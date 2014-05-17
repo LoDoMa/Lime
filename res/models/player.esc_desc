@@ -1,0 +1,41 @@
+"player"
+    int "format" i0
+    container "segments"
+        container "bodypolygon"
+            string "segmentType" "polygon"
+            int "polygon::pointc" 4
+            float "polygon::pointx0" f0.0
+            float "polygon::pointy0" f0.0
+            float "polygon::pointx1" f0.0
+            float "polygon::pointy1" f1.0
+            float "polygon::pointx2" f1.0
+            float "polygon::pointy2" f1.0
+            float "polygon::pointx3" f1.0
+            float "polygon::pointy3" f0.0
+            float "polygon::density" f0.09
+            float "polygon::friction" f0.3
+            float "polygon::restitution" f0.0
+            byte "fixedRotation" 1
+        end
+        container "bodycircle"
+            string "segmentType" "circle"
+            float "circle::radius" f0.5
+            float "circle::density" f0.09
+            float "circle::friction" f0.3
+            float "circle::restitution" f0.0
+        end
+    end
+    container "joints"
+        container "motor"
+            string "jointType" "revolute"
+            string "segmentA" "bodypolygon"
+            string "segmentB" "bodycircle"
+            byte "collideConnected" 0
+            float "revolute::anchorAx" f0.5
+            float "revolute::anchorAy" f0.0
+            float "revolute::anchorBx" f0.0
+            float "revolute::anchorBy" f0.0
+            float "revolute::maxMotorTorque" f100.0
+        end
+    end
+end
