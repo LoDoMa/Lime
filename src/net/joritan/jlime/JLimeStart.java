@@ -1,9 +1,11 @@
 package net.joritan.jlime;
 
 import net.joritan.jlime.stage.StageManager;
+import net.joritan.jlime.stage.root.BlueScreen;
 import net.joritan.jlime.stage.root.RootStage;
 import net.joritan.jlime.util.Input;
 import net.joritan.jlime.util.Timer;
+
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -28,13 +30,14 @@ public class JLimeStart
         }
         catch(LWJGLException e)
         {
-            e.printStackTrace();
+            new BlueScreen(null, e, new String[] {"Failute to create Display contexts"});
         }
     }
 
     public static void run()
     {
         StageManager manager = new StageManager();
+        BlueScreen.setDefaultManager(manager);
         manager.push(new RootStage(manager));
 
         Timer timer = new Timer();

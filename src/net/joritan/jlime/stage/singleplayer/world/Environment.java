@@ -1,6 +1,5 @@
 package net.joritan.jlime.stage.singleplayer.world;
 
-import net.joritan.jlime.util.Input;
 import net.joritan.jlime.util.Texture;
 import net.joritan.jlime.util.Vector2;
 import net.joritan.jlime.stage.singleplayer.world.gameobject.GameObject;

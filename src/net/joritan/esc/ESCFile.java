@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import net.joritan.jlime.stage.root.BlueScreen;
+
 public class ESCFile
 {
     private File file;
@@ -24,7 +26,7 @@ public class ESCFile
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+            new BlueScreen(null, e, new String[] {"ESCInputStream failed to open"});
         }
         return null;
     }
@@ -37,7 +39,7 @@ public class ESCFile
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+            new BlueScreen(null, e, new String[] {"ESCOutputStream failed to open"});
         }
         return null;
     }

@@ -1,7 +1,9 @@
 package net.joritan.jlime.stage.singleplayer.world.gameobject.segment;
 
 import net.joritan.jlime.util.Vector2;
+import net.joritan.jlime.stage.root.BlueScreen;
 import net.joritan.jlime.stage.singleplayer.world.Environment;
+
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.BodyDef;
@@ -20,10 +22,10 @@ public class SegmentPolygon extends Segment
     {
         if(args.length == 4)
         {
-            if(!(args[0] instanceof Vector2[])) throw new IllegalArgumentException();
-            if(!(args[1] instanceof Float)) throw new IllegalArgumentException();
-            if(!(args[2] instanceof Float)) throw new IllegalArgumentException();
-            if(!(args[3] instanceof Float)) throw new IllegalArgumentException();
+            if(!(args[0] instanceof Vector2[])) new BlueScreen(null, new IllegalArgumentException(), "illegal argument");
+            if(!(args[1] instanceof Float)) new BlueScreen(null, new IllegalArgumentException(), "illegal argument");
+            if(!(args[2] instanceof Float)) new BlueScreen(null, new IllegalArgumentException(), "illegal argument");
+            if(!(args[3] instanceof Float)) new BlueScreen(null, new IllegalArgumentException(), "illegal argument");
             Vector2[] vertices = (Vector2[]) args[0];
             float density = (Float) args[1];
             float friction = (Float) args[2];
@@ -50,7 +52,7 @@ public class SegmentPolygon extends Segment
             body.createFixture(fixture);
         }
         else
-            throw new IllegalArgumentException();
+            new BlueScreen(null, new IllegalArgumentException(), "illegal argument");
     }
 
     @Override

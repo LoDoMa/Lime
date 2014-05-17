@@ -3,6 +3,8 @@ package net.joritan.esc;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import net.joritan.jlime.stage.root.BlueScreen;
+
 public class ESCOutputStream
 {
     private OutputStream stream;
@@ -20,7 +22,7 @@ public class ESCOutputStream
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+            new BlueScreen(null, e, new String[] {"ESCOutputStream failed to write"});
         }
     }
 
@@ -33,7 +35,7 @@ public class ESCOutputStream
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+            new BlueScreen(null, e, new String[] {"ESCOutputStream failed to write"});
         }
     }
 
@@ -48,7 +50,7 @@ public class ESCOutputStream
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+            new BlueScreen(null, e, new String[] {"ESCOutputStream failed to write"});
         }
     }
 
@@ -67,7 +69,7 @@ public class ESCOutputStream
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+            new BlueScreen(null, e, new String[] {"ESCOutputStream failed to write"});
         }
     }
 
@@ -97,7 +99,7 @@ public class ESCOutputStream
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+            new BlueScreen(null, e, new String[] {"ESCOutputStream failed to write"});
         }
     }
 }

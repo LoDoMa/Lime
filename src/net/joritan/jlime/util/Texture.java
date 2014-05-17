@@ -1,8 +1,11 @@
 package net.joritan.jlime.util;
 
+import net.joritan.jlime.stage.root.BlueScreen;
+
 import org.lwjgl.BufferUtils;
 
 import javax.imageio.ImageIO;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.ByteBuffer;
@@ -115,7 +118,7 @@ public class Texture
         }
         catch(Exception e)
         {
-            e.printStackTrace();
+            new BlueScreen(null, e, new String[] {"Texture failed to load"});
         }
     }
 }

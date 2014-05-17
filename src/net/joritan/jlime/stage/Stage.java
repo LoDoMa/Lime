@@ -1,5 +1,7 @@
 package net.joritan.jlime.stage;
 
+import net.joritan.jlime.stage.root.BlueScreen;
+
 public abstract class Stage
 {
     public final Stage parentStage;
@@ -14,8 +16,8 @@ public abstract class Stage
         this.loader = loader;
         if(parentStage == null)
         {
-            if(manager.length != 1) throw new IllegalArgumentException();
-            if(!(manager[0] instanceof StageManager)) throw new IllegalArgumentException();
+            if(manager.length != 1) new BlueScreen(null, new IllegalArgumentException(), "illegal argument");
+            if(!(manager[0] instanceof StageManager)) new BlueScreen(null, new IllegalArgumentException(), "illegal argument");
             this.manager = (StageManager) manager[0];
         }
         else this.manager = parentStage.manager;

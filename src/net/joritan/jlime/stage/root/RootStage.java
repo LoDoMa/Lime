@@ -9,8 +9,6 @@ import net.joritan.jlime.util.RenderUtil;
 import net.joritan.jlime.util.Texture;
 import org.lwjgl.opengl.GL11;
 
-import java.awt.*;
-
 import static org.lwjgl.opengl.GL11.*;
 
 public class RootStage extends Stage
