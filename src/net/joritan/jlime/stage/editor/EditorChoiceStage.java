@@ -62,9 +62,9 @@ public class EditorChoiceStage extends Stage
             selectedIndex = (selectedIndex + 1) % choiceTexts.length;
         if(Input.getKeyDown(Input.KEY_RETURN))
         {
+            manager.pop();
             EditorChoiceResult result = new EditorChoiceResult(selectedIndex, choiceDescriptor);
             callback.choiceCallback(result);
-            manager.pop();
         }
     }
 
