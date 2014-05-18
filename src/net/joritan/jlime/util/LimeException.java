@@ -5,6 +5,8 @@ package net.joritan.jlime.util;
  */
 public class LimeException extends RuntimeException
 {
+    private static final long serialVersionUID = 5106627315161995387L;
+
     public LimeException()
     {
 
