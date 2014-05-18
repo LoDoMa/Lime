@@ -48,7 +48,16 @@ public class RootStage extends Stage
     @Override
     public void onSelection()
     {
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glOrtho(0, 1, 0, 1, -1, 1);
 
+        glMatrixMode(GL_MODELVIEW);
+        glEnable(GL_TEXTURE_2D);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_BLEND);
+
+        GL11.glClearColor(0.5f, 0.0f, 0.0f, 1.0f);
     }
 
     @Override
@@ -86,17 +95,6 @@ public class RootStage extends Stage
         if(bluescreen != null) bluescreen.render();
         else
         {
-            glMatrixMode(GL_PROJECTION);
-            glLoadIdentity();
-            glOrtho(0, 1, 0, 1, -1, 1);
-
-            glMatrixMode(GL_MODELVIEW);
-            glEnable(GL_TEXTURE_2D);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            glEnable(GL_BLEND);
-
-            GL11.glClearColor(0.5f, 0.0f, 0.0f, 1.0f);
-
             RenderUtil.renderText("press f3 to special boot", 0.04f, 0.04f);
         }
     }
