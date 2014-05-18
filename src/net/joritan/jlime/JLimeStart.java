@@ -4,6 +4,8 @@ import net.joritan.jlime.stage.StageManager;
 import net.joritan.jlime.stage.root.BlueScreen;
 import net.joritan.jlime.stage.root.RootStage;
 import net.joritan.jlime.util.Input;
+import net.joritan.jlime.util.RenderUtil;
+import net.joritan.jlime.util.Texture;
 import net.joritan.jlime.util.Timer;
 
 import org.lwjgl.LWJGLException;
@@ -11,6 +13,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.opengl.GL11;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -87,6 +90,10 @@ public class JLimeStart
             Display.create();
             Keyboard.create();
             Mouse.create();
+            
+            String font = "abcdefghijklmnopqrstuvwxyz0123456789.!?/*+-$=%\"'#&_ (),:\\|{}<>[]";
+            for (int i = 0; i < font.length(); i++)
+                Texture.addTexture("$letter" + font.charAt(i), new Texture("res/font.png", (i % 13) * 8, (i / 13) * 8, 8, 8));
         }
         catch (LWJGLException e)
         {
@@ -104,6 +111,8 @@ public class JLimeStart
         Timer timer = new Timer();
         timer.reset();
         
+        int finalFps = 0;
+        
         int frames = 0;
         long t1 = System.currentTimeMillis();
         while ((!Display.isCloseRequested()) && (!manager.hasStages()))
@@ -111,16 +120,21 @@ public class JLimeStart
             long t2 = System.currentTimeMillis();
             if ((t2 - t1) >= 1000)
             {
-                System.out.println("FPS: " + frames);
+                finalFps = frames;
                 frames = 0;
                 t1 = t2;
             }
             glClear(GL_COLOR_BUFFER_BIT);
             glLoadIdentity();
             
+            if (Input.getKeyDown(Input.KEY_F12))
+                manager.reachRootStage();
+            
             float delta = timer.update();
             manager.update(delta);
             Input.update();
+            GL11.glColor3f(1.0f, 1.0f, 1.0f);
+            RenderUtil.renderText("fps:" + finalFps + "l" + FPS + "=>ups", 0.005f, 0.005f, 0.015f, 0.02f);
             manager.render();
             
             Display.update();

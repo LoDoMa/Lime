@@ -81,12 +81,12 @@ public class EditorStage extends Stage implements EditorChoiceCallback
     public void render()
     {
         if (selectedIndex == 0)
-            RenderUtil.renderTextBox("add shape", 0.05f, 0.95f, 0.2f, 0.03f, 0.015f, 0.02f, 1.0f, 1.0f, 1.0f, 0.7f, 0.7f, 0.7f);
+            RenderUtil.renderButton("add shape", 0.05f, 0.95f, 0.2f, 0.03f, 0.015f, 0.02f, 1.0f, 1.0f, 1.0f, 0.7f, 0.7f, 0.7f);
         else
-            RenderUtil.renderTextBox("add shape", 0.05f, 0.95f, 0.2f, 0.03f, 0.015f, 0.02f, 1.0f, 1.0f, 1.0f, 0.3f, 0.3f, 0.3f);
+            RenderUtil.renderButton("add shape", 0.05f, 0.95f, 0.2f, 0.03f, 0.015f, 0.02f, 1.0f, 1.0f, 1.0f, 0.3f, 0.3f, 0.3f);
         if (selectedIndex == 1)
-            RenderUtil.renderTextBox("add joint", 0.05f, 0.91f, 0.2f, 0.03f, 0.015f, 0.02f, 1.0f, 1.0f, 1.0f, 0.7f, 0.7f, 0.7f);
+            RenderUtil.renderButton("add joint", 0.05f, 0.91f, 0.2f, 0.03f, 0.015f, 0.02f, 1.0f, 1.0f, 1.0f, 0.7f, 0.7f, 0.7f);
         else
-            RenderUtil.renderTextBox("add joint", 0.05f, 0.91f, 0.2f, 0.03f, 0.015f, 0.02f, 1.0f, 1.0f, 1.0f, 0.3f, 0.3f, 0.3f);
+            RenderUtil.renderButton("add joint", 0.05f, 0.91f, 0.2f, 0.03f, 0.015f, 0.02f, 1.0f, 1.0f, 1.0f, 0.3f, 0.3f, 0.3f);
     }
 }

@@ -1,101 +1,94 @@
 package net.joritan.jlime.stage.root;
 
+import net.joritan.jlime.stage.Stage;
+import net.joritan.jlime.stage.StageManager;
 import net.joritan.jlime.stage.editor.EditorStage;
 import net.joritan.jlime.stage.singleplayer.SingleplayerStage;
 import net.joritan.jlime.util.Input;
-import net.joritan.jlime.stage.Stage;
-import net.joritan.jlime.stage.StageManager;
 import net.joritan.jlime.util.RenderUtil;
-import net.joritan.jlime.util.Texture;
-import org.lwjgl.opengl.GL11;
 
-import static org.lwjgl.opengl.GL11.*;
+import org.lwjgl.opengl.GL11;
 
 public class RootStage extends Stage
 {
-    private static final float VISIBLE_DURATION = 1.0f;
-    private float currentDuration = 0.0f;
-
-    private boolean firstRun = true;
-    private boolean runSpecial = false;
-
     private BlueScreen bluescreen;
-
+    
     public RootStage(StageManager manager)
     {
         super(null, null, manager);
     }
-
+    
     public void setBluescreen(BlueScreen bluescreen)
     {
         this.bluescreen = bluescreen;
     }
-
+    
     @Override
     public void onCreation()
     {
-        String font = "abcdefghijklmnopqrstuvwxyz0123456789.!?/*+-$=%\"'#&_ (),:\\|{}<>[]";
-        for(int i = 0; i < font.length(); i++)
-            Texture.addTexture("$letter" + font.charAt(i), new Texture("res/font.png", (i % 13) * 8, (i / 13) * 8, 8, 8));
+        
     }
-
+    
     @Override
     public void onDestruction()
     {
-
+        
     }
-
+    
     @Override
     public void onSelection()
     {
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        glOrtho(0, 1, 0, 1, -1, 1);
-
-        glMatrixMode(GL_MODELVIEW);
-        glEnable(GL_TEXTURE_2D);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glEnable(GL_BLEND);
-
+        GL11.glMatrixMode(GL11.GL_PROJECTION);
+        GL11.glLoadIdentity();
+        GL11.glOrtho(0, 1, 0, 1, -1, 1);
+        
+        GL11.glMatrixMode(GL11.GL_MODELVIEW);
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glEnable(GL11.GL_BLEND);
+        
         GL11.glClearColor(0.5f, 0.0f, 0.0f, 1.0f);
     }
-
+    
     @Override
     public void onDeselection()
     {
-
+        
     }
-
+    
     @Override
     public void update(float timeDelta)
     {
-        if(bluescreen != null)
+        if (Input.getKey(Input.KEY_F11))
+            manager.pop();
+        if (bluescreen != null)
         {
             return;
         }
-        currentDuration += timeDelta;
-        if (Input.getKeyDown(Input.KEY_F3))
-            runSpecial = true;
-        if (currentDuration > VISIBLE_DURATION)
-        {
-            if (!firstRun)
-                manager.pop();
-            else
-            {
-                firstRun = false;
-                if (runSpecial) manager.push(new EditorStage(this));
-                else manager.push(new SingleplayerStage(this));
-            }
-        }
+        if (Input.getKey(Input.KEY_F1))
+            manager.push(new SingleplayerStage(this));
+        if (Input.getKey(Input.KEY_F2))
+            new BlueScreen(manager, new String[]
+            { "the stage manager", "loaded from the root stage (opt 2)", "the stage manager encountered a problem transfering execution", "", "problem detail: transfer to unknown stage" });
+        if (Input.getKey(Input.KEY_F3))
+            manager.push(new EditorStage(this));
     }
-
+    
     @Override
     public void render()
     {
-        if(bluescreen != null) bluescreen.render();
+        if (bluescreen != null)
+            bluescreen.render();
         else
         {
-            RenderUtil.renderText("press f3 to special boot", 0.04f, 0.04f);
+            RenderUtil.renderText("lime root stage 2.0", 0.1f, 0.90f, 0.015f, 0.02f);
+            RenderUtil.renderText("as there is no load menu, the root stage is used", 0.1f, 0.85f, 0.015f, 0.02f);
+            RenderUtil.renderText("for stage execution transfer (temporary)", 0.1f, 0.82f, 0.015f, 0.02f);
+            RenderUtil.renderText("f1 - transfer execution to the singleplayer stage", 0.1f, 0.77f, 0.015f, 0.02f);
+            RenderUtil.renderText("f2 - transfer execution to the multiplayer stage", 0.1f, 0.74f, 0.015f, 0.02f);
+            RenderUtil.renderText("f3 - transfer execution to the editor stage", 0.1f, 0.71f, 0.015f, 0.02f);
+            RenderUtil.renderText("f11 - terminate", 0.1f, 0.46f, 0.015f, 0.02f);
+            RenderUtil.renderText("f12 - transfer execution to the root stage", 0.1f, 0.43f, 0.015f, 0.02f);
         }
     }
 }

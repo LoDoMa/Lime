@@ -38,6 +38,7 @@ public final class StageManager
             new Exception("missing root stage").printStackTrace();
             System.exit(1);
         }
+        stack.peek().onSelection();
         return (RootStage) stack.peek();
     }
 

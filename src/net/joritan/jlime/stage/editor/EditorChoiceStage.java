@@ -75,9 +75,9 @@ public class EditorChoiceStage extends Stage
         for(int i = 0; i < choiceTexts.length; i++)
         {
             if(selectedIndex == i)
-                RenderUtil.renderTextBox(choiceTexts[i], 0.3f, y, 0.4f, 0.03f, 0.015f, 0.02f, 1.0f, 1.0f, 1.0f, 0.3f, 0.3f, 0.3f);
+                RenderUtil.renderButton(choiceTexts[i], 0.3f, y, 0.4f, 0.03f, 0.015f, 0.02f, 1.0f, 1.0f, 1.0f, 0.3f, 0.3f, 0.3f);
             else
-                RenderUtil.renderTextBox(choiceTexts[i], 0.3f, y, 0.4f, 0.03f, 0.015f, 0.02f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f);
+                RenderUtil.renderButton(choiceTexts[i], 0.3f, y, 0.4f, 0.03f, 0.015f, 0.02f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f);
             y -= 0.04f;
         }
     }

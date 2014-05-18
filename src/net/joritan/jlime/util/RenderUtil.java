@@ -75,7 +75,15 @@ public class RenderUtil
         }
     }
     
-    public static void renderTextBox(String text, float x, float y, float w, float h, float wt, float ht, float rt, float gt, float bt, float rb, float gb, float bb)
+    public static void renderText(String text, float x, float y, float w, float h)
+    {
+        GL11.glPushMatrix();
+        GL11.glTranslatef(x, y, 0.0f);
+        renderText(text, w, h);
+        GL11.glPopMatrix();
+    }
+    
+    public static void renderButton(String text, float x, float y, float w, float h, float wt, float ht, float rt, float gt, float bt, float rb, float gb, float bb)
     {
         GL11.glPushMatrix();
         {
@@ -91,6 +99,28 @@ public class RenderUtil
             }
             GL11.glEnd();
             GL11.glTranslatef((w - (text.length() * wt)) / 2.0f, (h - ht) / 2.0f, 0.0f);
+            GL11.glColor3f(rt, gt, bt);
+            renderText(text, wt, ht);
+        }
+        GL11.glPopMatrix();
+    }
+    
+    public static void renderTextBox(String text, float x, float y, float w, float h, float wt, float ht, float rt, float gt, float bt, float rb, float gb, float bb)
+    {
+        GL11.glPushMatrix();
+        {
+            GL11.glTranslatef(x, y, 0.0f);
+            GL11.glColor3f(rb, gb, bb);
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+            GL11.glBegin(GL11.GL_QUADS);
+            {
+                GL11.glVertex2f(0, 0);
+                GL11.glVertex2f(w, 0);
+                GL11.glVertex2f(w, h);
+                GL11.glVertex2f(0, h);
+            }
+            GL11.glEnd();
+            GL11.glTranslatef(0.0f, (h - ht) / 2.0f, 0.0f);
             GL11.glColor3f(rt, gt, bt);
             renderText(text, wt, ht);
         }
