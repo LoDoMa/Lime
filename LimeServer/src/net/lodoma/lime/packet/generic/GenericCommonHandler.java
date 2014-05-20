@@ -8,7 +8,7 @@ import net.lodoma.lime.client.generic.GenericClient;
 import net.lodoma.lime.server.generic.GenericServer;
 import net.lodoma.lime.server.generic.ServerUser;
 
-public abstract class CommonHandler
+public abstract class GenericCommonHandler
 {
     private final Map<Integer, PacketHandler> handlers = new HashMap<Integer, PacketHandler>();
     

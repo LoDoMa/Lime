@@ -7,7 +7,7 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
-import net.lodoma.lime.packet.generic.CommonHandler;
+import net.lodoma.lime.packet.generic.GenericCommonHandler;
 
 public abstract class GenericClient
 {
@@ -17,12 +17,12 @@ public abstract class GenericClient
     InetAddress ipAddress;
     DatagramSocket socket;
     
-    CommonHandler handler;
+    GenericCommonHandler handler;
     ClientReader reader;
     
     public abstract void handleException(Exception exception);
     
-    public final void open(int port, String ipAddress, CommonHandler handler)
+    public final void open(int port, String ipAddress, GenericCommonHandler handler)
     {
         if(isRunning)
         {

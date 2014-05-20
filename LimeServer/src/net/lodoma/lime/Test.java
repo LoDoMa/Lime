@@ -5,7 +5,7 @@ import java.net.UnknownHostException;
 import net.lodoma.lime.client.LimeClient;
 import net.lodoma.lime.client.generic.GenericClient;
 import net.lodoma.lime.packet.LimeCommonHandler;
-import net.lodoma.lime.packet.generic.CommonHandler;
+import net.lodoma.lime.packet.generic.GenericCommonHandler;
 import net.lodoma.lime.server.LimeServer;
 import net.lodoma.lime.server.generic.GenericServer;
 
@@ -13,7 +13,7 @@ public class Test
 {
     public static void main(String[] args) throws UnknownHostException, InterruptedException
     {
-        CommonHandler commonHandler = new LimeCommonHandler();
+        GenericCommonHandler commonHandler = new LimeCommonHandler();
         
         GenericServer server = new LimeServer();
         server.open(19523, commonHandler);

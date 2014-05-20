@@ -16,7 +16,7 @@ public class ReportPacket extends PacketHandler
     @Override
     public void handle(GenericClient client, byte[] data)
     {
-        if(data[0] == (byte) 0x01)
+        if (data[0] == (byte) 0x00)
             System.out.println("accepted");
         else
             System.out.println("rejected");
@@ -28,6 +28,6 @@ public class ReportPacket extends PacketHandler
         System.out.println("SERVER: a user asks for promotion");
         user.stage = NetStage.DEPENDENCY;
         server.sendData(buildMessage(new byte[]
-        { (byte) 0x01 }), user);
+        { (byte) 0x00 }), user);
     }
 }

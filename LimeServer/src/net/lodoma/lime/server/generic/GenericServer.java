@@ -5,7 +5,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 
-import net.lodoma.lime.packet.generic.CommonHandler;
+import net.lodoma.lime.packet.generic.GenericCommonHandler;
 
 public abstract class GenericServer
 {
@@ -14,12 +14,12 @@ public abstract class GenericServer
     DatagramSocket socket;
     
     UserPool userPool;
-    CommonHandler handler;
+    GenericCommonHandler handler;
     ServerReader reader;
     
     public abstract void handleException(Exception exception);
     
-    public final void open(int port, CommonHandler handler)
+    public final void open(int port, GenericCommonHandler handler)
     {
         if (isRunning)
         {
