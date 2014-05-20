@@ -6,7 +6,7 @@ import net.joritan.jlime.stage.Stage;
 import net.joritan.jlime.util.Input;
 import net.joritan.jlime.util.RenderUtil;
 
-public class EditorStage extends Stage implements EditorChoiceCallback
+public class EditorStage extends Stage implements EditorChoiceCallback, PolygonBuilderCallback
 {
     private int selectedIndex;
     
@@ -56,10 +56,18 @@ public class EditorStage extends Stage implements EditorChoiceCallback
             switch(result.CHOICE)
             {
             case 0:
-                manager.push(new PolygonBuilderStage(this));
+                manager.push(new PolygonBuilderStage(this, this));
                 break;
             }
         }
+    }
+    
+    @Override
+    public void polygonCallback(PolygonProduct product)
+    {
+        System.out.println(product.n);
+        for(int i = 0; i < product.n; i++)
+            System.out.println(product.x[i] + " " + product.y[i]);
     }
     
     @Override
@@ -72,7 +80,7 @@ public class EditorStage extends Stage implements EditorChoiceCallback
             {
             case 0:
                 manager.push(new EditorChoiceStage(this, new String[]
-                { "polygon", "circle" }, 0, this));
+                { "polygon", "circle", "cancel" }, 0, this));
                 break;
             }
     }

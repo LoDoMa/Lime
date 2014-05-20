@@ -1,12 +1,13 @@
 package net.joritan.jlime.stage.editor;
 
+import org.jbox2d.common.Settings;
 import org.lwjgl.opengl.GL11;
 
 import net.joritan.jlime.stage.Stage;
 import net.joritan.jlime.util.Input;
 import net.joritan.jlime.util.RenderUtil;
 
-public class PolygonBuilderStage extends Stage
+public class PolygonBuilderStage extends Stage implements EditorChoiceCallback
 {
     private int vertexCount;
     private float[] verticesX;
@@ -23,9 +24,12 @@ public class PolygonBuilderStage extends Stage
     
     private boolean workingTextbox;
     
-    public PolygonBuilderStage(Stage parentStage, Object... manager)
+    private PolygonBuilderCallback callback;
+    
+    public PolygonBuilderStage(Stage parentStage, PolygonBuilderCallback callback, Object... manager)
     {
         super(parentStage, null, manager);
+        this.callback = callback;
     }
     
     @Override
@@ -68,16 +72,37 @@ public class PolygonBuilderStage extends Stage
     }
     
     @Override
+    public void choiceCallback(EditorChoiceResult result)
+    {
+        if (result.DESCRIPTOR == 0)
+        {
+            switch(result.CHOICE)
+            {
+            case 0:
+                manager.pop();
+                for(int i = 0; i < vertexCount; i++)
+                {
+                    verticesX[i] *= scaleX;
+                    verticesY[i] *= scaleY;
+                }
+                PolygonProduct product = new PolygonProduct(vertexCount, verticesX, verticesY);
+                callback.polygonCallback(product);
+                break;
+            case 1:
+                manager.pop();
+                break;
+            }
+        }
+    }
+    
+    @Override
     public void update(float timeDelta)
     {
         if (!workingTextbox)
         {
             textboxContent[0] = vertexCount + "";
-            if (vertexCount > 0)
-            {
-                textboxContent[1] = verticesX[selectedVertex] + "";
-                textboxContent[2] = verticesY[selectedVertex] + "";
-            }
+            textboxContent[1] = verticesX[selectedVertex] + "";
+            textboxContent[2] = verticesY[selectedVertex] + "";
             textboxContent[3] = scaleX + "";
             textboxContent[4] = scaleY + "";
             
@@ -89,9 +114,10 @@ public class PolygonBuilderStage extends Stage
             }
             if (Input.getKeyDown(Input.KEY_RETURN))
             {
-                if(selectedTextbox == 5)
+                if (selectedTextbox == 5)
                 {
-                    manager.pop();
+                    manager.push(new EditorChoiceStage(this, new String[]
+                    { "import", "discard", "cancel" }, 0, this));
                 }
                 else
                 {
@@ -109,7 +135,7 @@ public class PolygonBuilderStage extends Stage
                 try
                 {
                     if (selectedTextbox == 0)
-                        vertexCount = (int) Math.max(3, Integer.parseInt(textboxContent[selectedTextbox]));
+                        vertexCount = (int) Math.max(3, Math.min(Settings.maxPolygonVertices, Integer.parseInt(textboxContent[selectedTextbox])));
                     if (selectedTextbox == 1)
                         verticesX[selectedVertex] = Float.parseFloat(textboxContent[selectedTextbox]);
                     if (selectedTextbox == 2)
@@ -168,14 +194,14 @@ public class PolygonBuilderStage extends Stage
         float maxX = Float.MIN_VALUE;
         float maxY = Float.MIN_VALUE;
         
-        for(int i = 0; i < vertexCount; i++)
+        for (int i = 0; i < vertexCount; i++)
         {
             minX = verticesX[i] < minX ? verticesX[i] : minX;
             minY = verticesY[i] < minY ? verticesY[i] : minY;
             maxX = verticesX[i] > maxX ? verticesX[i] : maxX;
             maxY = verticesY[i] > maxY ? verticesY[i] : maxY;
         }
-
+        
         float polyW = maxX - minX;
         float polyH = maxY - minY;
         float polyD = polyW < polyH ? polyH : polyW;
@@ -185,10 +211,10 @@ public class PolygonBuilderStage extends Stage
         GL11.glTranslatef(0.3f, 0.3f, 1.0f);
         GL11.glBegin(GL11.GL_LINES);
         {
-            for(int i = 0; i < vertexCount; i++)
+            for (int i = 0; i < vertexCount; i++)
             {
                 GL11.glColor3f(1.0f, 1.0f, 1.0f);
-                if(i == selectedVertex)
+                if (i == selectedVertex)
                     GL11.glColor3f(1.0f, 0.0f, 0.0f);
                 float x = verticesX[i] - minX;
                 float y = verticesY[i] - minY;
@@ -196,7 +222,7 @@ public class PolygonBuilderStage extends Stage
                 float uy = y / polyD * 0.6f;
                 GL11.glVertex2f(ux, uy);
                 GL11.glColor3f(1.0f, 1.0f, 1.0f);
-                if(((i + 1) % vertexCount) == selectedVertex)
+                if (((i + 1) % vertexCount) == selectedVertex)
                     GL11.glColor3f(1.0f, 0.0f, 0.0f);
                 float x2 = verticesX[(i + 1) % vertexCount] - minX;
                 float y2 = verticesY[(i + 1) % vertexCount] - minY;

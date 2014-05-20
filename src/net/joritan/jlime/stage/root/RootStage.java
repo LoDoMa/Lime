@@ -86,7 +86,7 @@ public class RootStage extends Stage
             RenderUtil.renderText("for stage execution transfer (temporary)", 0.1f, 0.82f, 0.015f, 0.02f);
             RenderUtil.renderText("f1 - transfer execution to the singleplayer stage", 0.1f, 0.77f, 0.015f, 0.02f);
             RenderUtil.renderText("f2 - transfer execution to the multiplayer stage", 0.1f, 0.74f, 0.015f, 0.02f);
-            RenderUtil.renderText("f3 - transfer execution to the editor stage", 0.1f, 0.71f, 0.015f, 0.02f);
+            RenderUtil.renderText("f3 - transfer execution to the entity editor stage", 0.1f, 0.71f, 0.015f, 0.02f);
             RenderUtil.renderText("f11 - terminate", 0.1f, 0.46f, 0.015f, 0.02f);
             RenderUtil.renderText("f12 - transfer execution to the root stage", 0.1f, 0.43f, 0.015f, 0.02f);
         }
