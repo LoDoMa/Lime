@@ -25,7 +25,7 @@ public abstract class PacketHandler
         return buffer.array();
     }
     
-    public final void sendEmpty(GenericClient client)
+    public final void sendHeader(GenericClient client)
     {
         client.sendData(buildMessage(new byte[] {}));
     }

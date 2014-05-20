@@ -5,6 +5,8 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.SocketException;
 
+import net.lodoma.lime.server.generic.GenericServer.LogLevel;
+
 class ServerReader extends Thread
 {
     private GenericServer server;
@@ -28,7 +30,7 @@ class ServerReader extends Thread
             {
                 if((e instanceof SocketException) && e.getMessage().equals("socket closed"))
                     break;
-                server.handleException(e);
+                server.log(LogLevel.SEVERE, e);
             }
             
             InetAddress address = packet.getAddress();

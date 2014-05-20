@@ -21,7 +21,7 @@ public class Test
         GenericClient client = new LimeClient();
         client.open(19523, "localhost", commonHandler);
         
-        commonHandler.getPacketHandler(0).sendEmpty(client);
+        commonHandler.getPacketHandler(0).sendHeader(client);
         
         Thread.sleep(1000);
         

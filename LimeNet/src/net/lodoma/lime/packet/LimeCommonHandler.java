@@ -7,6 +7,6 @@ public final class LimeCommonHandler extends GenericCommonHandler
     @Override
     public void loadPacketHandlers()
     {
-        addPacketHandler(new ReportPacket());
+        addPacketHandler(new LoginPacket());
     }
 }

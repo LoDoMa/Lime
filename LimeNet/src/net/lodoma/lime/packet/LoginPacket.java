@@ -6,9 +6,9 @@ import net.lodoma.lime.packet.generic.PacketHandler;
 import net.lodoma.lime.server.generic.GenericServer;
 import net.lodoma.lime.server.generic.ServerUser;
 
-public class ReportPacket extends PacketHandler
+public class LoginPacket extends PacketHandler
 {
-    public ReportPacket()
+    public LoginPacket()
     {
         super(0, NetStage.PRIMITIVE);
     }

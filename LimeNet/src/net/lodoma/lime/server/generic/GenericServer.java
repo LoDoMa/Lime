@@ -9,6 +9,14 @@ import net.lodoma.lime.packet.generic.GenericCommonHandler;
 
 public abstract class GenericServer
 {
+    public static enum LogLevel
+    {
+        DEBUG,
+        INFO,
+        WARNING,
+        SEVERE,
+    }
+    
     private boolean isRunning = false;
     
     DatagramSocket socket;
@@ -17,13 +25,14 @@ public abstract class GenericServer
     GenericCommonHandler handler;
     ServerReader reader;
     
-    public abstract void handleException(Exception exception);
+    public abstract void log(LogLevel level, String message);
+    public abstract void log(LogLevel level, Exception exception);
     
     public final void open(int port, GenericCommonHandler handler)
     {
         if (isRunning)
         {
-            handleException(new IllegalStateException("server is already open"));
+            log(LogLevel.WARNING, new IllegalStateException("server is already open"));
             return;
         }
         
@@ -33,7 +42,7 @@ public abstract class GenericServer
         }
         catch (SocketException e)
         {
-            handleException(e);
+            log(LogLevel.SEVERE, e);
         }
         
         userPool = new UserPool();
@@ -49,7 +58,7 @@ public abstract class GenericServer
     {
         if (!isRunning)
         {
-            handleException(new IllegalStateException("server is already closed"));
+            log(LogLevel.WARNING, new IllegalStateException("server is already closed"));
             return;
         }
         
@@ -63,7 +72,7 @@ public abstract class GenericServer
     {
         if (!isRunning)
         {
-            handleException(new IllegalStateException("cannot send data while closed"));
+            log(LogLevel.WARNING, new IllegalStateException("cannot send data while closed"));
             return;
         }
         
@@ -74,7 +83,7 @@ public abstract class GenericServer
         }
         catch (IOException e)
         {
-            handleException(e);
+            log(LogLevel.SEVERE, e);
         }
     }
 }
