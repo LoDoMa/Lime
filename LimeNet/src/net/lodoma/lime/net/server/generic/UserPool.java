@@ -1,10 +1,10 @@
-package net.lodoma.lime.server.generic;
+package net.lodoma.lime.net.server.generic;
 
 import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.lodoma.lime.packet.generic.NetStage;
+import net.lodoma.lime.net.packet.generic.NetStage;
 
 public final class UserPool
 {

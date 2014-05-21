@@ -1,4 +1,4 @@
-package net.lodoma.lime.client.generic;
+package net.lodoma.lime.net.client.generic;
 
 import java.io.IOException;
 import java.net.DatagramPacket;

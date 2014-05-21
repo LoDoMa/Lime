@@ -1,6 +1,6 @@
-package net.lodoma.lime.packet;
+package net.lodoma.lime.net.packet;
 
-import net.lodoma.lime.packet.generic.GenericCommonHandler;
+import net.lodoma.lime.net.packet.generic.GenericCommonHandler;
 
 public final class LimeCommonHandler extends GenericCommonHandler
 {
@@ -8,5 +8,6 @@ public final class LimeCommonHandler extends GenericCommonHandler
     public void loadPacketHandlers()
     {
         addPacketHandler(new LoginPacket());
+        addPacketHandler(new VisualInstanceReadyPacket());
     }
 }

@@ -1,10 +1,10 @@
-package net.lodoma.lime.server;
+package net.lodoma.lime.net.server;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import net.lodoma.lime.server.generic.GenericServer;
+import net.lodoma.lime.net.server.generic.GenericServer;
 
 public class LimeServer extends GenericServer
 {

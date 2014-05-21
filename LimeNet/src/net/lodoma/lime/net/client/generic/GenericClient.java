@@ -1,4 +1,4 @@
-package net.lodoma.lime.client.generic;
+package net.lodoma.lime.net.client.generic;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -6,8 +6,10 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.Map;
 
-import net.lodoma.lime.packet.generic.GenericCommonHandler;
+import net.lodoma.lime.net.packet.generic.GenericCommonHandler;
 
 public abstract class GenericClient
 {
@@ -19,6 +21,8 @@ public abstract class GenericClient
     
     GenericCommonHandler handler;
     ClientReader reader;
+    
+    Map<String, Object> properties;
     
     public abstract void handleException(Exception exception);
     
@@ -49,6 +53,8 @@ public abstract class GenericClient
         handler.loadPacketHandlers();
         reader = new ClientReader(this);
         reader.start();
+        
+        properties = new HashMap<String, Object>();
         
         isRunning = true;
     }
@@ -84,5 +90,25 @@ public abstract class GenericClient
         {
             handleException(e);
         }
+    }
+    
+    public Object getProperty(String name)
+    {
+        return properties.get(name);
+    }
+    
+    public void setProperty(String name, Object value)
+    {
+        properties.put(name, value);
+    }
+    
+    public void removeProperty(String name)
+    {
+        properties.remove(name);
+    }
+    
+    public boolean hasProperty(String name)
+    {
+        return properties.containsKey(name);
     }
 }

@@ -1,6 +1,6 @@
-package net.lodoma.lime.client;
+package net.lodoma.lime.net.client;
 
-import net.lodoma.lime.client.generic.GenericClient;
+import net.lodoma.lime.net.client.generic.GenericClient;
 
 public class LimeClient extends GenericClient
 {

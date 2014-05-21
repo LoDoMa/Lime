@@ -1,11 +1,11 @@
-package net.lodoma.lime.server.generic;
+package net.lodoma.lime.net.server.generic;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.SocketException;
 
-import net.lodoma.lime.server.generic.GenericServer.LogLevel;
+import net.lodoma.lime.net.server.generic.GenericServer.LogLevel;
 
 class ServerReader extends Thread
 {

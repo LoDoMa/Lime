@@ -1,11 +1,13 @@
-package net.lodoma.lime.server.generic;
+package net.lodoma.lime.net.server.generic;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
+import java.util.HashMap;
+import java.util.Map;
 
-import net.lodoma.lime.packet.generic.GenericCommonHandler;
+import net.lodoma.lime.net.packet.generic.GenericCommonHandler;
 
 public abstract class GenericServer
 {
@@ -24,11 +26,14 @@ public abstract class GenericServer
     UserPool userPool;
     GenericCommonHandler handler;
     ServerReader reader;
+    ServerLogic logic;
+    
+    Map<String, Object> properties;
     
     public abstract void log(LogLevel level, String message);
     public abstract void log(LogLevel level, Exception exception);
     
-    public final void open(int port, GenericCommonHandler handler)
+    public final void open(int port, GenericCommonHandler handler, ServerLogic logic)
     {
         if (isRunning)
         {
@@ -50,6 +55,9 @@ public abstract class GenericServer
         handler.loadPacketHandlers();
         reader = new ServerReader(this);
         reader.start();
+        logic.start();
+        
+        properties = new HashMap<String, Object>();
         
         isRunning = true;
     }
@@ -62,6 +70,7 @@ public abstract class GenericServer
             return;
         }
         
+        logic.interrupt();
         reader.interrupt();
         socket.close();
         
@@ -85,5 +94,15 @@ public abstract class GenericServer
         {
             log(LogLevel.SEVERE, e);
         }
+    }
+    
+    public Object getProperty(String name)
+    {
+        return properties.get(name);
+    }
+    
+    public void setProperty(String name, Object value)
+    {
+        properties.put(name, value);
     }
 }

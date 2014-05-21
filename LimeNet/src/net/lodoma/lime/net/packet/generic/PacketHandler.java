@@ -1,10 +1,10 @@
-package net.lodoma.lime.packet.generic;
+package net.lodoma.lime.net.packet.generic;
 
 import java.nio.ByteBuffer;
 
-import net.lodoma.lime.client.generic.GenericClient;
-import net.lodoma.lime.server.generic.GenericServer;
-import net.lodoma.lime.server.generic.ServerUser;
+import net.lodoma.lime.net.client.generic.GenericClient;
+import net.lodoma.lime.net.server.generic.GenericServer;
+import net.lodoma.lime.net.server.generic.ServerUser;
 
 public abstract class PacketHandler
 {
