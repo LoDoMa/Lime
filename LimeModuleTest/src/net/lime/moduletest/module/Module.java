@@ -1,15 +1,16 @@
 package net.lime.moduletest.module;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Module
+public abstract class Module
 {
-    public String name();
-    public String author();
+    protected String moduleName = null;
+    protected String moduleAuthor = null;
     
+    final void checkValid()
+    {
+        if(moduleName == null)
+            System.err.println("missing module name");
+        if(moduleAuthor == null)
+            System.err.println("missing module author");
+    }
+    public abstract void init();
 }

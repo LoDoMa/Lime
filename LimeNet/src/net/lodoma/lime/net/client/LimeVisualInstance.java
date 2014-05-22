@@ -1,5 +1,8 @@
 package net.lodoma.lime.net.client;
 
+import java.lang.reflect.InvocationTargetException;
+
+import net.lodoma.lime.mod.Module;
 import net.lodoma.lime.net.packet.LimeCommonHandler;
 import net.lodoma.lime.net.packet.LoginPacket;
 import net.lodoma.lime.net.packet.VisualInstanceReadyPacket;
@@ -20,6 +23,18 @@ public class LimeVisualInstance
     
     public LimeVisualInstance()
     {
+        try
+        {
+            Module module = new Module(Class.forName("net.lodoma.lime.mod.limemod.LimeClientModule"));
+            if(module.hasPreinit()) module.invokePreinit(null);
+            if(module.hasInit()) module.invokeInit(null);
+            if(module.hasPostinit()) module.invokePostinit(null);
+        }
+        catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
+        {
+            e.printStackTrace();
+        }
+        
         world = new World();
         client = new LimeClient();
     }
@@ -29,15 +44,24 @@ public class LimeVisualInstance
         if(client.hasProperty("accepted"))
             client.removeProperty("accepted");
         client.getCommonHandler().getPacketHandler(LoginPacket.class).sendHeader(client);
+        long requestStart = System.currentTimeMillis();
+        boolean timeout = false;
         while(!client.hasProperty("accepted"))
             try
             {
+                long requestCurrent = System.currentTimeMillis();
+                if((requestCurrent - requestStart) >= 1000)
+                {
+                    timeout = true;
+                    break;
+                }
                 Thread.sleep(1);
             }
             catch (InterruptedException e)
             {
                 return false;
             }
+        if(timeout) return false;
         boolean accepted = (Boolean) client.getProperty("accepted");
         return accepted;
     }
@@ -74,6 +98,7 @@ public class LimeVisualInstance
         if(!connect())
         {
             System.err.println("failed to connect");
+            client.close();
             return;
         }
         System.out.println("connected");

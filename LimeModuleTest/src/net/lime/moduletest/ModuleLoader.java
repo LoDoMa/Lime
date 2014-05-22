@@ -3,16 +3,16 @@ package net.lime.moduletest;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
 import net.lime.moduletest.module.Module;
-import net.lime.moduletest.module.ModuleClass;
 
 public class ModuleLoader
 {
-    private static ModuleClass loadModule(File moduleFile)
+    @SuppressWarnings("unchecked")
+    private static Module loadModule(File moduleFile)
     {
         try
         {
@@ -23,10 +23,25 @@ public class ModuleLoader
             reader.close();
             
             Class<?> clazz = Class.forName(className);
-            Annotation[] annotations = clazz.getAnnotations();
-            for(Annotation annotation : annotations)
-                if(annotation instanceof Module)
-                    return ModuleClass.constructModuleClass(clazz);
+            if(clazz.getSuperclass() != Module.class)
+            {
+                System.err.println("invalid module");
+                return null;
+            }
+            Class<Module> module = (Class<Module>) clazz;
+            Constructor<Module>[] constructors = (Constructor<Module>[]) module.getConstructors();
+            Module instance = null;
+            for(Constructor<Module> constructor : constructors)
+                if(constructor.getParameters().length == 0)
+                {
+                    instance = constructor.newInstance();
+                    break;
+                }
+            if(instance == null)
+            {
+                System.err.println("invalid module");
+            }
+            return instance;
         }
         catch(Exception e)
         {
@@ -36,13 +51,16 @@ public class ModuleLoader
         return null;
     }
     
-    public static List<ModuleClass> loadModules()
+    public static List<Module> loadModules()
     {
-        List<ModuleClass> modules = new ArrayList<ModuleClass>();
+        List<Module> modules = new ArrayList<Module>();
         File[] files = new File("./modules/").listFiles();
         for(File file : files)
             if(file.getName().endsWith(".module"))
-                modules.add(loadModule(file));
+            {
+                Module module = loadModule(file);
+                if(module != null) modules.add(module);
+            }
         return modules;
     }
 }

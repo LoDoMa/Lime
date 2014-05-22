@@ -1,17 +1,12 @@
 package another.author;
 
-import net.lime.moduletest.module.InitBundle;
 import net.lime.moduletest.module.Module;
-import net.lime.moduletest.module.ModuleInit;
 
-@Module(name = MyModule.MODULE_NAME, author = "just somebody that I used to know")
-public class MyModule
+public class MyModule extends Module
 {
-    public static final String MODULE_NAME = "MyAmazingModule";
-    
-    @ModuleInit
-    public void initModule(InitBundle bundle)
+    @Override
+    public void init()
     {
-        System.out.println("HIII");
+        System.out.println("heljou!");
     }
 }
