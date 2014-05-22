@@ -55,6 +55,8 @@ public abstract class GenericServer
         handler.loadPacketHandlers();
         reader = new ServerReader(this);
         reader.start();
+        this.logic = logic;
+        logic.setServer(this);
         logic.start();
         
         properties = new HashMap<String, Object>();

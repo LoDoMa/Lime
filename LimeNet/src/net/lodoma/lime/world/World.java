@@ -40,12 +40,15 @@ public class World
     
     private int tileDisplayList = Integer.MAX_VALUE;
     
-    public World(int width, int height)
+    public World()
+    {
+        materialMap = new HashMap<Short, Material>();
+    }
+    
+    public void init(int width, int height)
     {
         this.width = width;
         this.height = height;
-        
-        materialMap = new HashMap<Short, Material>();
         
         tileMaterial = new short[width * height];
         tileDescription = new long[width * height];

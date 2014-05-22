@@ -10,7 +10,7 @@ public class VisualInstanceReadyPacket extends PacketHandler
 {
     public VisualInstanceReadyPacket()
     {
-        super(1, NetStage.ACCEPTED);
+        super(NetStage.ACCEPTED);
     }
 
     @Override
@@ -22,6 +22,6 @@ public class VisualInstanceReadyPacket extends PacketHandler
     @Override
     public void handle(GenericServer server, byte[] data, ServerUser user)
     {
-        user.stage = NetStage.DEPENDENCY;
+        user.stage = NetStage.USER;
     }
 }

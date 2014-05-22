@@ -8,13 +8,17 @@ import net.lodoma.lime.net.server.generic.ServerUser;
 
 public abstract class PacketHandler
 {
-    public final int ID;
+    public int ID;
     public final NetStage STAGE;
     
-    public PacketHandler(int id, NetStage stage)
+    public PacketHandler(NetStage stage)
+    {
+        STAGE = stage;
+    }
+    
+    void setID(int id)
     {
         ID = id;
-        STAGE = stage;
     }
     
     protected final byte[] buildMessage(byte[] data)
@@ -30,7 +34,7 @@ public abstract class PacketHandler
         client.sendData(buildMessage(new byte[] {}));
     }
     
-    public final void sendEmpty(GenericServer server, ServerUser user)
+    public final void sendHeader(GenericServer server, ServerUser user)
     {
         server.sendData(buildMessage(new byte[] {}), user);
     }

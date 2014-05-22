@@ -21,12 +21,18 @@ public abstract class GenericClient
     
     GenericCommonHandler handler;
     ClientReader reader;
+    ClientLogic logic;
     
     Map<String, Object> properties;
     
     public abstract void handleException(Exception exception);
     
-    public final void open(int port, String ipAddress, GenericCommonHandler handler)
+    public final GenericCommonHandler getCommonHandler()
+    {
+        return handler;
+    }
+    
+    public final void open(int port, String ipAddress, GenericCommonHandler handler, ClientLogic logic)
     {
         if(isRunning)
         {
@@ -53,6 +59,9 @@ public abstract class GenericClient
         handler.loadPacketHandlers();
         reader = new ClientReader(this);
         reader.start();
+        this.logic = logic;
+        logic.setClient(this);
+        logic.start();
         
         properties = new HashMap<String, Object>();
         
@@ -67,6 +76,7 @@ public abstract class GenericClient
             return;
         }
         
+        logic.interrupt();
         reader.interrupt();
         socket.close();
         

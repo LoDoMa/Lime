@@ -10,13 +10,13 @@ public class LoginPacket extends PacketHandler
 {
     public LoginPacket()
     {
-        super(0, NetStage.PRIMITIVE);
+        super(NetStage.PRIMITIVE);
     }
     
     @Override
     public void handle(GenericClient client, byte[] data)
     {
-        client.setProperty("accepted", true);
+        client.setProperty("accepted", data[0] == 0);
     }
     
     @Override

@@ -10,19 +10,27 @@ import net.lodoma.lime.net.server.generic.ServerUser;
 
 public abstract class GenericCommonHandler
 {
+    private final Map<Class<?>, Integer> handlerIDs = new HashMap<Class<?>, Integer>();
     private final Map<Integer, PacketHandler> handlers = new HashMap<Integer, PacketHandler>();
     
     public abstract void loadPacketHandlers();
     
-    protected final void addPacketHandler(PacketHandler handler)
+    protected final void addPacketHandler(int id, PacketHandler handler)
     {
-        if(!handlers.containsKey(handler.ID))
-            handlers.put(handler.ID, handler);
+        handler.setID(id);
+        if(!handlers.containsKey(id))
+            handlers.put(id, handler);
+        handlerIDs.put(handler.getClass(), id);
     }
     
-    public final PacketHandler getPacketHandler(int ID)
+    public final int getPacketHandlerID(Class<?> clazz)
     {
-        return handlers.get(ID);
+        return handlerIDs.get(clazz);
+    }
+    
+    public final PacketHandler getPacketHandler(Class<?> packetHandlerClass)
+    {
+        return handlers.get(handlerIDs.get(packetHandlerClass));
     }
     
     public final void handle(GenericClient client, byte[] data)
