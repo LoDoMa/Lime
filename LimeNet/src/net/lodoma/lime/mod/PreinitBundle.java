@@ -1,6 +1,16 @@
 package net.lodoma.lime.mod;
 
-public class PreinitBundle
+import java.util.Map;
+
+public class PreinitBundle extends DataBundle
 {
+    public PreinitBundle(String[] names, Object[] values)
+    {
+        super(names, values);
+    }
     
+    public PreinitBundle(Map<String, Object> data)
+    {
+        super(data);
+    }
 }

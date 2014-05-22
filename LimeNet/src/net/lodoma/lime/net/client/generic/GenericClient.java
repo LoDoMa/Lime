@@ -121,4 +121,9 @@ public abstract class GenericClient
     {
         return properties.containsKey(name);
     }
+    
+    public void clearProperties()
+    {
+        properties.clear();
+    }
 }

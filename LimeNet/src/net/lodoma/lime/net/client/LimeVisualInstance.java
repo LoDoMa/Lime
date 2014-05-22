@@ -23,18 +23,6 @@ public class LimeVisualInstance
     
     public LimeVisualInstance()
     {
-        try
-        {
-            Module module = new Module(Class.forName("net.lodoma.lime.mod.limemod.LimeClientModule"));
-            if(module.hasPreinit()) module.invokePreinit(null);
-            if(module.hasInit()) module.invokeInit(null);
-            if(module.hasPostinit()) module.invokePostinit(null);
-        }
-        catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
-        {
-            e.printStackTrace();
-        }
-        
         world = new World();
         client = new LimeClient();
     }

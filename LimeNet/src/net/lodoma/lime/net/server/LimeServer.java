@@ -9,6 +9,18 @@ import net.lodoma.lime.net.server.generic.GenericServer;
 public class LimeServer extends GenericServer
 {
     @Override
+    public void onOpen()
+    {
+        
+    }
+
+    @Override
+    public void onClose()
+    {
+        
+    }
+    
+    @Override
     public void log(LogLevel level, String message)
     {
         PrintStream stream;

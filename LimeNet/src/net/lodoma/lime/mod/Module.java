@@ -105,6 +105,21 @@ public final class Module
         }
     }
     
+    public ModTarget getModuleTarget()
+    {
+        return moduleTarget;
+    }
+
+    public String getModuleName()
+    {
+        return moduleName;
+    }
+
+    public String getModuleAuthor()
+    {
+        return moduleAuthor;
+    }
+
     public boolean hasPreinit()
     {
         return preinitMethod != null;

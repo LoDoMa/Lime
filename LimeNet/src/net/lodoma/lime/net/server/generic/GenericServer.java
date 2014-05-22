@@ -30,6 +30,8 @@ public abstract class GenericServer
     
     Map<String, Object> properties;
     
+    public abstract void onOpen();
+    public abstract void onClose();
     public abstract void log(LogLevel level, String message);
     public abstract void log(LogLevel level, Exception exception);
     
@@ -62,6 +64,9 @@ public abstract class GenericServer
         properties = new HashMap<String, Object>();
         
         isRunning = true;
+        
+        onOpen();
+        logic.onOpen();
     }
     
     public final void close()
@@ -77,6 +82,9 @@ public abstract class GenericServer
         socket.close();
         
         isRunning = false;
+        
+        onClose();
+        logic.onClose();
     }
     
     public final void sendData(byte[] data, ServerUser user)
@@ -106,5 +114,20 @@ public abstract class GenericServer
     public void setProperty(String name, Object value)
     {
         properties.put(name, value);
+    }
+    
+    public void removeProperty(String name)
+    {
+        properties.remove(name);
+    }
+    
+    public boolean hasProperty(String name)
+    {
+        return properties.containsKey(name);
+    }
+    
+    public void clearProperties()
+    {
+        properties.clear();
     }
 }
