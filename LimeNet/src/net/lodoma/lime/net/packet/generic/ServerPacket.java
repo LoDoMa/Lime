@@ -20,7 +20,7 @@ public abstract class ServerPacket
         this.types = types;
     }
     
-    final void setID(int id)
+    public final void setID(int id)
     {
         this.id = id;
     }

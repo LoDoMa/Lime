@@ -47,6 +47,7 @@ public abstract class GenericClient
             handleException(e);
         }
         
+        properties = new HashMap<String, Object>();
         setProperty("packetPool", new ClientPacketPool());
         
         reader = new ClientReader(this);
@@ -54,8 +55,6 @@ public abstract class GenericClient
         this.logic = logic;
         logic.setClient(this);
         logic.start();
-        
-        properties = new HashMap<String, Object>();
         
         isRunning = true;
     }

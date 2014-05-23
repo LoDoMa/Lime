@@ -25,6 +25,7 @@ public class ServerPacketPool
     public void addPacket(String name, ServerPacket packet)
     {
         packets.put(getID(name), packet);
+        packet.setID(getID(name));
     }
     
     public ServerPacket getPacket(String name)
