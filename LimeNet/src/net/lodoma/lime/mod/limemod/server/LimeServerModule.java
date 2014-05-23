@@ -5,6 +5,7 @@ import net.lodoma.lime.mod.InitPriority;
 import net.lodoma.lime.mod.Mod;
 import net.lodoma.lime.mod.ModInit;
 import net.lodoma.lime.mod.ModTarget;
+import net.lodoma.lime.mod.Module;
 import net.lodoma.lime.mod.server.LogicPool;
 import net.lodoma.lime.net.packet.SPConnectRequestAnswer;
 import net.lodoma.lime.net.packet.SPHConnectRequest;
@@ -21,6 +22,9 @@ public class LimeServerModule
     @ModInit(priority = InitPriority.INIT)
     public void init(InitBundle bundle)
     {
+        Module module = (Module) bundle.get(InitBundle.MODULE);
+        module.addClientModuleDependency("Lime::Lime");
+        
         GenericServer genericServer = (GenericServer) bundle.get(InitBundle.SERVER);
         
         LogicPool logicPool = (LogicPool) genericServer.getProperty("logicPool");

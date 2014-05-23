@@ -3,6 +3,7 @@ package net.lodoma.lime.net.server;
 import java.util.Set;
 
 import net.lodoma.lime.mod.InitBundle;
+import net.lodoma.lime.mod.ModDependencyException;
 import net.lodoma.lime.mod.ModTarget;
 import net.lodoma.lime.mod.Module;
 import net.lodoma.lime.mod.ModulePool;
@@ -48,26 +49,29 @@ public final class LimeServerLogic extends ServerLogic
                 modulePool.loadModules(ModTarget.SERVERSIDE);
                 Set<Module> modules = modulePool.getModules();
                 
-                PreinitBundle preinitBundle = new PreinitBundle(new String[]
-                {}, new Object[]
-                {});
                 for (Module module : modules)
                     if (module.hasPreinit())
-                        module.invokePreinit(preinitBundle);
+                        module.invokePreinit(new PreinitBundle(new String[]
+                        {}, new Object[]
+                        {}));
                 
-                InitBundle initBundle = new InitBundle(new String[]
-                { InitBundle.SERVER }, new Object[]
-                { server });
                 for (Module module : modules)
                     if (module.hasInit())
-                        module.invokeInit(initBundle);
+                    {
+                        module.invokeInit(new InitBundle(new String[]
+                        { InitBundle.SERVER, InitBundle.MODULE }, new Object[]
+                        { server, module }));
+                        Set<String> dependencies = module.getServerModuleDependencies();
+                        for(String dependency : dependencies)
+                            if(!modulePool.isModuleLoaded(dependency))
+                                throw new ModDependencyException();
+                    }
                 
-                PostinitBundle postinitBundle = new PostinitBundle(new String[]
-                {}, new Object[]
-                {});
                 for (Module module : modules)
                     if (module.hasPostinit())
-                        module.invokePostinit(postinitBundle);
+                        module.invokePostinit(new PostinitBundle(new String[]
+                        {}, new Object[]
+                        {}));
             }
             catch (Exception e)
             {
@@ -81,13 +85,13 @@ public final class LimeServerLogic extends ServerLogic
         UserPool userPool = (UserPool) server.getProperty("userPool");
         int dependencyCount = userPool.getDependencyList().size();
         Set<ServerUser> waitingUsers = userPool.getWaitingUsers();
-        for(ServerUser user : waitingUsers)
-            if(user.dependencies == dependencyCount)
+        for (ServerUser user : waitingUsers)
+            if (user.dependencies == dependencyCount)
                 packetPool.getPacket("Lime::UserStatus").send(server, user, user, userPool);
         
         LogicPool logicPool = (LogicPool) server.getProperty("logicPool");
         Set<Logic> logicComponents = logicPool.getLogicComponents();
-        for(Logic logic : logicComponents)
+        for (Logic logic : logicComponents)
             logic.logic();
     }
 }

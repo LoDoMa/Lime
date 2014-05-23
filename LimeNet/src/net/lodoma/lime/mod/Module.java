@@ -3,6 +3,8 @@ package net.lodoma.lime.mod;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.Set;
 
 import net.lodoma.lime.util.AnnotationHelper;
 
@@ -18,6 +20,9 @@ public final class Module
     private String moduleName;
     private String moduleAuthor;
     
+    private Set<String> serverModuleDependency;
+    private Set<String> clientModuleDependency;
+    
     public Module(Class<?> moduleClass) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
         Mod modAnnot = (Mod) AnnotationHelper.getAnnotation(moduleClass, Mod.class);
@@ -26,6 +31,9 @@ public final class Module
             System.err.println("missing Mod annotation");
             return;
         }
+
+        serverModuleDependency = new HashSet<String>();
+        clientModuleDependency = new HashSet<String>();
 
         moduleTarget = modAnnot.target();
         moduleName = modAnnot.name();
@@ -148,5 +156,25 @@ public final class Module
     public void invokePostinit(PostinitBundle bundle) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
         postinitMethod.invoke(instance, bundle);
+    }
+    
+    public void addServerModuleDependency(String moduleName)
+    {
+        serverModuleDependency.add(moduleName);
+    }
+    
+    public Set<String> getServerModuleDependencies()
+    {
+        return serverModuleDependency;
+    }
+    
+    public void addClientModuleDependency(String moduleName)
+    {
+        clientModuleDependency.add(moduleName);
+    }
+    
+    public Set<String> getClientModuleDependencies()
+    {
+        return clientModuleDependency;
     }
 }
