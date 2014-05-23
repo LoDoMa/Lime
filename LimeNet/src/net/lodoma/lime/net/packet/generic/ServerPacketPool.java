@@ -1,25 +1,24 @@
-package net.lodoma.lime.net.server.generic;
+package net.lodoma.lime.net.packet.generic;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import net.lodoma.lime.net.packet.generic.ServerPacket;
-import net.lodoma.lime.net.packet.generic.ServerPacketHandler;
+import net.lodoma.lime.util.HashHelper;
 
 public class ServerPacketPool
 {
-    private Map<Integer, ServerPacket> packets;
-    private Map<Integer, ServerPacketHandler> handlers;
+    private Map<Long, ServerPacket> packets;
+    private Map<Long, ServerPacketHandler> handlers;
     
     public ServerPacketPool()
     {
-        packets = new HashMap<Integer, ServerPacket>();
-        handlers = new HashMap<Integer, ServerPacketHandler>();
+        packets = new HashMap<Long, ServerPacket>();
+        handlers = new HashMap<Long, ServerPacketHandler>();
     }
     
-    private int getID(String packetName)
+    private long getID(String packetName)
     {
-        return packetName.hashCode();
+        return HashHelper.hash64(packetName);
     }
     
     public void addPacket(String name, ServerPacket packet)
@@ -33,7 +32,7 @@ public class ServerPacketPool
         return packets.get(getID(name));
     }
     
-    public ServerPacket getPacket(int id)
+    public ServerPacket getPacket(long id)
     {
         return packets.get(id);
     }
@@ -48,7 +47,7 @@ public class ServerPacketPool
         return handlers.get(getID(name));
     }
     
-    public ServerPacketHandler getHandler(int id)
+    public ServerPacketHandler getHandler(long id)
     {
         return handlers.get(id);
     }

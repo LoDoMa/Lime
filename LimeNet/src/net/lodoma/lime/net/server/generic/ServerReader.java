@@ -6,6 +6,7 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
 
+import net.lodoma.lime.net.packet.generic.ServerPacketPool;
 import net.lodoma.lime.net.server.generic.GenericServer.LogLevel;
 
 class ServerReader extends Thread
@@ -39,7 +40,7 @@ class ServerReader extends Thread
             byte[] message = packet.getData();
             
             ByteBuffer buffer = ByteBuffer.wrap(message);
-            int id = buffer.getInt();
+            long id = buffer.getLong();
             byte[] other = new byte[buffer.remaining()];
             buffer.get(other);
             

@@ -8,8 +8,8 @@ import net.lodoma.lime.mod.ModTarget;
 import net.lodoma.lime.mod.server.LogicPool;
 import net.lodoma.lime.net.packet.SPConnectRequestAnswer;
 import net.lodoma.lime.net.packet.SPHConnectRequest;
+import net.lodoma.lime.net.packet.generic.ServerPacketPool;
 import net.lodoma.lime.net.server.generic.GenericServer;
-import net.lodoma.lime.net.server.generic.ServerPacketPool;
 
 @Mod(name = "Lime::Lime", author = "LoDoMa", target = ModTarget.SERVERSIDE)
 public class LimeServerModule

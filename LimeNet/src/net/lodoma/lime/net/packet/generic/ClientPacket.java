@@ -6,7 +6,7 @@ import net.lodoma.lime.net.client.generic.GenericClient;
 
 public abstract class ClientPacket
 {
-    private int id;
+    private long id;
     private Class<?>[] types;
     
     public ClientPacket()
@@ -19,9 +19,9 @@ public abstract class ClientPacket
         this.types = types;
     }
     
-    public final void setID(int id)
+    public final void setID(long l)
     {
-        this.id = id;
+        this.id = l;
     }
     
     protected abstract byte[] build(Object... args);
@@ -38,8 +38,8 @@ public abstract class ClientPacket
         }
         
         byte[] data = build(args);
-        ByteBuffer byteBuffer = ByteBuffer.allocate(data.length + 4);
-        byteBuffer.putInt(id);
+        ByteBuffer byteBuffer = ByteBuffer.allocate(data.length + 8);
+        byteBuffer.putLong(id);
         byteBuffer.put(data);
         byte[] toSend = byteBuffer.array();
         client.sendData(toSend);

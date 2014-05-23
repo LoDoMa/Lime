@@ -7,7 +7,7 @@ import net.lodoma.lime.net.server.generic.ServerUser;
 
 public abstract class ServerPacket
 {
-    private int id;
+    private long id;
     private Class<?>[] types;
     
     public ServerPacket()
@@ -20,7 +20,7 @@ public abstract class ServerPacket
         this.types = types;
     }
     
-    public final void setID(int id)
+    public final void setID(long id)
     {
         this.id = id;
     }
@@ -39,8 +39,8 @@ public abstract class ServerPacket
         }
         
         byte[] data = build(args);
-        ByteBuffer byteBuffer = ByteBuffer.allocate(data.length + 4);
-        byteBuffer.putInt(id);
+        ByteBuffer byteBuffer = ByteBuffer.allocate(data.length + 8);
+        byteBuffer.putLong(id);
         byteBuffer.put(data);
         byte[] toSend = byteBuffer.array();
         server.sendData(toSend, user);

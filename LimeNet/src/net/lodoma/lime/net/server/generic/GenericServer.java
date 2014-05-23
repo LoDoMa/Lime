@@ -7,6 +7,8 @@ import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.lodoma.lime.net.packet.generic.ServerPacketPool;
+
 public abstract class GenericServer
 {
     public static enum LogLevel

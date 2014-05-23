@@ -5,6 +5,8 @@ import java.net.DatagramPacket;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
 
+import net.lodoma.lime.net.packet.generic.ClientPacketPool;
+
 class ClientReader extends Thread
 {
     private GenericClient client;
@@ -34,7 +36,7 @@ class ClientReader extends Thread
             byte[] message = packet.getData();
             
             ByteBuffer buffer = ByteBuffer.wrap(message);
-            int id = buffer.getInt();
+            long id = buffer.getLong();
             byte[] other = new byte[buffer.remaining()];
             buffer.get(other);
             

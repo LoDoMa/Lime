@@ -9,6 +9,8 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.lodoma.lime.net.packet.generic.ClientPacketPool;
+
 public abstract class GenericClient
 {
     private boolean isRunning = false;

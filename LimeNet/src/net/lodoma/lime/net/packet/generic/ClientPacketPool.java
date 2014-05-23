@@ -1,25 +1,24 @@
-package net.lodoma.lime.net.client.generic;
+package net.lodoma.lime.net.packet.generic;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import net.lodoma.lime.net.packet.generic.ClientPacket;
-import net.lodoma.lime.net.packet.generic.ClientPacketHandler;
+import net.lodoma.lime.util.HashHelper;
 
 public class ClientPacketPool
 {
-    private Map<Integer, ClientPacket> packets;
-    private Map<Integer, ClientPacketHandler> handlers;
+    private Map<Long, ClientPacket> packets;
+    private Map<Long, ClientPacketHandler> handlers;
     
     public ClientPacketPool()
     {
-        packets = new HashMap<Integer, ClientPacket>();
-        handlers = new HashMap<Integer, ClientPacketHandler>();
+        packets = new HashMap<Long, ClientPacket>();
+        handlers = new HashMap<Long, ClientPacketHandler>();
     }
     
-    private int getID(String packetName)
+    private long getID(String packetName)
     {
-        return packetName.hashCode();
+        return HashHelper.hash64(packetName);
     }
     
     public void addPacket(String name, ClientPacket packet)
@@ -33,7 +32,7 @@ public class ClientPacketPool
         return packets.get(getID(name));
     }
     
-    public ClientPacket getPacket(int id)
+    public ClientPacket getPacket(long id)
     {
         return packets.get(id);
     }
@@ -48,7 +47,7 @@ public class ClientPacketPool
         return handlers.get(getID(name));
     }
     
-    public ClientPacketHandler getHandler(int id)
+    public ClientPacketHandler getHandler(long id)
     {
         return handlers.get(id);
     }

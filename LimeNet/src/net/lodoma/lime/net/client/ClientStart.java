@@ -1,8 +1,8 @@
 package net.lodoma.lime.net.client;
 
-import net.lodoma.lime.net.client.generic.ClientPacketPool;
 import net.lodoma.lime.net.packet.CPConnectRequest;
 import net.lodoma.lime.net.packet.CPHConnectRequestAnswer;
+import net.lodoma.lime.net.packet.generic.ClientPacketPool;
 
 
 public class ClientStart
