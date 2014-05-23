@@ -3,6 +3,7 @@ package net.lodoma.lime.net.client.generic;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.SocketException;
+import java.nio.ByteBuffer;
 
 class ClientReader extends Thread
 {
@@ -31,7 +32,14 @@ class ClientReader extends Thread
             }
             
             byte[] message = packet.getData();
-            client.handler.handle(client, message);
+            
+            ByteBuffer buffer = ByteBuffer.wrap(message);
+            int id = buffer.getInt();
+            byte[] other = new byte[buffer.remaining()];
+            buffer.get(other);
+            
+            ClientPacketPool packetPool = (ClientPacketPool) client.getProperty("packetPool");
+            packetPool.getHandler(id).handle(client, other);
         }
     }
 }

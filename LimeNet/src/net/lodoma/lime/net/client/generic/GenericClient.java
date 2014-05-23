@@ -9,8 +9,6 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.lodoma.lime.net.packet.generic.GenericCommonHandler;
-
 public abstract class GenericClient
 {
     private boolean isRunning = false;
@@ -18,8 +16,7 @@ public abstract class GenericClient
     int port;
     InetAddress ipAddress;
     DatagramSocket socket;
-    
-    GenericCommonHandler handler;
+   
     ClientReader reader;
     ClientLogic logic;
     
@@ -27,12 +24,7 @@ public abstract class GenericClient
     
     public abstract void handleException(Exception exception);
     
-    public final GenericCommonHandler getCommonHandler()
-    {
-        return handler;
-    }
-    
-    public final void open(int port, String ipAddress, GenericCommonHandler handler, ClientLogic logic)
+    public final void open(int port, String ipAddress, ClientLogic logic)
     {
         if(isRunning)
         {
@@ -55,8 +47,8 @@ public abstract class GenericClient
             handleException(e);
         }
         
-        this.handler = handler;
-        handler.loadPacketHandlers();
+        setProperty("packetPool", new ClientPacketPool());
+        
         reader = new ClientReader(this);
         reader.start();
         this.logic = logic;

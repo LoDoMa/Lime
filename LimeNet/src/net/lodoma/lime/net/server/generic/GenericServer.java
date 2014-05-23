@@ -7,8 +7,6 @@ import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.lodoma.lime.net.packet.generic.GenericCommonHandler;
-
 public abstract class GenericServer
 {
     public static enum LogLevel
@@ -24,7 +22,6 @@ public abstract class GenericServer
     DatagramSocket socket;
     
     UserPool userPool;
-    GenericCommonHandler handler;
     ServerReader reader;
     ServerLogic logic;
     
@@ -35,7 +32,7 @@ public abstract class GenericServer
     public abstract void log(LogLevel level, String message);
     public abstract void log(LogLevel level, Exception exception);
     
-    public final void open(int port, GenericCommonHandler handler, ServerLogic logic)
+    public final void open(int port, ServerLogic logic)
     {
         if (isRunning)
         {
@@ -52,17 +49,16 @@ public abstract class GenericServer
             log(LogLevel.SEVERE, e);
         }
         
+        properties = new HashMap<String, Object>();
+        setProperty("packetPool", new ServerPacketPool());
+        
         userPool = new UserPool();
-        this.handler = handler;
-        handler.loadPacketHandlers();
         reader = new ServerReader(this);
         reader.start();
         this.logic = logic;
         logic.setServer(this);
         logic.start();
-        
-        properties = new HashMap<String, Object>();
-        
+                
         isRunning = true;
         
         onOpen();

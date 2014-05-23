@@ -8,7 +8,7 @@ import net.lodoma.lime.mod.ModTarget;
 import net.lodoma.lime.mod.PostinitBundle;
 import net.lodoma.lime.mod.PreinitBundle;
 
-@Mod(name = "Lime", author = "LoDoMa", target = ModTarget.CLIENTSIDE)
+@Mod(name = "Lime::Lime", author = "LoDoMa", target = ModTarget.CLIENTSIDE)
 public class LimeClientModule
 {
     @ModInit(priority = InitPriority.PREINIT)

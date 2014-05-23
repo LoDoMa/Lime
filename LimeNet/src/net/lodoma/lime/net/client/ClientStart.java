@@ -5,7 +5,7 @@ public class ClientStart
 {
     public static void main(String[] args)
     {
-        LimeVisualInstance visualInstance = new LimeVisualInstance();
-        visualInstance.run();
+        //LimeVisualInstance visualInstance = new LimeVisualInstance();
+        //visualInstance.run();
     }
 }

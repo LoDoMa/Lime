@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.nio.ByteBuffer;
 
 import net.lodoma.lime.net.server.generic.GenericServer.LogLevel;
 
@@ -37,8 +38,14 @@ class ServerReader extends Thread
             int port = packet.getPort();
             byte[] message = packet.getData();
             
+            ByteBuffer buffer = ByteBuffer.wrap(message);
+            int id = buffer.getInt();
+            byte[] other = new byte[buffer.remaining()];
+            buffer.get(other);
+            
             ServerUser user = server.userPool.getUser(address, port);
-            server.handler.handle(server, message, user);
+            ServerPacketPool packetPool = (ServerPacketPool) server.getProperty("packetPool");
+            packetPool.getHandler(id).handle(server, user, other);
         }
     }
 }

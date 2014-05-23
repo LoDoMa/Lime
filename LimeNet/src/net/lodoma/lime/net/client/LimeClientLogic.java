@@ -1,7 +1,6 @@
 package net.lodoma.lime.net.client;
 
 import net.lodoma.lime.net.client.generic.ClientLogic;
-import net.lodoma.lime.net.packet.ConnectionCheckPacket;
 
 public class LimeClientLogic extends ClientLogic
 {
@@ -19,7 +18,7 @@ public class LimeClientLogic extends ClientLogic
             {
                 if(!checkedConnection)
                 {
-                    client.getCommonHandler().getPacketHandler(ConnectionCheckPacket.class).sendHeader(client);
+                    // TODO: add connection check
                     checkedConnection = true;
                 }
                 if(timeDelta >= 2000)

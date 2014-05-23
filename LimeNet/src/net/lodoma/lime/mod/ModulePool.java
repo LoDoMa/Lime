@@ -12,10 +12,12 @@ import java.util.Set;
 
 public final class ModulePool
 {
+    private Set<String> moduleNames;
     private Set<Module> modules;
     
     public ModulePool()
     {
+        moduleNames = new HashSet<String>();
         modules = new HashSet<Module>();
     }
     
@@ -39,8 +41,22 @@ public final class ModulePool
                 Class<?> moduleClass = Class.forName(className, true, classLoader);
                 Module module = new Module(moduleClass);
                 if(module.getModuleTarget() == target)
-                    modules.add(module);
+                {
+                    String moduleName = module.getModuleName();
+                    if(moduleNames.contains(moduleName))
+                        System.err.println("duplicate module");
+                    else
+                    {
+                        modules.add(module);
+                        moduleNames.add(moduleName);
+                    }
+                }
             }
+    }
+    
+    public boolean isModuleLoaded(String moduleName)
+    {
+        return moduleNames.contains(moduleName);
     }
     
     public Set<Module> getModules()
