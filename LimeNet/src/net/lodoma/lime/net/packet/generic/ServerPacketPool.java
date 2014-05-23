@@ -3,15 +3,21 @@ package net.lodoma.lime.net.packet.generic;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.lodoma.lime.mod.Dependency;
+import net.lodoma.lime.net.server.generic.GenericServer;
+import net.lodoma.lime.net.server.generic.UserPool;
+import net.lodoma.lime.util.AnnotationHelper;
 import net.lodoma.lime.util.HashHelper;
 
 public class ServerPacketPool
 {
+    private GenericServer server;
     private Map<Long, ServerPacket> packets;
     private Map<Long, ServerPacketHandler> handlers;
     
-    public ServerPacketPool()
+    public ServerPacketPool(GenericServer server)
     {
+        this.server = server;
         packets = new HashMap<Long, ServerPacket>();
         handlers = new HashMap<Long, ServerPacketHandler>();
     }
@@ -23,8 +29,11 @@ public class ServerPacketPool
     
     public void addPacket(String name, ServerPacket packet)
     {
-        packets.put(getID(name), packet);
-        packet.setID(getID(name));
+        long id = getID(name);
+        packets.put(id, packet);
+        packet.setID(id);
+        if(AnnotationHelper.isAnnotationPresent(packet.getClass(), Dependency.class))
+            ((UserPool) server.getProperty("userPool")).getDependencyList().add(id);
     }
     
     public ServerPacket getPacket(String name)

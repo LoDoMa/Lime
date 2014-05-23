@@ -52,9 +52,11 @@ public abstract class GenericServer
         }
         
         properties = new HashMap<String, Object>();
-        setProperty("packetPool", new ServerPacketPool());
+        setProperty("packetPool", new ServerPacketPool(this));
         
         userPool = new UserPool();
+        setProperty("userPool", userPool);
+        
         reader = new ServerReader(this);
         reader.start();
         this.logic = logic;

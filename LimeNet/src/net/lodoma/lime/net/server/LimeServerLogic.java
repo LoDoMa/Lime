@@ -10,8 +10,11 @@ import net.lodoma.lime.mod.PostinitBundle;
 import net.lodoma.lime.mod.PreinitBundle;
 import net.lodoma.lime.mod.server.Logic;
 import net.lodoma.lime.mod.server.LogicPool;
+import net.lodoma.lime.net.packet.generic.ServerPacketPool;
 import net.lodoma.lime.net.server.generic.GenericServer.LogLevel;
 import net.lodoma.lime.net.server.generic.ServerLogic;
+import net.lodoma.lime.net.server.generic.ServerUser;
+import net.lodoma.lime.net.server.generic.UserPool;
 
 public final class LimeServerLogic extends ServerLogic
 {
@@ -72,6 +75,15 @@ public final class LimeServerLogic extends ServerLogic
             }
             init = true;
         }
+        
+        ServerPacketPool packetPool = (ServerPacketPool) server.getProperty("packetPool");
+        
+        UserPool userPool = (UserPool) server.getProperty("userPool");
+        int dependencyCount = userPool.getDependencyList().size();
+        Set<ServerUser> waitingUsers = userPool.getWaitingUsers();
+        for(ServerUser user : waitingUsers)
+            if(user.dependencies == dependencyCount)
+                packetPool.getPacket("Lime::UserStatus").send(server, user, user, userPool);
         
         LogicPool logicPool = (LogicPool) server.getProperty("logicPool");
         Set<Logic> logicComponents = logicPool.getLogicComponents();

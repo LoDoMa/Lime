@@ -8,6 +8,10 @@ import net.lodoma.lime.mod.ModTarget;
 import net.lodoma.lime.mod.server.LogicPool;
 import net.lodoma.lime.net.packet.SPConnectRequestAnswer;
 import net.lodoma.lime.net.packet.SPHConnectRequest;
+import net.lodoma.lime.net.packet.SPHDependencyRequest;
+import net.lodoma.lime.net.packet.dependencytest.SPHTestDependencyAnswer;
+import net.lodoma.lime.net.packet.dependencytest.SPTestDependency;
+import net.lodoma.lime.net.packet.dependencytest.SPUserStatus;
 import net.lodoma.lime.net.packet.generic.ServerPacketPool;
 import net.lodoma.lime.net.server.generic.GenericServer;
 
@@ -25,5 +29,9 @@ public class LimeServerModule
         ServerPacketPool packetPool = (ServerPacketPool) genericServer.getProperty("packetPool");
         packetPool.addHandler("Lime::ConnectRequest", new SPHConnectRequest());
         packetPool.addPacket("Lime::ConnectRequestAnswer", new SPConnectRequestAnswer());
+        packetPool.addHandler("Lime::DependencyRequest", new SPHDependencyRequest());
+        packetPool.addPacket("Lime::TestDependency", new SPTestDependency());
+        packetPool.addHandler("Lime::TestDependencyAnswer", new SPHTestDependencyAnswer());
+        packetPool.addPacket("Lime::UserStatus", new SPUserStatus());
     }
 }

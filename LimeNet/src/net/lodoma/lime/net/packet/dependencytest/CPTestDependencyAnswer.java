@@ -1,8 +1,8 @@
-package net.lodoma.lime.net.packet;
+package net.lodoma.lime.net.packet.dependencytest;
 
 import net.lodoma.lime.net.packet.generic.ClientPacket;
 
-public class CPConnectRequest extends ClientPacket
+public class CPTestDependencyAnswer extends ClientPacket
 {
     @Override
     protected byte[] build(Object... args)
