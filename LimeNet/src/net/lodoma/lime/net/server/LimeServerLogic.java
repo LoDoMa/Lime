@@ -11,6 +11,7 @@ import net.lodoma.lime.mod.PostinitBundle;
 import net.lodoma.lime.mod.PreinitBundle;
 import net.lodoma.lime.mod.server.Logic;
 import net.lodoma.lime.mod.server.LogicPool;
+import net.lodoma.lime.net.LogLevel;
 import net.lodoma.lime.net.packet.SPConnectRequestAnswer;
 import net.lodoma.lime.net.packet.SPHConnectRequest;
 import net.lodoma.lime.net.packet.SPHDependencyRequest;
@@ -21,7 +22,6 @@ import net.lodoma.lime.net.packet.dependency.SPModuleDependency;
 import net.lodoma.lime.net.packet.dependency.SPUserStatus;
 import net.lodoma.lime.net.packet.generic.ServerPacketPool;
 import net.lodoma.lime.net.server.generic.ServerLogic;
-import net.lodoma.lime.util.LogLevel;
 
 public final class LimeServerLogic extends ServerLogic
 {

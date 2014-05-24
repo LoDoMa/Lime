@@ -1,4 +1,4 @@
-package net.lodoma.lime.util;
+package net.lodoma.lime.net;
 
 public enum LogLevel
 {

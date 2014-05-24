@@ -1,8 +1,8 @@
 package net.lodoma.lime.net.packet.generic;
 
+import net.lodoma.lime.net.NetStage;
 import net.lodoma.lime.net.server.generic.GenericServer;
 import net.lodoma.lime.net.server.generic.ServerUser;
-import net.lodoma.lime.util.NetStage;
 
 public abstract class ServerPacketHandler
 {

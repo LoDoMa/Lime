@@ -1,10 +1,10 @@
 package net.lodoma.lime.net.packet.check;
 
+import net.lodoma.lime.net.NetStage;
 import net.lodoma.lime.net.packet.generic.ServerPacketHandler;
 import net.lodoma.lime.net.packet.generic.ServerPacketPool;
 import net.lodoma.lime.net.server.generic.GenericServer;
 import net.lodoma.lime.net.server.generic.ServerUser;
-import net.lodoma.lime.util.NetStage;
 
 public class SPHResponseRequest extends ServerPacketHandler
 {

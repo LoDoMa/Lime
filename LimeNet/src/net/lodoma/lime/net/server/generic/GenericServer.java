@@ -7,8 +7,9 @@ import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.lodoma.lime.net.LogLevel;
+import net.lodoma.lime.net.NetworkSettings;
 import net.lodoma.lime.net.packet.generic.ServerPacketPool;
-import net.lodoma.lime.util.LogLevel;
 
 public abstract class GenericServer
 {
@@ -23,8 +24,11 @@ public abstract class GenericServer
     Map<String, Object> properties;
     
     public abstract void onOpen();
+    
     public abstract void onClose();
+    
     public abstract void log(LogLevel level, String message);
+    
     public abstract void log(LogLevel level, Exception exception);
     
     public final void open(int port, ServerLogic logic)
@@ -55,7 +59,7 @@ public abstract class GenericServer
         this.logic = logic;
         logic.setServer(this);
         logic.start();
-                
+        
         isRunning = true;
         
         onOpen();
@@ -85,6 +89,11 @@ public abstract class GenericServer
         if (!isRunning)
         {
             log(LogLevel.WARNING, new IllegalStateException("cannot send data while closed"));
+            return;
+        }
+        if (data.length > NetworkSettings.MAX_PACKET_SIZE)
+        {
+            log(LogLevel.SEVERE, "packet too large to send [MAX_PACKET_SIZE=" + NetworkSettings.MAX_PACKET_SIZE + "]");
             return;
         }
         

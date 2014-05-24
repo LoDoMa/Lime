@@ -9,8 +9,9 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.lodoma.lime.net.LogLevel;
+import net.lodoma.lime.net.NetworkSettings;
 import net.lodoma.lime.net.packet.generic.ClientPacketPool;
-import net.lodoma.lime.util.LogLevel;
 
 public abstract class GenericClient
 {
@@ -89,6 +90,11 @@ public abstract class GenericClient
         if (!isRunning)
         {
             log(LogLevel.WARNING, new IllegalStateException("cannot send data while closed"));
+            return;
+        }
+        if (data.length > NetworkSettings.MAX_PACKET_SIZE)
+        {
+            log(LogLevel.SEVERE, "packet too large to send [MAX_PACKET_SIZE=" + NetworkSettings.MAX_PACKET_SIZE + "]");
             return;
         }
         

@@ -4,7 +4,7 @@ import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.lodoma.lime.util.NetStage;
+import net.lodoma.lime.net.NetStage;
 
 public final class UserPool
 {

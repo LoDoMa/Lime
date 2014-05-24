@@ -9,6 +9,8 @@ import net.lodoma.lime.mod.Module;
 import net.lodoma.lime.mod.ModulePool;
 import net.lodoma.lime.mod.PostinitBundle;
 import net.lodoma.lime.mod.PreinitBundle;
+import net.lodoma.lime.net.LogLevel;
+import net.lodoma.lime.net.NetStage;
 import net.lodoma.lime.net.client.generic.ClientLogic;
 import net.lodoma.lime.net.packet.CPConnectRequest;
 import net.lodoma.lime.net.packet.CPDependencyRequest;
@@ -18,8 +20,6 @@ import net.lodoma.lime.net.packet.check.CPResponseRequest;
 import net.lodoma.lime.net.packet.dependency.CPHModuleDependency;
 import net.lodoma.lime.net.packet.dependency.CPHUserStatus;
 import net.lodoma.lime.net.packet.generic.ClientPacketPool;
-import net.lodoma.lime.util.LogLevel;
-import net.lodoma.lime.util.NetStage;
 
 public class LimeClientLogic extends ClientLogic
 {

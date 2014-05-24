@@ -5,8 +5,9 @@ import java.net.DatagramPacket;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
 
+import net.lodoma.lime.net.LogLevel;
+import net.lodoma.lime.net.NetworkSettings;
 import net.lodoma.lime.net.packet.generic.ClientPacketPool;
-import net.lodoma.lime.util.LogLevel;
 
 class ClientReader extends Thread
 {
@@ -21,7 +22,7 @@ class ClientReader extends Thread
     {
         while (!this.isInterrupted())
         {
-            byte[] data = new byte[1024];
+            byte[] data = new byte[NetworkSettings.MAX_PACKET_SIZE];
             DatagramPacket packet = new DatagramPacket(data,data.length);
             try
             {
