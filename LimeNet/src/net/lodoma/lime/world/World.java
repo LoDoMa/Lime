@@ -3,8 +3,6 @@ package net.lodoma.lime.world;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.lwjgl.opengl.GL11;
-
 public class World
 {
     public static long buildDescription(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
@@ -73,7 +71,7 @@ public class World
     {
         
     }
-    
+    /*
     private void generateTileDisplayList()
     {
         tileDisplayList = GL11.glGenLists(1);
@@ -133,4 +131,5 @@ public class World
             generateTileDisplayList();
         GL11.glCallList(tileDisplayList);
     }
+    */
 }

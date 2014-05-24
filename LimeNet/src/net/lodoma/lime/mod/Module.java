@@ -42,7 +42,7 @@ public final class Module
         Method[] methods = moduleClass.getMethods();
         for (Method method : methods)
             if (AnnotationHelper.isAnnotationPresent(method, ModInit.class))
-                if (method.getParameterCount() == 1)
+                if (method.getParameterTypes().length == 1)
                 {
                     ModInit modInitAnnot = (ModInit) AnnotationHelper.getAnnotation(method, ModInit.class);
                     InitPriority priority = modInitAnnot.priority();
@@ -100,7 +100,7 @@ public final class Module
         
         Constructor<?>[] constrs = moduleClass.getConstructors();
         for(Constructor<?> constr : constrs)
-            if(constr.getParameterCount() == 0)
+            if(constr.getParameterTypes().length == 0)
             {
                 instance = constr.newInstance();
                 break;
