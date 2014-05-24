@@ -59,6 +59,8 @@ public abstract class GenericClient
         logic.start();
         
         isRunning = true;
+        
+        logic.onOpen();
     }
     
     public final void close()
@@ -74,6 +76,8 @@ public abstract class GenericClient
         socket.close();
         
         isRunning = false;
+        
+        logic.onClose();
     }
     
     public void sendData(byte[] data)

@@ -12,6 +12,7 @@ import net.lodoma.lime.mod.PreinitBundle;
 import net.lodoma.lime.mod.server.Logic;
 import net.lodoma.lime.mod.server.LogicPool;
 import net.lodoma.lime.net.packet.dependency.DependencyPool;
+import net.lodoma.lime.net.packet.dependency.SPModuleDependency;
 import net.lodoma.lime.net.server.generic.GenericServer.LogLevel;
 import net.lodoma.lime.net.server.generic.ServerLogic;
 
@@ -67,7 +68,8 @@ public final class LimeServerLogic extends ServerLogic
                             if(!modulePool.isModuleLoaded(dependency))
                                 throw new ModDependencyException();
                         Set<String> clientDependencies = module.getClientModuleDependencies();
-                        modulePool.addClientDependencies(clientDependencies);
+                        for(String dependency : clientDependencies)
+                            dependencyPool.addDependency(new SPModuleDependency(dependency));
                     }
                 
                 for (Module module : modules)

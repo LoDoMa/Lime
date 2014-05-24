@@ -5,22 +5,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.lodoma.lime.net.packet.generic.ServerPacket;
 import net.lodoma.lime.net.server.generic.ServerUser;
 
 public class DependencyPool
 {
     private Map<ServerUser, Integer> userProgress;
-    private List<Long> dependencies;
+    private List<ServerPacket> dependencies;
     
     public DependencyPool()
     {
         userProgress = new HashMap<ServerUser, Integer>();
-        dependencies = new ArrayList<Long>();
+        dependencies = new ArrayList<ServerPacket>();
     }
     
-    public void addDependency(long packetID)
+    public void addDependency(ServerPacket packet)
     {
-        dependencies.add(packetID);
+        dependencies.add(packet);
     }
     
     public boolean hasNextDependency(ServerUser user)
@@ -31,7 +32,7 @@ public class DependencyPool
         return progress != dependencies.size();
     }
     
-    public long nextDependency(ServerUser user)
+    public ServerPacket nextDependency(ServerUser user)
     {
         if(!userProgress.containsKey(user))
             userProgress.put(user, 0);

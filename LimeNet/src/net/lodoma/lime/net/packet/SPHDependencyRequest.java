@@ -12,15 +12,14 @@ public class SPHDependencyRequest extends ServerPacketHandler
     public void handle(GenericServer server, ServerUser user, byte[] data)
     {
         DependencyPool dependencyPool = (DependencyPool) server.getProperty("dependencyPool");
-        if(data[0] == 0)
+        if (data[0] == 0)
         {
-            ServerPacketPool packetPool = (ServerPacketPool) server.getProperty("packetPool");
-            if(dependencyPool.hasNextDependency(user))
-                packetPool.getPacket(dependencyPool.nextDependency(user)).send(server, user);
+            if (dependencyPool.hasNextDependency(user))
+                dependencyPool.nextDependency(user).send(server, user);
             else
             {
                 dependencyPool.endUserProgress(user);
-                packetPool.getPacket("Lime::UserStatus").send(server, user);
+                ((ServerPacketPool) server.getProperty("packetPool")).getPacket("Lime::UserStatus").send(server, user);
             }
         }
         else

@@ -9,6 +9,8 @@ public abstract class ClientLogic extends Thread
         this.client = client;
     }
     
+    public abstract void onOpen();
+    public abstract void onClose();
     public abstract void logic();
     
     @Override

@@ -1,24 +1,18 @@
 package net.lodoma.lime.net.client;
 
-import net.lodoma.lime.net.packet.CPConnectRequest;
-import net.lodoma.lime.net.packet.CPHConnectRequestAnswer;
-import net.lodoma.lime.net.packet.dependency.CPHUserStatus;
-import net.lodoma.lime.net.packet.generic.ClientPacketPool;
+import java.util.Scanner;
 
 
 public class ClientStart
 {
+    @SuppressWarnings("resource")
     public static void main(String[] args)
     {
         LimeClient client = new LimeClient();
         client.open(19523, "localhost", new LimeClientLogic());
         
-        ClientPacketPool packetPool = (ClientPacketPool) client.getProperty("packetPool");
-        packetPool.addPacket("Lime::ConnectRequest", new CPConnectRequest());
-        packetPool.addHandler("Lime::ConnectRequestAnswer", new CPHConnectRequestAnswer());
-        packetPool.addPacket("Lime::DependencyRequest", new CPConnectRequest());
-        packetPool.addHandler("Lime::UserStatus", new CPHUserStatus());
+        new Scanner(System.in).nextLine();
         
-        packetPool.getPacket("Lime::ConnectRequest").send(client);
+        client.close();
     }
 }

@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.lodoma.lime.mod.Dependency;
-import net.lodoma.lime.net.server.generic.GenericServer;
 import net.lodoma.lime.net.packet.dependency.DependencyPool;
+import net.lodoma.lime.net.server.generic.GenericServer;
 import net.lodoma.lime.util.AnnotationHelper;
 import net.lodoma.lime.util.HashHelper;
 
@@ -22,7 +22,7 @@ public class ServerPacketPool
         handlers = new HashMap<Long, ServerPacketHandler>();
     }
     
-    private long getID(String packetName)
+    public static long getID(String packetName)
     {
         return HashHelper.hash64(packetName);
     }
@@ -33,7 +33,7 @@ public class ServerPacketPool
         packets.put(id, packet);
         packet.setID(id);
         if(AnnotationHelper.isAnnotationPresent(packet.getClass(), Dependency.class))
-            ((DependencyPool) server.getProperty("dependencyPool")).addDependency(id);
+            ((DependencyPool) server.getProperty("dependencyPool")).addDependency(packet);
     }
     
     public ServerPacket getPacket(String name)
