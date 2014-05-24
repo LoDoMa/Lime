@@ -4,19 +4,21 @@ import net.lodoma.lime.net.packet.generic.ServerPacket;
 import net.lodoma.lime.net.packet.generic.ServerPacketHandler;
 import net.lodoma.lime.net.packet.generic.ServerPacketPool;
 import net.lodoma.lime.net.server.generic.GenericServer;
-import net.lodoma.lime.net.server.generic.NetStage;
 import net.lodoma.lime.net.server.generic.ServerUser;
+import net.lodoma.lime.util.NetStage;
 
 public class SPHConnectRequest extends ServerPacketHandler
 {
-    @Override
-    public void handle(GenericServer server, ServerUser user, byte[] data)
+    public SPHConnectRequest()
     {
-        if(user.stage == NetStage.PRIMITIVE)
-        {
-            user.stage = NetStage.ACCEPTED;
-            ServerPacket packet = ((ServerPacketPool) server.getProperty("packetPool")).getPacket("Lime::ConnectRequestAnswer"); 
-            packet.send(server, user, true);
-        }
+        super(NetStage.PRIMITIVE);
+    }
+
+    @Override
+    protected void handle(GenericServer server, ServerUser user, byte[] data)
+    {
+        user.stage = NetStage.DEPENDENCY;
+        ServerPacket packet = ((ServerPacketPool) server.getProperty("packetPool")).getPacket("Lime::ConnectRequestAnswer"); 
+        packet.send(server, user, true);
     }
 }

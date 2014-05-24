@@ -10,6 +10,12 @@ import net.lodoma.lime.mod.ModulePool;
 import net.lodoma.lime.mod.PostinitBundle;
 import net.lodoma.lime.mod.PreinitBundle;
 import net.lodoma.lime.net.client.generic.ClientLogic;
+import net.lodoma.lime.net.packet.CPConnectRequest;
+import net.lodoma.lime.net.packet.CPDependencyRequest;
+import net.lodoma.lime.net.packet.CPHConnectRequestAnswer;
+import net.lodoma.lime.net.packet.dependency.CPHModuleDependency;
+import net.lodoma.lime.net.packet.dependency.CPHUserStatus;
+import net.lodoma.lime.net.packet.generic.ClientPacketPool;
 import net.lodoma.lime.util.LogLevel;
 
 public class LimeClientLogic extends ClientLogic
@@ -36,6 +42,13 @@ public class LimeClientLogic extends ClientLogic
         {
             try
             {
+                ClientPacketPool packetPool = (ClientPacketPool) client.getProperty("packetPool");
+                packetPool.addPacket("Lime::ConnectRequest", new CPConnectRequest());
+                packetPool.addHandler("Lime::ConnectRequestAnswer", new CPHConnectRequestAnswer());
+                packetPool.addPacket("Lime::DependencyRequest", new CPDependencyRequest());
+                packetPool.addHandler("Lime::UserStatus", new CPHUserStatus());
+                packetPool.addHandler("Lime::ModuleDependency", new CPHModuleDependency());
+                
                 ModulePool modulePool = new ModulePool();
                 client.setProperty("modulePool", modulePool);
                 
@@ -65,6 +78,8 @@ public class LimeClientLogic extends ClientLogic
                         module.invokePostinit(new PostinitBundle(new String[]
                         {}, new Object[]
                         {}));
+                
+                packetPool.getPacket("Lime::ConnectRequest").send(client);
             }
             catch (Exception e)
             {

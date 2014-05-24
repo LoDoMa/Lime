@@ -46,7 +46,7 @@ class ServerReader extends Thread
             
             ServerUser user = server.userPool.getUser(address, port);
             ServerPacketPool packetPool = (ServerPacketPool) server.getProperty("packetPool");
-            packetPool.getHandler(id).handle(server, user, other);
+            packetPool.getHandler(id).handlePacket(server, user, other);
         }
     }
 }

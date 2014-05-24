@@ -2,6 +2,8 @@ package net.lodoma.lime.net.server.generic;
 
 import java.net.InetAddress;
 
+import net.lodoma.lime.util.NetStage;
+
 public final class ServerUser
 {
     public NetStage stage;

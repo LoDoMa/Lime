@@ -4,6 +4,8 @@ import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.lodoma.lime.util.NetStage;
+
 public final class UserPool
 {
     private Map<InetAddress, Map<Integer, ServerUser>> knownUsers = new HashMap<InetAddress, Map<Integer, ServerUser>>();

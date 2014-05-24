@@ -1,9 +1,8 @@
-package net.lodoma.lime.net.server.generic;
+package net.lodoma.lime.util;
 
 public enum NetStage
 {
     PRIMITIVE,
-    ACCEPTED,
     DEPENDENCY,
     USER
 }
