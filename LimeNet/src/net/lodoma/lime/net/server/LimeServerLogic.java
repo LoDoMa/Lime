@@ -14,6 +14,8 @@ import net.lodoma.lime.mod.server.LogicPool;
 import net.lodoma.lime.net.packet.SPConnectRequestAnswer;
 import net.lodoma.lime.net.packet.SPHConnectRequest;
 import net.lodoma.lime.net.packet.SPHDependencyRequest;
+import net.lodoma.lime.net.packet.check.SPHResponseRequest;
+import net.lodoma.lime.net.packet.check.SPResponse;
 import net.lodoma.lime.net.packet.dependency.DependencyPool;
 import net.lodoma.lime.net.packet.dependency.SPModuleDependency;
 import net.lodoma.lime.net.packet.dependency.SPUserStatus;
@@ -49,6 +51,8 @@ public final class LimeServerLogic extends ServerLogic
                 packetPool.addPacket("Lime::ConnectRequestAnswer", new SPConnectRequestAnswer());
                 packetPool.addHandler("Lime::DependencyRequest", new SPHDependencyRequest());
                 packetPool.addPacket("Lime::UserStatus", new SPUserStatus());
+                packetPool.addHandler("Lime::ResponseRequest", new SPHResponseRequest());
+                packetPool.addPacket("Lime::Response", new SPResponse());
                 
                 DependencyPool dependencyPool = new DependencyPool();
                 server.setProperty("dependencyPool", dependencyPool);

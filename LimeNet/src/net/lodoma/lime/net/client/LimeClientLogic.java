@@ -13,10 +13,13 @@ import net.lodoma.lime.net.client.generic.ClientLogic;
 import net.lodoma.lime.net.packet.CPConnectRequest;
 import net.lodoma.lime.net.packet.CPDependencyRequest;
 import net.lodoma.lime.net.packet.CPHConnectRequestAnswer;
+import net.lodoma.lime.net.packet.check.CPHResponse;
+import net.lodoma.lime.net.packet.check.CPResponseRequest;
 import net.lodoma.lime.net.packet.dependency.CPHModuleDependency;
 import net.lodoma.lime.net.packet.dependency.CPHUserStatus;
 import net.lodoma.lime.net.packet.generic.ClientPacketPool;
 import net.lodoma.lime.util.LogLevel;
+import net.lodoma.lime.util.NetStage;
 
 public class LimeClientLogic extends ClientLogic
 {
@@ -48,6 +51,8 @@ public class LimeClientLogic extends ClientLogic
                 packetPool.addPacket("Lime::DependencyRequest", new CPDependencyRequest());
                 packetPool.addHandler("Lime::UserStatus", new CPHUserStatus());
                 packetPool.addHandler("Lime::ModuleDependency", new CPHModuleDependency());
+                packetPool.addPacket("Lime::ResponseRequest", new CPResponseRequest());
+                packetPool.addHandler("Lime::Response", new CPHResponse());
                 
                 ModulePool modulePool = new ModulePool();
                 client.setProperty("modulePool", modulePool);
@@ -79,7 +84,10 @@ public class LimeClientLogic extends ClientLogic
                         {}, new Object[]
                         {}));
                 
+                client.setProperty("stage", NetStage.PRIMITIVE);
                 packetPool.getPacket("Lime::ConnectRequest").send(client);
+                
+                client.setProperty("lastServerResponse", System.currentTimeMillis());
             }
             catch (Exception e)
             {
@@ -88,16 +96,16 @@ public class LimeClientLogic extends ClientLogic
             init = true;
         }
         
-        if (client.hasProperty("lastConnectionTime"))
+        if (client.hasProperty("lastServerResponse"))
         {
             long currentTime = System.currentTimeMillis();
-            long lastTime = (Long) client.getProperty("lastConnectionTime");
+            long lastTime = (Long) client.getProperty("lastServerResponse");
             long timeDelta = currentTime - lastTime;
             if (timeDelta >= 1000)
             {
                 if (!checkedConnection)
                 {
-                    // TODO: add connection check
+                    ((ClientPacketPool) client.getProperty("packetPool")).getPacket("Lime::ResponseRequest").send(client);;
                     checkedConnection = true;
                 }
                 if (timeDelta >= 2000)

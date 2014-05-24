@@ -1,4 +1,4 @@
-package net.lodoma.lime.mod.limemod;
+package net.lodoma.lime.mod.limemod.client;
 
 import net.lodoma.lime.mod.InitBundle;
 import net.lodoma.lime.mod.InitPriority;
