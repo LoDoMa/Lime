@@ -10,6 +10,7 @@ import net.lodoma.lime.mod.ModulePool;
 import net.lodoma.lime.mod.PostinitBundle;
 import net.lodoma.lime.mod.PreinitBundle;
 import net.lodoma.lime.net.client.generic.ClientLogic;
+import net.lodoma.lime.util.LogLevel;
 
 public class LimeClientLogic extends ClientLogic
 {
@@ -67,7 +68,7 @@ public class LimeClientLogic extends ClientLogic
             }
             catch (Exception e)
             {
-                client.handleException(e);
+                client.log(LogLevel.SEVERE, e);
             }
             init = true;
         }

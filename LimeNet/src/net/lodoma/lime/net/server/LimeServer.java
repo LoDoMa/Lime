@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import net.lodoma.lime.net.server.generic.GenericServer;
+import net.lodoma.lime.util.LogLevel;
 
 public class LimeServer extends GenericServer
 {

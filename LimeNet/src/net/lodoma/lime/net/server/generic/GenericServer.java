@@ -8,17 +8,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.lodoma.lime.net.packet.generic.ServerPacketPool;
+import net.lodoma.lime.util.LogLevel;
 
 public abstract class GenericServer
 {
-    public static enum LogLevel
-    {
-        DEBUG,
-        INFO,
-        WARNING,
-        SEVERE,
-    }
-    
     private boolean isRunning = false;
     
     DatagramSocket socket;

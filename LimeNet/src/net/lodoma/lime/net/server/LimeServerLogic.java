@@ -13,8 +13,8 @@ import net.lodoma.lime.mod.server.Logic;
 import net.lodoma.lime.mod.server.LogicPool;
 import net.lodoma.lime.net.packet.dependency.DependencyPool;
 import net.lodoma.lime.net.packet.dependency.SPModuleDependency;
-import net.lodoma.lime.net.server.generic.GenericServer.LogLevel;
 import net.lodoma.lime.net.server.generic.ServerLogic;
+import net.lodoma.lime.util.LogLevel;
 
 public final class LimeServerLogic extends ServerLogic
 {

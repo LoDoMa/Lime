@@ -7,7 +7,7 @@ import java.net.SocketException;
 import java.nio.ByteBuffer;
 
 import net.lodoma.lime.net.packet.generic.ServerPacketPool;
-import net.lodoma.lime.net.server.generic.GenericServer.LogLevel;
+import net.lodoma.lime.util.LogLevel;
 
 class ServerReader extends Thread
 {

@@ -6,6 +6,7 @@ import java.net.SocketException;
 import java.nio.ByteBuffer;
 
 import net.lodoma.lime.net.packet.generic.ClientPacketPool;
+import net.lodoma.lime.util.LogLevel;
 
 class ClientReader extends Thread
 {
@@ -30,7 +31,7 @@ class ClientReader extends Thread
             {
                 if((e instanceof SocketException) && e.getMessage().equals("socket closed"))
                     break;
-                client.handleException(e);
+                client.log(LogLevel.SEVERE, e);
             }
             
             byte[] message = packet.getData();

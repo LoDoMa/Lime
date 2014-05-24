@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.lodoma.lime.net.packet.generic.ClientPacketPool;
+import net.lodoma.lime.util.LogLevel;
 
 public abstract class GenericClient
 {
@@ -24,13 +25,16 @@ public abstract class GenericClient
     
     Map<String, Object> properties;
     
-    public abstract void handleException(Exception exception);
+    public abstract void onOpen();
+    public abstract void onClose();
+    public abstract void log(LogLevel level, String message);
+    public abstract void log(LogLevel level, Exception exception);
     
     public final void open(int port, String ipAddress, ClientLogic logic)
     {
         if(isRunning)
         {
-            handleException(new IllegalStateException("client is already open"));
+            log(LogLevel.WARNING, new IllegalStateException("client is already open"));
             return;
         }
         
@@ -42,11 +46,11 @@ public abstract class GenericClient
         }
         catch (UnknownHostException e)
         {
-            handleException(e);
+            log(LogLevel.SEVERE, e);
         }
         catch (SocketException e)
         {
-            handleException(e);
+            log(LogLevel.SEVERE, e);
         }
         
         properties = new HashMap<String, Object>();
@@ -67,7 +71,7 @@ public abstract class GenericClient
     {
         if(!isRunning)
         {
-            handleException(new IllegalStateException("client is already closed"));
+            log(LogLevel.WARNING, new IllegalStateException("client is already closed"));
             return;
         }
         
@@ -84,7 +88,7 @@ public abstract class GenericClient
     {
         if (!isRunning)
         {
-            handleException(new IllegalStateException("cannot send data while closed"));
+            log(LogLevel.WARNING, new IllegalStateException("cannot send data while closed"));
             return;
         }
         
@@ -95,7 +99,7 @@ public abstract class GenericClient
         }
         catch (IOException e)
         {
-            handleException(e);
+            log(LogLevel.SEVERE, e);
         }
     }
     
