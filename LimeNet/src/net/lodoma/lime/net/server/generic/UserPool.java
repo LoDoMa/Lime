@@ -2,25 +2,11 @@ package net.lodoma.lime.net.server.generic;
 
 import java.net.InetAddress;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 public final class UserPool
 {
-    private Set<Long> dependencyList = new HashSet<Long>();
-    private Set<ServerUser> waitingUsers = new HashSet<ServerUser>();
     private Map<InetAddress, Map<Integer, ServerUser>> knownUsers = new HashMap<InetAddress, Map<Integer, ServerUser>>();
-    
-    public Set<Long> getDependencyList()
-    {
-        return dependencyList;
-    }
-    
-    public Set<ServerUser> getWaitingUsers()
-    {
-        return waitingUsers;
-    }
     
     public ServerUser getUser(InetAddress address, int port)
     {
@@ -46,8 +32,6 @@ public final class UserPool
     
     public void removeUser(ServerUser user)
     {
-        if(waitingUsers.contains(user))
-            waitingUsers.remove(user);
         knownUsers.get(user.address).remove(user.port);
         if(knownUsers.get(user.address).isEmpty())
             knownUsers.remove(user.address);

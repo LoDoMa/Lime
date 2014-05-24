@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,10 +16,14 @@ public final class ModulePool
     private Set<String> moduleNames;
     private Set<Module> modules;
     
+    private Set<String> clientDependencies;
+    
     public ModulePool()
     {
         moduleNames = new HashSet<String>();
         modules = new HashSet<Module>();
+        
+        clientDependencies = new HashSet<String>();
     }
     
     public void loadModules(ModTarget target) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException,
@@ -62,5 +67,20 @@ public final class ModulePool
     public Set<Module> getModules()
     {
         return modules;
+    }
+    
+    public void addClientDependency(String name)
+    {
+        clientDependencies.add(name);
+    }
+    
+    public void addClientDependencies(Collection<String> name)
+    {
+        clientDependencies.addAll(name);
+    }
+    
+    public Set<String> getClientDependencies()
+    {
+        return clientDependencies;
     }
 }

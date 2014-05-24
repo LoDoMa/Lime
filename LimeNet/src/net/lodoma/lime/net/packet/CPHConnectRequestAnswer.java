@@ -14,7 +14,7 @@ public class CPHConnectRequestAnswer extends ClientPacketHandler
             System.err.println("accepted");
             
             ClientPacketPool packetPool = (ClientPacketPool) client.getProperty("packetPool");
-            packetPool.getPacket("Lime::DependencyRequest").send(client);
+            packetPool.getPacket("Lime::DependencyRequest").send(client, true);
         }
         else
         {
