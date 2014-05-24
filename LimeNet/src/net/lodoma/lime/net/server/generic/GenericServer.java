@@ -6,6 +6,7 @@ import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import net.lodoma.lime.net.LogLevel;
 import net.lodoma.lime.net.NetworkSettings;
@@ -108,27 +109,34 @@ public abstract class GenericServer
         }
     }
     
-    public Object getProperty(String name)
+    public final void sendDataToAll(byte[] data)
+    {
+        Set<ServerUser> allUsers = ((UserPool) getProperty("userPool")).getUserSet();
+        for(ServerUser user : allUsers)
+            sendData(data, user);
+    }
+    
+    public final Object getProperty(String name)
     {
         return properties.get(name);
     }
     
-    public void setProperty(String name, Object value)
+    public final void setProperty(String name, Object value)
     {
         properties.put(name, value);
     }
     
-    public void removeProperty(String name)
+    public final void removeProperty(String name)
     {
         properties.remove(name);
     }
     
-    public boolean hasProperty(String name)
+    public final boolean hasProperty(String name)
     {
         return properties.containsKey(name);
     }
     
-    public void clearProperties()
+    public final void clearProperties()
     {
         properties.clear();
     }
