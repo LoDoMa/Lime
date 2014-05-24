@@ -1,4 +1,4 @@
-package net.lodoma.lime.mod.server;
+package net.lodoma.lime.net;
 
 public interface Logic
 {

@@ -7,6 +7,11 @@ import net.lodoma.lime.mod.ModInit;
 import net.lodoma.lime.mod.ModTarget;
 import net.lodoma.lime.mod.PostinitBundle;
 import net.lodoma.lime.mod.PreinitBundle;
+import net.lodoma.lime.mod.limemod.chat.CPChatMessage;
+import net.lodoma.lime.mod.limemod.chat.CPHChatMessage;
+import net.lodoma.lime.net.LogicPool;
+import net.lodoma.lime.net.client.generic.GenericClient;
+import net.lodoma.lime.net.packet.generic.ClientPacketPool;
 
 @Mod(name = "Lime::Lime", author = "LoDoMa", target = ModTarget.CLIENTSIDE)
 public class LimeClientModule
@@ -20,7 +25,14 @@ public class LimeClientModule
     @ModInit(priority = InitPriority.INIT)
     public void init(InitBundle bundle)
     {
-        System.out.println("yo this my init");
+        GenericClient client = (GenericClient) bundle.get(InitBundle.CLIENT);
+        
+        ClientPacketPool packetPool = (ClientPacketPool) client.getProperty("packetPool");
+        packetPool.addPacket("Lime::ChatMessage", new CPChatMessage());
+        packetPool.addHandler("Lime::ChatMessage", new CPHChatMessage());
+        
+        LogicPool logicPool = (LogicPool) client.getProperty("logicPool");
+        logicPool.addLogicComponent(new LimeModuleLogic(client));
     }
     
     @ModInit(priority = InitPriority.POSTINIT)

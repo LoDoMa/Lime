@@ -1,6 +1,6 @@
 package net.lodoma.lime.mod.limemod.server;
 
-import net.lodoma.lime.mod.server.Logic;
+import net.lodoma.lime.net.Logic;
 
 public class LimeModuleLogic implements Logic
 {

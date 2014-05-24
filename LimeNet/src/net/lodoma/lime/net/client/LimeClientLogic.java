@@ -10,6 +10,8 @@ import net.lodoma.lime.mod.ModulePool;
 import net.lodoma.lime.mod.PostinitBundle;
 import net.lodoma.lime.mod.PreinitBundle;
 import net.lodoma.lime.net.LogLevel;
+import net.lodoma.lime.net.Logic;
+import net.lodoma.lime.net.LogicPool;
 import net.lodoma.lime.net.NetStage;
 import net.lodoma.lime.net.client.generic.ClientLogic;
 import net.lodoma.lime.net.packet.CPConnectRequest;
@@ -56,6 +58,9 @@ public class LimeClientLogic extends ClientLogic
                 
                 ModulePool modulePool = new ModulePool();
                 client.setProperty("modulePool", modulePool);
+                
+                LogicPool logicPool = new LogicPool();
+                client.setProperty("logicPool", logicPool);
                 
                 modulePool.loadModules(ModTarget.CLIENTSIDE);
                 Set<Module> modules = modulePool.getModules();
@@ -116,5 +121,10 @@ public class LimeClientLogic extends ClientLogic
             else
                 checkedConnection = false;
         }
+        
+        LogicPool logicPool = (LogicPool) client.getProperty("logicPool");
+        Set<Logic> logicComponents = logicPool.getLogicComponents();
+        for (Logic logic : logicComponents)
+            logic.logic();
     }
 }

@@ -45,4 +45,23 @@ public abstract class ServerPacket
         byte[] toSend = byteBuffer.array();
         server.sendData(toSend, user);
     }
+    
+    public final void sendToAll(GenericServer server, Object... args)
+    {
+        if(types != null)
+        {
+            if(args.length != types.length)
+                throw new IllegalArgumentException();
+            for(int i = 0; i < args.length; i++)
+                if(!types[i].isInstance(args[i]))
+                    throw new IllegalArgumentException();
+        }
+        
+        byte[] data = build(args);
+        ByteBuffer byteBuffer = ByteBuffer.allocate(data.length + 8);
+        byteBuffer.putLong(id);
+        byteBuffer.put(data);
+        byte[] toSend = byteBuffer.array();
+        server.sendDataToAll(toSend);
+    }
 }
