@@ -9,18 +9,20 @@ public class ChatConsole extends Thread implements ChatHandler
     public ChatConsole(GenericClient client)
     {
         this.client = client;
-        start();
     }
     
     @Override
     public void run()
     {
-        
+        while(!this.isInterrupted())
+        {
+            
+        }
     }
     
     @Override
     public void handle(byte[] chatMessage)
     {
-        
+        System.out.println("chat: " + new String(chatMessage));
     }
 }
