@@ -25,82 +25,83 @@ import net.lodoma.lime.net.packet.generic.ClientPacketPool;
 
 public class LimeClientLogic extends ClientLogic
 {
-    private boolean init;
     private boolean checkedConnection;
     
     @Override
     public void onOpen()
     {
-        init = false;
+        try
+        {
+            ClientPacketPool packetPool = (ClientPacketPool) client.getProperty("packetPool");
+            packetPool.addPacket("Lime::ConnectRequest", new CPConnectRequest());
+            packetPool.addHandler("Lime::ConnectRequestAnswer", new CPHConnectRequestAnswer());
+            packetPool.addPacket("Lime::DependencyRequest", new CPDependencyRequest());
+            packetPool.addHandler("Lime::UserStatus", new CPHUserStatus());
+            packetPool.addHandler("Lime::ModuleDependency", new CPHModuleDependency());
+            packetPool.addPacket("Lime::ResponseRequest", new CPResponseRequest());
+            packetPool.addHandler("Lime::Response", new CPHResponse());
+            
+            ModulePool modulePool = new ModulePool();
+            client.setProperty("modulePool", modulePool);
+            
+            LogicPool logicPool = new LogicPool();
+            client.setProperty("logicPool", logicPool);
+            
+            modulePool.loadModules(ModTarget.CLIENTSIDE);
+            Set<Module> modules = modulePool.getModules();
+            
+            for (Module module : modules)
+                if (module.hasPreinit())
+                    module.invokePreinit(new PreinitBundle(new String[]
+                    {}, new Object[]
+                    {}));
+            
+            for (Module module : modules)
+                if (module.hasInit())
+                {
+                    module.invokeInit(new InitBundle(new String[]
+                    { InitBundle.CLIENT, InitBundle.MODULE }, new Object[]
+                    { client, module }));
+                    Set<String> dependencies = module.getClientModuleDependencies();
+                    for (String dependency : dependencies)
+                        if (!modulePool.isModuleLoaded(dependency))
+                            throw new ModDependencyException();
+                }
+            
+            for (Module module : modules)
+                if (module.hasPostinit())
+                    module.invokePostinit(new PostinitBundle(new String[]
+                    {}, new Object[]
+                    {}));
+            
+            client.setProperty("stage", NetStage.PRIMITIVE);
+            packetPool.getPacket("Lime::ConnectRequest").send(client);
+            
+            client.setProperty("lastServerResponse", System.currentTimeMillis());
+        }
+        catch (Exception e)
+        {
+            client.log(LogLevel.SEVERE, e);
+        }
+        
+        LogicPool logicPool = (LogicPool) client.getProperty("logicPool");
+        Set<Logic> logicComponents = logicPool.getLogicComponents();
+        for (Logic logic : logicComponents)
+            logic.onOpen();
     }
     
     @Override
     public void onClose()
     {
-        
+        LogicPool logicPool = (LogicPool) client.getProperty("logicPool");
+        Set<Logic> logicComponents = logicPool.getLogicComponents();
+        for (Logic logic : logicComponents)
+            logic.onClose();
     }
     
     @Override
     public void logic()
     {
-        if (!init)
-        {
-            try
-            {
-                ClientPacketPool packetPool = (ClientPacketPool) client.getProperty("packetPool");
-                packetPool.addPacket("Lime::ConnectRequest", new CPConnectRequest());
-                packetPool.addHandler("Lime::ConnectRequestAnswer", new CPHConnectRequestAnswer());
-                packetPool.addPacket("Lime::DependencyRequest", new CPDependencyRequest());
-                packetPool.addHandler("Lime::UserStatus", new CPHUserStatus());
-                packetPool.addHandler("Lime::ModuleDependency", new CPHModuleDependency());
-                packetPool.addPacket("Lime::ResponseRequest", new CPResponseRequest());
-                packetPool.addHandler("Lime::Response", new CPHResponse());
-                
-                ModulePool modulePool = new ModulePool();
-                client.setProperty("modulePool", modulePool);
-                
-                LogicPool logicPool = new LogicPool();
-                client.setProperty("logicPool", logicPool);
-                
-                modulePool.loadModules(ModTarget.CLIENTSIDE);
-                Set<Module> modules = modulePool.getModules();
-                
-                for (Module module : modules)
-                    if (module.hasPreinit())
-                        module.invokePreinit(new PreinitBundle(new String[]
-                        {}, new Object[]
-                        {}));
-                
-                for (Module module : modules)
-                    if (module.hasInit())
-                    {
-                        module.invokeInit(new InitBundle(new String[]
-                        { InitBundle.CLIENT, InitBundle.MODULE }, new Object[]
-                        { client, module }));
-                        Set<String> dependencies = module.getClientModuleDependencies();
-                        for (String dependency : dependencies)
-                            if (!modulePool.isModuleLoaded(dependency))
-                                throw new ModDependencyException();
-                    }
-                
-                for (Module module : modules)
-                    if (module.hasPostinit())
-                        module.invokePostinit(new PostinitBundle(new String[]
-                        {}, new Object[]
-                        {}));
-                
-                client.setProperty("stage", NetStage.PRIMITIVE);
-                packetPool.getPacket("Lime::ConnectRequest").send(client);
-                
-                client.setProperty("lastServerResponse", System.currentTimeMillis());
-            }
-            catch (Exception e)
-            {
-                client.log(LogLevel.SEVERE, e);
-            }
-            init = true;
-        }
-        
         if (client.hasProperty("lastServerResponse"))
         {
             long currentTime = System.currentTimeMillis();

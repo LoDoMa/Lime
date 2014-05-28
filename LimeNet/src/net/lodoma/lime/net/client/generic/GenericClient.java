@@ -26,8 +26,6 @@ public abstract class GenericClient
     
     Map<String, Object> properties;
     
-    public abstract void onOpen();
-    public abstract void onClose();
     public abstract void log(LogLevel level, String message);
     public abstract void log(LogLevel level, Exception exception);
     
@@ -59,13 +57,13 @@ public abstract class GenericClient
         
         reader = new ClientReader(this);
         reader.start();
+        
         this.logic = logic;
         logic.setClient(this);
+        logic.onOpen();
         logic.start();
         
         isRunning = true;
-        
-        logic.onOpen();
     }
     
     public final void close()
@@ -75,14 +73,23 @@ public abstract class GenericClient
             log(LogLevel.WARNING, new IllegalStateException("client is already closed"));
             return;
         }
-        
+
         logic.interrupt();
+        while(logic.isAlive())
+            try
+            {
+                Thread.sleep(1);
+            }
+            catch (InterruptedException e)
+            {
+                log(LogLevel.SEVERE, e);
+            }
+        logic.onClose();
+        
         reader.interrupt();
         socket.close();
         
         isRunning = false;
-        
-        logic.onClose();
     }
     
     public void sendData(byte[] data)

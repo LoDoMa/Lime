@@ -24,10 +24,6 @@ public abstract class GenericServer
     
     Map<String, Object> properties;
     
-    public abstract void onOpen();
-    
-    public abstract void onClose();
-    
     public abstract void log(LogLevel level, String message);
     
     public abstract void log(LogLevel level, Exception exception);
@@ -57,14 +53,13 @@ public abstract class GenericServer
         
         reader = new ServerReader(this);
         reader.start();
+        
         this.logic = logic;
         logic.setServer(this);
+        logic.onOpen();
         logic.start();
         
         isRunning = true;
-        
-        onOpen();
-        logic.onOpen();
     }
     
     public final void close()
@@ -76,13 +71,20 @@ public abstract class GenericServer
         }
         
         logic.interrupt();
+        while(logic.isAlive())
+            try
+            {
+                Thread.sleep(1);
+            }
+            catch(InterruptedException e)
+            {
+                log(LogLevel.SEVERE, e);
+            }
+        logic.onClose();
         reader.interrupt();
         socket.close();
         
         isRunning = false;
-        
-        onClose();
-        logic.onClose();
     }
     
     public final void sendData(byte[] data, ServerUser user)

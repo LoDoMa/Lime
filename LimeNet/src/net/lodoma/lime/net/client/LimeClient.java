@@ -10,18 +10,6 @@ import net.lodoma.lime.net.client.generic.GenericClient;
 public class LimeClient extends GenericClient
 {
     @Override
-    public void onOpen()
-    {
-        
-    }
-
-    @Override
-    public void onClose()
-    {
-        
-    }
-    
-    @Override
     public void log(LogLevel level, String message)
     {
         PrintStream stream;

@@ -9,6 +9,7 @@ import net.lodoma.lime.mod.PostinitBundle;
 import net.lodoma.lime.mod.PreinitBundle;
 import net.lodoma.lime.mod.limemod.chat.CPChatMessage;
 import net.lodoma.lime.mod.limemod.chat.CPHChatMessage;
+import net.lodoma.lime.mod.limemod.chat.ChatManager;
 import net.lodoma.lime.net.LogicPool;
 import net.lodoma.lime.net.client.generic.GenericClient;
 import net.lodoma.lime.net.packet.generic.ClientPacketPool;
@@ -33,6 +34,9 @@ public class LimeClientModule
         
         LogicPool logicPool = (LogicPool) client.getProperty("logicPool");
         logicPool.addLogicComponent(new LimeModuleLogic(client));
+        
+        ChatManager chatManager = new ChatManager(client);
+        client.setProperty("chatManager", chatManager);
     }
     
     @ModInit(priority = InitPriority.POSTINIT)

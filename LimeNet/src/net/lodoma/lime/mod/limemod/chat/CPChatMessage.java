@@ -10,14 +10,14 @@ public class CPChatMessage extends ClientPacket
 {
     public CPChatMessage()
     {
-        super(String.class);
+        super(byte[].class);
     }
     
     @Override
     protected byte[] build(Object... args)
     {
-        String message = (String) args[0];
-        String toSend = DatatypeConverter.printBase64Binary(message.getBytes());
+        byte[] message = (byte[]) args[0];
+        String toSend = DatatypeConverter.printBase64Binary(message);
         ByteBuffer buffer = ByteBuffer.allocate(toSend.length() + 4);
         buffer.putInt(toSend.length());
         buffer.put(toSend.getBytes());
