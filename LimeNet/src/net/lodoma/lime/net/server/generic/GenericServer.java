@@ -11,6 +11,7 @@ import java.util.Set;
 import net.lodoma.lime.net.LogLevel;
 import net.lodoma.lime.net.NetworkSettings;
 import net.lodoma.lime.net.packet.generic.ServerPacketPool;
+import net.lodoma.lime.util.ThreadHelper;
 
 public abstract class GenericServer
 {
@@ -53,13 +54,12 @@ public abstract class GenericServer
         
         reader = new ServerReader(this);
         reader.start();
+        isRunning = true;
         
         this.logic = logic;
         logic.setServer(this);
         logic.onOpen();
         logic.start();
-        
-        isRunning = true;
     }
     
     public final void close()
@@ -70,16 +70,14 @@ public abstract class GenericServer
             return;
         }
         
-        logic.interrupt();
-        while(logic.isAlive())
-            try
-            {
-                Thread.sleep(1);
-            }
-            catch(InterruptedException e)
-            {
-                log(LogLevel.SEVERE, e);
-            }
+        try
+        {
+            ThreadHelper.interruptAndWait(logic);
+        }
+        catch(InterruptedException e)
+        {
+            log(LogLevel.SEVERE, e);
+        }
         logic.onClose();
         reader.interrupt();
         socket.close();

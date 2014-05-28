@@ -5,6 +5,7 @@ import net.lodoma.lime.mod.limemod.chat.ChatManager;
 import net.lodoma.lime.net.LogLevel;
 import net.lodoma.lime.net.Logic;
 import net.lodoma.lime.net.client.generic.GenericClient;
+import net.lodoma.lime.util.ThreadHelper;
 
 public class LimeModuleLogic implements Logic
 {
@@ -30,16 +31,14 @@ public class LimeModuleLogic implements Logic
     @Override
     public void onClose()
     {
-        console.interrupt();
-        while(console.isAlive())
-            try
-            {
-                Thread.sleep(1);
-            }
-            catch(InterruptedException e)
-            {
-                client.log(LogLevel.SEVERE, e);
-            }
+        try
+        {
+            ThreadHelper.interruptAndWait(console);
+        }
+        catch(InterruptedException e)
+        {
+            client.log(LogLevel.SEVERE, e);
+        }
     }
     
     @Override
