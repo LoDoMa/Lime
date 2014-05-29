@@ -1,4 +1,7 @@
-package net.lodoma.lime.client.net;
+package net.lodoma.lime.client;
+
+import net.lodoma.lime.client.net.LimeClient;
+import net.lodoma.lime.client.net.LimeClientLogic;
 
 public class VisualInstance
 {

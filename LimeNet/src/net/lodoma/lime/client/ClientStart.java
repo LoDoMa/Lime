@@ -1,4 +1,5 @@
-package net.lodoma.lime.client.net;
+package net.lodoma.lime.client;
+
 
 public class ClientStart
 {
