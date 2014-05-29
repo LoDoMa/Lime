@@ -28,7 +28,7 @@ public class Window
         Window.title = title;
     }
     
-    public static void open()
+    public static void open() throws InvalidWindowPropertyException, DisplayModeSearchException
     {
         apply();
         try
@@ -43,27 +43,12 @@ public class Window
         }
     }
     
-    public static void apply()
+    public static void apply() throws InvalidWindowPropertyException, DisplayModeSearchException
     {
-        try
-        {
-            if(width <= 0) throw new InvalidWindowPropertyException();
-            if(height <= 0) throw new InvalidWindowPropertyException();
-        }
-        catch (InvalidWindowPropertyException e)
-        {
-            e.printStackTrace();
-        }
-        
+        if(width <= 0) throw new InvalidWindowPropertyException();
+        if(height <= 0) throw new InvalidWindowPropertyException();
         if(title == null) throw new NullPointerException();
-        try
-        {
-            WindowHelper.setDisplayMode(width, height, fullscreen);
-        }
-        catch (DisplayModeSearchException e)
-        {
-            e.printStackTrace();
-        }
+        WindowHelper.setDisplayMode(width, height, fullscreen);
         Display.setTitle(title);
     }
     
