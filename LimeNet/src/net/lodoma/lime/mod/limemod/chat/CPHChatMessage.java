@@ -18,6 +18,6 @@ public class CPHChatMessage extends ClientPacketHandler
         buffer.get(msg);
         byte[] message = DatatypeConverter.parseBase64Binary(new String(msg));
         ChatManager chatManager = (ChatManager) client.getProperty("chatManager");
-        chatManager.sendChatPacket(message);
+        chatManager.handleChatPacket(message);
     }
 }

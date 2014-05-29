@@ -1,7 +1,10 @@
 package net.lodoma.lime.mod.limemod.chat;
 
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
+import net.lodoma.lime.net.LogLevel;
 import net.lodoma.lime.net.client.generic.GenericClient;
 
 public class ChatConsole extends Thread implements ChatHandler
@@ -13,19 +16,21 @@ public class ChatConsole extends Thread implements ChatHandler
         this.client = client;
     }
     
-    @SuppressWarnings("resource")
     @Override
     public void run()
     {
-        Scanner scanner = new Scanner(System.in);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         while(!isInterrupted())
         {
-            while(scanner.hasNextInt())
+            try
             {
-                String message = "" + scanner.nextInt();
-                byte[] bytes = message.getBytes();
+                byte[] bytes = reader.readLine().getBytes();
                 ChatManager chatManager = (ChatManager) client.getProperty("chatManager");
                 chatManager.sendChatPacket(bytes);
+            }
+            catch(IOException e)
+            {
+                client.log(LogLevel.SEVERE, e);
             }
         }
     }
