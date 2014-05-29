@@ -7,10 +7,12 @@ import org.lwjgl.opengl.Display;
 
 public class Window
 {
-    private static int width;
-    private static int height;
-    private static boolean fullscreen;
-    private static String title;
+    private static int width = 0;
+    private static int height = 0;
+    private static boolean fullscreen = false;
+    private static String title = null;
+    
+    private static boolean closeRequested = false;
     
     public static void setDimensions(int width, int height)
     {
@@ -26,6 +28,16 @@ public class Window
     public static void setTitle(String title)
     {
         Window.title = title;
+    }
+    
+    public static void requestClose()
+    {
+        Window.closeRequested = true;
+    }
+    
+    public static boolean isCloseRequested()
+    {
+        return Display.isCloseRequested() || closeRequested;
     }
     
     public static void open() throws InvalidWindowPropertyException, DisplayModeSearchException
