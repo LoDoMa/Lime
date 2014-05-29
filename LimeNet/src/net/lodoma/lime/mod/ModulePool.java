@@ -26,7 +26,7 @@ public final class ModulePool
     {
         File[] files = new File("./mod").listFiles();
         for (File file : files)
-            if (file.getName().endsWith(".mod"))
+            if (file.getName().endsWith(".module"))
             {
                 BufferedReader reader = new BufferedReader(new FileReader(file));
                 String jarPath = reader.readLine();
