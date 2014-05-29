@@ -114,6 +114,11 @@ public abstract class GenericClient
         }
     }
     
+    public boolean isRunning()
+    {
+        return isRunning;
+    }
+    
     public Object getProperty(String name)
     {
         return properties.get(name);
