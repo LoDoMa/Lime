@@ -1,2 +1,2 @@
 localjar
-net.lodoma.lime.mod.limemod.server.LimeServerModule
+net.lodoma.limemod.base.server.LimeServerModule
