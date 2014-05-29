@@ -6,6 +6,11 @@ import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.lodoma.lime.mod.init.InitBundle;
+import net.lodoma.lime.mod.init.InitPriority;
+import net.lodoma.lime.mod.init.ModInit;
+import net.lodoma.lime.mod.init.PostinitBundle;
+import net.lodoma.lime.mod.init.PreinitBundle;
 import net.lodoma.lime.util.AnnotationHelper;
 
 public final class Module
