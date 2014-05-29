@@ -21,18 +21,19 @@ public class ChatConsole extends Thread implements ChatHandler
     {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         while(!isInterrupted())
-        {
             try
             {
-                byte[] bytes = reader.readLine().getBytes();
-                ChatManager chatManager = (ChatManager) client.getProperty("chatManager");
-                chatManager.sendChatPacket(bytes);
+                while(System.in.available() > 0)
+                {
+                    byte[] bytes = reader.readLine().getBytes();
+                    ChatManager chatManager = (ChatManager) client.getProperty("chatManager");
+                    chatManager.sendChatPacket(bytes);
+                }
             }
             catch(IOException e)
             {
                 client.log(LogLevel.SEVERE, e);
             }
-        }
     }
     
     @Override

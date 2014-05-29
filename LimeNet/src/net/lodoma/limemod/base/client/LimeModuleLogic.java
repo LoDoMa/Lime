@@ -33,7 +33,7 @@ public class LimeModuleLogic implements Logic
     {
         try
         {
-            ThreadHelper.forceStop(console);
+            ThreadHelper.interruptAndWait(console);
         }
         catch(InterruptedException e)
         {
