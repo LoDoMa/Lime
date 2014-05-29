@@ -1,8 +1,5 @@
 package net.lodoma.lime.client;
 
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.GL11;
-
 import net.lodoma.lime.client.net.LimeClient;
 import net.lodoma.lime.client.net.LimeClientLogic;
 import net.lodoma.lime.client.window.DisplayModeSearchException;
@@ -20,6 +17,7 @@ public class VisualInstance
         Window.setDimensions(800, 600);
         Window.setFullscreen(false);
         Window.setTitle("Lime");
+        Window.setFPS(60);
         
         try
         {
@@ -41,11 +39,16 @@ public class VisualInstance
     {
         while(!Window.isCloseRequested())
         {
-            GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
-            GL11.glLoadIdentity();
+            Window.clear();
             
-            Display.update();
-            Display.sync(60);
+            try
+            {
+                Window.update();
+            }
+            catch (InvalidWindowPropertyException e)
+            {
+                e.printStackTrace();
+            }
         }
     }
     

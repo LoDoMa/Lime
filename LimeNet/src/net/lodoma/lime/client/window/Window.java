@@ -4,6 +4,7 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.GL11;
 
 public class Window
 {
@@ -11,6 +12,7 @@ public class Window
     private static int height = 0;
     private static boolean fullscreen = false;
     private static String title = null;
+    private static int fps = 0;
     
     private static boolean closeRequested = false;
     
@@ -28,6 +30,11 @@ public class Window
     public static void setTitle(String title)
     {
         Window.title = title;
+    }
+    
+    public static void setFPS(int fps)
+    {
+        Window.fps = fps;
     }
     
     public static void requestClose()
@@ -62,6 +69,19 @@ public class Window
         if(title == null) throw new NullPointerException();
         WindowHelper.setDisplayMode(width, height, fullscreen);
         Display.setTitle(title);
+    }
+    
+    public static void clear()
+    {
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+        GL11.glLoadIdentity();
+    }
+    
+    public static void update() throws InvalidWindowPropertyException
+    {
+        if(fps <= 0) throw new InvalidWindowPropertyException();
+        Display.update();
+        Display.sync(fps);
     }
     
     public static void close()
