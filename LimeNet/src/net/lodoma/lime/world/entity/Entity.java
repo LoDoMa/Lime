@@ -22,7 +22,77 @@ public abstract class Entity
     private float baseAngle;
     private float baseAngularVelocity;
     
-    protected void updateTransform(float timeDelta)
+    public final World getWorld()
+    {
+        return world;
+    }
+
+    public final void setWorld(World world)
+    {
+        this.world = world;
+    }
+
+    public final Entity getRidingOn()
+    {
+        return ridingOn;
+    }
+
+    public final void setRidingOn(Entity ridingOn)
+    {
+        this.ridingOn = ridingOn;
+    }
+
+    public final Entity getIsRiding()
+    {
+        return isRiding;
+    }
+
+    public final void setIsRiding(Entity isRiding)
+    {
+        this.isRiding = isRiding;
+    }
+
+    public final Vector2 getBasePosition()
+    {
+        return basePosition;
+    }
+
+    public final void setBasePosition(Vector2 basePosition)
+    {
+        this.basePosition = basePosition;
+    }
+
+    public final Vector2 getBaseLinearVelocity()
+    {
+        return baseLinearVelocity;
+    }
+
+    public final void setBaseLinearVelocity(Vector2 baseLinearVelocity)
+    {
+        this.baseLinearVelocity = baseLinearVelocity;
+    }
+
+    public final float getBaseAngle()
+    {
+        return baseAngle;
+    }
+
+    public final void setBaseAngle(float baseAngle)
+    {
+        this.baseAngle = baseAngle;
+    }
+
+    public final float getBaseAngularVelocity()
+    {
+        return baseAngularVelocity;
+    }
+
+    public final void setBaseAngularVelocity(float baseAngularVelocity)
+    {
+        this.baseAngularVelocity = baseAngularVelocity;
+    }
+
+    protected final void updateTransform(float timeDelta)
     {
         baseLinearVelocity.containLocal(-MAX_LINEAR_VELOCITY, MAX_LINEAR_VELOCITY, -MAX_LINEAR_VELOCITY, MAX_LINEAR_VELOCITY);
         basePosition.addLocal(baseLinearVelocity.mul(timeDelta));
