@@ -8,19 +8,19 @@ public abstract class Entity
     private static final float MAX_LINEAR_VELOCITY = 5.0f;
     private static final float MAX_ANGULAR_VELOCITY = 720.0f;
     
-    private World world;
+    protected World world;
     
     /*** Entity this Entity is riding */
-    private Entity ridingOn;
+    protected Entity ridingOn;
     
     /*** Entity riding this Entity */
-    private Entity isRiding;
+    protected Entity isRiding;
     
-    private Vector2 basePosition;
-    private Vector2 baseLinearVelocity;
+    protected Vector2 basePosition;
+    protected Vector2 baseLinearVelocity;
     
-    private float baseAngle;
-    private float baseAngularVelocity;
+    protected float baseAngle;
+    protected float baseAngularVelocity;
     
     public final World getWorld()
     {
