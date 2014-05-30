@@ -758,6 +758,38 @@ public class Vector2
     {
         return y;
     }
+    
+    public void setX(float x)
+    {
+        this.x = x;
+    }
+    
+    public static void setX(Vector2 v, float x)
+    {
+        v.x = x;
+    }
+    
+    public void setY(float y)
+    {
+        this.y = y;
+    }
+    
+    public static void setY(Vector2 v, float y)
+    {
+        v.y = y;
+    }
+    
+    public void set(Vector2 v)
+    {
+        x = v.x;
+        y = v.y;
+    }
+    
+    public static void set(Vector2 v1, Vector2 v2)
+    {
+        v1.x = v2.x;
+        v1.y = v2.y;
+    }
 
     @Override
     public Vector2 clone()
