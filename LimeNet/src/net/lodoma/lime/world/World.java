@@ -7,6 +7,9 @@ import java.util.Set;
 
 import net.lodoma.lime.util.BinaryHelper;
 
+/* Disable formatting
+ * @formatter:off
+ */
 public class World
 {
     public static final int MASK_TILEINFO_METADATA = 0b00000001;
