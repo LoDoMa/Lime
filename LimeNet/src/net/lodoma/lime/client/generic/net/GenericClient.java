@@ -6,9 +6,8 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.HashMap;
-import java.util.Map;
 
+import net.lodoma.lime.client.ClientData;
 import net.lodoma.lime.client.generic.net.packet.ClientPacketPool;
 import net.lodoma.lime.common.net.LogLevel;
 import net.lodoma.lime.common.net.NetworkSettings;
@@ -25,12 +24,12 @@ public abstract class GenericClient
     ClientReader reader;
     ClientLogic logic;
     
-    Map<String, Object> properties;
+    private ClientData data;
     
     public abstract void log(LogLevel level, String message);
     public abstract void log(LogLevel level, Exception exception);
     
-    public final void open(int port, String ipAddress, ClientLogic logic)
+    public final void open(int port, String ipAddress, ClientLogic logic, ClientData data)
     {
         if(isRunning)
         {
@@ -53,8 +52,8 @@ public abstract class GenericClient
             log(LogLevel.SEVERE, e);
         }
         
-        properties = new HashMap<String, Object>();
-        setProperty("packetPool", new ClientPacketPool());
+        this.data = data;
+        this.data.packetPool = new ClientPacketPool();
         
         reader = new ClientReader(this);
         reader.start();
@@ -119,28 +118,8 @@ public abstract class GenericClient
         return isRunning;
     }
     
-    public Object getProperty(String name)
+    public ClientData getData()
     {
-        return properties.get(name);
-    }
-    
-    public void setProperty(String name, Object value)
-    {
-        properties.put(name, value);
-    }
-    
-    public void removeProperty(String name)
-    {
-        properties.remove(name);
-    }
-    
-    public boolean hasProperty(String name)
-    {
-        return properties.containsKey(name);
-    }
-    
-    public void clearProperties()
-    {
-        properties.clear();
+        return data;
     }
 }

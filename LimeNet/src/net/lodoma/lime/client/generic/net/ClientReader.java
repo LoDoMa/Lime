@@ -5,7 +5,6 @@ import java.net.DatagramPacket;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
 
-import net.lodoma.lime.client.generic.net.packet.ClientPacketPool;
 import net.lodoma.lime.common.net.LogLevel;
 import net.lodoma.lime.common.net.NetworkSettings;
 
@@ -42,8 +41,7 @@ class ClientReader extends Thread
             byte[] other = new byte[buffer.remaining()];
             buffer.get(other);
             
-            ClientPacketPool packetPool = (ClientPacketPool) client.getProperty("packetPool");
-            packetPool.getHandler(id).handle(client, other);
+            client.getData().packetPool.getHandler(id).handle(client, other);
         }
     }
 }

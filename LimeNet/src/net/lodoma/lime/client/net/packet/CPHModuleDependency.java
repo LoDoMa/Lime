@@ -2,10 +2,9 @@ package net.lodoma.lime.client.net.packet;
 
 import java.nio.ByteBuffer;
 
+import net.lodoma.lime.client.ClientData;
 import net.lodoma.lime.client.generic.net.GenericClient;
 import net.lodoma.lime.client.generic.net.packet.ClientPacketHandler;
-import net.lodoma.lime.client.generic.net.packet.ClientPacketPool;
-import net.lodoma.lime.mod.ModulePool;
 
 public class CPHModuleDependency extends ClientPacketHandler
 {
@@ -17,8 +16,7 @@ public class CPHModuleDependency extends ClientPacketHandler
         byte[] nameBytes = new byte[length];
         buffer.get(nameBytes);
         String name = new String(nameBytes);
-        ModulePool modulePool = (ModulePool) client.getProperty("modulePool");
-        ClientPacketPool packetPool = (ClientPacketPool) client.getProperty("packetPool");
-        packetPool.getPacket("Lime::DependencyRequest").send(client, modulePool.isModuleLoaded(name));
+        ClientData cdata = client.getData();
+        cdata.packetPool.getPacket("Lime::DependencyRequest").send(client, cdata.modulePool.isModuleLoaded(name));
     }
 }

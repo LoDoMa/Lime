@@ -2,6 +2,7 @@ package net.lodoma.lime.client.net;
 
 import java.util.Set;
 
+import net.lodoma.lime.client.ClientData;
 import net.lodoma.lime.client.generic.net.ClientLogic;
 import net.lodoma.lime.client.generic.net.packet.ClientPacketPool;
 import net.lodoma.lime.client.net.packet.CPConnectRequest;
@@ -32,7 +33,9 @@ public class LimeClientLogic extends ClientLogic
     {
         try
         {
-            ClientPacketPool packetPool = (ClientPacketPool) client.getProperty("packetPool");
+            ClientData data = client.getData();
+            
+            ClientPacketPool packetPool = data.packetPool;
             packetPool.addPacket("Lime::ConnectRequest", new CPConnectRequest());
             packetPool.addHandler("Lime::ConnectRequestAnswer", new CPHConnectRequestAnswer());
             packetPool.addPacket("Lime::DependencyRequest", new CPDependencyRequest());
@@ -41,11 +44,11 @@ public class LimeClientLogic extends ClientLogic
             packetPool.addPacket("Lime::ResponseRequest", new CPResponseRequest());
             packetPool.addHandler("Lime::Response", new CPHResponse());
             
-            ModulePool modulePool = new ModulePool();
-            client.setProperty("modulePool", modulePool);
-            
             LogicPool logicPool = new LogicPool();
-            client.setProperty("logicPool", logicPool);
+            data.logicPool = logicPool;
+            
+            ModulePool modulePool = new ModulePool();
+            data.modulePool = modulePool;
             
             modulePool.loadModules(ModTarget.CLIENTSIDE);
             Set<Module> modules = modulePool.getModules();
@@ -74,26 +77,25 @@ public class LimeClientLogic extends ClientLogic
                     {}, new Object[]
                     {}));
             
-            client.setProperty("stage", NetStage.PRIMITIVE);
+            data.networkStage = NetStage.PRIMITIVE;
             packetPool.getPacket("Lime::ConnectRequest").send(client);
             
-            client.setProperty("lastServerResponse", System.currentTimeMillis());
+            data.lastServerResponse = System.currentTimeMillis();
+            
+            Set<Logic> logicComponents = logicPool.getLogicComponents();
+            for (Logic logic : logicComponents)
+                logic.onOpen();
         }
         catch (Exception e)
         {
             client.log(LogLevel.SEVERE, e);
         }
-        
-        LogicPool logicPool = (LogicPool) client.getProperty("logicPool");
-        Set<Logic> logicComponents = logicPool.getLogicComponents();
-        for (Logic logic : logicComponents)
-            logic.onOpen();
     }
     
     @Override
     public void onClose()
     {
-        LogicPool logicPool = (LogicPool) client.getProperty("logicPool");
+        LogicPool logicPool = client.getData().logicPool;
         Set<Logic> logicComponents = logicPool.getLogicComponents();
         for (Logic logic : logicComponents)
             logic.onClose();
@@ -102,29 +104,27 @@ public class LimeClientLogic extends ClientLogic
     @Override
     public void logic()
     {
-        if (client.hasProperty("lastServerResponse"))
-        {
-            long currentTime = System.currentTimeMillis();
-            long lastTime = (Long) client.getProperty("lastServerResponse");
-            long timeDelta = currentTime - lastTime;
-            if (timeDelta >= 1000)
-            {
-                if (!checkedConnection)
-                {
-                    ((ClientPacketPool) client.getProperty("packetPool")).getPacket("Lime::ResponseRequest").send(client);;
-                    checkedConnection = true;
-                }
-                if (timeDelta >= 2000)
-                {
-                    System.out.println("server not responding");
-                }
-            }
-            else
-                checkedConnection = false;
-        }
+        ClientData data = client.getData();
         
-        LogicPool logicPool = (LogicPool) client.getProperty("logicPool");
-        Set<Logic> logicComponents = logicPool.getLogicComponents();
+        long currentTime = System.currentTimeMillis();
+        long lastTime = data.lastServerResponse;
+        long timeDelta = currentTime - lastTime;
+        if (timeDelta >= 1000)
+        {
+            if (!checkedConnection)
+            {
+                data.packetPool.getPacket("Lime::ResponseRequest").send(client);;
+                checkedConnection = true;
+            }
+            if (timeDelta >= 2000)
+            {
+                System.out.println("server not responding");
+            }
+        }
+        else
+            checkedConnection = false;
+        
+        Set<Logic> logicComponents = data.logicPool.getLogicComponents();
         for (Logic logic : logicComponents)
             logic.logic();
     }

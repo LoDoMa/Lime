@@ -8,6 +8,7 @@ import net.lodoma.lime.client.window.Window;
 
 public class VisualInstance
 {
+    private ClientData data;
     private LimeClient client;
     
     private void init()
@@ -32,7 +33,8 @@ public class VisualInstance
             e.printStackTrace();
         }
         
-        client.open(19523, "localhost", new LimeClientLogic());
+        data = new ClientData();
+        client.open(19523, "localhost", new LimeClientLogic(), data);
     }
     
     private void loop()

@@ -26,8 +26,7 @@ public class ChatConsole extends Thread implements ChatHandler
                 while(System.in.available() > 0)
                 {
                     byte[] bytes = reader.readLine().getBytes();
-                    ChatManager chatManager = (ChatManager) client.getProperty("chatManager");
-                    chatManager.sendChatPacket(bytes);
+                    client.getData().chatManager.sendChatPacket(bytes);
                 }
             }
             catch(IOException e)

@@ -5,7 +5,6 @@ import net.lodoma.lime.common.net.LogLevel;
 import net.lodoma.lime.common.net.Logic;
 import net.lodoma.lime.util.ThreadHelper;
 import net.lodoma.limemod.net.chat.ChatConsole;
-import net.lodoma.limemod.net.chat.ChatManager;
 
 public class LimeModuleLogic implements Logic
 {
@@ -22,8 +21,7 @@ public class LimeModuleLogic implements Logic
     {
         console = new ChatConsole(client);
         
-        ChatManager chatManager = (ChatManager) client.getProperty("chatManager");
-        chatManager.addHandler(console);
+        client.getData().chatManager.addHandler(console);
         
         console.start();
     }
