@@ -1,12 +1,39 @@
 package net.lodoma.lime.world;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
-import org.lwjgl.opengl.GL11;
+import net.lodoma.lime.util.BinaryHelper;
 
 public class World
 {
+    public static final int MASK_TILEINFO_METADATA = 0b00000001;
+    public static final int MASK_TILEINFO_REFRESHED = 0b00000010;
+    public static final int MASK_TILEINFO_SOLID = 0b00000100;
+    
+    public static final int MASK_TILESHAPE_BOTTOM_LEFT = 0b00000001;
+    public static final int MASK_TILESHAPE_BOTTOM_MIDDLE = 0b00000010;
+    public static final int MASK_TILESHAPE_BOTTOM_RIGHT = 0b00000100;
+    public static final int MASK_TILESHAPE_MIDDLE_RIGHT = 0b00001000;
+    public static final int MASK_TILESHAPE_TOP_RIGHT = 0b00010000;
+    public static final int MASK_TILESHAPE_TOP_MIDDLE = 0b00100000;
+    public static final int MASK_TILESHAPE_TOP_LEFT = 0b01000000;
+    public static final int MASK_TILESHAPE_MIDDLE_LEFT = 0b10000000;
+    
+    public static byte buildTileShape(boolean... presence)
+    {
+        byte tileshape = 0;
+        int count = presence.length < 8 ? presence.length : 8;
+        for(int i = 0; i < count; i++)
+            if(presence[i])
+                tileshape = BinaryHelper.setOn(tileshape, 1 << i);
+        return tileshape;
+    }
+
+    public static final byte TILESHAPE_FULL = buildTileShape(true, false, true, false, true, false, true, false);
+    
     private int width;
     private int height;
     
@@ -16,21 +43,46 @@ public class World
     private byte[] tileShape;
     private short[] tileMaterial;
     
+    private Set<Long> refreshTileSet;
+    
     public World()
     {
         materialMap = new HashMap<Short, Material>();
+        refreshTileSet = new HashSet<Long>();
     }
     
     public void init(int width, int height)
     {
         this.width = width;
         this.height = height;
-
+        
         materialMap.clear();
         
         tileInfo = new byte[width * height];
         tileShape = new byte[width * height];
         tileMaterial = new short[width * height];
+        
+        refreshTileSet.clear();
+    }
+    
+    public Material getMaterial(short id)
+    {
+        return materialMap.get(id);
+    }
+    
+    public byte getTileInfo(int x, int y)
+    {
+        return tileInfo[y * width + x];
+    }
+    
+    public byte getTileShape(int x, int y)
+    {
+        return tileShape[y * width + x];
+    }
+    
+    public short getTileMaterial(int x, int y)
+    {
+        return tileMaterial[y * width + x];
     }
     
     public void setMaterialID(short id, Material material)
