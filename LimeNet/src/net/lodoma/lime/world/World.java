@@ -31,8 +31,16 @@ public class World
                 tileshape = BinaryHelper.setOn(tileshape, 1 << i);
         return tileshape;
     }
-
+    
     public static final byte TILESHAPE_FULL = buildTileShape(true, false, true, false, true, false, true, false);
+    public static final byte TILESHAPE_SLOPELEFT = buildTileShape(true, false, true, false, true, false, false, false);
+    public static final byte TILESHAPE_SLOPERIGHT = buildTileShape(true, false, true, false, false, false, true, false);
+    public static final byte TILESHAPE_SLOPELEFT_YFLIP = buildTileShape(false, false, true, false, true, false, true, false);
+    public static final byte TILESHAPE_SLOPERIGHT_YFLIP = buildTileShape(true, false, false, false, true, false, true, false);
+    public static final byte TILESHAPE_SLAB = buildTileShape(true, false, true, true, false, false, false, true);
+    public static final byte TILESHAPE_SLAB_YFLIP = buildTileShape(false, false, false, true, true, false, true, true);
+    public static final byte TILESHAPE_PILLAR = buildTileShape(true, true, false, false, false, true, true, false);
+    public static final byte TILESHAPE_PILLAR_XFLIP = buildTileShape(false, true, true, false, true, true, false, false);
     
     private int width;
     private int height;
