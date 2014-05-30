@@ -105,6 +105,6 @@ public abstract class EntitySegment
         position.rotateAroundLocalDeg(parentPosition, parentAngle);
     }
     
-    public abstract void update();
+    public abstract void update(float timeDelta);
     public abstract void render();
 }

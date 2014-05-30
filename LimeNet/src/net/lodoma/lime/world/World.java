@@ -44,6 +44,7 @@ public class World
     public static final byte TILESHAPE_SLAB_YFLIP = buildTileShape(false, false, false, true, true, false, true, true);
     public static final byte TILESHAPE_PILLAR = buildTileShape(true, true, false, false, false, true, true, false);
     public static final byte TILESHAPE_PILLAR_XFLIP = buildTileShape(false, true, true, false, true, true, false, false);
+    public static final byte TILESHAPE_EMPTY = buildTileShape(false, false, false, false, false, false, false, false);
     
     private int width;
     private int height;
@@ -76,6 +77,31 @@ public class World
         refreshTileSet.clear();
     }
     
+    public final int getWidth()
+    {
+        return width;
+    }
+
+    public final void setWidth(int width)
+    {
+        this.width = width;
+    }
+
+    public final int getHeight()
+    {
+        return height;
+    }
+
+    public final void setHeight(int height)
+    {
+        this.height = height;
+    }
+
+    public static final byte getTileshapeSloperightYflip()
+    {
+        return TILESHAPE_SLOPERIGHT_YFLIP;
+    }
+
     public Material getMaterial(short id)
     {
         return materialMap.get(id);
