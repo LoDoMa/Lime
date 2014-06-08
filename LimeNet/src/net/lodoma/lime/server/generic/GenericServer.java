@@ -21,7 +21,7 @@ public abstract class GenericServer
     
     DatagramSocket socket;
     
-    ServerReader reader;
+    private ServerReader reader;
     
     private ServerLogicPool logicPool;
     private Map<String, Object> properties;
