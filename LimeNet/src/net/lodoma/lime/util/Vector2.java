@@ -779,6 +779,26 @@ public class Vector2
         v.y = y;
     }
     
+    public void setX(Vector2 v)
+    {
+        this.x = v.x;
+    }
+    
+    public static void setX(Vector2 v1, Vector2 v2)
+    {
+        v1.x = v2.x;
+    }
+    
+    public void setY(Vector2 v)
+    {
+        this.y = v.y;
+    }
+    
+    public static void setY(Vector2 v1, Vector2 v2)
+    {
+        v1.y = v2.y;
+    }
+    
     public void set(Vector2 v)
     {
         x = v.x;

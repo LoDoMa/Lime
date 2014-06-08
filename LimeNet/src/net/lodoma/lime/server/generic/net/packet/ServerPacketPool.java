@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.lodoma.lime.common.net.packet.DependencyPool;
-import net.lodoma.lime.mod.targetserver.Dependency;
 import net.lodoma.lime.server.generic.GenericServer;
 import net.lodoma.lime.util.AnnotationHelper;
 import net.lodoma.lime.util.HashHelper;

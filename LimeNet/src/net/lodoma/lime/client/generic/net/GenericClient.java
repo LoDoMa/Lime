@@ -20,11 +20,11 @@ public abstract class GenericClient
 {
     private boolean isRunning = false;
     
-    int port;
-    InetAddress ipAddress;
+    private int port;
+    private InetAddress ipAddress;
     DatagramSocket socket;
    
-    ClientReader reader;
+    private ClientReader reader;
     
     private ClientLogicPool logicPool;
     private Map<String, Object> properties;
