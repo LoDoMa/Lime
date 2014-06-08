@@ -1,6 +1,5 @@
 package net.lodoma.lime.client.logic;
 
-import net.lodoma.lime.client.generic.net.ClientLogic;
 import net.lodoma.lime.client.generic.net.GenericClient;
 import net.lodoma.lime.client.generic.net.packet.ClientPacketPool;
 import net.lodoma.lime.client.net.packet.CPHResponse;

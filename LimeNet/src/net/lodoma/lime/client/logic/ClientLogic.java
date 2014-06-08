@@ -1,4 +1,6 @@
-package net.lodoma.lime.client.generic.net;
+package net.lodoma.lime.client.logic;
+
+import net.lodoma.lime.client.generic.net.GenericClient;
 
 public interface ClientLogic
 {

@@ -1,6 +1,5 @@
 package net.lodoma.lime.client.logic;
 
-import net.lodoma.lime.client.generic.net.ClientLogic;
 import net.lodoma.lime.client.generic.net.GenericClient;
 import net.lodoma.lime.common.net.LogLevel;
 import net.lodoma.lime.util.ThreadHelper;

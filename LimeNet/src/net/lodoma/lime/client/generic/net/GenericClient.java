@@ -12,6 +12,7 @@ import java.util.Map;
 import net.lodoma.lime.client.logic.CLBase;
 import net.lodoma.lime.client.logic.CLChat;
 import net.lodoma.lime.client.logic.CLConnectionCheck;
+import net.lodoma.lime.client.logic.ClientLogicPool;
 import net.lodoma.lime.common.net.LogLevel;
 import net.lodoma.lime.common.net.NetworkSettings;
 

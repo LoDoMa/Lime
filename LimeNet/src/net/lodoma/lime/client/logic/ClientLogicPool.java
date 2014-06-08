@@ -1,7 +1,9 @@
-package net.lodoma.lime.client.generic.net;
+package net.lodoma.lime.client.logic;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import net.lodoma.lime.client.generic.net.GenericClient;
 
 public class ClientLogicPool implements Runnable
 {
@@ -18,7 +20,7 @@ public class ClientLogicPool implements Runnable
         logicSet = new HashSet<ClientLogic>();
     }
     
-    void init()
+    public void init()
     {
         for(ClientLogic logic : logicSet)
             logic.baseInit(client);
@@ -30,7 +32,7 @@ public class ClientLogicPool implements Runnable
             logic.generalInit();
     }
     
-    void start()
+    public void start()
     {
         if(running) return;
         running = true;
@@ -39,7 +41,7 @@ public class ClientLogicPool implements Runnable
         thread.start();
     }
     
-    void stop()
+    public void stop()
     {
         if(!running) return;
         running = false;

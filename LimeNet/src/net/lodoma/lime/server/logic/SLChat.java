@@ -1,7 +1,6 @@
 package net.lodoma.lime.server.logic;
 
 import net.lodoma.lime.server.generic.GenericServer;
-import net.lodoma.lime.server.generic.ServerLogic;
 import net.lodoma.lime.server.generic.net.packet.ServerPacketPool;
 import net.lodoma.limemod.net.chat.packet.server.SPChatMessage;
 import net.lodoma.limemod.net.chat.packet.server.SPHChatMessage;
