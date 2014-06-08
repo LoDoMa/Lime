@@ -1,4 +1,4 @@
-package net.lodoma.limemod.net.chat.packet.server;
+package net.lodoma.lime.chat.server;
 
 import net.lodoma.lime.server.generic.net.packet.ServerPacket;
 

@@ -1,4 +1,4 @@
-package net.lodoma.limemod.net.chat;
+package net.lodoma.lime.chat;
 
 public interface ChatHandler
 {

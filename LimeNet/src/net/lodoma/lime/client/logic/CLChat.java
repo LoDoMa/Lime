@@ -1,10 +1,10 @@
 package net.lodoma.lime.client.logic;
 
+import net.lodoma.lime.chat.ChatConsole;
+import net.lodoma.lime.chat.ChatManager;
 import net.lodoma.lime.client.generic.net.GenericClient;
 import net.lodoma.lime.common.net.LogLevel;
 import net.lodoma.lime.util.ThreadHelper;
-import net.lodoma.limemod.net.chat.ChatConsole;
-import net.lodoma.limemod.net.chat.ChatManager;
 
 public class CLChat implements ClientLogic
 {

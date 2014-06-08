@@ -1,4 +1,4 @@
-package net.lodoma.limemod.net.chat;
+package net.lodoma.lime.chat;
 
 import java.util.HashSet;
 import java.util.Set;

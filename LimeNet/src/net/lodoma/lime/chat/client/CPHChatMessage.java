@@ -1,12 +1,12 @@
-package net.lodoma.limemod.net.chat.packet.client;
+package net.lodoma.lime.chat.client;
 
 import java.nio.ByteBuffer;
 
 import javax.xml.bind.DatatypeConverter;
 
+import net.lodoma.lime.chat.ChatManager;
 import net.lodoma.lime.client.generic.net.GenericClient;
 import net.lodoma.lime.client.generic.net.packet.ClientPacketHandler;
-import net.lodoma.limemod.net.chat.ChatManager;
 
 public class CPHChatMessage extends ClientPacketHandler
 {
