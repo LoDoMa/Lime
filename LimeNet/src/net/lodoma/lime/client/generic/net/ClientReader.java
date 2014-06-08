@@ -5,11 +5,13 @@ import java.net.DatagramPacket;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
 
+import net.lodoma.lime.client.generic.net.packet.ClientPacketPool;
 import net.lodoma.lime.common.net.LogLevel;
 import net.lodoma.lime.common.net.NetworkSettings;
 
 class ClientReader extends Thread
 {
+    private ClientPacketPool packetPool;
     private GenericClient client;
     
     public ClientReader(GenericClient client)
@@ -19,6 +21,8 @@ class ClientReader extends Thread
     
     public void run()
     {
+        packetPool = (ClientPacketPool) client.getProperty("packetPool");
+        
         while (!this.isInterrupted())
         {
             byte[] data = new byte[NetworkSettings.MAX_PACKET_SIZE];
@@ -29,7 +33,7 @@ class ClientReader extends Thread
             }
             catch (IOException e)
             {
-                if((e instanceof SocketException) && e.getMessage().equals("socket closed"))
+                if((e instanceof SocketException) && e.getMessage().equals("Socket closed"))
                     break;
                 client.log(LogLevel.SEVERE, e);
             }
@@ -41,7 +45,7 @@ class ClientReader extends Thread
             byte[] other = new byte[buffer.remaining()];
             buffer.get(other);
             
-            client.getData().packetPool.getHandler(id).handle(client, other);
+            packetPool.getHandler(id).handle(client, other);
         }
     }
 }

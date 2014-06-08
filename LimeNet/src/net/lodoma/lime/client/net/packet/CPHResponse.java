@@ -8,6 +8,6 @@ public class CPHResponse extends ClientPacketHandler
     @Override
     public void handle(GenericClient client, byte[] data)
     {
-        client.getData().lastServerResponse = System.currentTimeMillis();
+        client.setProperty("lastServerResponse", System.currentTimeMillis());
     }
 }

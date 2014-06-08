@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.lodoma.lime.client.generic.net.GenericClient;
+import net.lodoma.lime.client.generic.net.packet.ClientPacketPool;
 
 public class ChatManager
 {
@@ -23,7 +24,8 @@ public class ChatManager
     
     public void sendChatPacket(byte[] chat)
     {
-        client.getData().packetPool.getPacket("Lime::ChatMessage").send(client, chat);
+        ClientPacketPool packetPool = (ClientPacketPool) client.getProperty("packetPool");
+        packetPool.getPacket("Lime::ChatMessage").send(client, chat);
     }
     
     public void handleChatPacket(byte[] chat)

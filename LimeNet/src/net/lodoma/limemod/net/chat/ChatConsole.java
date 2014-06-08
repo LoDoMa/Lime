@@ -10,10 +10,12 @@ import net.lodoma.lime.common.net.LogLevel;
 public class ChatConsole extends Thread implements ChatHandler
 {
     private GenericClient client;
+    private ChatManager chatManager;
     
     public ChatConsole(GenericClient client)
     {
         this.client = client;
+        chatManager = (ChatManager) client.getProperty("chatManager");
     }
     
     @Override
@@ -26,7 +28,7 @@ public class ChatConsole extends Thread implements ChatHandler
                 while(System.in.available() > 0)
                 {
                     byte[] bytes = reader.readLine().getBytes();
-                    client.getData().chatManager.sendChatPacket(bytes);
+                    chatManager.sendChatPacket(bytes);
                 }
             }
             catch(IOException e)

@@ -24,9 +24,6 @@ public class LimeServerModule
         packetPool.addPacket("Lime::ChatMessage", new SPChatMessage());
         packetPool.addHandler("Lime::ChatMessage", new SPHChatMessage());
         
-        Module module = (Module) bundle.get(InitBundle.MODULE);
-        module.addClientModuleDependency("Lime::Lime");
-        
         LogicPool logicPool = (LogicPool) server.getProperty("logicPool");
         logicPool.addLogicComponent(new LimeModuleLogic());
     }

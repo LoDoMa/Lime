@@ -1,14 +1,12 @@
 package net.lodoma.lime.client;
 
 import net.lodoma.lime.client.net.LimeClient;
-import net.lodoma.lime.client.net.LimeClientLogic;
 import net.lodoma.lime.client.window.DisplayModeSearchException;
 import net.lodoma.lime.client.window.InvalidWindowPropertyException;
 import net.lodoma.lime.client.window.Window;
 
 public class VisualInstance
 {
-    private ClientData data;
     private LimeClient client;
     
     private void init()
@@ -33,8 +31,7 @@ public class VisualInstance
             e.printStackTrace();
         }
         
-        data = new ClientData();
-        client.open(19523, "localhost", new LimeClientLogic(), data);
+        client.open(19523, "localhost");
     }
     
     private void loop()

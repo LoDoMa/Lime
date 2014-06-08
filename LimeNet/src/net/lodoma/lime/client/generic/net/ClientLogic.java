@@ -1,24 +1,12 @@
 package net.lodoma.lime.client.generic.net;
 
-public abstract class ClientLogic extends Thread
+public interface ClientLogic
 {
-    protected GenericClient client;
+    public void baseInit(GenericClient client);
+    public void propertyInit();
+    public void fetchInit();
+    public void generalInit();
     
-    void setClient(GenericClient client)
-    {
-        this.client = client;
-    }
-    
-    public abstract void onOpen();
-    public abstract void onClose();
-    public abstract void logic();
-    
-    @Override
-    public void run()
-    {
-        while(!isInterrupted())
-        {
-            logic();
-        }
-    }
+    public void clean();
+    public void logic();
 }

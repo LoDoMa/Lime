@@ -6,12 +6,13 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.Map;
 
-import net.lodoma.lime.client.ClientData;
-import net.lodoma.lime.client.generic.net.packet.ClientPacketPool;
+import net.lodoma.lime.client.logic.BaseLogic;
+import net.lodoma.lime.client.logic.ChatLogic;
 import net.lodoma.lime.common.net.LogLevel;
 import net.lodoma.lime.common.net.NetworkSettings;
-import net.lodoma.lime.util.ThreadHelper;
 
 public abstract class GenericClient
 {
@@ -22,14 +23,14 @@ public abstract class GenericClient
     DatagramSocket socket;
    
     ClientReader reader;
-    ClientLogic logic;
     
-    private ClientData data;
+    private ClientLogicPool logicPool;
+    private Map<String, Object> properties;
     
     public abstract void log(LogLevel level, String message);
     public abstract void log(LogLevel level, Exception exception);
     
-    public final void open(int port, String ipAddress, ClientLogic logic, ClientData data)
+    public final void open(int port, String ipAddress)
     {
         if(isRunning)
         {
@@ -52,17 +53,20 @@ public abstract class GenericClient
             log(LogLevel.SEVERE, e);
         }
         
-        this.data = data;
-        this.data.packetPool = new ClientPacketPool();
+        logicPool = new ClientLogicPool(this);
+        properties = new HashMap<String, Object>();
+        
+        logicPool.addLogic(new BaseLogic());
+        logicPool.addLogic(new ChatLogic());
+        
+        logicPool.init();
         
         reader = new ClientReader(this);
         reader.start();
+        
         isRunning = true;
         
-        this.logic = logic;
-        logic.setClient(this);
-        logic.onOpen();
-        logic.start();
+        logicPool.start();
     }
     
     public final void close()
@@ -73,15 +77,7 @@ public abstract class GenericClient
             return;
         }
 
-        try
-        {
-            ThreadHelper.interruptAndWait(logic);
-        }
-        catch (InterruptedException e)
-        {
-            log(LogLevel.SEVERE, e);
-        }
-        logic.onClose();
+        logicPool.stop();
         
         reader.interrupt();
         socket.close();
@@ -118,8 +114,23 @@ public abstract class GenericClient
         return isRunning;
     }
     
-    public ClientData getData()
+    public Object getProperty(String name)
     {
-        return data;
+        return properties.get(name);
+    }
+    
+    public void setProperty(String name, Object value)
+    {
+        properties.put(name, value);
+    }
+    
+    public boolean hasProperty(String name)
+    {
+        return properties.containsKey(name);
+    }
+    
+    public void removeProperty(String name)
+    {
+        properties.remove(name);
     }
 }

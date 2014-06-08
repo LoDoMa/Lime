@@ -1,17 +1,11 @@
 package net.lodoma.limemod.world.client;
 
-import net.lodoma.lime.client.generic.net.GenericClient;
 import net.lodoma.lime.mod.Mod;
 import net.lodoma.lime.mod.ModTarget;
-import net.lodoma.lime.mod.init.InitBundle;
-import net.lodoma.lime.mod.init.InitPriority;
-import net.lodoma.lime.mod.init.ModInit;
-import net.lodoma.lime.mod.init.PostinitBundle;
-import net.lodoma.lime.mod.init.PreinitBundle;
 
 @Mod(name = "Lime::World", target = ModTarget.CLIENTSIDE)
 public class WorldClientModule
-{
+{/*
     @ModInit(priority = InitPriority.PREINIT)
     public void preinit(PreinitBundle bundle)
     {
@@ -30,5 +24,5 @@ public class WorldClientModule
     public void postinit(PostinitBundle bundle)
     {
         
-    }
+    }*/
 }
