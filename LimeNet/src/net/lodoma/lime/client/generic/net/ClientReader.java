@@ -11,8 +11,8 @@ import net.lodoma.lime.common.net.NetworkSettings;
 
 class ClientReader extends Thread
 {
-    private ClientPacketPool packetPool;
     private GenericClient client;
+    private ClientPacketPool packetPool;
     
     public ClientReader(GenericClient client)
     {

@@ -9,8 +9,9 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.lodoma.lime.client.logic.BaseLogic;
-import net.lodoma.lime.client.logic.ChatLogic;
+import net.lodoma.lime.client.logic.CLBase;
+import net.lodoma.lime.client.logic.CLChat;
+import net.lodoma.lime.client.logic.CLConnectionCheck;
 import net.lodoma.lime.common.net.LogLevel;
 import net.lodoma.lime.common.net.NetworkSettings;
 
@@ -56,8 +57,9 @@ public abstract class GenericClient
         logicPool = new ClientLogicPool(this);
         properties = new HashMap<String, Object>();
         
-        logicPool.addLogic(new BaseLogic());
-        logicPool.addLogic(new ChatLogic());
+        logicPool.addLogic(new CLBase());
+        logicPool.addLogic(new CLConnectionCheck());
+        logicPool.addLogic(new CLChat());
         
         logicPool.init();
         

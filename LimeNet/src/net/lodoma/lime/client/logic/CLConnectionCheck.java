@@ -3,8 +3,10 @@ package net.lodoma.lime.client.logic;
 import net.lodoma.lime.client.generic.net.ClientLogic;
 import net.lodoma.lime.client.generic.net.GenericClient;
 import net.lodoma.lime.client.generic.net.packet.ClientPacketPool;
+import net.lodoma.lime.client.net.packet.CPHResponse;
+import net.lodoma.lime.client.net.packet.CPResponseRequest;
 
-public class ConnectionCheckLogic implements ClientLogic
+public class CLConnectionCheck implements ClientLogic
 {
     private GenericClient client;
     private ClientPacketPool packetPool;
@@ -32,7 +34,8 @@ public class ConnectionCheckLogic implements ClientLogic
     @Override
     public void generalInit()
     {
-        
+        packetPool.addPacket("Lime::ResponseRequest", new CPResponseRequest());
+        packetPool.addHandler("Lime::Response", new CPHResponse());
     }
 
     @Override

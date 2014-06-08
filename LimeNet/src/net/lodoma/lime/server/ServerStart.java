@@ -7,14 +7,13 @@ import java.io.InputStreamReader;
 import net.lodoma.lime.common.net.LogLevel;
 import net.lodoma.lime.server.generic.GenericServer;
 import net.lodoma.lime.server.net.LimeServer;
-import net.lodoma.lime.server.net.LimeServerLogic;
 
 public class ServerStart
 {
     public static void main(String[] args)
     {
         GenericServer server = new LimeServer();
-        server.open(19523, new LimeServerLogic());
+        server.open(19523);
         
         try
         {

@@ -10,8 +10,9 @@ import java.util.Set;
 
 import net.lodoma.lime.common.net.LogLevel;
 import net.lodoma.lime.common.net.NetworkSettings;
-import net.lodoma.lime.server.generic.net.packet.ServerPacketPool;
-import net.lodoma.lime.util.ThreadHelper;
+import net.lodoma.lime.server.logic.SLBase;
+import net.lodoma.lime.server.logic.SLChat;
+import net.lodoma.lime.server.logic.SLConnectionCheck;
 
 public abstract class GenericServer
 {
@@ -19,17 +20,16 @@ public abstract class GenericServer
     
     DatagramSocket socket;
     
-    UserPool userPool;
     ServerReader reader;
-    ServerLogic logic;
     
-    Map<String, Object> properties;
+    private ServerLogicPool logicPool;
+    private Map<String, Object> properties;
     
     public abstract void log(LogLevel level, String message);
     
     public abstract void log(LogLevel level, Exception exception);
     
-    public final void open(int port, ServerLogic logic)
+    public final void open(int port)
     {
         if (isRunning)
         {
@@ -46,20 +46,21 @@ public abstract class GenericServer
             log(LogLevel.SEVERE, e);
         }
         
+        logicPool = new ServerLogicPool(this);
         properties = new HashMap<String, Object>();
-        userPool = new UserPool();
+
+        logicPool.addLogic(new SLBase());
+        logicPool.addLogic(new SLConnectionCheck());
+        logicPool.addLogic(new SLChat());
         
-        setProperty("packetPool", new ServerPacketPool(this));
-        setProperty("userPool", userPool);
+        logicPool.init();
         
         reader = new ServerReader(this);
         reader.start();
+        
         isRunning = true;
         
-        this.logic = logic;
-        logic.setServer(this);
-        logic.onOpen();
-        logic.start();
+        logicPool.start();
     }
     
     public final void close()
@@ -69,16 +70,9 @@ public abstract class GenericServer
             log(LogLevel.WARNING, new IllegalStateException("server is already closed"));
             return;
         }
+
+        logicPool.stop();
         
-        try
-        {
-            ThreadHelper.interruptAndWait(logic);
-        }
-        catch(InterruptedException e)
-        {
-            log(LogLevel.SEVERE, e);
-        }
-        logic.onClose();
         reader.interrupt();
         socket.close();
         
@@ -134,10 +128,5 @@ public abstract class GenericServer
     public final boolean hasProperty(String name)
     {
         return properties.containsKey(name);
-    }
-    
-    public final void clearProperties()
-    {
-        properties.clear();
     }
 }

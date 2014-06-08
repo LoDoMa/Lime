@@ -13,6 +13,8 @@ import net.lodoma.lime.server.generic.net.packet.ServerPacketPool;
 class ServerReader extends Thread
 {
     private GenericServer server;
+    private ServerPacketPool packetPool;
+    private UserPool userPool;
     
     public ServerReader(GenericServer server)
     {
@@ -21,6 +23,9 @@ class ServerReader extends Thread
     
     public void run()
     {
+        packetPool = (ServerPacketPool) server.getProperty("packetPool");
+        userPool = (UserPool) server.getProperty("userPool");
+        
         while (!this.isInterrupted())
         {
             byte[] data = new byte[NetworkSettings.MAX_PACKET_SIZE];
@@ -31,7 +36,7 @@ class ServerReader extends Thread
             }
             catch (IOException e)
             {
-                if((e instanceof SocketException) && e.getMessage().equals("socket closed"))
+                if((e instanceof SocketException) && e.getMessage().toLowerCase().equals("socket closed"))
                     break;
                 server.log(LogLevel.SEVERE, e);
             }
@@ -45,9 +50,7 @@ class ServerReader extends Thread
             byte[] other = new byte[buffer.remaining()];
             buffer.get(other);
             
-            ServerUser user = server.userPool.getUser(address, port);
-            ServerPacketPool packetPool = (ServerPacketPool) server.getProperty("packetPool");
-            packetPool.getHandler(id).handlePacket(server, user, other);
+            packetPool.getHandler(id).handlePacket(server, userPool.getUser(address, port), other);
         }
     }
 }

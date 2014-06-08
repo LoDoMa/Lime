@@ -6,12 +6,10 @@ import net.lodoma.lime.client.generic.net.packet.ClientPacketPool;
 import net.lodoma.lime.client.net.packet.CPConnectRequest;
 import net.lodoma.lime.client.net.packet.CPDependencyRequest;
 import net.lodoma.lime.client.net.packet.CPHConnectRequestAnswer;
-import net.lodoma.lime.client.net.packet.CPHResponse;
 import net.lodoma.lime.client.net.packet.CPHUserStatus;
-import net.lodoma.lime.client.net.packet.CPResponseRequest;
 import net.lodoma.lime.common.net.NetStage;
 
-public class BaseLogic implements ClientLogic
+public class CLBase implements ClientLogic
 {
     private GenericClient client;
     private ClientPacketPool packetPool;
@@ -42,8 +40,6 @@ public class BaseLogic implements ClientLogic
         packetPool.addHandler("Lime::ConnectRequestAnswer", new CPHConnectRequestAnswer());
         packetPool.addPacket("Lime::DependencyRequest", new CPDependencyRequest());
         packetPool.addHandler("Lime::UserStatus", new CPHUserStatus());
-        packetPool.addPacket("Lime::ResponseRequest", new CPResponseRequest());
-        packetPool.addHandler("Lime::Response", new CPHResponse());
     }
     
     private boolean first = true;

@@ -7,7 +7,7 @@ import net.lodoma.lime.util.ThreadHelper;
 import net.lodoma.limemod.net.chat.ChatConsole;
 import net.lodoma.limemod.net.chat.ChatManager;
 
-public class ChatLogic implements ClientLogic
+public class CLChat implements ClientLogic
 {
     private GenericClient client;
     
