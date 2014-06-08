@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.lwjgl.opengl.GL11;
+
 import net.lodoma.lime.util.BinaryHelper;
 
 /* Disable formatting
@@ -149,6 +151,22 @@ public class World
     
     public void render()
     {
-        
+        // TODO: use display lists
+        for(int y = 0; y < height; y++)
+            for(int x = 0; x < width; x++)
+            {
+                byte tileShape = getTileShape(x, y);
+                GL11.glColor3f(x / (float) width, y / (float) height, 0.0f);
+                GL11.glBegin(GL11.GL_POLYGON);
+                if((tileShape & MASK_TILESHAPE_BOTTOM_LEFT) != 0) GL11.glVertex2f(x + 0.0f, y + 0.0f);
+                if((tileShape & MASK_TILESHAPE_BOTTOM_MIDDLE) != 0) GL11.glVertex2f(x + 0.5f, y + 0.0f);
+                if((tileShape & MASK_TILESHAPE_BOTTOM_RIGHT) != 0) GL11.glVertex2f(x + 1.0f, y + 0.0f);
+                if((tileShape & MASK_TILESHAPE_MIDDLE_RIGHT) != 0) GL11.glVertex2f(x + 1.0f, y + 0.5f);
+                if((tileShape & MASK_TILESHAPE_TOP_RIGHT) != 0) GL11.glVertex2f(x + 1.0f, y + 1.0f);
+                if((tileShape & MASK_TILESHAPE_TOP_MIDDLE) != 0) GL11.glVertex2f(x + 0.5f, y + 1.0f);
+                if((tileShape & MASK_TILESHAPE_TOP_LEFT) != 0) GL11.glVertex2f(x + 0.0f, y + 1.0f);
+                if((tileShape & MASK_TILESHAPE_MIDDLE_LEFT) != 0) GL11.glVertex2f(x + 0.0f, y + 0.5f);
+                GL11.glEnd();
+            }
     }
 }

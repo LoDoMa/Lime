@@ -13,7 +13,7 @@ public class WorldFileLoader implements WorldBuilder
         World world = new World();
         world.init(256, 256);
         
-        Random random = new Random(98325);
+        Random random = new Random();
         for(int y = 0; y < world.getHeight(); y++)
             for(int x = 0; x < world.getWidth(); x++)
             {
@@ -23,7 +23,7 @@ public class WorldFileLoader implements WorldBuilder
                 
                 for(int i = 0; i < 8; i++)
                     if(random.nextInt(2) == 0)
-                        BinaryHelper.setOn(tileshape, 1 << i);
+                        tileshape = BinaryHelper.setOn(tileshape, 1 << i);
                 
                 world.setTileInfo(x, y, tileinfo);
                 world.setTileShape(x, y, tileshape);
