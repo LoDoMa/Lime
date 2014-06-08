@@ -4,6 +4,8 @@ import java.util.Random;
 
 import net.lodoma.lime.util.BinaryHelper;
 import net.lodoma.lime.world.World;
+import net.lodoma.lime.world.material.MaterialAir;
+import net.lodoma.lime.world.material.MaterialDirt;
 
 public class WorldFileLoader implements WorldBuilder
 {
@@ -12,6 +14,9 @@ public class WorldFileLoader implements WorldBuilder
     {
         World world = new World();
         world.init(256, 256);
+
+        world.setMaterialID((short) 0, new MaterialAir());
+        world.setMaterialID((short) 1, new MaterialDirt());
         
         Random random = new Random();
         for(int y = 0; y < world.getHeight(); y++)

@@ -8,6 +8,7 @@ import java.util.Set;
 import org.lwjgl.opengl.GL11;
 
 import net.lodoma.lime.util.BinaryHelper;
+import net.lodoma.lime.world.material.Material;
 
 /* Disable formatting
  * @formatter:off
@@ -97,11 +98,6 @@ public class World
     public final void setHeight(int height)
     {
         this.height = height;
-    }
-
-    public static final byte getTileshapeSloperightYflip()
-    {
-        return TILESHAPE_SLOPERIGHT_YFLIP;
     }
 
     public Material getMaterial(short id)
