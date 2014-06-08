@@ -1,16 +1,18 @@
 package net.lodoma.lime.world.material;
 
+import net.lodoma.lime.util.AnnotationHelper;
+import net.lodoma.lime.world.material.property.Rendered;
+import net.lodoma.lime.world.material.property.Solid;
+
+@Solid
 public abstract class Material
 {
-    private boolean solid;
+    public final boolean solid;
+    public final boolean rendered;
     
-    public final boolean isSolid()
+    public Material()
     {
-        return solid;
-    }
-    
-    protected final void setSolid(boolean solid)
-    {
-        this.solid = solid;
+        solid = AnnotationHelper.isAnnotationPresent(getClass(), Solid.class);
+        rendered = AnnotationHelper.isAnnotationPresent(getClass(), Rendered.class);
     }
 }

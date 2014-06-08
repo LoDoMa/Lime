@@ -151,6 +151,10 @@ public class World
         for(int y = 0; y < height; y++)
             for(int x = 0; x < width; x++)
             {
+                short tileMaterial = getTileMaterial(x, y);
+                if(!materialMap.get(tileMaterial).rendered)
+                    continue;
+                
                 byte tileShape = getTileShape(x, y);
                 GL11.glColor3f(x / (float) width, y / (float) height, 0.0f);
                 GL11.glBegin(GL11.GL_POLYGON);
