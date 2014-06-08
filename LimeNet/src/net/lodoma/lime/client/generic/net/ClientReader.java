@@ -33,7 +33,7 @@ class ClientReader extends Thread
             }
             catch (IOException e)
             {
-                if((e instanceof SocketException) && e.getMessage().equals("Socket closed"))
+                if((e instanceof SocketException) && e.getMessage().toLowerCase().equals("socket closed"))
                     break;
                 client.log(LogLevel.SEVERE, e);
             }
