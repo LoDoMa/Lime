@@ -1,9 +1,9 @@
 package net.lodoma.lime.server.logic;
 
+import net.lodoma.lime.chat.packet.server.SPChatMessage;
+import net.lodoma.lime.chat.packet.server.SPHChatMessage;
 import net.lodoma.lime.server.generic.GenericServer;
 import net.lodoma.lime.server.generic.net.packet.ServerPacketPool;
-import net.lodoma.limemod.net.chat.packet.server.SPChatMessage;
-import net.lodoma.limemod.net.chat.packet.server.SPHChatMessage;
 
 public class SLChat implements ServerLogic
 {

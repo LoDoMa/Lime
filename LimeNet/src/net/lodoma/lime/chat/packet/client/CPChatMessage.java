@@ -1,4 +1,4 @@
-package net.lodoma.limemod.net.chat.packet.client;
+package net.lodoma.lime.chat.packet.client;
 
 import java.nio.ByteBuffer;
 
