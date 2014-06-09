@@ -44,6 +44,21 @@ public class WorldChunk
             changes.get(user).add((long) x << 32 | y);
     }
     
+    public byte getInfo(int x, int y)
+    {
+        return info[y * width + x];
+    }
+    
+    public byte getShape(int x, int y)
+    {
+        return shape[y * width + x];
+    }
+    
+    public short getMaterial(int x, int y)
+    {
+        return material[y * width + x];
+    }
+    
     public void setInfo(int x, int y, byte v)
     {
         if(info[y * width + x] != v)

@@ -156,7 +156,6 @@ public class World
                     continue;
                 
                 byte tileShape = getTileShape(x, y);
-                GL11.glColor3f(x / (float) width, y / (float) height, 0.0f);
                 GL11.glBegin(GL11.GL_POLYGON);
                 if((tileShape & MASK_TILESHAPE_BOTTOM_LEFT) != 0) GL11.glVertex2f(x + 0.0f, y + 0.0f);
                 if((tileShape & MASK_TILESHAPE_BOTTOM_MIDDLE) != 0) GL11.glVertex2f(x + 0.5f, y + 0.0f);

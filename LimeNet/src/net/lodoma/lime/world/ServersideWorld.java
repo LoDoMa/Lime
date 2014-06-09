@@ -2,6 +2,7 @@ package net.lodoma.lime.world;
 
 import net.lodoma.lime.server.generic.GenericServer;
 import net.lodoma.lime.server.generic.UserPool;
+import net.lodoma.lime.world.material.Material;
 
 public class ServersideWorld
 {
@@ -48,5 +49,42 @@ public class ServersideWorld
                 chunks[y * chunkAX + x] = new WorldChunk(this, cw, ch, userPool);
             }
         }
+    }
+    
+    public byte getTileInfo(int x, int y)
+    {
+        return chunks[(y / chunkh) * chunkAX + (x / chunkw)].getInfo(x % chunkw, y % chunkh);
+    }
+    
+    public byte getTileShape(int x, int y)
+    {
+        return chunks[(y / chunkh) * chunkAX + (x / chunkw)].getShape(x % chunkw, y % chunkh);
+    }
+    
+    public short getTileMaterial(int x, int y)
+    {
+        return chunks[(y / chunkh) * chunkAX + (x / chunkw)].getMaterial(x % chunkw, y % chunkh);
+    }
+    
+    public void setTileInfo(int x, int y, byte info)
+    {
+        chunks[(y / chunkh) * chunkAX + (x / chunkw)].setInfo(x % chunkw, y % chunkh, info);
+    }
+    
+    public void setTileShape(int x, int y, byte shape)
+    {
+        chunks[(y / chunkh) * chunkAX + (x / chunkw)].setShape(x % chunkw, y % chunkh, shape);
+    }
+    
+    public void setTileMaterial(int x, int y, short material)
+    {
+        chunks[(y / chunkh) * chunkAX + (x / chunkw)].setMaterial(x % chunkw, y % chunkh, material);
+    }
+    
+    public void update(float timeDelta)
+    {
+        for(int y = 0; y < chunkAY; y++)
+            for(int x = 0; x < chunkAX; x++)
+                chunks[y * chunkAX + x].update();
     }
 }

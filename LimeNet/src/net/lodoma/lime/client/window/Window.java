@@ -78,7 +78,7 @@ public class Window
         
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glLoadIdentity();
-        GL11.glOrtho(0.0f, 100.0f, 0.0f, 100.0f, -1.0f, 1.0f);
+        GL11.glOrtho(0.0f, 10.0f, 0.0f, 10.0f, -1.0f, 1.0f);
         
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
