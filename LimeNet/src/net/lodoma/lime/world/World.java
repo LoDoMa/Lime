@@ -92,9 +92,9 @@ public class World
         palette.clear();
     }
     
-    public void recieveDimensions(int width, int height)
+    public void receiveDimensions(int width, int height)
     {
-        System.out.println("recieved dimensions");
+        System.out.println("received dimensions");
         
         this.width = width;
         this.height = height;
@@ -106,17 +106,17 @@ public class World
         packetPool.getPacket("Lime::WorldPaletteRequest").send(client);
     }
     
-    public void recievePalette(byte[] content)
+    public void receivePalette(byte[] content)
     {
-        System.out.println("recieved palette");
+        System.out.println("received palette");
         palette.put((short) 0, new MaterialAir());
         palette.put((short) 1, new MaterialDirt());
         packetPool.getPacket("Lime::WorldChunksRequest").send(client);
     }
     
-    public void recieveChunk(int cx, int cy, int cw, int ch, byte[] content)
+    public void receiveChunk(int cx, int cy, int cw, int ch, byte[] content)
     {
-        System.out.println("recieved chunk " + cx + " " + cy);
+        System.out.println("received chunk " + cx + " " + cy);
         
         ByteBuffer buffer = ByteBuffer.wrap(content);
         for(int y = 0; y < ch; y++)

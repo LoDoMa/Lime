@@ -16,6 +16,6 @@ public class CPHWorldDimensions extends ClientPacketHandler
         int height = buffer.getInt();
         
         World world = (World) client.getProperty("world");
-        world.recieveDimensions(width, height);
+        world.receiveDimensions(width, height);
     }
 }

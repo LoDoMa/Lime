@@ -10,6 +10,6 @@ public class CPHWorldPalette extends ClientPacketHandler
     public void handle(GenericClient client, byte[] data)
     {
         World world = (World) client.getProperty("world");
-        world.recievePalette(data);
+        world.receivePalette(data);
     }
 }

@@ -19,6 +19,6 @@ public class CPHWorldChunk extends ClientPacketHandler
         byte[] c = new byte[buffer.remaining()];
         buffer.get(c);
         World world = (World) client.getProperty("world");
-        world.recieveChunk(x, y, w, h, c);
+        world.receiveChunk(x, y, w, h, c);
     }
 }
