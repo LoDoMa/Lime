@@ -62,7 +62,6 @@ public class VisualInstance
     {
         if(client.isRunning())
             client.close();
-        
         Window.close();
     }
     

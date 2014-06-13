@@ -2,7 +2,9 @@ package net.lodoma.lime.world;
 
 import java.nio.ByteBuffer;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import net.lodoma.lime.server.generic.GenericServer;
 import net.lodoma.lime.server.generic.ServerUser;
@@ -70,6 +72,11 @@ public class ServersideWorld
     public int getHeight()
     {
         return height;
+    }
+    
+    public Set<Short> getPaletteKeySet()
+    {
+        return new HashSet<Short>(palette.keySet());
     }
     
     public Material getPaletteMember(short paletteKey)

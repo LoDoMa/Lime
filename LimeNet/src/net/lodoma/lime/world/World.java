@@ -3,14 +3,14 @@ package net.lodoma.lime.world;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import net.lodoma.lime.client.generic.net.GenericClient;
 import net.lodoma.lime.client.generic.net.packet.ClientPacketPool;
 import net.lodoma.lime.common.net.NetStage;
+import net.lodoma.lime.texture.TexturePool;
 import net.lodoma.lime.util.BinaryHelper;
 import net.lodoma.lime.world.material.Material;
-import net.lodoma.lime.world.material.MaterialAir;
-import net.lodoma.lime.world.material.MaterialDirt;
 
 import org.lwjgl.opengl.GL11;
 
@@ -55,6 +55,7 @@ public class World
     
     private GenericClient client;
     private ClientPacketPool packetPool;
+    private TexturePool texturePool;
     private boolean startedSequence;
     
     private int width;
@@ -75,7 +76,8 @@ public class World
     
     public void fetch()
     {
-        packetPool = (ClientPacketPool) client.getProperty("packetPool");       
+        packetPool = (ClientPacketPool) client.getProperty("packetPool");
+        texturePool = (TexturePool) client.getProperty("texturePool");
     }
     
     public void reset()
@@ -94,8 +96,6 @@ public class World
     
     public void receiveDimensions(int width, int height)
     {
-        System.out.println("received dimensions");
-        
         this.width = width;
         this.height = height;
         
@@ -108,16 +108,25 @@ public class World
     
     public void receivePalette(byte[] content)
     {
-        System.out.println("received palette");
-        palette.put((short) 0, new MaterialAir());
-        palette.put((short) 1, new MaterialDirt());
+        palette.clear();
+        ByteBuffer buffer = ByteBuffer.wrap(content);
+        int count = buffer.getInt();
+        while((count--) != 0)
+        {
+            short key = buffer.getShort();
+            long least = buffer.getLong();
+            long most = buffer.getLong();
+            UUID uuid = new UUID(most, least);
+            System.out.println("material " + key + ": " + uuid);
+            Material material = new Material(uuid);
+            palette.put(key, material);
+        }
+        
         packetPool.getPacket("Lime::WorldChunksRequest").send(client);
     }
     
     public void receiveChunk(int cx, int cy, int cw, int ch, byte[] content)
     {
-        System.out.println("received chunk " + cx + " " + cy);
-        
         ByteBuffer buffer = ByteBuffer.wrap(content);
         for(int y = 0; y < ch; y++)
             for(int x = 0; x < cw; x++)
@@ -188,22 +197,32 @@ public class World
                 for(int x = 0; x < width; x++)
                 {
                     short tileMaterial = getTileMaterial(x, y);
-                    if(!palette.containsKey(tileMaterial))
-                        continue;
+                    Material material = palette.get(tileMaterial);
                     
-                    if(!palette.get(tileMaterial).rendered)
-                        continue;
+                    if(material == null) continue;
+                    
+                    if(!material.rendered) continue;
+                    if(material.texture != 0)
+                        texturePool.getTexture(material.texture).bind();
                     
                     byte tileShape = getTileShape(x, y);
                     GL11.glBegin(GL11.GL_POLYGON);
-                    if((tileShape & MASK_TILESHAPE_BOTTOM_LEFT) != 0) GL11.glVertex2f(x + 0.0f, y + 0.0f);
-                    if((tileShape & MASK_TILESHAPE_BOTTOM_MIDDLE) != 0) GL11.glVertex2f(x + 0.5f, y + 0.0f);
-                    if((tileShape & MASK_TILESHAPE_BOTTOM_RIGHT) != 0) GL11.glVertex2f(x + 1.0f, y + 0.0f);
-                    if((tileShape & MASK_TILESHAPE_MIDDLE_RIGHT) != 0) GL11.glVertex2f(x + 1.0f, y + 0.5f);
-                    if((tileShape & MASK_TILESHAPE_TOP_RIGHT) != 0) GL11.glVertex2f(x + 1.0f, y + 1.0f);
-                    if((tileShape & MASK_TILESHAPE_TOP_MIDDLE) != 0) GL11.glVertex2f(x + 0.5f, y + 1.0f);
-                    if((tileShape & MASK_TILESHAPE_TOP_LEFT) != 0) GL11.glVertex2f(x + 0.0f, y + 1.0f);
-                    if((tileShape & MASK_TILESHAPE_MIDDLE_LEFT) != 0) GL11.glVertex2f(x + 0.0f, y + 0.5f);
+                    if((tileShape & MASK_TILESHAPE_BOTTOM_LEFT) != 0)
+                        {GL11.glTexCoord2f(0.0f, 1.0f); GL11.glVertex2f(x + 0.0f, y + 0.0f);}
+                    if((tileShape & MASK_TILESHAPE_BOTTOM_MIDDLE) != 0)
+                        {GL11.glTexCoord2f(0.5f, 1.0f); GL11.glVertex2f(x + 0.5f, y + 0.0f);}
+                    if((tileShape & MASK_TILESHAPE_BOTTOM_RIGHT) != 0)
+                        {GL11.glTexCoord2f(1.0f, 1.0f); GL11.glVertex2f(x + 1.0f, y + 0.0f);}
+                    if((tileShape & MASK_TILESHAPE_MIDDLE_RIGHT) != 0)
+                        {GL11.glTexCoord2f(1.0f, 0.5f); GL11.glVertex2f(x + 1.0f, y + 0.5f);}
+                    if((tileShape & MASK_TILESHAPE_TOP_RIGHT) != 0)
+                        {GL11.glTexCoord2f(1.0f, 0.0f); GL11.glVertex2f(x + 1.0f, y + 1.0f);}
+                    if((tileShape & MASK_TILESHAPE_TOP_MIDDLE) != 0)
+                        {GL11.glTexCoord2f(0.5f, 0.0f); GL11.glVertex2f(x + 0.5f, y + 1.0f);}
+                    if((tileShape & MASK_TILESHAPE_TOP_LEFT) != 0)
+                        {GL11.glTexCoord2f(0.0f, 0.0f); GL11.glVertex2f(x + 0.0f, y + 1.0f);}
+                    if((tileShape & MASK_TILESHAPE_MIDDLE_LEFT) != 0)
+                        {GL11.glTexCoord2f(0.0f, 0.5f); GL11.glVertex2f(x + 0.0f, y + 0.5f);}
                     GL11.glEnd();
                 }
         }
