@@ -4,7 +4,7 @@ import java.nio.ByteBuffer;
 
 import net.lodoma.lime.client.generic.net.GenericClient;
 import net.lodoma.lime.client.generic.net.packet.ClientPacketHandler;
-import net.lodoma.lime.world.World;
+import net.lodoma.lime.world.ClientsideWorld;
 
 public class CPHWorldDimensions extends ClientPacketHandler
 {
@@ -15,7 +15,7 @@ public class CPHWorldDimensions extends ClientPacketHandler
         int width = buffer.getInt();
         int height = buffer.getInt();
         
-        World world = (World) client.getProperty("world");
+        ClientsideWorld world = (ClientsideWorld) client.getProperty("world");
         world.receiveDimensions(width, height);
     }
 }

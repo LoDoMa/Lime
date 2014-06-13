@@ -2,7 +2,7 @@ package net.lodoma.lime.client.logic;
 
 import net.lodoma.lime.client.generic.net.GenericClient;
 import net.lodoma.lime.client.generic.net.packet.ClientPacketPool;
-import net.lodoma.lime.world.World;
+import net.lodoma.lime.world.ClientsideWorld;
 import net.lodoma.lime.world.client.packet.CPHWorldChunk;
 import net.lodoma.lime.world.client.packet.CPHWorldDimensions;
 import net.lodoma.lime.world.client.packet.CPHWorldPalette;
@@ -14,7 +14,7 @@ public class CLWorld implements ClientLogic
 {
     private GenericClient client;
     private ClientPacketPool packetPool;
-    private World world;
+    private ClientsideWorld world;
     
     @Override
     public void baseInit(GenericClient client)
@@ -25,14 +25,14 @@ public class CLWorld implements ClientLogic
     @Override
     public void propertyInit()
     {
-        client.setProperty("world", new World(client));
+        client.setProperty("world", new ClientsideWorld(client));
     }
     
     @Override
     public void fetchInit()
     {
         packetPool = (ClientPacketPool) client.getProperty("packetPool");
-        world = (World) client.getProperty("world");
+        world = (ClientsideWorld) client.getProperty("world");
         world.fetch();
     }
     

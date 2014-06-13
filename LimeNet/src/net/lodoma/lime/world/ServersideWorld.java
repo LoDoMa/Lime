@@ -11,7 +11,7 @@ import net.lodoma.lime.server.generic.ServerUser;
 import net.lodoma.lime.server.generic.net.packet.ServerPacketPool;
 import net.lodoma.lime.world.material.Material;
 
-public class ServersideWorld
+public class ServersideWorld implements TileGrid
 {
     /* limit: NetworkSettings.MAX_PACKET_SIZE */
     private static final int CHUNKW = 30;
@@ -110,31 +110,37 @@ public class ServersideWorld
         paletteLock = true;
     }
     
+    @Override
     public byte getTileInfo(int x, int y)
     {
         return chunks[(y / CHUNKH) * chunkAX + (x / CHUNKW)].getInfo(x % CHUNKW, y % CHUNKH);
     }
     
+    @Override
     public byte getTileShape(int x, int y)
     {
         return chunks[(y / CHUNKH) * chunkAX + (x / CHUNKW)].getShape(x % CHUNKW, y % CHUNKH);
     }
     
+    @Override
     public short getTileMaterial(int x, int y)
     {
         return chunks[(y / CHUNKH) * chunkAX + (x / CHUNKW)].getMaterial(x % CHUNKW, y % CHUNKH);
     }
     
+    @Override
     public void setTileInfo(int x, int y, byte info)
     {
         chunks[(y / CHUNKH) * chunkAX + (x / CHUNKW)].setInfo(x % CHUNKW, y % CHUNKH, info);
     }
     
+    @Override
     public void setTileShape(int x, int y, byte shape)
     {
         chunks[(y / CHUNKH) * chunkAX + (x / CHUNKW)].setShape(x % CHUNKW, y % CHUNKH, shape);
     }
     
+    @Override
     public void setTileMaterial(int x, int y, short material)
     {
         chunks[(y / CHUNKH) * chunkAX + (x / CHUNKW)].setMaterial(x % CHUNKW, y % CHUNKH, material);

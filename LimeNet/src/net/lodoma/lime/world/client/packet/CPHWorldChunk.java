@@ -4,7 +4,7 @@ import java.nio.ByteBuffer;
 
 import net.lodoma.lime.client.generic.net.GenericClient;
 import net.lodoma.lime.client.generic.net.packet.ClientPacketHandler;
-import net.lodoma.lime.world.World;
+import net.lodoma.lime.world.ClientsideWorld;
 
 public class CPHWorldChunk extends ClientPacketHandler
 {
@@ -18,7 +18,7 @@ public class CPHWorldChunk extends ClientPacketHandler
         int h = buffer.getInt();
         byte[] c = new byte[buffer.remaining()];
         buffer.get(c);
-        World world = (World) client.getProperty("world");
+        ClientsideWorld world = (ClientsideWorld) client.getProperty("world");
         world.receiveChunk(x, y, w, h, c);
     }
 }

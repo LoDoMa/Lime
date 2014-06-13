@@ -4,7 +4,7 @@ import net.lodoma.lime.client.net.LimeClient;
 import net.lodoma.lime.client.window.DisplayModeSearchException;
 import net.lodoma.lime.client.window.InvalidWindowPropertyException;
 import net.lodoma.lime.client.window.Window;
-import net.lodoma.lime.world.World;
+import net.lodoma.lime.world.ClientsideWorld;
 
 public class VisualInstance
 {
@@ -43,7 +43,7 @@ public class VisualInstance
             
             if(client.hasProperty("world"))
             {
-                World world = (World) client.getProperty("world");
+                ClientsideWorld world = (ClientsideWorld) client.getProperty("world");
                 world.render();
             }
             

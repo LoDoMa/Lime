@@ -17,7 +17,7 @@ import org.lwjgl.opengl.GL11;
 /* Disable formatting
  * @formatter:off
  */
-public class World
+public class ClientsideWorld implements TileGrid
 {
     public static final int MASK_TILEINFO_METADATA = 0b00000001;
     public static final int MASK_TILEINFO_REFRESHED = 0b00000010;
@@ -67,7 +67,7 @@ public class World
     
     private Map<Short, Material> palette;
     
-    public World(GenericClient client)
+    public ClientsideWorld(GenericClient client)
     {
         this.client = client;
         palette = new HashMap<Short, Material>();
@@ -147,31 +147,37 @@ public class World
         return height;
     }
     
+    @Override
     public byte getTileInfo(int x, int y)
     {
         return tileInfo[y * width + x];
     }
-    
+
+    @Override
     public byte getTileShape(int x, int y)
     {
         return tileShape[y * width + x];
     }
-    
+
+    @Override
     public short getTileMaterial(int x, int y)
     {
         return tileMaterial[y * width + x];
     }
     
+    @Override
     public void setTileInfo(int x, int y, byte info)
     {
         tileInfo[y * width + x] = info;
     }
     
+    @Override
     public void setTileShape(int x, int y, byte shape)
     {
         tileShape[y * width + x] = shape;
     }
     
+    @Override
     public void setTileMaterial(int x, int y, short material)
     {
         tileMaterial[y * width + x] = material;
