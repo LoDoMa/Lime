@@ -57,7 +57,7 @@ public class ServersideWorld
             for(int x = 0; x < chunkAX; x++)
             {
                 int cw = (width - x * CHUNKW) < CHUNKW ? width % CHUNKW : CHUNKW;
-                chunks[y * chunkAX + x] = new WorldChunk(this, cw, ch);
+                chunks[y * chunkAX + x] = new WorldChunk(cw, ch);
             }
         }
         

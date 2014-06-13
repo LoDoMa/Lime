@@ -4,9 +4,6 @@ import java.nio.ByteBuffer;
 
 public class WorldChunk
 {
-    // TODO: suppress warnings or remove field, the field is not used but might be in future
-    private ServersideWorld world;
-    
     private int width;
     private int height;
     
@@ -16,10 +13,8 @@ public class WorldChunk
     
     private boolean locked;
     
-    public WorldChunk(ServersideWorld world, int width, int height)
+    public WorldChunk(int width, int height)
     {
-        this.world = world;
-        
         this.width = width;
         this.height = height;
         
