@@ -1,11 +1,20 @@
 package net.lodoma.lime.server.logic;
 
 import net.lodoma.lime.server.generic.GenericServer;
+import net.lodoma.lime.server.generic.net.packet.ServerPacketPool;
 import net.lodoma.lime.world.ServersideWorld;
+import net.lodoma.lime.world.builder.WorldFileLoader;
+import net.lodoma.lime.world.server.packet.SPHWorldChunksRequest;
+import net.lodoma.lime.world.server.packet.SPHWorldDimensionRequest;
+import net.lodoma.lime.world.server.packet.SPHWorldPaletteRequest;
+import net.lodoma.lime.world.server.packet.SPWorldChunk;
+import net.lodoma.lime.world.server.packet.SPWorldDimensions;
+import net.lodoma.lime.world.server.packet.SPWorldPalette;
 
 public class SLWorld implements ServerLogic
 {
     private GenericServer server;
+    private ServerPacketPool packetPool;
     private ServersideWorld world;
     
     @Override
@@ -23,6 +32,7 @@ public class SLWorld implements ServerLogic
     @Override
     public void fetchInit()
     {
+        packetPool = (ServerPacketPool) server.getProperty("packetPool");
         world = (ServersideWorld) server.getProperty("world");
         world.fetch();
     }
@@ -30,7 +40,17 @@ public class SLWorld implements ServerLogic
     @Override
     public void generalInit()
     {
+        packetPool.addHandler("Lime::WorldDimensionRequest", new SPHWorldDimensionRequest());
+        packetPool.addPacket("Lime::WorldDimensions", new SPWorldDimensions());
         
+        packetPool.addHandler("Lime::WorldPaletteRequest", new SPHWorldPaletteRequest());
+        packetPool.addPacket("Lime::WorldPalette", new SPWorldPalette());
+
+        packetPool.addHandler("Lime::WorldChunksRequest", new SPHWorldChunksRequest());
+        packetPool.addPacket("Lime::WorldChunk", new SPWorldChunk());
+        
+        WorldFileLoader fileLoader = new WorldFileLoader();
+        fileLoader.build(world);
     }
     
     @Override

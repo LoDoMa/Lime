@@ -13,6 +13,7 @@ import net.lodoma.lime.common.net.NetworkSettings;
 import net.lodoma.lime.server.logic.SLBase;
 import net.lodoma.lime.server.logic.SLChat;
 import net.lodoma.lime.server.logic.SLConnectionCheck;
+import net.lodoma.lime.server.logic.SLWorld;
 import net.lodoma.lime.server.logic.ServerLogicPool;
 
 public abstract class GenericServer
@@ -53,6 +54,7 @@ public abstract class GenericServer
         logicPool.addLogic(new SLBase());
         logicPool.addLogic(new SLConnectionCheck());
         logicPool.addLogic(new SLChat());
+        logicPool.addLogic(new SLWorld());
         
         logicPool.init();
         

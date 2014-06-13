@@ -1,15 +1,10 @@
 package net.lodoma.lime.world;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import net.lodoma.lime.server.generic.ServerUser;
-import net.lodoma.lime.server.generic.UserPool;
+import java.nio.ByteBuffer;
 
 public class WorldChunk
 {
+    // TODO: suppress warnings or remove field, the field is not used but might be in future
     private ServersideWorld world;
     
     private int width;
@@ -19,10 +14,9 @@ public class WorldChunk
     private byte[] shape;
     private short[] material;
     
-    private UserPool userPool;
-    private Map<ServerUser, Set<Long>> changes;
+    private boolean locked;
     
-    public WorldChunk(ServersideWorld world, int width, int height, UserPool userPool)
+    public WorldChunk(ServersideWorld world, int width, int height)
     {
         this.world = world;
         
@@ -33,15 +27,33 @@ public class WorldChunk
         this.shape = new byte[width * height];
         this.material = new short[width * height];
         
-        this.userPool = userPool;
-        this.changes = new HashMap<ServerUser, Set<Long>>();
+        this.locked = false;
     }
     
-    private void reportChange(int x, int y)
+    public void setInfo(int x, int y, byte v)
     {
-        Set<ServerUser> users = userPool.getUserSet();
-        for(ServerUser user : users)
-            changes.get(user).add((long) x << 32 | y);
+        if(locked)
+            throw new LockedChunkModificationException();
+        info[y * width + x] = v;
+    }
+    
+    public void setShape(int x, int y, byte v)
+    {
+        if(locked)
+            throw new LockedChunkModificationException();
+        shape[y * width + x] = v;
+    }
+    
+    public void setMaterial(int x, int y, short v)
+    {
+        if(locked)
+            throw new LockedChunkModificationException();
+        material[y * width + x] = v;
+    }
+    
+    public void lockState()
+    {
+        locked = true;
     }
     
     public byte getInfo(int x, int y)
@@ -59,53 +71,16 @@ public class WorldChunk
         return material[y * width + x];
     }
     
-    public void setInfo(int x, int y, byte v)
+    public ByteBuffer build()
     {
-        if(info[y * width + x] != v)
-        {
-            info[y * width + x] = v;
-            reportChange(x, y);
-        }
-    }
-    
-    public void setShape(int x, int y, byte v)
-    {
-        if(shape[y * width + x] != v)
-        {
-            shape[y * width + x] = v;
-            reportChange(x, y);
-        }
-    }
-    
-    public void setMaterial(int x, int y, short v)
-    {
-        if(material[y * width + x] != v)
-        {
-            material[y * width + x] = v;
-            reportChange(x, y);
-        }
-    }
-    
-    public void activeUser(ServerUser user)
-    {
-        if(!changes.containsKey(user))
-        {
-            Set<Long> set = new HashSet<Long>();
+        ByteBuffer buffer = ByteBuffer.allocate(width * height * 4);
+        for(int y = 0; y < height; y++)
             for(int x = 0; x < width; x++)
-                for(int y = 0; y < height; y++)
-                    set.add((long) x << 32 | y);
-            changes.put(user, set);
-        }
-    }
-    
-    public void inactiveUser(ServerUser user)
-    {
-        if(changes.containsKey(user))
-            changes.remove(user);
-    }
-    
-    public void update()
-    {
-        
+            {
+                buffer.put(info[y * width + x]);
+                buffer.put(shape[y * width + x]);
+                buffer.putShort(material[y * width + x]);
+            }
+        return buffer;
     }
 }

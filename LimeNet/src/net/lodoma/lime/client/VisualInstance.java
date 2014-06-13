@@ -5,19 +5,13 @@ import net.lodoma.lime.client.window.DisplayModeSearchException;
 import net.lodoma.lime.client.window.InvalidWindowPropertyException;
 import net.lodoma.lime.client.window.Window;
 import net.lodoma.lime.world.World;
-import net.lodoma.lime.world.generator.WorldFileLoader;
 
 public class VisualInstance
 {
     private LimeClient client;
     
-    private World world;
-    
     private void init()
     {
-        WorldFileLoader fileLoader = new WorldFileLoader();
-        world = fileLoader.build();
-        
         client = new LimeClient();
         
         Window.setDimensions(800, 600);
@@ -46,7 +40,13 @@ public class VisualInstance
         while(!Window.isCloseRequested())
         {
             Window.clear();
-            world.render();
+            
+            if(client.hasProperty("world"))
+            {
+                World world = (World) client.getProperty("world");
+                world.render();
+            }
+            
             try
             {
                 Window.update();

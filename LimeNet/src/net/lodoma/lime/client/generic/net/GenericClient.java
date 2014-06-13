@@ -12,6 +12,7 @@ import java.util.Map;
 import net.lodoma.lime.client.logic.CLBase;
 import net.lodoma.lime.client.logic.CLChat;
 import net.lodoma.lime.client.logic.CLConnectionCheck;
+import net.lodoma.lime.client.logic.CLWorld;
 import net.lodoma.lime.client.logic.ClientLogicPool;
 import net.lodoma.lime.common.net.LogLevel;
 import net.lodoma.lime.common.net.NetworkSettings;
@@ -61,6 +62,7 @@ public abstract class GenericClient
         logicPool.addLogic(new CLBase());
         logicPool.addLogic(new CLConnectionCheck());
         logicPool.addLogic(new CLChat());
+        logicPool.addLogic(new CLWorld());
         
         logicPool.init();
         

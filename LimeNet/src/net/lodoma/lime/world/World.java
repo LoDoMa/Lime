@@ -1,14 +1,18 @@
 package net.lodoma.lime.world;
 
+import java.nio.ByteBuffer;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
-import org.lwjgl.opengl.GL11;
-
+import net.lodoma.lime.client.generic.net.GenericClient;
+import net.lodoma.lime.client.generic.net.packet.ClientPacketPool;
+import net.lodoma.lime.common.net.NetStage;
 import net.lodoma.lime.util.BinaryHelper;
 import net.lodoma.lime.world.material.Material;
+import net.lodoma.lime.world.material.MaterialAir;
+import net.lodoma.lime.world.material.MaterialDirt;
+
+import org.lwjgl.opengl.GL11;
 
 /* Disable formatting
  * @formatter:off
@@ -49,60 +53,89 @@ public class World
     public static final byte TILESHAPE_PILLAR_XFLIP = buildTileShape(false, true, true, false, true, true, false, false);
     public static final byte TILESHAPE_EMPTY = buildTileShape(false, false, false, false, false, false, false, false);
     
+    private GenericClient client;
+    private ClientPacketPool packetPool;
+    private boolean startedSequence;
+    
     private int width;
     private int height;
-    
-    private Map<Short, Material> materialMap;
     
     private byte[] tileInfo;
     private byte[] tileShape;
     private short[] tileMaterial;
     
-    private Set<Long> refreshTileSet;
+    private Map<Short, Material> palette;
     
-    public World()
+    public World(GenericClient client)
     {
-        materialMap = new HashMap<Short, Material>();
-        refreshTileSet = new HashSet<Long>();
+        this.client = client;
+        palette = new HashMap<Short, Material>();
+        reset();
     }
     
-    public void init(int width, int height)
+    public void fetch()
     {
+        packetPool = (ClientPacketPool) client.getProperty("packetPool");       
+    }
+    
+    public void reset()
+    {
+        startedSequence = false;
+        
+        width = 0;
+        height = 0;
+        
+        tileInfo = null;
+        tileShape = null;
+        tileMaterial = null;
+        
+        palette.clear();
+    }
+    
+    public void recieveDimensions(int width, int height)
+    {
+        System.out.println("recieved dimensions");
+        
         this.width = width;
         this.height = height;
         
-        materialMap.clear();
+        this.tileInfo = new byte[width * height];
+        this.tileShape = new byte[width * height];
+        this.tileMaterial = new short[width * height];
         
-        tileInfo = new byte[width * height];
-        tileShape = new byte[width * height];
-        tileMaterial = new short[width * height];
-        
-        refreshTileSet.clear();
+        packetPool.getPacket("Lime::WorldPaletteRequest").send(client);
     }
     
-    public final int getWidth()
+    public void recievePalette(byte[] content)
+    {
+        System.out.println("recieved palette");
+        palette.put((short) 0, new MaterialAir());
+        palette.put((short) 1, new MaterialDirt());
+        packetPool.getPacket("Lime::WorldChunksRequest").send(client);
+    }
+    
+    public void recieveChunk(int cx, int cy, int cw, int ch, byte[] content)
+    {
+        System.out.println("recieved chunk " + cx + " " + cy);
+        
+        ByteBuffer buffer = ByteBuffer.wrap(content);
+        for(int y = 0; y < ch; y++)
+            for(int x = 0; x < cw; x++)
+            {
+                setTileInfo(x + cx, y + cy, buffer.get());
+                setTileShape(x + cx, y + cy, buffer.get());
+                setTileMaterial(x + cx, y + cy, buffer.getShort());
+            }
+    }
+    
+    public int getWidth()
     {
         return width;
     }
 
-    public final void setWidth(int width)
-    {
-        this.width = width;
-    }
-
-    public final int getHeight()
+    public int getHeight()
     {
         return height;
-    }
-
-    public final void setHeight(int height)
-    {
-        this.height = height;
-    }
-
-    public Material getMaterial(short id)
-    {
-        return materialMap.get(id);
     }
     
     public byte getTileInfo(int x, int y)
@@ -118,11 +151,6 @@ public class World
     public short getTileMaterial(int x, int y)
     {
         return tileMaterial[y * width + x];
-    }
-    
-    public void setMaterialID(short id, Material material)
-    {
-        materialMap.put(id, material);
     }
     
     public void setTileInfo(int x, int y, byte info)
@@ -142,30 +170,42 @@ public class World
     
     public void update(float timeDelta)
     {
-        
+        if(!startedSequence && ((NetStage) client.getProperty("networkStage")) == NetStage.USER)
+        {
+            packetPool.getPacket("Lime::WorldDimensionRequest").send(client);
+            startedSequence = true;
+        }
     }
     
     public void render()
     {
-        // TODO: use display lists
-        for(int y = 0; y < height; y++)
-            for(int x = 0; x < width; x++)
-            {
-                short tileMaterial = getTileMaterial(x, y);
-                if(!materialMap.get(tileMaterial).rendered)
-                    continue;
-                
-                byte tileShape = getTileShape(x, y);
-                GL11.glBegin(GL11.GL_POLYGON);
-                if((tileShape & MASK_TILESHAPE_BOTTOM_LEFT) != 0) GL11.glVertex2f(x + 0.0f, y + 0.0f);
-                if((tileShape & MASK_TILESHAPE_BOTTOM_MIDDLE) != 0) GL11.glVertex2f(x + 0.5f, y + 0.0f);
-                if((tileShape & MASK_TILESHAPE_BOTTOM_RIGHT) != 0) GL11.glVertex2f(x + 1.0f, y + 0.0f);
-                if((tileShape & MASK_TILESHAPE_MIDDLE_RIGHT) != 0) GL11.glVertex2f(x + 1.0f, y + 0.5f);
-                if((tileShape & MASK_TILESHAPE_TOP_RIGHT) != 0) GL11.glVertex2f(x + 1.0f, y + 1.0f);
-                if((tileShape & MASK_TILESHAPE_TOP_MIDDLE) != 0) GL11.glVertex2f(x + 0.5f, y + 1.0f);
-                if((tileShape & MASK_TILESHAPE_TOP_LEFT) != 0) GL11.glVertex2f(x + 0.0f, y + 1.0f);
-                if((tileShape & MASK_TILESHAPE_MIDDLE_LEFT) != 0) GL11.glVertex2f(x + 0.0f, y + 0.5f);
-                GL11.glEnd();
-            }
+        if(tileInfo != null && tileShape != null && tileMaterial != null)
+        {
+            // tiles *should* be safe to render at this point
+            
+            // TODO: use display lists
+            for(int y = 0; y < height; y++)
+                for(int x = 0; x < width; x++)
+                {
+                    short tileMaterial = getTileMaterial(x, y);
+                    if(!palette.containsKey(tileMaterial))
+                        continue;
+                    
+                    if(!palette.get(tileMaterial).rendered)
+                        continue;
+                    
+                    byte tileShape = getTileShape(x, y);
+                    GL11.glBegin(GL11.GL_POLYGON);
+                    if((tileShape & MASK_TILESHAPE_BOTTOM_LEFT) != 0) GL11.glVertex2f(x + 0.0f, y + 0.0f);
+                    if((tileShape & MASK_TILESHAPE_BOTTOM_MIDDLE) != 0) GL11.glVertex2f(x + 0.5f, y + 0.0f);
+                    if((tileShape & MASK_TILESHAPE_BOTTOM_RIGHT) != 0) GL11.glVertex2f(x + 1.0f, y + 0.0f);
+                    if((tileShape & MASK_TILESHAPE_MIDDLE_RIGHT) != 0) GL11.glVertex2f(x + 1.0f, y + 0.5f);
+                    if((tileShape & MASK_TILESHAPE_TOP_RIGHT) != 0) GL11.glVertex2f(x + 1.0f, y + 1.0f);
+                    if((tileShape & MASK_TILESHAPE_TOP_MIDDLE) != 0) GL11.glVertex2f(x + 0.5f, y + 1.0f);
+                    if((tileShape & MASK_TILESHAPE_TOP_LEFT) != 0) GL11.glVertex2f(x + 0.0f, y + 1.0f);
+                    if((tileShape & MASK_TILESHAPE_MIDDLE_LEFT) != 0) GL11.glVertex2f(x + 0.0f, y + 0.5f);
+                    GL11.glEnd();
+                }
+        }
     }
 }

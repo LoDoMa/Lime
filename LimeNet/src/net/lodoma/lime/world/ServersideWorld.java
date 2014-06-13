@@ -1,90 +1,157 @@
 package net.lodoma.lime.world;
 
+import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
+
 import net.lodoma.lime.server.generic.GenericServer;
-import net.lodoma.lime.server.generic.UserPool;
+import net.lodoma.lime.server.generic.ServerUser;
+import net.lodoma.lime.server.generic.net.packet.ServerPacketPool;
 import net.lodoma.lime.world.material.Material;
 
 public class ServersideWorld
 {
+    /* limit: NetworkSettings.MAX_PACKET_SIZE */
+    private static final int CHUNKW = 30;
+    private static final int CHUNKH = 30;
+    
     private GenericServer server;
-    private UserPool userPool;
+    private ServerPacketPool packetPool;
     
     private int width;
     private int height;
-
-    private int chunkw;
-    private int chunkh;
+    
     private int chunkAX;
     private int chunkAY;
     
+    private Map<Short, Material> palette;
     private WorldChunk[] chunks;
+    
+    private boolean paletteLock;
     
     public ServersideWorld(GenericServer server)
     {
         this.server = server;
+        this.palette = new HashMap<Short, Material>();
     }
     
     public void fetch()
     {
-        userPool = (UserPool) server.getProperty("userPool");
+        packetPool = (ServerPacketPool) server.getProperty("packetPool");
     }
     
-    public void init(int width, int height, int chunkw, int chunkh)
+    public void init(int width, int height)
     {
         this.width = width;
         this.height = height;
-
-        this.chunkw = chunkw;
-        this.chunkh = chunkh;
-        chunkAX = width / chunkw + ((width % chunkw != 0) ? 1 : 0);
-        chunkAY = height / chunkh + ((height % chunkh != 0) ? 1 : 0);
+        
+        chunkAX = width / CHUNKW + ((width % CHUNKW != 0) ? 1 : 0);
+        chunkAY = height / CHUNKH + ((height % CHUNKH != 0) ? 1 : 0);
         chunks = new WorldChunk[chunkAX * chunkAY];
         
         for(int y = 0; y < chunkAY; y++)
         {
-            int ch = (height - y * chunkh) % chunkh;
+            int ch = (height - y * CHUNKH) < CHUNKH ? height % CHUNKH : CHUNKH;
             for(int x = 0; x < chunkAX; x++)
             {
-                int cw = (width - x * chunkw) % chunkw;
-                chunks[y * chunkAX + x] = new WorldChunk(this, cw, ch, userPool);
+                int cw = (width - x * CHUNKW) < CHUNKW ? width % CHUNKW : CHUNKW;
+                chunks[y * chunkAX + x] = new WorldChunk(this, cw, ch);
             }
         }
+        
+        paletteLock = false;
+    }
+    
+    public int getWidth()
+    {
+        return width;
+    }
+    
+    public int getHeight()
+    {
+        return height;
+    }
+    
+    public Material getPaletteMember(short paletteKey)
+    {
+        return palette.get(paletteKey);
+    }
+    
+    public void setPaletteMember(short paletteKey, Material material)
+    {
+        if(paletteLock)
+            throw new LockedPaletteModificationException();
+        palette.put(paletteKey, material);
+    }
+    
+    public void removePaletteMember(short paletteKey)
+    {
+        if(paletteLock)
+            throw new LockedPaletteModificationException();
+        palette.remove(paletteKey);
+    }
+    
+    public void clearPalette()
+    {
+        if(paletteLock)
+            throw new LockedPaletteModificationException();
+        palette.clear();
+    }
+    
+    public void lockPaletteState()
+    {
+        paletteLock = true;
     }
     
     public byte getTileInfo(int x, int y)
     {
-        return chunks[(y / chunkh) * chunkAX + (x / chunkw)].getInfo(x % chunkw, y % chunkh);
+        return chunks[(y / CHUNKH) * chunkAX + (x / CHUNKW)].getInfo(x % CHUNKW, y % CHUNKH);
     }
     
     public byte getTileShape(int x, int y)
     {
-        return chunks[(y / chunkh) * chunkAX + (x / chunkw)].getShape(x % chunkw, y % chunkh);
+        return chunks[(y / CHUNKH) * chunkAX + (x / CHUNKW)].getShape(x % CHUNKW, y % CHUNKH);
     }
     
     public short getTileMaterial(int x, int y)
     {
-        return chunks[(y / chunkh) * chunkAX + (x / chunkw)].getMaterial(x % chunkw, y % chunkh);
+        return chunks[(y / CHUNKH) * chunkAX + (x / CHUNKW)].getMaterial(x % CHUNKW, y % CHUNKH);
     }
     
     public void setTileInfo(int x, int y, byte info)
     {
-        chunks[(y / chunkh) * chunkAX + (x / chunkw)].setInfo(x % chunkw, y % chunkh, info);
+        chunks[(y / CHUNKH) * chunkAX + (x / CHUNKW)].setInfo(x % CHUNKW, y % CHUNKH, info);
     }
     
     public void setTileShape(int x, int y, byte shape)
     {
-        chunks[(y / chunkh) * chunkAX + (x / chunkw)].setShape(x % chunkw, y % chunkh, shape);
+        chunks[(y / CHUNKH) * chunkAX + (x / CHUNKW)].setShape(x % CHUNKW, y % CHUNKH, shape);
     }
     
     public void setTileMaterial(int x, int y, short material)
     {
-        chunks[(y / chunkh) * chunkAX + (x / chunkw)].setMaterial(x % chunkw, y % chunkh, material);
+        chunks[(y / CHUNKH) * chunkAX + (x / CHUNKW)].setMaterial(x % CHUNKW, y % CHUNKH, material);
     }
     
-    public void update(float timeDelta)
+    public void lockChunkState()
     {
         for(int y = 0; y < chunkAY; y++)
             for(int x = 0; x < chunkAX; x++)
-                chunks[y * chunkAX + x].update();
+                chunks[y * chunkAX + x].lockState();
+    }
+    
+    private void sendChunkPacket(int x, int y, ServerUser user)
+    {
+        ByteBuffer chunkBuffer = chunks[y * chunkAX + x].build();
+        byte[] chunkBytes = chunkBuffer.array();
+        
+        packetPool.getPacket("Lime::WorldChunk").send(server, user, x, y, CHUNKW, CHUNKH, chunkBytes);
+    }
+    
+    public void sendChunkPackets(ServerUser user)
+    {
+        for(int y = 0; y < chunkAY; y++)
+            for(int x = 0; x < chunkAX; x++)
+                sendChunkPacket(x, y, user);
     }
 }

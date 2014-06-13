@@ -1,22 +1,23 @@
-package net.lodoma.lime.world.generator;
+package net.lodoma.lime.world.builder;
 
 import java.util.Random;
 
 import net.lodoma.lime.util.BinaryHelper;
-import net.lodoma.lime.world.World;
+import net.lodoma.lime.world.ServersideWorld;
 import net.lodoma.lime.world.material.MaterialAir;
 import net.lodoma.lime.world.material.MaterialDirt;
 
 public class WorldFileLoader implements WorldBuilder
 {
     @Override
-    public World build()
+    public void build(ServersideWorld world)
     {
-        World world = new World();
         world.init(256, 256);
 
-        world.setMaterialID((short) 0, new MaterialAir());
-        world.setMaterialID((short) 1, new MaterialDirt());
+        world.clearPalette();
+        world.setPaletteMember((short) 0, new MaterialAir());
+        world.setPaletteMember((short) 1, new MaterialDirt());
+        world.lockPaletteState();
         
         Random random = new Random();
         for(int y = 0; y < world.getHeight(); y++)
@@ -34,7 +35,6 @@ public class WorldFileLoader implements WorldBuilder
                 world.setTileShape(x, y, tileshape);
                 world.setTileMaterial(x, y, material);
             }
-        
-        return world;
+        world.lockChunkState();
     }
 }
