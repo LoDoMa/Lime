@@ -8,6 +8,7 @@ import javax.imageio.ImageIO;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 
 public class Texture
 {
@@ -19,8 +20,9 @@ public class Texture
         load(fileName);
     }
     
-    public void bind()
+    public void bind(int unitOffset)
     {
+        GL13.glActiveTexture(GL13.GL_TEXTURE0 + unitOffset);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
     }
     

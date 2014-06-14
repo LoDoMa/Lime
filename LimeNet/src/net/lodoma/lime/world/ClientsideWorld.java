@@ -209,7 +209,7 @@ public class ClientsideWorld implements TileGrid
                     
                     if(!material.rendered) continue;
                     if(material.texture != 0)
-                        texturePool.getTexture(material.texture).bind();
+                        texturePool.getTexture(material.texture).bind(0);
                     
                     byte tileShape = getTileShape(x, y);
                     GL11.glBegin(GL11.GL_POLYGON);
