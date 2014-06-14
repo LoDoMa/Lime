@@ -31,7 +31,10 @@ public class Shader
             BufferedReader reader = new BufferedReader(new FileReader(sourceFile));
             String line;
             while((line = reader.readLine()) != null)
+            {
                 builder.append(line);
+                builder.append("\n");
+            }
             reader.close();
         }
         catch(IOException e)

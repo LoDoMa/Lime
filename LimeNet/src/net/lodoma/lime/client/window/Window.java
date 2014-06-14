@@ -76,6 +76,7 @@ public class Window
         shaderPool.addShader("vs", vertexShader);
         shaderPool.addShader("fs", fragmentShader);
         program = new Program(shaderPool, "vs", "fs");
+        program.setUniformI1("texture", 0);
     }
     
     public static void apply() throws InvalidWindowPropertyException, DisplayModeSearchException

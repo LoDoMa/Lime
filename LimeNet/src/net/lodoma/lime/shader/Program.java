@@ -44,4 +44,17 @@ public class Program
     {
         GL20.glDeleteProgram(program);
     }
+    
+    public boolean hasUniform(String uniformName)
+    {
+        return GL20.glGetUniformLocation(program, uniformName) != -1;
+    }
+    
+    public void setUniformI1(String uniformName, int v0)
+    {
+        int location = GL20.glGetUniformLocation(program, uniformName);
+        if(location == -1)
+            throw new InvalidUniformNameException(uniformName);
+        GL20.glUniform1i(location, v0);
+    }
 }
