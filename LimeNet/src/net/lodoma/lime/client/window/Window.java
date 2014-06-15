@@ -6,6 +6,7 @@ import net.lodoma.lime.shader.Program;
 import net.lodoma.lime.shader.Shader;
 import net.lodoma.lime.shader.ShaderPool;
 import net.lodoma.lime.shader.ShaderType;
+import net.lodoma.lime.shader.UniformType;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
@@ -76,7 +77,26 @@ public class Window
         shaderPool.addShader("vs", vertexShader);
         shaderPool.addShader("fs", fragmentShader);
         program = new Program(shaderPool, "vs", "fs");
-        program.setUniformI1("texture", 0);
+        program.setUniform("texture", UniformType.INT1, 0);
+        
+        setupGL();
+    }
+    
+    private static void setupGL()
+    {
+        GL11.glMatrixMode(GL11.GL_PROJECTION);
+        GL11.glLoadIdentity();
+        GL11.glOrtho(0.0f, 10.0f, 0.0f, 10.0f, -1.0f, 1.0f);
+        
+        GL11.glMatrixMode(GL11.GL_MODELVIEW);
+        GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        
+        program.useProgram();
     }
     
     public static void apply() throws InvalidWindowPropertyException, DisplayModeSearchException
@@ -92,20 +112,6 @@ public class Window
     {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
         GL11.glLoadIdentity();
-        
-        GL11.glMatrixMode(GL11.GL_PROJECTION);
-        GL11.glLoadIdentity();
-        GL11.glOrtho(0.0f, 10.0f, 0.0f, 10.0f, -1.0f, 1.0f);
-        
-        GL11.glMatrixMode(GL11.GL_MODELVIEW);
-        GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-        
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        
-        program.useProgram();
     }
     
     public static void update() throws InvalidWindowPropertyException
