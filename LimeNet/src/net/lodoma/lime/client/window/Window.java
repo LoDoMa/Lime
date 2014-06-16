@@ -5,6 +5,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GLContext;
 
 public class Window
 {
@@ -15,6 +16,8 @@ public class Window
     private static int fps = 0;
     
     private static boolean closeRequested = false;
+    
+    private static boolean supportFBO;
     
     public static void setDimensions(int width, int height)
     {
@@ -64,8 +67,15 @@ public class Window
         setupGL();
     }
     
+    private static void loadLimitations()
+    {
+        supportFBO = GLContext.getCapabilities().GL_EXT_framebuffer_object;
+    }
+    
     private static void setupGL()
     {
+        loadLimitations();
+        
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glLoadIdentity();
         GL11.glOrtho(0.0f, 10.0f, 0.0f, 10.0f, -1.0f, 1.0f);
@@ -77,6 +87,11 @@ public class Window
         
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+    }
+    
+    public static boolean supportsFBO()
+    {
+        return supportFBO;
     }
     
     public static void apply() throws InvalidWindowPropertyException, DisplayModeSearchException
