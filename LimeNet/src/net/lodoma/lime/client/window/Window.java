@@ -1,13 +1,5 @@
 package net.lodoma.lime.client.window;
 
-import java.io.File;
-
-import net.lodoma.lime.shader.Program;
-import net.lodoma.lime.shader.Shader;
-import net.lodoma.lime.shader.ShaderPool;
-import net.lodoma.lime.shader.ShaderType;
-import net.lodoma.lime.shader.UniformType;
-
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -23,8 +15,6 @@ public class Window
     private static int fps = 0;
     
     private static boolean closeRequested = false;
-    
-    private static Program program;
     
     public static void setDimensions(int width, int height)
     {
@@ -70,14 +60,6 @@ public class Window
         {
             e.printStackTrace();
         }
-
-        Shader vertexShader = new Shader(new File("./shader/testshader.vsx"), ShaderType.VERTEX);
-        Shader fragmentShader = new Shader(new File("./shader/testshader.fsx"), ShaderType.FRAGMENT);
-        ShaderPool shaderPool = new ShaderPool();
-        shaderPool.addShader("vs", vertexShader);
-        shaderPool.addShader("fs", fragmentShader);
-        program = new Program(shaderPool, "vs", "fs");
-        program.setUniform("texture", UniformType.INT1, 0);
         
         setupGL();
     }
@@ -95,8 +77,6 @@ public class Window
         
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        
-        program.useProgram();
     }
     
     public static void apply() throws InvalidWindowPropertyException, DisplayModeSearchException
@@ -123,7 +103,6 @@ public class Window
     
     public static void close()
     {
-        program.deleteProgram();
         Mouse.destroy();
         Keyboard.destroy();
         Display.destroy();
