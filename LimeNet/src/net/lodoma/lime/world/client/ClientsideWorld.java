@@ -71,6 +71,7 @@ public class ClientsideWorld implements TileGrid
     
     private Map<Short, Material> palette;
     
+    private boolean firstRender;
     private WorldRenderer renderer;
     
     public ClientsideWorld(GenericClient client)
@@ -100,6 +101,8 @@ public class ClientsideWorld implements TileGrid
         
         remainingChunks = Integer.MAX_VALUE;
         palette.clear();
+        
+        firstRender = true;
     }
     
     public void receiveDimensions(int width, int height)
@@ -239,7 +242,11 @@ public class ClientsideWorld implements TileGrid
     {
         if(remainingChunks == 0)
         {
-            renderer.recompile();
+            if(firstRender)
+            {
+                renderer.recompile();
+                firstRender = false;
+            }
             
             renderer.render();
         }
