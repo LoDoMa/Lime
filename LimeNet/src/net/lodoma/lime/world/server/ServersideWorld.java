@@ -75,6 +75,16 @@ public class ServersideWorld implements TileGrid
         return height;
     }
     
+    public int getChunkHC()
+    {
+        return chunkAX;
+    }
+    
+    public int getChunkVC()
+    {
+        return chunkAY;
+    }
+    
     public Set<Short> getPaletteKeySet()
     {
         return new HashSet<Short>(palette.keySet());
@@ -159,7 +169,7 @@ public class ServersideWorld implements TileGrid
         ByteBuffer chunkBuffer = chunks[y * chunkAX + x].build();
         byte[] chunkBytes = chunkBuffer.array();
         
-        packetPool.getPacket("Lime::WorldChunk").send(server, user, x, y, CHUNKW, CHUNKH, chunkBytes);
+        packetPool.getPacket("Lime::WorldChunk").send(server, user, x * CHUNKW, y * CHUNKH, CHUNKW, CHUNKH, chunkBytes);
     }
     
     public void sendChunkPackets(ServerUser user)

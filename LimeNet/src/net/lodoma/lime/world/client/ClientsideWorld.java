@@ -1,8 +1,12 @@
 package net.lodoma.lime.world.client;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import net.lodoma.lime.client.generic.net.GenericClient;
@@ -149,9 +153,24 @@ public class ClientsideWorld implements TileGrid
         return height;
     }
     
+    public int getPaletteSize()
+    {
+        return palette.size();
+    }
+    
     public Material getPaletteMaterial(short key)
     {
         return palette.get(key);
+    }
+    
+    public List<Material> getPaletteValues()
+    {
+        return new ArrayList<Material>(palette.values());
+    }
+    
+    public Set<Short> getPaletteKeys()
+    {
+        return new HashSet<Short>(palette.keySet());
     }
     
     public TexturePool getTexturePool()
@@ -208,6 +227,7 @@ public class ClientsideWorld implements TileGrid
     {
         if(tileInfo != null && tileShape != null && tileMaterial != null)
         {
+            renderer.recompile();
             // tiles *should* be safe to render at this point
             renderer.render();
         }
