@@ -2,7 +2,7 @@ package net.lodoma.lime.client.logic;
 
 import net.lodoma.lime.client.generic.net.GenericClient;
 import net.lodoma.lime.client.generic.net.packet.ClientPacketPool;
-import net.lodoma.lime.world.ClientsideWorld;
+import net.lodoma.lime.world.client.ClientsideWorld;
 import net.lodoma.lime.world.client.packet.CPHWorldChunk;
 import net.lodoma.lime.world.client.packet.CPHWorldDimensions;
 import net.lodoma.lime.world.client.packet.CPHWorldPalette;

@@ -1,4 +1,4 @@
-package net.lodoma.lime.world;
+package net.lodoma.lime.world.server;
 
 public class LockedPaletteModificationException extends RuntimeException
 {

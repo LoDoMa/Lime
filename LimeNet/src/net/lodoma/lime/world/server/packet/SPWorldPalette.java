@@ -4,8 +4,8 @@ import java.nio.ByteBuffer;
 import java.util.Set;
 
 import net.lodoma.lime.server.generic.net.packet.ServerPacket;
-import net.lodoma.lime.world.ServersideWorld;
 import net.lodoma.lime.world.material.Material;
+import net.lodoma.lime.world.server.ServersideWorld;
 
 public class SPWorldPalette extends ServerPacket
 {

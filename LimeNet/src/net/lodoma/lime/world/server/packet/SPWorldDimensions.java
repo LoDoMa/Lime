@@ -3,7 +3,7 @@ package net.lodoma.lime.world.server.packet;
 import java.nio.ByteBuffer;
 
 import net.lodoma.lime.server.generic.net.packet.ServerPacket;
-import net.lodoma.lime.world.ServersideWorld;
+import net.lodoma.lime.world.server.ServersideWorld;
 
 public class SPWorldDimensions extends ServerPacket
 {

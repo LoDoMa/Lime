@@ -1,4 +1,4 @@
-package net.lodoma.lime.world;
+package net.lodoma.lime.world.server;
 
 import java.nio.ByteBuffer;
 

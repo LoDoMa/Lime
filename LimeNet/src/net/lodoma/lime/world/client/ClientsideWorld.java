@@ -1,4 +1,4 @@
-package net.lodoma.lime.world;
+package net.lodoma.lime.world.client;
 
 import java.nio.ByteBuffer;
 import java.util.HashMap;
@@ -10,6 +10,7 @@ import net.lodoma.lime.client.generic.net.packet.ClientPacketPool;
 import net.lodoma.lime.common.net.NetStage;
 import net.lodoma.lime.texture.TexturePool;
 import net.lodoma.lime.util.BinaryHelper;
+import net.lodoma.lime.world.TileGrid;
 import net.lodoma.lime.world.material.Material;
 
 /* Disable formatting

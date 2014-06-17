@@ -2,8 +2,8 @@ package net.lodoma.lime.server.logic;
 
 import net.lodoma.lime.server.generic.GenericServer;
 import net.lodoma.lime.server.generic.net.packet.ServerPacketPool;
-import net.lodoma.lime.world.ServersideWorld;
 import net.lodoma.lime.world.builder.WorldFileLoader;
+import net.lodoma.lime.world.server.ServersideWorld;
 import net.lodoma.lime.world.server.packet.SPHWorldChunksRequest;
 import net.lodoma.lime.world.server.packet.SPHWorldDimensionRequest;
 import net.lodoma.lime.world.server.packet.SPHWorldPaletteRequest;

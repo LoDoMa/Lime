@@ -4,7 +4,7 @@ import net.lodoma.lime.client.net.LimeClient;
 import net.lodoma.lime.client.window.DisplayModeSearchException;
 import net.lodoma.lime.client.window.InvalidWindowPropertyException;
 import net.lodoma.lime.client.window.Window;
-import net.lodoma.lime.world.ClientsideWorld;
+import net.lodoma.lime.world.client.ClientsideWorld;
 
 public class VisualInstance
 {

@@ -1,4 +1,4 @@
-package net.lodoma.lime.world;
+package net.lodoma.lime.world.server;
 
 import java.nio.ByteBuffer;
 import java.util.HashMap;
@@ -9,6 +9,7 @@ import java.util.Set;
 import net.lodoma.lime.server.generic.GenericServer;
 import net.lodoma.lime.server.generic.ServerUser;
 import net.lodoma.lime.server.generic.net.packet.ServerPacketPool;
+import net.lodoma.lime.world.TileGrid;
 import net.lodoma.lime.world.material.Material;
 
 public class ServersideWorld implements TileGrid

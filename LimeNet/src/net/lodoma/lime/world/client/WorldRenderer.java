@@ -1,4 +1,4 @@
-package net.lodoma.lime.world;
+package net.lodoma.lime.world.client;
 
 import net.lodoma.lime.texture.TexturePool;
 import net.lodoma.lime.world.material.Material;

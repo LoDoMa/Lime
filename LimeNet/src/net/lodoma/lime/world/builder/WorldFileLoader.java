@@ -3,9 +3,9 @@ package net.lodoma.lime.world.builder;
 import java.util.Random;
 
 import net.lodoma.lime.util.BinaryHelper;
-import net.lodoma.lime.world.ServersideWorld;
 import net.lodoma.lime.world.material.MaterialAir;
 import net.lodoma.lime.world.material.MaterialDirt;
+import net.lodoma.lime.world.server.ServersideWorld;
 
 public class WorldFileLoader implements WorldBuilder
 {
