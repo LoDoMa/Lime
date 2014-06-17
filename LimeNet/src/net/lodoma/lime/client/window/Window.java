@@ -3,9 +3,11 @@ package net.lodoma.lime.client.window;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.ContextAttribs;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
+import org.lwjgl.opengl.PixelFormat;
 
 public class Window
 {
@@ -55,7 +57,12 @@ public class Window
         apply();
         try
         {
-            Display.create();
+            PixelFormat pixelFormat = new PixelFormat();
+            ContextAttribs contextAtrributes = new ContextAttribs(2, 0);
+            // .withForwardCompatible(true);
+            // .withProfileCore(true);        for 3.2+
+        
+            Display.create(pixelFormat, contextAtrributes);
             Keyboard.create();
             Mouse.create();
         }
