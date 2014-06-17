@@ -64,6 +64,7 @@ public class ClientsideWorld implements TileGrid
     private int width;
     private int height;
     
+    private int remainingChunks;
     private byte[] tileInfo;
     private byte[] tileShape;
     private short[] tileMaterial;
@@ -97,6 +98,7 @@ public class ClientsideWorld implements TileGrid
         tileShape = null;
         tileMaterial = null;
         
+        remainingChunks = Integer.MAX_VALUE;
         palette.clear();
     }
     
@@ -128,7 +130,14 @@ public class ClientsideWorld implements TileGrid
             palette.put(key, material);
         }
         
-        packetPool.getPacket("Lime::WorldChunksRequest").send(client);
+        packetPool.getPacket("Lime::WorldChunkInformationRequest").send(client);
+    }
+    
+    public void receiveChunkInformation(byte[] content)
+    {
+        ByteBuffer buffer = ByteBuffer.wrap(content);
+        remainingChunks = buffer.getInt();
+        packetPool.getPacket("Lime::WorldChunkRequest").send(client, remainingChunks - 1);
     }
     
     public void receiveChunk(int cx, int cy, int cw, int ch, byte[] content)
@@ -141,6 +150,9 @@ public class ClientsideWorld implements TileGrid
                 setTileShape(x + cx, y + cy, buffer.get());
                 setTileMaterial(x + cx, y + cy, buffer.getShort());
             }
+        remainingChunks--;
+        if(remainingChunks > 0)
+            packetPool.getPacket("Lime::WorldChunkRequest").send(client, remainingChunks - 1);
     }
     
     public int getWidth()
@@ -225,10 +237,10 @@ public class ClientsideWorld implements TileGrid
     
     public void render()
     {
-        if(tileInfo != null && tileShape != null && tileMaterial != null)
+        if(remainingChunks == 0)
         {
             renderer.recompile();
-            // tiles *should* be safe to render at this point
+            
             renderer.render();
         }
     }

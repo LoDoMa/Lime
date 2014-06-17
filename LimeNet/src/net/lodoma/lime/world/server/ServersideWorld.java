@@ -45,22 +45,16 @@ public class ServersideWorld implements TileGrid
     
     public void init(int width, int height)
     {
-        this.width = width;
-        this.height = height;
-        
         chunkAX = width / CHUNKW + ((width % CHUNKW != 0) ? 1 : 0);
         chunkAY = height / CHUNKH + ((height % CHUNKH != 0) ? 1 : 0);
         chunks = new WorldChunk[chunkAX * chunkAY];
         
+        this.width = chunkAX * CHUNKW;
+        this.height = chunkAY * CHUNKH;
+        
         for(int y = 0; y < chunkAY; y++)
-        {
-            int ch = (height - y * CHUNKH) < CHUNKH ? height % CHUNKH : CHUNKH;
             for(int x = 0; x < chunkAX; x++)
-            {
-                int cw = (width - x * CHUNKW) < CHUNKW ? width % CHUNKW : CHUNKW;
-                chunks[y * chunkAX + x] = new WorldChunk(cw, ch);
-            }
-        }
+                chunks[y * chunkAX + x] = new WorldChunk(CHUNKW, CHUNKH);
         
         paletteLock = false;
     }
@@ -164,18 +158,20 @@ public class ServersideWorld implements TileGrid
                 chunks[y * chunkAX + x].lockState();
     }
     
-    private void sendChunkPacket(int x, int y, ServerUser user)
+    public void sendChunkInformation(ServerUser user)
     {
+        int chunkc = chunkAX * chunkAY;
+        packetPool.getPacket("Lime::WorldChunkInformation").send(server, user, chunkc);
+    }
+    
+    public void sendChunkPacket(ServerUser user, int packetIndex)
+    {
+        int y = packetIndex / chunkAX;
+        int x = packetIndex % chunkAX;
+        
         ByteBuffer chunkBuffer = chunks[y * chunkAX + x].build();
         byte[] chunkBytes = chunkBuffer.array();
         
         packetPool.getPacket("Lime::WorldChunk").send(server, user, x * CHUNKW, y * CHUNKH, CHUNKW, CHUNKH, chunkBytes);
-    }
-    
-    public void sendChunkPackets(ServerUser user)
-    {
-        for(int y = 0; y < chunkAY; y++)
-            for(int x = 0; x < chunkAX; x++)
-                sendChunkPacket(x, y, user);
     }
 }

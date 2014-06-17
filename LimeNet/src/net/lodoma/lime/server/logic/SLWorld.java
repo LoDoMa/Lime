@@ -4,10 +4,12 @@ import net.lodoma.lime.server.generic.GenericServer;
 import net.lodoma.lime.server.generic.net.packet.ServerPacketPool;
 import net.lodoma.lime.world.builder.WorldFileLoader;
 import net.lodoma.lime.world.server.ServersideWorld;
-import net.lodoma.lime.world.server.packet.SPHWorldChunksRequest;
+import net.lodoma.lime.world.server.packet.SPHWorldChunkInformationRequest;
+import net.lodoma.lime.world.server.packet.SPHWorldChunkRequest;
 import net.lodoma.lime.world.server.packet.SPHWorldDimensionRequest;
 import net.lodoma.lime.world.server.packet.SPHWorldPaletteRequest;
 import net.lodoma.lime.world.server.packet.SPWorldChunk;
+import net.lodoma.lime.world.server.packet.SPWorldChunkInformation;
 import net.lodoma.lime.world.server.packet.SPWorldDimensions;
 import net.lodoma.lime.world.server.packet.SPWorldPalette;
 
@@ -46,7 +48,10 @@ public class SLWorld implements ServerLogic
         packetPool.addHandler("Lime::WorldPaletteRequest", new SPHWorldPaletteRequest());
         packetPool.addPacket("Lime::WorldPalette", new SPWorldPalette());
 
-        packetPool.addHandler("Lime::WorldChunksRequest", new SPHWorldChunksRequest());
+        packetPool.addHandler("Lime::WorldChunkInformationRequest", new SPHWorldChunkInformationRequest());
+        packetPool.addPacket("Lime::WorldChunkInformation", new SPWorldChunkInformation());
+
+        packetPool.addHandler("Lime::WorldChunkRequest", new SPHWorldChunkRequest());
         packetPool.addPacket("Lime::WorldChunk", new SPWorldChunk());
         
         WorldFileLoader fileLoader = new WorldFileLoader();

@@ -6,17 +6,16 @@ import net.lodoma.lime.server.generic.ServerUser;
 import net.lodoma.lime.server.generic.net.packet.ServerPacketHandler;
 import net.lodoma.lime.world.server.ServersideWorld;
 
-public class SPHWorldChunksRequest extends ServerPacketHandler
+public class SPHWorldChunkInformationRequest extends ServerPacketHandler
 {
-    public SPHWorldChunksRequest()
+    public SPHWorldChunkInformationRequest()
     {
         super(NetStage.USER);
     }
-    
+
     @Override
     protected void handle(GenericServer server, ServerUser user, byte[] data)
     {
-        ServersideWorld world = (ServersideWorld) server.getProperty("world");
-        world.sendChunkPackets(user);
+        ((ServersideWorld) server.getProperty("world")).sendChunkInformation(user);
     }
 }

@@ -4,9 +4,11 @@ import net.lodoma.lime.client.generic.net.GenericClient;
 import net.lodoma.lime.client.generic.net.packet.ClientPacketPool;
 import net.lodoma.lime.world.client.ClientsideWorld;
 import net.lodoma.lime.world.client.packet.CPHWorldChunk;
+import net.lodoma.lime.world.client.packet.CPHWorldChunkInformation;
 import net.lodoma.lime.world.client.packet.CPHWorldDimensions;
 import net.lodoma.lime.world.client.packet.CPHWorldPalette;
-import net.lodoma.lime.world.client.packet.CPWorldChunksRequest;
+import net.lodoma.lime.world.client.packet.CPWorldChunkInformationRequest;
+import net.lodoma.lime.world.client.packet.CPWorldChunkRequest;
 import net.lodoma.lime.world.client.packet.CPWorldDimensionRequest;
 import net.lodoma.lime.world.client.packet.CPWorldPaletteRequest;
 
@@ -45,7 +47,10 @@ public class CLWorld implements ClientLogic
         packetPool.addPacket("Lime::WorldPaletteRequest", new CPWorldPaletteRequest());
         packetPool.addHandler("Lime::WorldPalette", new CPHWorldPalette());
 
-        packetPool.addPacket("Lime::WorldChunksRequest", new CPWorldChunksRequest());
+        packetPool.addPacket("Lime::WorldChunkInformationRequest", new CPWorldChunkInformationRequest());
+        packetPool.addHandler("Lime::WorldChunkInformation", new CPHWorldChunkInformation());
+
+        packetPool.addPacket("Lime::WorldChunkRequest", new CPWorldChunkRequest());
         packetPool.addHandler("Lime::WorldChunk", new CPHWorldChunk());
     }
     
