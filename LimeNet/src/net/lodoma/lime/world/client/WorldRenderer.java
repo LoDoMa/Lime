@@ -45,7 +45,7 @@ public class WorldRenderer
         {
             Material material = world.getPaletteMaterial(key);
             if(!material.rendered) continue;
-            
+                
             int displayList = GL11.glGenLists(1);
             GL11.glNewList(displayList, GL11.GL_COMPILE);
             
@@ -86,8 +86,6 @@ public class WorldRenderer
             else
                 displayLists.put(material, displayList);
         }
-        
-        
     }
     
     public void render()
@@ -101,45 +99,5 @@ public class WorldRenderer
             int displayList = displayLists.get(material);
             GL11.glCallList(displayList);
         }
-        // TODO: use display lists
-        
-        /*
-        int width = world.getWidth();
-        int height = world.getHeight();
-        TexturePool texturePool = world.getTexturePool();
-        
-        for(int y = 0; y < height; y++)
-            for(int x = 0; x < width; x++)
-            {
-                short tileMaterial = world.getTileMaterial(x, y);
-                Material material = world.getPaletteMaterial(tileMaterial);
-                
-                if(material == null) continue;
-                
-                if(!material.rendered) continue;
-                if(material.texture != 0)
-                    texturePool.getTexture(material.texture).bind(0);
-                
-                byte tileShape = world.getTileShape(x, y);
-                GL11.glBegin(GL11.GL_POLYGON);
-                if((tileShape & ClientsideWorld.MASK_TILESHAPE_BOTTOM_LEFT) != 0)
-                    {GL11.glTexCoord2f(0.0f, 1.0f); GL11.glVertex2f(x + 0.0f, y + 0.0f);}
-                if((tileShape & ClientsideWorld.MASK_TILESHAPE_BOTTOM_MIDDLE) != 0)
-                    {GL11.glTexCoord2f(0.5f, 1.0f); GL11.glVertex2f(x + 0.5f, y + 0.0f);}
-                if((tileShape & ClientsideWorld.MASK_TILESHAPE_BOTTOM_RIGHT) != 0)
-                    {GL11.glTexCoord2f(1.0f, 1.0f); GL11.glVertex2f(x + 1.0f, y + 0.0f);}
-                if((tileShape & ClientsideWorld.MASK_TILESHAPE_MIDDLE_RIGHT) != 0)
-                    {GL11.glTexCoord2f(1.0f, 0.5f); GL11.glVertex2f(x + 1.0f, y + 0.5f);}
-                if((tileShape & ClientsideWorld.MASK_TILESHAPE_TOP_RIGHT) != 0)
-                    {GL11.glTexCoord2f(1.0f, 0.0f); GL11.glVertex2f(x + 1.0f, y + 1.0f);}
-                if((tileShape & ClientsideWorld.MASK_TILESHAPE_TOP_MIDDLE) != 0)
-                    {GL11.glTexCoord2f(0.5f, 0.0f); GL11.glVertex2f(x + 0.5f, y + 1.0f);}
-                if((tileShape & ClientsideWorld.MASK_TILESHAPE_TOP_LEFT) != 0)
-                    {GL11.glTexCoord2f(0.0f, 0.0f); GL11.glVertex2f(x + 0.0f, y + 1.0f);}
-                if((tileShape & ClientsideWorld.MASK_TILESHAPE_MIDDLE_LEFT) != 0)
-                    {GL11.glTexCoord2f(0.0f, 0.5f); GL11.glVertex2f(x + 0.0f, y + 0.5f);}
-                GL11.glEnd();
-            }
-        */
     }
 }
