@@ -9,6 +9,7 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.lodoma.lime.client.error.ClientError;
 import net.lodoma.lime.client.logic.CLBase;
 import net.lodoma.lime.client.logic.CLChat;
 import net.lodoma.lime.client.logic.CLConnectionCheck;
@@ -88,6 +89,20 @@ public abstract class GenericClient
         socket.close();
         
         isRunning = false;
+    }
+    
+    public void handleError(final ClientError error)
+    {
+        final GenericClient thisClient = this;
+        new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                thisClient.close();
+                error.onClientTermination(thisClient);
+            }
+        }).start();
     }
     
     public void sendData(byte[] data)
