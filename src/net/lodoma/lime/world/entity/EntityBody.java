@@ -13,4 +13,10 @@ public class EntityBody
         this.entity = entity;
         segments = new ArrayList<BodySegment>();
     }
+    
+    public void addBodySegment(BodySegment segment)
+    {
+        segments.add(segment);
+        segment.setEntity(entity);
+    }
 }
