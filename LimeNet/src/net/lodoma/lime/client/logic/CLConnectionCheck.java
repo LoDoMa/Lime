@@ -1,5 +1,6 @@
 package net.lodoma.lime.client.logic;
 
+import net.lodoma.lime.client.error.CErrorServerNotResponding;
 import net.lodoma.lime.client.generic.net.GenericClient;
 import net.lodoma.lime.client.generic.net.packet.ClientPacketPool;
 import net.lodoma.lime.client.net.packet.CPHResponse;
@@ -55,9 +56,7 @@ public class CLConnectionCheck implements ClientLogic
                 checkedConnection = true;
             }
             if (timeDelta >= 2000)
-            {
-                System.out.println("server not responding");
-            }
+                client.handleError(new CErrorServerNotResponding());
         }
         else
             checkedConnection = false;
