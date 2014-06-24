@@ -93,6 +93,7 @@ public abstract class GenericClient
     
     public void handleError(final ClientError error)
     {
+        logicPool.disable();
         final GenericClient thisClient = this;
         new Thread(new Runnable()
         {
