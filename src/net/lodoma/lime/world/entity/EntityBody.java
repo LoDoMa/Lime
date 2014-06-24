@@ -11,6 +11,4 @@ public class EntityBody
     {
         segments = new ArrayList<BodySegment>();
     }
-    
-    
 }
