@@ -5,10 +5,12 @@ import java.util.List;
 
 public class EntityBody
 {
+    private Entity entity;
     private List<BodySegment> segments;
     
-    public EntityBody()
+    public EntityBody(Entity entity)
     {
+        this.entity = entity;
         segments = new ArrayList<BodySegment>();
     }
 }

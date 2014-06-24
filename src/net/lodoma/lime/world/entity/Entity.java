@@ -10,7 +10,7 @@ public abstract class Entity
     public Entity(TileGrid tileGrid)
     {
         this.tileGrid = tileGrid;
-        this.body = new EntityBody();
+        this.body = new EntityBody(this);
     }
     
     public abstract void update(float timeDelta);
