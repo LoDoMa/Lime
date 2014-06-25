@@ -1,5 +1,6 @@
 package net.lodoma.lime.texture;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +18,29 @@ public class TexturePool
         for(Texture texture : textureList)
             texture.delete();
         textures.clear();
+    }
+    
+    private void loadFromDirectory(File directory, String prefix)
+    {
+        File[] texFiles = directory.listFiles();
+        for(File texFile : texFiles)
+        {
+            if(texFile.isDirectory()) continue;
+            
+            String name = texFile.getName();
+            String[] splitResult = name.split("\\.");
+            String extension = splitResult[splitResult.length - 1];
+            String nameOnly = name.substring(0, name.length() - extension.length() - 1);
+            
+            addTexture(prefix + nameOnly, new Texture(texFile.getPath()));
+        }
+    }
+    
+    public void loadTextures()
+    {
+        loadFromDirectory(new File("res/texture/tile"), "texture::tile::");
+        loadFromDirectory(new File("res/texture/tile/border"), "texture::tile::border::");
+        loadFromDirectory(new File("res/texture/decoration"), "texture::decoration::");
     }
     
     public void addTexture(String name, Texture texture)

@@ -7,7 +7,6 @@ import net.lodoma.lime.client.net.packet.CPDependencyRequest;
 import net.lodoma.lime.client.net.packet.CPHConnectRequestAnswer;
 import net.lodoma.lime.client.net.packet.CPHUserStatus;
 import net.lodoma.lime.common.net.NetStage;
-import net.lodoma.lime.texture.Texture;
 import net.lodoma.lime.texture.TexturePool;
 
 public class CLBase implements ClientLogic
@@ -45,7 +44,7 @@ public class CLBase implements ClientLogic
         packetPool.addPacket("Lime::DependencyRequest", new CPDependencyRequest());
         packetPool.addHandler("Lime::UserStatus", new CPHUserStatus());
 
-        texturePool.addTexture("Lime::test::dirt", new Texture("res/dirt.png"));
+        texturePool.loadTextures();
     }
     
     private boolean first = true;

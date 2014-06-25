@@ -6,7 +6,7 @@ import net.lodoma.lime.world.material.property.Texture;
 
 @Solid
 @Rendered
-@Texture(textureName = "Lime::test::dirt")
+@Texture(textureName = "texture::tile::dirt")
 public class MaterialDirt extends Material
 {
     
