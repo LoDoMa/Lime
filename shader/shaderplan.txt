@@ -1,0 +1,4 @@
+file extensions
+	vertex shader - vsx
+	fragment shader - fsx
+	"header" file - hsx - used by #include
