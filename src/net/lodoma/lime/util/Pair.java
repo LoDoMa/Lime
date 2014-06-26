@@ -10,4 +10,10 @@ public class Pair<T1, T2>
         this.first = first;
         this.second = second;
     }
+    
+    @Override
+    public Pair<T1, T2> clone()
+    {
+        return new Pair<T1, T2>(first, second);
+    }
 }
