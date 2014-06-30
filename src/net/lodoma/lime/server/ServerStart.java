@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import net.lodoma.lime.common.net.LogLevel;
+import net.lodoma.lime.common.net.NetworkSettings;
 import net.lodoma.lime.server.generic.GenericServer;
 import net.lodoma.lime.server.net.LimeServer;
 
@@ -13,7 +14,7 @@ public class ServerStart
     public static void main(String[] args)
     {
         GenericServer server = new LimeServer();
-        server.open(19523);
+        server.open(NetworkSettings.SHADER_PORT);
         
         try
         {

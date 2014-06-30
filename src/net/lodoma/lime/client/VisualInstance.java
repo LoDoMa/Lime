@@ -4,6 +4,7 @@ import net.lodoma.lime.client.net.LimeClient;
 import net.lodoma.lime.client.window.DisplayModeSearchException;
 import net.lodoma.lime.client.window.InvalidWindowPropertyException;
 import net.lodoma.lime.client.window.Window;
+import net.lodoma.lime.common.net.NetworkSettings;
 import net.lodoma.lime.world.client.ClientsideWorld;
 
 public class VisualInstance
@@ -32,7 +33,7 @@ public class VisualInstance
             e.printStackTrace();
         }
         
-        client.open(19523, "localhost");
+        client.open(NetworkSettings.SHADER_PORT, "localhost");
     }
     
     private void loop()
