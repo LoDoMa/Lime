@@ -19,7 +19,6 @@ import net.lodoma.lime.world.entity.Entity;
 import net.lodoma.lime.world.entity.TestEntity1;
 import net.lodoma.lime.world.material.Material;
 
-import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.World;
 
 /* Disable formatting

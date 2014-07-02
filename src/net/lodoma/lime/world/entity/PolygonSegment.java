@@ -14,8 +14,7 @@ public class PolygonSegment extends BodySegment
     {
         this.vertices = vertices;
         this.verticesPhysics = Vector2.toVec2Array(this.vertices);
-        if(vertices.length > Settings.maxPolygonVertices)
-            throw new PolygonVertexCountException(vertices.length + ">" + Settings.maxPolygonVertices);
+        assert verticesPhysics.length <= Settings.maxPolygonVertices;
     }
     
     @Override
