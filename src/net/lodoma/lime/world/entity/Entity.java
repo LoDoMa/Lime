@@ -24,6 +24,11 @@ public abstract class Entity
         return world;
     }
     
+    public final void destroy()
+    {
+        body.destroy();
+    }
+    
     public abstract void update(float timeDelta);
     public abstract void render();
 }

@@ -26,4 +26,12 @@ public class EntityBody
         joints.add(joint);
         joint.setEntity(entity);
     }
+    
+    public void destroy()
+    {
+        for(BodySegment segment : segments)
+            segment.destroy();
+        for(BodyJoint joint : joints)
+            joint.destroy();
+    }
 }

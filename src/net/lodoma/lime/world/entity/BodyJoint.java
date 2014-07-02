@@ -27,4 +27,5 @@ public abstract class BodyJoint
     }
     
     protected abstract void construct();
+    protected abstract void destroy();
 }

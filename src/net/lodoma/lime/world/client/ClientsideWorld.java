@@ -9,10 +9,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import org.jbox2d.dynamics.Body;
-import org.jbox2d.dynamics.World;
-import org.jbox2d.dynamics.joints.Joint;
-
 import net.lodoma.lime.client.generic.net.GenericClient;
 import net.lodoma.lime.client.generic.net.packet.ClientPacketPool;
 import net.lodoma.lime.common.net.NetStage;
@@ -21,6 +17,8 @@ import net.lodoma.lime.util.BinaryHelper;
 import net.lodoma.lime.world.TileGrid;
 import net.lodoma.lime.world.entity.Entity;
 import net.lodoma.lime.world.material.Material;
+
+import org.jbox2d.dynamics.World;
 
 /* Disable formatting
  * @formatter:off
@@ -87,6 +85,7 @@ public class ClientsideWorld implements TileGrid
         this.client = client;
         palette = new HashMap<Short, Material>();
         renderer = new WorldRenderer(this);
+        entities = new HashSet<Entity>();
         reset();
     }
     
@@ -112,19 +111,9 @@ public class ClientsideWorld implements TileGrid
         
         firstRender = true;
         
-        Body bodyList = world.getBodyList();
-        while(bodyList != null)
-        {
-            world.destroyBody(bodyList);
-            bodyList = bodyList.getNext();
-        }
-        
-        Joint jointList = world.getJointList();
-        while(jointList != null)
-        {
-            world.destroyJoint(jointList);
-            jointList = jointList.getNext();
-        }
+        for(Entity entity : entities)
+            entity.destroy();
+        entities.clear();
         
         world = null;
     }

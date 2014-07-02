@@ -11,4 +11,5 @@ public abstract class BodySegment
     }
     
     protected abstract void construct();
+    protected abstract void destroy();
 }

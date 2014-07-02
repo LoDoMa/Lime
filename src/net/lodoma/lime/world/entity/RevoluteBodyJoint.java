@@ -14,4 +14,10 @@ public class RevoluteBodyJoint extends BodyJoint
     {
         
     }
+    
+    @Override
+    protected void destroy()
+    {
+        
+    }
 }

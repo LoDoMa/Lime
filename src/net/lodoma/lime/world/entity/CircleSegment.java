@@ -12,4 +12,10 @@ public class CircleSegment extends BodySegment
     {
         
     }
+    
+    @Override
+    protected void destroy()
+    {
+        
+    }
 }

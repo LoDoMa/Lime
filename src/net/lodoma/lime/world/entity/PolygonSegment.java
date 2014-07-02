@@ -47,4 +47,11 @@ public class PolygonSegment extends BodySegment
         
         body.m_fixtureList = body.createFixture(fixtureDef);
     }
+    
+    @Override
+    protected void destroy()
+    {
+        World world = entity.getWorld();
+        world.destroyBody(body);
+    }
 }
