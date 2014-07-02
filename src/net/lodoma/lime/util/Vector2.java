@@ -858,4 +858,16 @@ public class Vector2
             result[i] = new Vector2(varr[i].x, varr[i].y);
         return result;
     }
+    
+    public void set(Vec2 v)
+    {
+        x = v.x;
+        y = v.y;
+    }
+    
+    public static void set(Vector2 v1, Vec2 v2)
+    {
+        v1.x = v2.x;
+        v1.y = v2.y;
+    }
 }
