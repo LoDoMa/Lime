@@ -16,6 +16,7 @@ import net.lodoma.lime.texture.TexturePool;
 import net.lodoma.lime.util.BinaryHelper;
 import net.lodoma.lime.world.TileGrid;
 import net.lodoma.lime.world.entity.Entity;
+import net.lodoma.lime.world.entity.TestEntity1;
 import net.lodoma.lime.world.material.Material;
 
 import org.jbox2d.dynamics.World;
@@ -114,8 +115,6 @@ public class ClientsideWorld implements TileGrid
         for(Entity entity : entities)
             entity.destroy();
         entities.clear();
-        
-        world = null;
     }
     
     public void receiveDimensions(int width, int height)
@@ -147,6 +146,8 @@ public class ClientsideWorld implements TileGrid
         }
         
         packetPool.getPacket("Lime::WorldChunkInformationRequest").send(client);
+        
+        addEntity(new TestEntity1(world, this));
     }
     
     public void receiveChunkInformation(byte[] content)
