@@ -7,6 +7,7 @@ public class EntityBody
 {
     private Entity entity;
     private List<BodySegment> segments;
+    private List<BodyJoint> joints;
     
     public EntityBody(Entity entity)
     {
@@ -18,5 +19,11 @@ public class EntityBody
     {
         segments.add(segment);
         segment.setEntity(entity);
+    }
+    
+    public void addBodyJoint(BodyJoint joint)
+    {
+        joints.add(joint);
+        joint.setEntity(entity);
     }
 }
