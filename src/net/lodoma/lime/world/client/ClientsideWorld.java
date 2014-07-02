@@ -116,8 +116,6 @@ public class ClientsideWorld implements TileGrid
         for(Entity entity : entities)
             entity.destroy();
         entities.clear();
-        
-        world = new World(new Vec2(0.0f, -0.5f), false);
     }
     
     public void receiveDimensions(int width, int height)
