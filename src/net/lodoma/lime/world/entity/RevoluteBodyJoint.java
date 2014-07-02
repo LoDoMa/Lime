@@ -8,4 +8,10 @@ public class RevoluteBodyJoint extends BodyJoint
     {
         super(segA, segB, anchorA, anchorB);
     }
+
+    @Override
+    protected void construct()
+    {
+        
+    }
 }

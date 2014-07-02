@@ -1,5 +1,7 @@
 package net.lodoma.lime.world.entity;
 
+import org.jbox2d.dynamics.World;
+
 import net.lodoma.lime.util.Vector2;
 import net.lodoma.lime.world.TileGrid;
 
@@ -9,9 +11,9 @@ public class TestEntity1 extends Entity
     private CircleSegment wheel;
     private RevoluteBodyJoint motor;
     
-    public TestEntity1(TileGrid tileGrid)
+    public TestEntity1(World world, TileGrid tileGrid)
     {
-        super(tileGrid);
+        super(world, tileGrid);
         
         build();
         assemble();

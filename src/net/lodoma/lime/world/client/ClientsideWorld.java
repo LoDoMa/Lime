@@ -9,6 +9,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import org.jbox2d.dynamics.Body;
+import org.jbox2d.dynamics.World;
+import org.jbox2d.dynamics.joints.Joint;
+
 import net.lodoma.lime.client.generic.net.GenericClient;
 import net.lodoma.lime.client.generic.net.packet.ClientPacketPool;
 import net.lodoma.lime.common.net.NetStage;
@@ -74,6 +78,8 @@ public class ClientsideWorld implements TileGrid
     private boolean firstRender;
     private WorldRenderer renderer;
     
+    private World world;
+    
     public ClientsideWorld(GenericClient client)
     {
         this.client = client;
@@ -103,6 +109,22 @@ public class ClientsideWorld implements TileGrid
         palette.clear();
         
         firstRender = true;
+        
+        Body bodyList = world.getBodyList();
+        while(bodyList != null)
+        {
+            world.destroyBody(bodyList);
+            bodyList = bodyList.getNext();
+        }
+        
+        Joint jointList = world.getJointList();
+        while(jointList != null)
+        {
+            world.destroyJoint(jointList);
+            jointList = jointList.getNext();
+        }
+        
+        world = null;
     }
     
     public void receiveDimensions(int width, int height)
@@ -209,6 +231,11 @@ public class ClientsideWorld implements TileGrid
     public short getTileMaterial(int x, int y)
     {
         return tileMaterial[y * width + x];
+    }
+    
+    public World getWorld()
+    {
+        return world;
     }
     
     @Override

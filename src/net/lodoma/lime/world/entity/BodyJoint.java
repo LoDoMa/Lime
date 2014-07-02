@@ -23,5 +23,8 @@ public abstract class BodyJoint
     public final void setEntity(Entity entity)
     {
         this.entity = entity;
+        construct();
     }
+    
+    protected abstract void construct();
 }

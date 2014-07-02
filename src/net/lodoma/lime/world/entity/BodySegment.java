@@ -7,5 +7,8 @@ public abstract class BodySegment
     public final void setEntity(Entity entity)
     {
         this.entity = entity;
+        construct();
     }
+    
+    protected abstract void construct();
 }
