@@ -13,6 +13,7 @@ public class EntityBody
     {
         this.entity = entity;
         segments = new ArrayList<BodySegment>();
+        joints = new ArrayList<BodyJoint>();
     }
     
     public void addBodySegment(BodySegment segment)
