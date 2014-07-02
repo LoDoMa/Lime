@@ -19,6 +19,7 @@ import net.lodoma.lime.common.net.NetStage;
 import net.lodoma.lime.texture.TexturePool;
 import net.lodoma.lime.util.BinaryHelper;
 import net.lodoma.lime.world.TileGrid;
+import net.lodoma.lime.world.entity.Entity;
 import net.lodoma.lime.world.material.Material;
 
 /* Disable formatting
@@ -79,6 +80,7 @@ public class ClientsideWorld implements TileGrid
     private WorldRenderer renderer;
     
     private World world;
+    private Set<Entity> entities;
     
     public ClientsideWorld(GenericClient client)
     {
@@ -236,6 +238,21 @@ public class ClientsideWorld implements TileGrid
     public World getWorld()
     {
         return world;
+    }
+    
+    public Set<Entity> getEntitySet()
+    {
+        return new HashSet<Entity>(entities);
+    }
+    
+    public void addEntity(Entity entity)
+    {
+        entities.add(entity);
+    }
+    
+    public void removeEntity(Entity entity)
+    {
+        entities.remove(entity);
     }
     
     @Override
