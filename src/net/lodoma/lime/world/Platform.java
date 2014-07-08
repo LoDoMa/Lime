@@ -1,26 +1,38 @@
 package net.lodoma.lime.world;
 
-import net.lodoma.lime.mask.Mask;
-import net.lodoma.lime.util.Vector2;
+import org.jbox2d.collision.shapes.PolygonShape;
+import org.jbox2d.dynamics.Body;
+import org.jbox2d.dynamics.BodyDef;
 
-import org.jbox2d.dynamics.World;
+import net.lodoma.lime.mask.Mask;
+import net.lodoma.lime.physics.PhysicsBody;
+import net.lodoma.lime.physics.PhysicsBodyType;
+import net.lodoma.lime.physics.PhysicsWorld;
+import net.lodoma.lime.util.Vector2;
 
 public class Platform
 {
     private Mask mask;
-    private Vector2[] points;
+    private PhysicsBody body;
     
-    public Platform(Mask mask, Vector2... points)
+    public Platform(Mask mask, Vector2 offset, Vector2... vertices)
     {
-        assert points.length == 4;
-        
         this.mask = mask;
-        this.points = points;
+        
+        body = new PhysicsBody();
+        body.setBodyType(PhysicsBodyType.STATIC);
+        body.setPolygonShape(vertices);
+        body.setPosition(offset);
+    }
+    
+    public Platform(Vector2 offset, Vector2... vertices)
+    {
+        this(null, offset, vertices);
     }
 
-    public Platform(Vector2... points)
+    public Platform(Vector2... vertices)
     {
-        this(null, points);
+        this(null, new Vector2(0.0f, 0.0f), vertices);
     }
     
     public void setMask(Mask mask)
@@ -28,14 +40,14 @@ public class Platform
         this.mask = mask;
     }
     
-    public void load(World world)
+    public void load(PhysicsWorld world)
     {
-        
+        body.create(world);
     }
     
-    public void unload(World world)
+    public void unload(PhysicsWorld world)
     {
-        
+        body.destroy(world);
     }
     
     public void render()
