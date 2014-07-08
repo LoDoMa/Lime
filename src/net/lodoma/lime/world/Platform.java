@@ -1,9 +1,9 @@
 package net.lodoma.lime.world;
 
-import org.jbox2d.dynamics.World;
-
 import net.lodoma.lime.mask.Mask;
 import net.lodoma.lime.util.Vector2;
+
+import org.jbox2d.dynamics.World;
 
 public class Platform
 {
