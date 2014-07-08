@@ -1,9 +1,5 @@
 package net.lodoma.lime.world;
 
-import org.jbox2d.collision.shapes.PolygonShape;
-import org.jbox2d.dynamics.Body;
-import org.jbox2d.dynamics.BodyDef;
-
 import net.lodoma.lime.mask.Mask;
 import net.lodoma.lime.physics.PhysicsBody;
 import net.lodoma.lime.physics.PhysicsBodyType;
