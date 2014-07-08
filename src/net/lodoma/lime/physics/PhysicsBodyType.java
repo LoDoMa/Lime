@@ -5,7 +5,8 @@ import org.jbox2d.dynamics.BodyType;
 public enum PhysicsBodyType
 {
     DYNAMIC(BodyType.DYNAMIC),
-    STATIC(BodyType.STATIC);
+    STATIC(BodyType.STATIC),
+    KINEMATIC(BodyType.KINEMATIC);
     
     private BodyType engineValue;
     
