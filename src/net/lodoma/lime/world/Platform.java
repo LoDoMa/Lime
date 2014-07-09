@@ -19,6 +19,8 @@ public class Platform
         body.setBodyType(PhysicsBodyType.STATIC);
         body.setPolygonShape(vertices);
         body.setPosition(offset);
+        
+        body.reload();
     }
     
     public Platform(Vector2 offset, Vector2... vertices)
