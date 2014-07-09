@@ -7,6 +7,7 @@ import net.lodoma.lime.util.Vector2;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
+import org.jbox2d.common.Settings;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
@@ -34,7 +35,8 @@ public class PhysicsBody
     private static final int INDEX_SHAPEARG1 = INDEX_RESTITUTION + SIZE_RESTITUTION;
     private static final int SIZE_SHAPEARG = 4;
     private static final int INDEX_SHAPEARG2 = INDEX_SHAPEARG1 + SIZE_SHAPEARG;
-    private static final int SIZE_SHAPEARGMAX = 32;
+    private static final int SIZE_SHAPEARGMAX = 4 + Settings.maxPolygonVertices * 8;
+    private static final int TOTAL_SIZE = INDEX_SHAPEARG1 + SIZE_SHAPEARGMAX;
     
     private static final int SHAPE_CIRCLE = 0;
     private static final int SHAPE_POLYGON = 1;
@@ -57,6 +59,8 @@ public class PhysicsBody
     
     public PhysicsBody()
     {
+        bytes = ByteBuffer.allocate(TOTAL_SIZE);
+        
         bd = new BodyDef();
         fd = new FixtureDef();
     }
