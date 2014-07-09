@@ -15,7 +15,9 @@ import org.jbox2d.dynamics.FixtureDef;
 
 public class PhysicsBody
 {
-    private static final int INDEX_POSX = 0;
+    private static final int INDEX_ID = 0;
+    private static final int SIZE_ID = 8;
+    private static final int INDEX_POSX = INDEX_ID + SIZE_ID;
     private static final int SIZE_POSX = 4;
     private static final int INDEX_POSY = INDEX_POSX + SIZE_POSX;
     private static final int SIZE_POSY = 4;
@@ -37,6 +39,13 @@ public class PhysicsBody
     private static final int SHAPE_CIRCLE = 0;
     private static final int SHAPE_POLYGON = 1;
     
+    /*
+     * The counterID being a 64-bit integer sets the maximum amount
+     * of bodies loaded at once to pow(2, 64);
+     */
+    private static long counterID = 0;
+    private long ID;
+    
     private BodyDef bd;
     private Shape shape;
     private FixtureDef fd;
@@ -50,6 +59,16 @@ public class PhysicsBody
     {
         bd = new BodyDef();
         fd = new FixtureDef();
+    }
+    
+    public long getID()
+    {
+        return ID;
+    }
+    
+    public void generateID()
+    {
+        bytes.putLong(INDEX_ID, counterID++);
     }
     
     public void setPosition(Vector2 pos)
@@ -113,6 +132,8 @@ public class PhysicsBody
     
     public void reload()
     {
+        long id = bytes.getLong(INDEX_ID);
+        
         float posX = bytes.getFloat(INDEX_POSX);
         float posY = bytes.getFloat(INDEX_POSY);
         
@@ -122,6 +143,8 @@ public class PhysicsBody
         float density = bytes.getFloat(INDEX_DENSITY);
         float friction = bytes.getFloat(INDEX_FRICTION);
         float restitution = bytes.getFloat(INDEX_RESTITUTION);
+        
+        ID = id;
         
         bd.position.set(posX, posY);
         bd.type = type.getEngineValue();
