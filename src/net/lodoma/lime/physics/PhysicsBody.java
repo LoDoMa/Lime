@@ -1,10 +1,13 @@
 package net.lodoma.lime.physics;
 
+import java.nio.ByteBuffer;
+
 import net.lodoma.lime.util.Vector2;
 
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
+import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.Fixture;
@@ -12,12 +15,36 @@ import org.jbox2d.dynamics.FixtureDef;
 
 public class PhysicsBody
 {
+    private static final int INDEX_POSX = 0;
+    private static final int SIZE_POSX = 4;
+    private static final int INDEX_POSY = INDEX_POSX + SIZE_POSX;
+    private static final int SIZE_POSY = 4;
+    private static final int INDEX_TYPE = INDEX_POSY + SIZE_POSY;
+    private static final int SIZE_TYPE = 1;
+    private static final int INDEX_SHAPE = INDEX_TYPE + SIZE_TYPE;
+    private static final int SIZE_SHAPE = 1;
+    private static final int INDEX_DENSITY = INDEX_SHAPE + SIZE_SHAPE;
+    private static final int SIZE_DENSITY = 4;
+    private static final int INDEX_FRICTION = INDEX_DENSITY + SIZE_DENSITY;
+    private static final int SIZE_FRICTION = 4;
+    private static final int INDEX_RESTITUTION = INDEX_FRICTION + SIZE_FRICTION;
+    private static final int SIZE_RESTITUTION = 4;
+    private static final int INDEX_SHAPEARG1 = INDEX_RESTITUTION + SIZE_RESTITUTION;
+    private static final int SIZE_SHAPEARG = 4;
+    private static final int INDEX_SHAPEARG2 = INDEX_SHAPEARG1 + SIZE_SHAPEARG;
+    private static final int SIZE_SHAPEARGMAX = 32;
+    
+    private static final int SHAPE_CIRCLE = 0;
+    private static final int SHAPE_POLYGON = 1;
+    
     private BodyDef bd;
     private Shape shape;
     private FixtureDef fd;
     
     private Fixture fixture;
     private Body body;
+    
+    private ByteBuffer bytes;
     
     public PhysicsBody()
     {
@@ -27,46 +54,103 @@ public class PhysicsBody
     
     public void setPosition(Vector2 pos)
     {
-        bd.position.set(pos.x, pos.y);
+        bytes.putFloat(INDEX_POSX, pos.x);
+        bytes.putFloat(INDEX_POSY, pos.y);
     }
     
     public void setBodyType(PhysicsBodyType type)
     {
-        bd.type = type.getEngineValue();
+        bytes.put(INDEX_TYPE, (byte) type.ordinal());
     }
     
-    private void setShape(Shape shape)
+    private void setShape(int shapeType)
     {
-        this.shape = shape;
-        fd.shape = this.shape;
+        bytes.put(INDEX_SHAPE, (byte) shapeType);
     }
     
     public void setCircleShape(float radius)
     {
-        CircleShape circleShape = new CircleShape();
-        circleShape.m_radius = radius;
-        setShape(circleShape);
+        setShape(SHAPE_CIRCLE);
+        bytes.putFloat(INDEX_SHAPEARG1, radius);
     }
     
     public void setPolygonShape(Vector2... vertices)
     {
-        PolygonShape polygonShape = new PolygonShape();
-        polygonShape.set(Vector2.toVec2Array(vertices), vertices.length);
-        setShape(polygonShape);
+        setShape(SHAPE_POLYGON);
+        bytes.putInt(INDEX_SHAPEARG1, vertices.length);
+        for(int i = 0; i < vertices.length; i++)
+        {
+            bytes.putFloat(INDEX_SHAPEARG2 + SIZE_SHAPEARG * (i * 2 + 0), vertices[i].x);
+            bytes.putFloat(INDEX_SHAPEARG2 + SIZE_SHAPEARG * (i * 2 + 1), vertices[i].y);
+        }
     }
     
     public void setDensity(float density)
     {
-        fd.density = density;
+        bytes.putFloat(INDEX_DENSITY, density);
     }
     
     public void setFriction(float friction)
     {
-        fd.friction = friction;
+        bytes.putFloat(INDEX_FRICTION, friction);
     }
     
     public void setRestitution(float restitution)
     {
+        bytes.putFloat(INDEX_RESTITUTION, restitution);
+    }
+    
+    public byte[] getBytes()
+    {
+        return bytes.array();
+    }
+    
+    public void setBytes(byte[] lbytes)
+    {
+        bytes.rewind();
+        bytes.put(lbytes);
+    }
+    
+    public void reload()
+    {
+        float posX = bytes.getFloat(INDEX_POSX);
+        float posY = bytes.getFloat(INDEX_POSY);
+        
+        PhysicsBodyType type = PhysicsBodyType.values()[bytes.get(INDEX_TYPE)];
+        byte shapeType = bytes.get(INDEX_SHAPE);
+
+        float density = bytes.getFloat(INDEX_DENSITY);
+        float friction = bytes.getFloat(INDEX_FRICTION);
+        float restitution = bytes.getFloat(INDEX_RESTITUTION);
+        
+        bd.position.set(posX, posY);
+        bd.type = type.getEngineValue();
+        
+        Shape shape = null;
+        switch(shapeType)
+        {
+        case SHAPE_CIRCLE:
+            shape = new CircleShape();
+            shape.m_radius = bytes.getFloat(INDEX_SHAPEARG1);
+            break;
+        case SHAPE_POLYGON:
+            shape = new PolygonShape();
+            int vertexC = bytes.getInt(INDEX_SHAPEARG1);
+            Vec2[] vertices = new Vec2[vertexC];
+            for(int i = 0; i < vertexC; i++)
+            {
+                float vertexX = bytes.getFloat(INDEX_SHAPEARG2 + SIZE_SHAPEARG * (i * 2 + 0));
+                float vertexY = bytes.getFloat(INDEX_SHAPEARG2 + SIZE_SHAPEARG * (i * 2 + 1));
+                vertices[i] = new Vec2(vertexX, vertexY);
+            }
+            ((PolygonShape) shape).set(vertices, vertexC);
+            break;
+        }
+        this.shape = shape;
+        fd.shape = this.shape;
+        
+        fd.density = density;
+        fd.friction = friction;
         fd.restitution = restitution;
     }
     
