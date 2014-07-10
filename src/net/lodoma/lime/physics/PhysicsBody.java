@@ -71,6 +71,12 @@ public class PhysicsBody
         bytes.putLong(INDEX_ID, counterID++);
     }
     
+    public void updatePosition()
+    {
+        bytes.putFloat(INDEX_POSX, bd.position.x);
+        bytes.putFloat(INDEX_POSY, bd.position.y);
+    }
+    
     public void setPosition(Vector2 pos)
     {
         bytes.putFloat(INDEX_POSX, pos.x);
