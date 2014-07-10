@@ -41,10 +41,6 @@ public class PhysicsBody
     private static final int SHAPE_CIRCLE = 0;
     private static final int SHAPE_POLYGON = 1;
     
-    /*
-     * The counterID being a 64-bit integer sets the maximum amount
-     * of bodies loaded at once to pow(2, 64);
-     */
     private static long counterID = 0;
     private long ID;
     
@@ -179,6 +175,11 @@ public class PhysicsBody
         fd.density = density;
         fd.friction = friction;
         fd.restitution = restitution;
+    }
+    
+    public Body getEngineBody()
+    {
+        return body;
     }
     
     public void create(PhysicsWorld world)
