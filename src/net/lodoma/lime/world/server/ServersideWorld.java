@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import net.lodoma.lime.physics.PhysicsWorld;
 import net.lodoma.lime.server.generic.GenericServer;
 import net.lodoma.lime.server.generic.ServerUser;
 import net.lodoma.lime.server.generic.net.packet.ServerPacketPool;
@@ -32,10 +33,14 @@ public class ServersideWorld implements TileGrid
     
     private boolean paletteLock;
     
+    private PhysicsWorld physicsWorld;
+    
     public ServersideWorld(GenericServer server)
     {
         this.server = server;
         this.palette = new HashMap<Short, Material>();
+        
+        physicsWorld = new PhysicsWorld();
     }
     
     public void fetch()
@@ -57,6 +62,11 @@ public class ServersideWorld implements TileGrid
                 chunks[y * chunkAX + x] = new WorldChunk(CHUNKW, CHUNKH);
         
         paletteLock = false;
+    }
+    
+    public PhysicsWorld getPhysicsWorld()
+    {
+        return physicsWorld;
     }
     
     public int getWidth()
