@@ -14,10 +14,10 @@ public class PhysicsWorld
     private World world;
     private PhysicsPool pool;
     
-    public PhysicsWorld()
+    public PhysicsWorld(PhysicsPool pool)
     {
         world = new World(ENGINE_GRAVITY, ENGINE_SLEEP);
-        pool = new PhysicsPool();
+        this.pool = pool;
     }
     
     public World getEngineWorld()

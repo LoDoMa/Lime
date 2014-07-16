@@ -2,23 +2,25 @@ package net.lodoma.lime.client.logic;
 
 import net.lodoma.lime.chat.ChatConsole;
 import net.lodoma.lime.chat.ChatManager;
-import net.lodoma.lime.chat.client.CPChatMessage;
-import net.lodoma.lime.chat.client.CPHChatMessage;
-import net.lodoma.lime.client.generic.net.GenericClient;
-import net.lodoma.lime.client.generic.net.packet.ClientPacketPool;
-import net.lodoma.lime.common.net.LogLevel;
+import net.lodoma.lime.client.Client;
+import net.lodoma.lime.client.ClientInputHandler;
+import net.lodoma.lime.client.ClientOutput;
+import net.lodoma.lime.client.io.chat.CIHChatMessageReceive;
+import net.lodoma.lime.client.io.chat.COChatMessageSend;
+import net.lodoma.lime.util.HashPool;
 import net.lodoma.lime.util.ThreadHelper;
 
 public class CLChat implements ClientLogic
 {
-    private GenericClient client;
-    private ClientPacketPool packetPool;
+    private Client client;
+    private HashPool<ClientInputHandler> cihPool;
+    private HashPool<ClientOutput> coPool;
     
     private ChatConsole chatConsole;
     private ChatManager chatManager;
     
     @Override
-    public void baseInit(GenericClient client)
+    public void baseInit(Client client)
     {
         this.client = client;
     }
@@ -29,18 +31,20 @@ public class CLChat implements ClientLogic
         client.setProperty("chatManager", new ChatManager(client));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void fetchInit()
     {
-        packetPool = (ClientPacketPool) client.getProperty("packetPool");
+        cihPool = (HashPool<ClientInputHandler>) client.getProperty("cihPool");
+        coPool = (HashPool<ClientOutput>) client.getProperty("coPool");
         chatManager = (ChatManager) client.getProperty("chatManager");
     }
 
     @Override
     public void generalInit()
     {
-        packetPool.addPacket("Lime::ChatMessage", new CPChatMessage());
-        packetPool.addHandler("Lime::ChatMessage", new CPHChatMessage());
+        cihPool.add("Lime::ChatMessageReceive", new CIHChatMessageReceive(client));
+        coPool.add("Lime::ChatMessageSend", new COChatMessageSend(client, "Lime::ChatMessageSend"));
         
         chatConsole = new ChatConsole(client);
         chatConsole.start();
@@ -57,7 +61,7 @@ public class CLChat implements ClientLogic
         }
         catch(InterruptedException e)
         {
-            client.log(LogLevel.SEVERE, e);
+            e.printStackTrace();
         }
     }
 

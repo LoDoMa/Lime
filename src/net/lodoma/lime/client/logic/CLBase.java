@@ -1,22 +1,23 @@
 package net.lodoma.lime.client.logic;
 
-import net.lodoma.lime.client.generic.net.GenericClient;
-import net.lodoma.lime.client.generic.net.packet.ClientPacketPool;
-import net.lodoma.lime.client.net.packet.CPConnectRequest;
-import net.lodoma.lime.client.net.packet.CPDependencyRequest;
-import net.lodoma.lime.client.net.packet.CPHConnectRequestAnswer;
-import net.lodoma.lime.client.net.packet.CPHUserStatus;
+import net.lodoma.lime.client.Client;
+import net.lodoma.lime.client.ClientInputHandler;
+import net.lodoma.lime.client.ClientOutput;
+import net.lodoma.lime.client.io.base.CIHNetworkStageChange;
+import net.lodoma.lime.client.io.base.CODependencyRequest;
 import net.lodoma.lime.common.net.NetStage;
-import net.lodoma.lime.texture.TexturePool;
+import net.lodoma.lime.util.HashPool;
 
 public class CLBase implements ClientLogic
 {
-    private GenericClient client;
-    private ClientPacketPool packetPool;
-    private TexturePool texturePool;
+    private Client client;
+    private HashPool<ClientInputHandler> cihPool;
+    private HashPool<ClientOutput> coPool;
+    
+    private boolean sendFirstRequest;
     
     @Override
-    public void baseInit(GenericClient client)
+    public void baseInit(Client client)
     {
         this.client = client;
     }
@@ -24,38 +25,33 @@ public class CLBase implements ClientLogic
     @Override
     public void propertyInit()
     {
-        client.setProperty("networkStage", NetStage.PRIMITIVE);
-        client.setProperty("packetPool", new ClientPacketPool());
-        client.setProperty("texturePool", new TexturePool());
+        client.setProperty("networkStage", NetStage.DEPENDENCY);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void fetchInit()
     {
-        packetPool = (ClientPacketPool) client.getProperty("packetPool");
-        texturePool = (TexturePool) client.getProperty("texturePool");
+        cihPool = (HashPool<ClientInputHandler>) client.getProperty("cihPool");
+        coPool = (HashPool<ClientOutput>) client.getProperty("coPool");
     }
 
     @Override
     public void generalInit()
     {
-        packetPool.addPacket("Lime::ConnectRequest", new CPConnectRequest());
-        packetPool.addHandler("Lime::ConnectRequestAnswer", new CPHConnectRequestAnswer());
-        packetPool.addPacket("Lime::DependencyRequest", new CPDependencyRequest());
-        packetPool.addHandler("Lime::UserStatus", new CPHUserStatus());
-
-        texturePool.loadTextures();
+        sendFirstRequest = true;
+        coPool.add("Lime::DependencyRequest", new CODependencyRequest(client, "Lime::DependencyRequest"));
+        cihPool.add("Lime::NetworkStageChange", new CIHNetworkStageChange(client));
     }
-    
-    private boolean first = true;
     
     @Override
     public void logic()
     {
-        if(first)
+        if(sendFirstRequest)
         {
-            packetPool.getPacket("Lime::ConnectRequest").send(client);
-            first = false;
+            client.setProperty("dependencyProgress", 0);
+            coPool.get("Lime::DependencyRequest").handle();
+            sendFirstRequest = false;
         }
     }
     

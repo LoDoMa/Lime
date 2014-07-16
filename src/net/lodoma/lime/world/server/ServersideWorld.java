@@ -1,15 +1,13 @@
 package net.lodoma.lime.world.server;
 
-import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import net.lodoma.lime.physics.PhysicsWorld;
-import net.lodoma.lime.server.generic.GenericServer;
-import net.lodoma.lime.server.generic.ServerUser;
-import net.lodoma.lime.server.generic.net.packet.ServerPacketPool;
+import net.lodoma.lime.physics.ServersidePhysicsPool;
+import net.lodoma.lime.server.Server;
 import net.lodoma.lime.world.TileGrid;
 import net.lodoma.lime.world.material.Material;
 
@@ -19,8 +17,8 @@ public class ServersideWorld implements TileGrid
     private static final int CHUNKW = 30;
     private static final int CHUNKH = 30;
     
-    private GenericServer server;
-    private ServerPacketPool packetPool;
+    @SuppressWarnings("unused")
+    private Server server;
     
     private int width;
     private int height;
@@ -35,17 +33,17 @@ public class ServersideWorld implements TileGrid
     
     private PhysicsWorld physicsWorld;
     
-    public ServersideWorld(GenericServer server)
+    public ServersideWorld(Server server)
     {
         this.server = server;
         this.palette = new HashMap<Short, Material>();
         
-        physicsWorld = new PhysicsWorld();
+        physicsWorld = new PhysicsWorld(new ServersidePhysicsPool());
     }
     
     public void fetch()
     {
-        packetPool = (ServerPacketPool) server.getProperty("packetPool");
+        physicsWorld.getPool().fetch();
     }
     
     public void init(int width, int height)
@@ -166,22 +164,5 @@ public class ServersideWorld implements TileGrid
         for(int y = 0; y < chunkAY; y++)
             for(int x = 0; x < chunkAX; x++)
                 chunks[y * chunkAX + x].lockState();
-    }
-    
-    public void sendChunkInformation(ServerUser user)
-    {
-        int chunkc = chunkAX * chunkAY;
-        packetPool.getPacket("Lime::WorldChunkInformation").send(server, user, chunkc);
-    }
-    
-    public void sendChunkPacket(ServerUser user, int packetIndex)
-    {
-        int y = packetIndex / chunkAX;
-        int x = packetIndex % chunkAX;
-        
-        ByteBuffer chunkBuffer = chunks[y * chunkAX + x].build();
-        byte[] chunkBytes = chunkBuffer.array();
-        
-        packetPool.getPacket("Lime::WorldChunk").send(server, user, x * CHUNKW, y * CHUNKH, CHUNKW, CHUNKH, chunkBytes);
     }
 }

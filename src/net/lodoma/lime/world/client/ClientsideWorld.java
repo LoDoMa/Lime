@@ -1,22 +1,19 @@
 package net.lodoma.lime.world.client;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
-import net.lodoma.lime.client.generic.net.GenericClient;
-import net.lodoma.lime.client.generic.net.packet.ClientPacketPool;
+import net.lodoma.lime.client.Client;
+import net.lodoma.lime.client.ClientOutput;
 import net.lodoma.lime.common.net.NetStage;
-import net.lodoma.lime.texture.TexturePool;
 import net.lodoma.lime.util.BinaryHelper;
+import net.lodoma.lime.util.HashPool;
 import net.lodoma.lime.world.TileGrid;
 import net.lodoma.lime.world.entity.Entity;
-import net.lodoma.lime.world.entity.TestEntity1;
 import net.lodoma.lime.world.material.Material;
 
 import org.jbox2d.dynamics.World;
@@ -60,56 +57,55 @@ public class ClientsideWorld implements TileGrid
     public static final byte TILESHAPE_PILLAR_XFLIP = buildTileShape(false, true, true, false, true, true, false, false);
     public static final byte TILESHAPE_EMPTY = buildTileShape(false, false, false, false, false, false, false, false);
     
-    private GenericClient client;
-    private ClientPacketPool packetPool;
-    private TexturePool texturePool;
+    private Client client;
+    private HashPool<ClientOutput> coPool;
     private boolean startedSequence;
     
     private int width;
     private int height;
     
-    private int remainingChunks;
     private byte[] tileInfo;
     private byte[] tileShape;
     private short[] tileMaterial;
     
     private Map<Short, Material> palette;
-    
+
+    private boolean renderReady;
     private boolean firstRender;
     private WorldRenderer renderer;
     
     private World world;
     private Set<Entity> entities;
     
-    public ClientsideWorld(GenericClient client)
+    public ClientsideWorld(Client client)
     {
         this.client = client;
         palette = new HashMap<Short, Material>();
         renderer = new WorldRenderer(this);
         entities = new HashSet<Entity>();
-        reset();
+
+        startedSequence = false;
+        reset(0, 0);
     }
-    
+
+    @SuppressWarnings("unchecked")
     public void fetch()
     {
-        packetPool = (ClientPacketPool) client.getProperty("packetPool");
-        texturePool = (TexturePool) client.getProperty("texturePool");
+        coPool = (HashPool<ClientOutput>) this.client.getProperty("coPool");
     }
     
-    public void reset()
+    public void reset(int width, int height)
     {
-        startedSequence = false;
+        this.width = width;
+        this.height = height;
         
-        width = 0;
-        height = 0;
+        tileInfo = new byte[width * height];
+        tileShape = new byte[width * height];
+        tileMaterial = new short[width * height];
         
-        tileInfo = null;
-        tileShape = null;
-        tileMaterial = null;
-        
-        remainingChunks = Integer.MAX_VALUE;
         palette.clear();
-        
+
+        renderReady = false;
         firstRender = true;
         
         for(Entity entity : entities)
@@ -117,59 +113,14 @@ public class ClientsideWorld implements TileGrid
         entities.clear();
     }
     
-    public void receiveDimensions(int width, int height)
+    public void requestInitialData()
     {
-        this.width = width;
-        this.height = height;
-        
-        this.tileInfo = new byte[width * height];
-        this.tileShape = new byte[width * height];
-        this.tileMaterial = new short[width * height];
-        
-        packetPool.getPacket("Lime::WorldPaletteRequest").send(client);
+        startedSequence = false;
     }
     
-    public void receivePalette(byte[] content)
+    public void setRenderReady()
     {
-        palette.clear();
-        ByteBuffer buffer = ByteBuffer.wrap(content);
-        int count = buffer.getInt();
-        while((count--) != 0)
-        {
-            short key = buffer.getShort();
-            long least = buffer.getLong();
-            long most = buffer.getLong();
-            UUID uuid = new UUID(most, least);
-            System.out.println("material " + key + ": " + uuid);
-            Material material = new Material(uuid);
-            palette.put(key, material);
-        }
-        
-        packetPool.getPacket("Lime::WorldChunkInformationRequest").send(client);
-        
-        addEntity(new TestEntity1(world, this));
-    }
-    
-    public void receiveChunkInformation(byte[] content)
-    {
-        ByteBuffer buffer = ByteBuffer.wrap(content);
-        remainingChunks = buffer.getInt();
-        packetPool.getPacket("Lime::WorldChunkRequest").send(client, remainingChunks - 1);
-    }
-    
-    public void receiveChunk(int cx, int cy, int cw, int ch, byte[] content)
-    {
-        ByteBuffer buffer = ByteBuffer.wrap(content);
-        for(int y = 0; y < ch; y++)
-            for(int x = 0; x < cw; x++)
-            {
-                setTileInfo(x + cx, y + cy, buffer.get());
-                setTileShape(x + cx, y + cy, buffer.get());
-                setTileMaterial(x + cx, y + cy, buffer.getShort());
-            }
-        remainingChunks--;
-        if(remainingChunks > 0)
-            packetPool.getPacket("Lime::WorldChunkRequest").send(client, remainingChunks - 1);
+        renderReady = true;
     }
     
     public int getWidth()
@@ -180,6 +131,11 @@ public class ClientsideWorld implements TileGrid
     public int getHeight()
     {
         return height;
+    }
+    
+    public void addPaletteMember(short key, Material material)
+    {
+        palette.put(key, material);
     }
     
     public int getPaletteSize()
@@ -200,11 +156,6 @@ public class ClientsideWorld implements TileGrid
     public Set<Short> getPaletteKeys()
     {
         return new HashSet<Short>(palette.keySet());
-    }
-    
-    public TexturePool getTexturePool()
-    {
-        return texturePool;
     }
     
     @Override
@@ -267,14 +218,14 @@ public class ClientsideWorld implements TileGrid
     {
         if(!startedSequence && ((NetStage) client.getProperty("networkStage")) == NetStage.USER)
         {
-            packetPool.getPacket("Lime::WorldDimensionRequest").send(client);
+            coPool.get("Lime::InitialWorldRequest").handle();
             startedSequence = true;
         }
     }
     
     public void render()
     {
-        if(remainingChunks == 0)
+        if(renderReady)
         {
             if(firstRender)
             {

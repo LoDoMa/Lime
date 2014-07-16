@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.lodoma.lime.texture.TexturePool;
 import net.lodoma.lime.world.material.Material;
 
 import org.lwjgl.opengl.GL11;
@@ -14,7 +13,6 @@ import org.lwjgl.opengl.GL11;
 public class WorldRenderer
 {
     private ClientsideWorld world;
-    private TexturePool texturePool;
     
     /*
      * Tiles using the same Material have exactly the same rendering properties.
@@ -38,7 +36,6 @@ public class WorldRenderer
         
         int width = world.getWidth();
         int height = world.getHeight();
-        texturePool = world.getTexturePool();
         
         Set<Short> keySet = world.getPaletteKeys();
         for(short key : keySet)
@@ -93,9 +90,6 @@ public class WorldRenderer
         Set<Material> materials = displayLists.keySet();
         for(Material material : materials)
         {
-            if(material.texture != 0)
-                texturePool.getTexture(material.texture).bind(0);
-            
             int displayList = displayLists.get(material);
             GL11.glCallList(displayList);
         }

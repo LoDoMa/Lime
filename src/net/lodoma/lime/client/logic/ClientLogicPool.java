@@ -3,11 +3,11 @@ package net.lodoma.lime.client.logic;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.lodoma.lime.client.generic.net.GenericClient;
+import net.lodoma.lime.client.Client;
 
 public class ClientLogicPool implements Runnable
 {
-    private GenericClient client;
+    private Client client;
     
     private boolean running = false;
     private Thread thread;
@@ -16,7 +16,7 @@ public class ClientLogicPool implements Runnable
     
     private boolean disabled;
     
-    public ClientLogicPool(GenericClient client)
+    public ClientLogicPool(Client client)
     {
         this.client = client;
         logicSet = new HashSet<ClientLogic>();

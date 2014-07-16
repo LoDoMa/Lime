@@ -3,18 +3,18 @@ package net.lodoma.lime.server.logic;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.lodoma.lime.server.generic.GenericServer;
+import net.lodoma.lime.server.Server;
 
 public class ServerLogicPool implements Runnable
 {
-    private GenericServer server;
+    private Server server;
     
     private boolean running = false;
     private Thread thread;
     
     private Set<ServerLogic> logicSet;
     
-    public ServerLogicPool(GenericServer server)
+    public ServerLogicPool(Server server)
     {
         this.server = server;
         logicSet = new HashSet<ServerLogic>();

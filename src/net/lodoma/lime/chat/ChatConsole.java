@@ -4,18 +4,17 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import net.lodoma.lime.client.generic.net.GenericClient;
-import net.lodoma.lime.common.net.LogLevel;
+import net.lodoma.lime.client.Client;
 
 public class ChatConsole extends Thread implements ChatHandler
 {
-    private GenericClient client;
+    private Client client;
     private ChatManager chatManager;
     
-    public ChatConsole(GenericClient client)
+    public ChatConsole(Client client)
     {
         this.client = client;
-        chatManager = (ChatManager) client.getProperty("chatManager");
+        chatManager = (ChatManager) this.client.getProperty("chatManager");
     }
     
     @Override
@@ -26,20 +25,17 @@ public class ChatConsole extends Thread implements ChatHandler
             try
             {
                 while(System.in.available() > 0)
-                {
-                    byte[] bytes = reader.readLine().getBytes();
-                    chatManager.sendChatPacket(bytes);
-                }
+                    chatManager.send(reader.readLine());
             }
             catch(IOException e)
             {
-                client.log(LogLevel.SEVERE, e);
+                e.printStackTrace();
             }
     }
     
     @Override
-    public void handle(byte[] chatMessage)
+    public void receive(String message)
     {
-        System.out.println("chat: " + new String(chatMessage));
+        System.out.println("chat: " + message);
     }
 }

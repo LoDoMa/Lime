@@ -1,17 +1,20 @@
 package net.lodoma.lime.server.logic;
 
-import net.lodoma.lime.chat.server.SPChatMessage;
-import net.lodoma.lime.chat.server.SPHChatMessage;
-import net.lodoma.lime.server.generic.GenericServer;
-import net.lodoma.lime.server.generic.net.packet.ServerPacketPool;
+import net.lodoma.lime.server.Server;
+import net.lodoma.lime.server.ServerInputHandler;
+import net.lodoma.lime.server.ServerOutput;
+import net.lodoma.lime.server.io.chat.SIHChatMessageSend;
+import net.lodoma.lime.server.io.chat.SOChatMessageReceive;
+import net.lodoma.lime.util.HashPool;
 
 public class SLChat implements ServerLogic
 {
-    private GenericServer server;
-    private ServerPacketPool packetPool;
+    private Server server;
+    private HashPool<ServerInputHandler> sihPool;
+    private HashPool<ServerOutput> soPool;
     
     @Override
-    public void baseInit(GenericServer server)
+    public void baseInit(Server server)
     {
         this.server = server;
     }
@@ -22,17 +25,19 @@ public class SLChat implements ServerLogic
         
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void fetchInit()
     {
-        packetPool = (ServerPacketPool) server.getProperty("packetPool");
+        sihPool = (HashPool<ServerInputHandler>) server.getProperty("sihPool");
+        soPool = (HashPool<ServerOutput>) server.getProperty("soPool");
     }
 
     @Override
     public void generalInit()
     {
-        packetPool.addPacket("Lime::ChatMessage", new SPChatMessage());
-        packetPool.addHandler("Lime::ChatMessage", new SPHChatMessage());
+        sihPool.add("Lime::ChatMessageSend", new SIHChatMessageSend(server));
+        soPool.add("Lime::ChatMessageReceive", new SOChatMessageReceive(server, "Lime::ChatMessageReceive"));
     }
 
     @Override

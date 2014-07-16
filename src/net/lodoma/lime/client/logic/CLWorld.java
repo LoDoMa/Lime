@@ -1,25 +1,22 @@
 package net.lodoma.lime.client.logic;
 
-import net.lodoma.lime.client.generic.net.GenericClient;
-import net.lodoma.lime.client.generic.net.packet.ClientPacketPool;
+import net.lodoma.lime.client.Client;
+import net.lodoma.lime.client.ClientInputHandler;
+import net.lodoma.lime.client.ClientOutput;
+import net.lodoma.lime.client.io.world.CIHInitialWorldData;
+import net.lodoma.lime.client.io.world.COInitialWorldRequest;
+import net.lodoma.lime.util.HashPool;
 import net.lodoma.lime.world.client.ClientsideWorld;
-import net.lodoma.lime.world.client.packet.CPHWorldChunk;
-import net.lodoma.lime.world.client.packet.CPHWorldChunkInformation;
-import net.lodoma.lime.world.client.packet.CPHWorldDimensions;
-import net.lodoma.lime.world.client.packet.CPHWorldPalette;
-import net.lodoma.lime.world.client.packet.CPWorldChunkInformationRequest;
-import net.lodoma.lime.world.client.packet.CPWorldChunkRequest;
-import net.lodoma.lime.world.client.packet.CPWorldDimensionRequest;
-import net.lodoma.lime.world.client.packet.CPWorldPaletteRequest;
 
 public class CLWorld implements ClientLogic
 {
-    private GenericClient client;
-    private ClientPacketPool packetPool;
+    private Client client;
+    private HashPool<ClientInputHandler> cihPool;
+    private HashPool<ClientOutput> coPool;
     private ClientsideWorld world;
     
     @Override
-    public void baseInit(GenericClient client)
+    public void baseInit(Client client)
     {
         this.client = client;
     }
@@ -30,10 +27,12 @@ public class CLWorld implements ClientLogic
         client.setProperty("world", new ClientsideWorld(client));
     }
     
+    @SuppressWarnings("unchecked")
     @Override
     public void fetchInit()
     {
-        packetPool = (ClientPacketPool) client.getProperty("packetPool");
+        cihPool = (HashPool<ClientInputHandler>) client.getProperty("cihPool");
+        coPool = (HashPool<ClientOutput>) client.getProperty("coPool");
         world = (ClientsideWorld) client.getProperty("world");
         world.fetch();
     }
@@ -41,17 +40,8 @@ public class CLWorld implements ClientLogic
     @Override
     public void generalInit()
     {
-        packetPool.addPacket("Lime::WorldDimensionRequest", new CPWorldDimensionRequest());
-        packetPool.addHandler("Lime::WorldDimensions", new CPHWorldDimensions());
-        
-        packetPool.addPacket("Lime::WorldPaletteRequest", new CPWorldPaletteRequest());
-        packetPool.addHandler("Lime::WorldPalette", new CPHWorldPalette());
-
-        packetPool.addPacket("Lime::WorldChunkInformationRequest", new CPWorldChunkInformationRequest());
-        packetPool.addHandler("Lime::WorldChunkInformation", new CPHWorldChunkInformation());
-
-        packetPool.addPacket("Lime::WorldChunkRequest", new CPWorldChunkRequest());
-        packetPool.addHandler("Lime::WorldChunk", new CPHWorldChunk());
+        coPool.add("Lime::InitialWorldRequest", new COInitialWorldRequest(client, "Lime::InitialWorldRequest"));
+        cihPool.add("Lime::InitialWorldData", new CIHInitialWorldData(client));
     }
     
     @Override
