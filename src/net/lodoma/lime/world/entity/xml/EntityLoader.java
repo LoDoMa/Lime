@@ -10,6 +10,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import net.lodoma.lime.physics.PhysicsBody;
 import net.lodoma.lime.physics.PhysicsBodyType;
+import net.lodoma.lime.util.Pair;
 import net.lodoma.lime.util.Vector2;
 import net.lodoma.lime.util.XMLHelper;
 
@@ -41,8 +42,9 @@ public class EntityLoader
         if(rootName != "model")
             new InvalidNameException("root of an entity XML file must be named \"model\"");
         
-        String name         = XMLHelper.getDeepValue(doc.getDocumentElement(), "name");
-        String visualName   = XMLHelper.getDeepValue(doc.getDocumentElement(), "visual");
+        String name         = XMLHelper.getDeepValue(docElement, "name");
+        String visualName   = XMLHelper.getDeepValue(docElement, "visual");
+        String version      = XMLHelper.getDeepValue(docElement, "version");
         
         NodeList bodies     = docElement.getElementsByTagName("body");
         NodeList joints     = docElement.getElementsByTagName("joint");
@@ -55,7 +57,8 @@ public class EntityLoader
             Node bodyNode = bodies.item(i);
             if(bodyNode.getNodeType() != Node.ELEMENT_NODE)
                 throw new RuntimeException("invalid \"body\" node");
-            parseBodyElement((Element) bodies.item(i));
+            Pair<String, PhysicsBody> bodyData = parseBodyElement((Element) bodies.item(i));
+            
         }
     }
     
@@ -65,32 +68,28 @@ public class EntityLoader
 
         if(XMLHelper.hasNode(vertexElement, "index"))
             vertex.index = XMLHelper.getDeepValueInteger(vertexElement, "index");
-        
-        if(XMLHelper.hasNode(vertexElement, "x")) vertex.x = XMLHelper.getDeepValueFloat(vertexElement, "x");
-        if(XMLHelper.hasNode(vertexElement, "y")) vertex.y = XMLHelper.getDeepValueFloat(vertexElement, "y");
-        
+        vertex.x = XMLHelper.getDeepValueFloat(vertexElement, "x");
+        vertex.y = XMLHelper.getDeepValueFloat(vertexElement, "y");
         if(XMLHelper.hasNode(vertexElement, "color"))
             vertex.color = XMLHelper.getDeepValueInteger(vertexElement, "color");
         
         return vertex;
     }
     
-    private void parseBodyElement(Element bodyElement)
+    private Pair<String, PhysicsBody> parseBodyElement(Element bodyElement)
     {
         PhysicsBody body = new PhysicsBody();
-        
         String name     = XMLHelper.getDeepValue(bodyElement, "name");
         String type     = XMLHelper.getDeepValue(bodyElement, "type");
         String behavior = XMLHelper.getDeepValue(bodyElement, "behavior");
         
-        if(type == "circle")
+        switch(type)
         {
+        case "circle":
             float radius = XMLHelper.getDeepValueFloat(bodyElement, "radius");
             body.setCircleShape(radius);
-        }
-        
-        if(type == "polygon")
-        {
+            break;
+        case "polygon":
             int vertexCount = XMLHelper.getDeepValueInteger(bodyElement, "vertex_count");
             Vector2[] vertices = new Vector2[vertexCount];
             
@@ -106,10 +105,14 @@ public class EntityLoader
             }
             
             body.setPolygonShape(vertices);
+            break;
+        default:
+            throw new RuntimeException("invalid body type \"" + type + "\"");
         }
         
-        if(behavior == "dynamic")
+        switch(behavior)
         {
+        case "dynamic":
             body.setBodyType(PhysicsBodyType.DYNAMIC);
             
             float density     = XMLHelper.getDeepValueFloat(bodyElement, "density");
@@ -119,6 +122,11 @@ public class EntityLoader
             body.setDensity(density);
             body.setFriction(friction);
             body.setRestitution(restitution);
+            break;
+        default:
+            throw new RuntimeException("invalid body behavior \"" + behavior + "\"");
         }
+        
+        return new Pair<String, PhysicsBody>(name, body);
     }
 }

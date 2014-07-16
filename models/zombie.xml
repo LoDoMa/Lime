@@ -1,6 +1,7 @@
 <model>
 	<name> lime::zombie </name>
 	<visual> Zombie </visual>
+	<version> 1 </version>
 
 	<body>
 		<name> head </name>
