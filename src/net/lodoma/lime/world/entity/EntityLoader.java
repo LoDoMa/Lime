@@ -1,4 +1,4 @@
-package net.lodoma.lime.world.entity.xml;
+package net.lodoma.lime.world.entity;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +22,6 @@ import net.lodoma.lime.physics.PhysicsJointType;
 import net.lodoma.lime.util.Pair;
 import net.lodoma.lime.util.Vector2;
 import net.lodoma.lime.util.XMLHelper;
-import net.lodoma.lime.world.entity.Entity;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

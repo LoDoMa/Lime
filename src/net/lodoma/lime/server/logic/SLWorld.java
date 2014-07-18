@@ -9,7 +9,7 @@ import net.lodoma.lime.server.io.world.SIHInitialWorldRequest;
 import net.lodoma.lime.server.io.world.SOInitialWorldData;
 import net.lodoma.lime.util.HashPool;
 import net.lodoma.lime.world.builder.WorldFileLoader;
-import net.lodoma.lime.world.entity.xml.EntityLoader;
+import net.lodoma.lime.world.entity.EntityLoader;
 import net.lodoma.lime.world.server.ServersideWorld;
 
 public class SLWorld implements ServerLogic
