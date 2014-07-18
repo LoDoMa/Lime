@@ -1,10 +1,8 @@
 package net.lodoma.lime.server.logic;
 
 import java.io.File;
-import java.io.IOException;
 
 import net.lodoma.lime.physics.entity.EntityLoader;
-import net.lodoma.lime.script.LuaScript;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.server.ServerInputHandler;
 import net.lodoma.lime.server.ServerOutput;
@@ -55,18 +53,6 @@ public class SLWorld implements ServerLogic
         
         WorldFileLoader fileLoader = new WorldFileLoader();
         fileLoader.build(world);
-        
-        try
-        {
-            LuaScript script = new LuaScript(new File("script/zombie.lua"));
-            script.call("Lime_FrameUpdate");
-            script.close();
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        
         
         try
         {

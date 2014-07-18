@@ -1,13 +1,14 @@
 package net.lodoma.lime.physics.entity;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import net.lodoma.lime.mask.Mask;
 import net.lodoma.lime.physics.PhysicsBody;
 import net.lodoma.lime.physics.PhysicsJoint;
+import net.lodoma.lime.script.LuaScript;
 
 public class Entity
 {
@@ -15,19 +16,19 @@ public class Entity
     private String visualName;
     private String version;
     
-    private Map<String, PhysicsBody> physicsBodies;
-    private Map<String, PhysicsJoint> physicsJoints;
-    private Map<String, Mask> masks;
-    private Map<String, String> properties;
-    private List<String> scripts;
+    private List<PhysicsBody> bodies;
+    private List<PhysicsJoint> joints;
+    private List<Mask> masks;
+    private List<String> properties;
+    private List<LuaScript> scripts;
     
     public Entity()
     {
-        physicsBodies = new HashMap<String, PhysicsBody>();
-        physicsJoints = new HashMap<String, PhysicsJoint>();
-        masks = new HashMap<String, Mask>();
-        properties = new HashMap<String, String>();
-        scripts = new ArrayList<String>();
+        bodies = new ArrayList<PhysicsBody>();
+        joints = new ArrayList<PhysicsJoint>();
+        masks = new ArrayList<Mask>();
+        properties = new ArrayList<String>();
+        scripts = new ArrayList<LuaScript>();
     }
     
     public String getInternalName()
@@ -60,52 +61,63 @@ public class Entity
         this.version = version;
     }
     
-    public PhysicsBody getPhysicsBodyByName(String name)
+    public void addPhysicsBody(PhysicsBody body)
     {
-        return physicsBodies.get(name);
+        bodies.add(body);
     }
     
-    public void addPhysicsBody(String name, PhysicsBody body)
+    public void addPhysicsJoint(PhysicsJoint joint)
     {
-        physicsBodies.put(name, body);
+        joints.add(joint);
     }
     
-    public PhysicsJoint getPhysicsJointByName(String name)
+    public void addMask(Mask mask)
     {
-        return physicsJoints.get(name);
+        masks.add(mask);
     }
     
-    public void addPhysicsJoint(String name, PhysicsJoint joint)
+    public void addProperty(String type)
     {
-        physicsJoints.put(name, joint);
-    }
-    
-    public void addMask(String name, Mask mask)
-    {
-        masks.put(name, mask);
-    }
-    
-    public void addProperty(String name, String type)
-    {
-        properties.put(name, type);
+        properties.add(type);
     }
     
     public void addScript(String script)
     {
-        scripts.add(script);
+        try
+        {
+            System.out.println(script);
+            scripts.add(new LuaScript(new File(script)));
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
+    
+    public void destroy()
+    {
+        for(LuaScript script : scripts)
+            script.close();
+        
+        bodies.clear();
+        joints.clear();
+        masks.clear();
+        properties.clear();
+        scripts.clear();
     }
     
     public void update()
     {
-        List<PhysicsBody> bodies = new ArrayList<PhysicsBody>(physicsBodies.values());
+        for(LuaScript script : scripts)
+            script.call("Lime_FrameUpdate");
+        
         for(PhysicsBody body : bodies)
             body.update();
     }
     
     public void render()
     {
-        List<Mask> maskList = new ArrayList<Mask>(masks.values());
-        for(Mask mask : maskList)
+        for(Mask mask : masks)
             mask.call();
     }
 }

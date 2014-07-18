@@ -1,3 +1,3 @@
 function Lime_FrameUpdate()
-	print("Howdy, Java, my name is Lua!");
+	print("Howdy, Java, my name's Lua!")
 end
