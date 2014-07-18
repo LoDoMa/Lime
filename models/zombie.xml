@@ -1,74 +1,79 @@
 <model>
-	<name> lime::zombie </name>
-	<visual> Zombie </visual>
-	<version> 1 </version>
+	<model_name> lime::zombie </model_name>
+	<model_visual> Zombie </model_visual>
+	<model_version> 1 </model_version>
 
 	<body>
 		<name> head </name>
-		<type> polygon </name>
-		<behavior> dynamic </behavior>
-		<density> 2.0 </density>
-		<friction> 0.3 </friction>
-	    <restitution> 0.2 </restitution>	
-		<vertex_count> 4 </vertex_count>
-		<vertex> <index> 1 </index> <x> 0.0 </x> <y> 0.0 </y> </vertex>
-		<vertex> <index> 2 </index> <x> 0.5 </x> <y> 0.0 </y> </vertex>
-		<vertex> <index> 3 </index> <x> 0.5 </x> <y> 0.5 </y> </vertex>
-		<vertex> <index> 4 </index> <x> 0.0 </x> <y> 0.5 </y> </vertex>
+		<polygon_shape>
+			<vertex_count> 4 </vertex_count>
+			<vertex> <index> 1 </index> <x> 0.0 </x> <y> 0.0 </y> </vertex>
+			<vertex> <index> 2 </index> <x> 0.5 </x> <y> 0.0 </y> </vertex>
+			<vertex> <index> 3 </index> <x> 0.5 </x> <y> 0.5 </y> </vertex>
+			<vertex> <index> 4 </index> <x> 0.0 </x> <y> 0.5 </y> </vertex>
+		</polygon_shape>
+		<dynamic_behavior>
+			<density> 2.0 </density>
+			<friction> 0.3 </friction>
+		    <restitution> 0.2 </restitution>
+		</dynamic_behavior>
 	</body>
 	
 	<body>
 		<name> body </name>
-		<type> polygon </type>
-		<behavior> dynamic </behavior>
-		<density> 2.0 </density>
-		<friction> 0.3 </friction>
-	    <restitution> 0.2 </restitution>
-		<vertex_count> 4 </vertex_count>
-		<vertex> <index> 1 </index> <x> 0.0 </x> <y> 0.0 </y> </vertex>
-		<vertex> <index> 2 </index> <x> 0.4 </x> <y> 0.0 </y> </vertex>
-		<vertex> <index> 3 </index> <x> 0.4 </x> <y> 1.0 </y> </vertex>
-		<vertex> <index> 4 </index> <x> 0.0 </x> <y> 1.0 </y> </vertex>
+		<polygon_shape>
+			<vertex_count> 4 </vertex_count>
+			<vertex> <index> 1 </index> <x> 0.0 </x> <y> 0.0 </y> </vertex>
+			<vertex> <index> 2 </index> <x> 0.4 </x> <y> 0.0 </y> </vertex>
+			<vertex> <index> 3 </index> <x> 0.4 </x> <y> 1.0 </y> </vertex>
+			<vertex> <index> 4 </index> <x> 0.0 </x> <y> 1.0 </y> </vertex>
+		</polygon_shape>
+		<dynamic_behavior>
+			<density> 2.0 </density>
+			<friction> 0.3 </friction>
+		    <restitution> 0.2 </restitution>
+		</dynamic_behavior>
 	</body>
 	
-	<joint>
+	<revolute_joint>
 		<name> head_body </name>
-		<type> revolute </type>
-		<body> <mark> A </mark> <name> head </name> </body>
-		<body> <mark> B </mark> <name> body </name> </body>
+		<body_a> head </body_a>
+		<body_b> body </body_b>
 		<collision> false </collision>
 		<rotation> 0 </rotation>
 		<fixed_rotation> true </fixed_rotation>
-		<anchor>
-			<mark> A </mark>
+		<anchor_a>
 			<x> 0.25 </x>
 			<y> 0.00 </y>
-		</anchor>
-		<anchor>
-			<mark> B </mark>
+		</anchor_a>
+		<anchor_b>
 			<x> 0.20 </x>
 			<y> 1.00 </y>
-		</anchor>
-	</joint>
+		</anchor_b>
+	</revolute_joint>
 
 	<mask>
 		<name> m_head </name>
 		<follow> head </follow>
-		<vertex_count> 4 </vertex_count>
-		<vertex> <index> 1 </index> <x> 0.0 </x> <y> 0.0 </y> <color> 0xFF0000FF </color> </vertex>
-		<vertex> <index> 2 </index> <x> 0.5 </x> <y> 0.0 </y> <color> 0xFF4400FF </color> </vertex>
-		<vertex> <index> 3 </index> <x> 0.5 </x> <y> 0.5 </y> <color> 0xFF0044FF </color> </vertex>
-		<vertex> <index> 4 </index> <x> 0.0 </x> <y> 0.5 </y> <color> 0xFF4444FF </color> </vertex>
+		<polygon_shape>
+			<vertex_count> 4 </vertex_count>
+			<vertex> <index> 1 </index> <x> 0.0 </x> <y> 0.0 </y> <color> 0xFF0000FF </color> </vertex>
+			<vertex> <index> 2 </index> <x> 0.5 </x> <y> 0.0 </y> <color> 0xFF4400FF </color> </vertex>
+			<vertex> <index> 3 </index> <x> 0.5 </x> <y> 0.5 </y> <color> 0xFF0044FF </color> </vertex>
+			<vertex> <index> 4 </index> <x> 0.0 </x> <y> 0.5 </y> <color> 0xFF4444FF </color> </vertex>
+		</polygon_shape>
 	</mask>
 
 	<mask>
 		<name> m_body </name>
 		<follow> body </follow>
-		<vertex_count> 4 </vertex_count>
-		<vertex> <index> 1 </index> <x> 0.0 </x> <y> 0.0 </y> <color> 0x00FF00FF </color> </vertex>
-		<vertex> <index> 2 </index> <x> 0.4 </x> <y> 0.0 </y> <color> 0x44FF00FF </color> </vertex>
-		<vertex> <index> 3 </index> <x> 0.4 </x> <y> 1.0 </y> <color> 0x00FF44FF </color> </vertex>
-		<vertex> <index> 4 </index> <x> 0.0 </x> <y> 1.0 </y> <color> 0x44FF44FF </color> </vertex>
+		<polygon_shape>
+			<vertex_count> 4 </vertex_count>
+			<vertex> <index> 1 </index> <x> 0.0 </x> <y> 0.0 </y> <color> 0x00FF00FF </color> </vertex>
+			<vertex> <index> 2 </index> <x> 0.4 </x> <y> 0.0 </y> <color> 0x44FF00FF </color> </vertex>
+			<vertex> <index> 3 </index> <x> 0.4 </x> <y> 1.0 </y> <color> 0x00FF44FF </color> </vertex>
+			<vertex> <index> 4 </index> <x> 0.0 </x> <y> 1.0 </y> <color> 0x44FF44FF </color> </vertex>
+		</polygon_shape>
 	</mask>
 
 	<property>

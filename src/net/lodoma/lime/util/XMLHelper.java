@@ -16,8 +16,9 @@ public class XMLHelper
         if(list.getLength() < 1)
             throw new RuntimeException("missing \"" + tag + "\" node in \"" + element.getNodeName() + "\"");
         if(list.getLength() > 1)
-            throw new RuntimeException("multiple \"" + tag + "\" nodes found in \"" + element.getNodeName() + "\"");
-        return list.item(0).getNodeValue();
+            throw new RuntimeException("multiple \"" + tag + "\" nodes not allowed in \"" + element.getNodeName() + "\"");
+        NodeList list2 = list.item(0).getChildNodes();
+        return list2.item(0).getNodeValue().trim();
     }
     
     public static float getDeepValueFloat(Element element, String tag)

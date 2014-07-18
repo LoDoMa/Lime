@@ -1,5 +1,12 @@
 package net.lodoma.lime.server.logic;
 
+import java.io.File;
+import java.io.IOException;
+
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
+
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.server.ServerInputHandler;
 import net.lodoma.lime.server.ServerOutput;
@@ -52,7 +59,14 @@ public class SLWorld implements ServerLogic
         WorldFileLoader fileLoader = new WorldFileLoader();
         fileLoader.build(world);
         
-        
+        try
+        {
+            entityLoader.loadFromXML(new File("models/zombie.xml"));
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
     
     @Override
