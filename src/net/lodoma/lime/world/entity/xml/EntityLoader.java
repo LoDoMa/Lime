@@ -2,9 +2,7 @@ package net.lodoma.lime.world.entity.xml;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,6 +22,7 @@ import net.lodoma.lime.physics.PhysicsJointType;
 import net.lodoma.lime.util.Pair;
 import net.lodoma.lime.util.Vector2;
 import net.lodoma.lime.util.XMLHelper;
+import net.lodoma.lime.world.entity.Entity;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -68,29 +67,10 @@ public class EntityLoader
     {
         
     }
-
-    private Map<String, PhysicsBody> namedPhysicsBodies;
-    private Map<String, PhysicsJoint> namedPhysicsJoints;
-    private Map<String, Mask> namedMasks;
-    private Map<String, String> namedProperties;
-    private List<String> namedScripts;
     
-    public EntityLoader()
+    public Entity loadFromXML(File xmlFile) throws IOException, SAXException, ParserConfigurationException
     {
-        namedPhysicsBodies = new HashMap<String, PhysicsBody>();
-        namedPhysicsJoints = new HashMap<String, PhysicsJoint>();
-        namedMasks = new HashMap<String, Mask>();
-        namedProperties = new HashMap<String, String>();
-        namedScripts = new ArrayList<String>();
-    }
-    
-    public void loadFromXML(File xmlFile) throws IOException, SAXException, ParserConfigurationException
-    {
-        namedPhysicsBodies.clear();
-        namedPhysicsJoints.clear();
-        namedMasks.clear();
-        namedProperties.clear();
-        namedScripts.clear();
+        Entity entity = new Entity();
         
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -102,9 +82,13 @@ public class EntityLoader
         if(rootName != "model")
             new InvalidNameException("root of an entity XML file must be named \"model\"");
         
-        String name          = XMLHelper.getDeepValue(docElement, "model_name");
-        String visualName    = XMLHelper.getDeepValue(docElement, "model_visual");
-        String version       = XMLHelper.getDeepValue(docElement, "model_version");
+        String name       = XMLHelper.getDeepValue(docElement, "model_name");
+        String visualName = XMLHelper.getDeepValue(docElement, "model_visual");
+        String version    = XMLHelper.getDeepValue(docElement, "model_version");
+        
+        entity.setInternalName(name);
+        entity.setVisualName(visualName);
+        entity.setVersion(version);
         
         NodeList bodies         = docElement.getElementsByTagName("body");
         NodeList revoluteJoints = docElement.getElementsByTagName("revolute_joint");
@@ -118,23 +102,23 @@ public class EntityLoader
             if(bodyNode.getNodeType() != Node.ELEMENT_NODE)
                 throw new RuntimeException("invalid \"body\" node");
             Pair<String, PhysicsBody> bodyData = parseBodyElement((Element) bodyNode);
-            namedPhysicsBodies.put(bodyData.first, bodyData.second);
+            entity.addPhysicsBody(bodyData.first, bodyData.second);
         }
         for(int i = 0; i < revoluteJoints.getLength(); i++)
         {
             Node jointNode = revoluteJoints.item(i);
             if(jointNode.getNodeType() != Node.ELEMENT_NODE)
                 throw new RuntimeException("invalid \"revolute_joint\" node");
-            Pair<String, PhysicsJoint> jointData = parseRevoluteJointElement((Element) jointNode);
-            namedPhysicsJoints.put(jointData.first, jointData.second);
+            Pair<String, PhysicsJoint> jointData = parseRevoluteJointElement((Element) jointNode, entity);
+            entity.addPhysicsJoint(jointData.first, jointData.second);
         }
         for(int i = 0; i < masks.getLength(); i++)
         {
             Node maskNode = masks.item(i);
             if(maskNode.getNodeType() != Node.ELEMENT_NODE)
                 throw new RuntimeException("invalid \"mask\" node");
-            Pair<String, Mask> maskData = parseMaskElement((Element) maskNode);
-            namedMasks.put(maskData.first, maskData.second);
+            Pair<String, Mask> maskData = parseMaskElement((Element) maskNode, entity);
+            entity.addMask(maskData.first, maskData.second);
         }
         for(int i = 0; i < properties.getLength(); i++)
         {
@@ -142,14 +126,16 @@ public class EntityLoader
             if(propertyNode.getNodeType() != Node.ELEMENT_NODE)
                 throw new RuntimeException("invalid \"property\" node");
             Pair<String, String> propertyData = parsePropertyElement((Element) propertyNode);
-            namedProperties.put(propertyData.first, propertyData.second);
+            entity.addProperty(propertyData.first, propertyData.second);
         }
         for(int i = 0; i < scripts.getLength(); i++)
         {
             Node scriptNode = properties.item(i);
             NodeList childNodes = scriptNode.getChildNodes();
-            namedScripts.add(childNodes.item(0).getNodeName());
+            entity.addScript(childNodes.item(0).getNodeName());
         }
+        
+        return entity;
     }
     
     private Vertex parseVertexElement(Element vertexElement)
@@ -321,7 +307,7 @@ public class EntityLoader
         return new Pair<String, PhysicsBody>(name, body);
     }
     
-    private Pair<String, PhysicsJoint> parseRevoluteJointElement(Element revoluteJointElement)
+    private Pair<String, PhysicsJoint> parseRevoluteJointElement(Element revoluteJointElement, Entity entity)
     {
         PhysicsJoint joint = new PhysicsJoint(PhysicsJointType.REVOLUTE);
         String name = XMLHelper.getDeepValue(revoluteJointElement, "name");
@@ -356,8 +342,8 @@ public class EntityLoader
         Element anchorBElement = (Element) anchorBNode;
         Vector2 anchorB = parseVectorElement(anchorBElement);
         
-        joint.setBodyA(namedPhysicsBodies.get(nameBodyA));
-        joint.setBodyB(namedPhysicsBodies.get(nameBodyB));
+        joint.setBodyA(entity.getPhysicsBodyByName(nameBodyA));
+        joint.setBodyB(entity.getPhysicsBodyByName(nameBodyB));
         joint.setCollisionEnabled(collision);
         joint.setAngle(rotation);
         joint.setAnchorA(anchorA);
@@ -403,7 +389,7 @@ public class EntityLoader
         return new Pair<Integer, Mask>(layerHeight, mask);
     }
     
-    private Pair<String, Mask> parseMaskElement(Element maskElement)
+    private Pair<String, Mask> parseMaskElement(Element maskElement, Entity entity)
     {
         LayeredMask mask = new LayeredMask(RenderingOrder.BOTTOM_TO_TOP);
         
@@ -431,7 +417,7 @@ public class EntityLoader
             mask.addLayer(layers.get(height));
         
         @SuppressWarnings("unused")
-        PhysicsBody followingBody = namedPhysicsBodies.get(follow);
+        PhysicsBody followingBody = entity.getPhysicsBodyByName(follow);
         
         return new Pair<String, Mask>(name, mask);
     }
