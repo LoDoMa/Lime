@@ -2,6 +2,7 @@ package net.lodoma.lime.world.entity.xml;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,6 +80,8 @@ public class EntityLoader
         namedPhysicsBodies = new HashMap<String, PhysicsBody>();
         namedPhysicsJoints = new HashMap<String, PhysicsJoint>();
         namedMasks = new HashMap<String, Mask>();
+        namedProperties = new HashMap<String, String>();
+        namedScripts = new ArrayList<String>();
     }
     
     public void loadFromXML(File xmlFile) throws IOException, SAXException, ParserConfigurationException
@@ -86,6 +89,8 @@ public class EntityLoader
         namedPhysicsBodies.clear();
         namedPhysicsJoints.clear();
         namedMasks.clear();
+        namedProperties.clear();
+        namedScripts.clear();
         
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -125,7 +130,7 @@ public class EntityLoader
         }
         for(int i = 0; i < masks.getLength(); i++)
         {
-            Node maskNode = revoluteJoints.item(i);
+            Node maskNode = masks.item(i);
             if(maskNode.getNodeType() != Node.ELEMENT_NODE)
                 throw new RuntimeException("invalid \"mask\" node");
             Pair<String, Mask> maskData = parseMaskElement((Element) maskNode);
@@ -403,7 +408,7 @@ public class EntityLoader
         LayeredMask mask = new LayeredMask(RenderingOrder.BOTTOM_TO_TOP);
         
         String name   = XMLHelper.getDeepValue(maskElement, "name");
-        String follow = XMLHelper.getDeepValue(maskElement, "target");
+        String follow = XMLHelper.getDeepValue(maskElement, "follow");
         
         Map<Integer, Mask> layers = new HashMap<Integer, Mask>();
         

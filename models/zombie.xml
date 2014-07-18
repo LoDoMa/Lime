@@ -71,7 +71,6 @@
 		<follow> body </follow>
 		<colored_layer>
 			<layer_height> 0 </layer_height>
-			<layer_type> colored </layer_type>
 			<polygon_shape>
 				<vertex_count> 4 </vertex_count>
 				<vertex> <index> 1 </index> <x> 0.0 </x> <y> 0.0 </y> <color> 0x00FF00FF </color> </vertex>

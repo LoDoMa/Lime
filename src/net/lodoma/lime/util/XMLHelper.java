@@ -39,7 +39,10 @@ public class XMLHelper
         String value = getDeepValue(element, tag);
         try
         {
-            return Integer.parseInt(value);
+            if(value.startsWith("0x"))
+                return (int) Long.parseLong(value.substring(2), 16);
+            else
+                return Integer.parseInt(value);
         }
         catch(NumberFormatException e)
         {
