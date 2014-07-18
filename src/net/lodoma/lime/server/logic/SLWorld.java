@@ -73,7 +73,7 @@ public class SLWorld implements ServerLogic
     @Override
     public void clean()
     {
-        
+        world.clean();
     }
     
     @Override
