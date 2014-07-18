@@ -1,4 +1,4 @@
-package net.lodoma.lime.world.entity;
+package net.lodoma.lime.physics.entity;
 
 import java.util.ArrayList;
 import java.util.HashMap;

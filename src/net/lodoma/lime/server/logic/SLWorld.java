@@ -2,6 +2,7 @@ package net.lodoma.lime.server.logic;
 
 import java.io.File;
 
+import net.lodoma.lime.physics.entity.EntityLoader;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.server.ServerInputHandler;
 import net.lodoma.lime.server.ServerOutput;
@@ -9,7 +10,6 @@ import net.lodoma.lime.server.io.world.SIHInitialWorldRequest;
 import net.lodoma.lime.server.io.world.SOInitialWorldData;
 import net.lodoma.lime.util.HashPool;
 import net.lodoma.lime.world.builder.WorldFileLoader;
-import net.lodoma.lime.world.entity.EntityLoader;
 import net.lodoma.lime.world.server.ServersideWorld;
 
 public class SLWorld implements ServerLogic
