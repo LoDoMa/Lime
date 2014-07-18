@@ -41,7 +41,6 @@
 		<body_b> body </body_b>
 		<collision> false </collision>
 		<rotation> 0 </rotation>
-		<fixed_rotation> true </fixed_rotation>
 		<anchor_a>
 			<x> 0.25 </x>
 			<y> 0.00 </y>
@@ -54,26 +53,33 @@
 
 	<mask>
 		<name> m_head </name>
-		<follow> head </follow>
-		<polygon_shape>
-			<vertex_count> 4 </vertex_count>
-			<vertex> <index> 1 </index> <x> 0.0 </x> <y> 0.0 </y> <color> 0xFF0000FF </color> </vertex>
-			<vertex> <index> 2 </index> <x> 0.5 </x> <y> 0.0 </y> <color> 0xFF4400FF </color> </vertex>
-			<vertex> <index> 3 </index> <x> 0.5 </x> <y> 0.5 </y> <color> 0xFF0044FF </color> </vertex>
-			<vertex> <index> 4 </index> <x> 0.0 </x> <y> 0.5 </y> <color> 0xFF4444FF </color> </vertex>
-		</polygon_shape>
+		<follow> head </follow> 
+		<colored_layer>
+			<layer_height> 0 </layer_height>
+			<polygon_shape>
+				<vertex_count> 4 </vertex_count>
+				<vertex> <index> 1 </index> <x> 0.0 </x> <y> 0.0 </y> <color> 0xFF0000FF </color> </vertex>
+				<vertex> <index> 2 </index> <x> 0.5 </x> <y> 0.0 </y> <color> 0xFF4400FF </color> </vertex>
+				<vertex> <index> 3 </index> <x> 0.5 </x> <y> 0.5 </y> <color> 0xFF0044FF </color> </vertex>
+				<vertex> <index> 4 </index> <x> 0.0 </x> <y> 0.5 </y> <color> 0xFF4444FF </color> </vertex>
+			</polygon_shape>
+		</colored_layer>
 	</mask>
 
 	<mask>
 		<name> m_body </name>
 		<follow> body </follow>
-		<polygon_shape>
-			<vertex_count> 4 </vertex_count>
-			<vertex> <index> 1 </index> <x> 0.0 </x> <y> 0.0 </y> <color> 0x00FF00FF </color> </vertex>
-			<vertex> <index> 2 </index> <x> 0.4 </x> <y> 0.0 </y> <color> 0x44FF00FF </color> </vertex>
-			<vertex> <index> 3 </index> <x> 0.4 </x> <y> 1.0 </y> <color> 0x00FF44FF </color> </vertex>
-			<vertex> <index> 4 </index> <x> 0.0 </x> <y> 1.0 </y> <color> 0x44FF44FF </color> </vertex>
-		</polygon_shape>
+		<colored_layer>
+			<layer_height> 0 </layer_height>
+			<layer_type> colored </layer_type>
+			<polygon_shape>
+				<vertex_count> 4 </vertex_count>
+				<vertex> <index> 1 </index> <x> 0.0 </x> <y> 0.0 </y> <color> 0x00FF00FF </color> </vertex>
+				<vertex> <index> 2 </index> <x> 0.4 </x> <y> 0.0 </y> <color> 0x44FF00FF </color> </vertex>
+				<vertex> <index> 3 </index> <x> 0.4 </x> <y> 1.0 </y> <color> 0x00FF44FF </color> </vertex>
+				<vertex> <index> 4 </index> <x> 0.0 </x> <y> 1.0 </y> <color> 0x44FF44FF </color> </vertex>
+			</polygon_shape>
+		</colored_layer>
 	</mask>
 
 	<property>

@@ -12,22 +12,15 @@ public class PhysicsWorld
     private static final int ENGINE_POSITION_ITERATIONS = 2;
     
     private World world;
-    private PhysicsPool pool;
     
-    public PhysicsWorld(PhysicsPool pool)
+    public PhysicsWorld()
     {
         world = new World(ENGINE_GRAVITY, ENGINE_SLEEP);
-        this.pool = pool;
     }
     
     public World getEngineWorld()
     {
         return world;
-    }
-    
-    public PhysicsPool getPool()
-    {
-        return pool;
     }
     
     public void update(float timeDelta)

@@ -4,15 +4,21 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.naming.InvalidNameException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import net.lodoma.lime.mask.ColoredMask;
+import net.lodoma.lime.mask.LayeredMask;
+import net.lodoma.lime.mask.Mask;
+import net.lodoma.lime.mask.RenderingOrder;
 import net.lodoma.lime.physics.PhysicsBody;
 import net.lodoma.lime.physics.PhysicsBodyType;
 import net.lodoma.lime.physics.PhysicsJoint;
+import net.lodoma.lime.physics.PhysicsJointType;
 import net.lodoma.lime.util.Pair;
 import net.lodoma.lime.util.Vector2;
 import net.lodoma.lime.util.XMLHelper;
@@ -21,6 +27,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.ranges.RangeException;
 import org.xml.sax.SAXException;
 
 public class EntityLoader
@@ -62,18 +69,21 @@ public class EntityLoader
     }
 
     private Map<String, PhysicsBody> namedPhysicsBodies;
-    private Map<String, PhysicsBody> namedPhysicsJoints;
+    private Map<String, PhysicsJoint> namedPhysicsJoints;
+    private Map<String, Mask> namedMasks;
     
     public EntityLoader()
     {
         namedPhysicsBodies = new HashMap<String, PhysicsBody>();
         namedPhysicsJoints = new HashMap<String, PhysicsJoint>();
+        namedMasks = new HashMap<String, Mask>();
     }
     
     public void loadFromXML(File xmlFile) throws IOException, SAXException, ParserConfigurationException
     {
         namedPhysicsBodies.clear();
         namedPhysicsJoints.clear();
+        namedMasks.clear();
         
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -110,6 +120,14 @@ public class EntityLoader
                 throw new RuntimeException("invalid \"revolute_joint\" node");
             Pair<String, PhysicsJoint> jointData = parseRevoluteJointElement((Element) jointNode);
             namedPhysicsJoints.put(jointData.first, jointData.second);
+        }
+        for(int i = 0; i < masks.getLength(); i++)
+        {
+            Node maskNode = revoluteJoints.item(i);
+            if(maskNode.getNodeType() != Node.ELEMENT_NODE)
+                throw new RuntimeException("invalid \"mask\" node");
+            Pair<String, Mask> maskData = parseMaskElement((Element) maskNode);
+            namedMasks.put(maskData.first, maskData.second);
         }
     }
     
@@ -284,15 +302,13 @@ public class EntityLoader
     
     private Pair<String, PhysicsJoint> parseRevoluteJointElement(Element revoluteJointElement)
     {
-        PhysicsJoint joint = new PhysicsJoint();
+        PhysicsJoint joint = new PhysicsJoint(PhysicsJointType.REVOLUTE);
         String name = XMLHelper.getDeepValue(revoluteJointElement, "name");
 
         String nameBodyA = XMLHelper.getDeepValue(revoluteJointElement, "body_a");
         String nameBodyB = XMLHelper.getDeepValue(revoluteJointElement, "body_b");
         boolean collision = XMLHelper.getDeepValueBoolean(revoluteJointElement, "collision");
-        
         float rotation = XMLHelper.getDeepValueFloat(revoluteJointElement, "rotation");
-        boolean fixedRotation = XMLHelper.getDeepValueBoolean(revoluteJointElement, "fixed_rotation");
         
         NodeList anchorAs = revoluteJointElement.getElementsByTagName("anchor_a");
         NodeList anchorBs = revoluteJointElement.getElementsByTagName("anchor_b");
@@ -319,6 +335,83 @@ public class EntityLoader
         Element anchorBElement = (Element) anchorBNode;
         Vector2 anchorB = parseVectorElement(anchorBElement);
         
+        joint.setBodyA(namedPhysicsBodies.get(nameBodyA));
+        joint.setBodyB(namedPhysicsBodies.get(nameBodyB));
+        joint.setCollisionEnabled(collision);
+        joint.setAngle(rotation);
+        joint.setAnchorA(anchorA);
+        joint.setAnchorB(anchorB);
+        
         return new Pair<String, PhysicsJoint>(name, joint);
+    }
+    
+    private Pair<Integer, Mask> parseColoredLayerElement(Element coloredLayerElement)
+    {
+        int layerHeight = XMLHelper.getDeepValueInteger(coloredLayerElement, "layer_height");
+        
+        NodeList polygonShapes = coloredLayerElement.getElementsByTagName("polygon_shape");
+        if(polygonShapes.getLength() < 1)
+            throw new RuntimeException("missing \"polygon_shape\" node in \"colored_layer\"");
+        if(polygonShapes.getLength() > 1)
+            throw new RuntimeException("multiple \"polygon_shape\" nodes not allowed in \"colored_layer\"");
+        Node polygonShapeNode = polygonShapes.item(0);
+        if(polygonShapeNode.getNodeType() != Node.ELEMENT_NODE)
+            throw new RuntimeException("invalid \"polygon_shape\" node");
+        Element polygonShapeElement = (Element) polygonShapeNode;
+        PolygonShape polygonShape = parsePolygonShapeElement(polygonShapeElement);
+        
+        int n = polygonShape.vertexCount;
+        float[] x = new float[n];
+        float[] y = new float[n];
+        float[] r = new float[n];
+        float[] g = new float[n];
+        float[] b = new float[n];
+        float[] a = new float[n];
+        for(int i = 0; i < n; i++)
+        {
+            Vertex vertex = polygonShape.vertices[i];
+            x[i] = vertex.x;
+            y[i] = vertex.y;
+            r[i] = ((vertex.color >> 24) & 0xFF) / (float) (0xFF);
+            g[i] = ((vertex.color >> 16) & 0xFF) / (float) (0xFF);
+            b[i] = ((vertex.color >> 8 ) & 0xFF) / (float) (0xFF);
+            a[i] = ((vertex.color      ) & 0xFF) / (float) (0xFF);
+        }
+        
+        ColoredMask mask = new ColoredMask(n, x, y, r, g, b, a);
+        return new Pair<Integer, Mask>(layerHeight, mask);
+    }
+    
+    private Pair<String, Mask> parseMaskElement(Element maskElement)
+    {
+        LayeredMask mask = new LayeredMask(RenderingOrder.BOTTOM_TO_TOP);
+        
+        String name   = XMLHelper.getDeepValue(maskElement, "name");
+        String follow = XMLHelper.getDeepValue(maskElement, "target");
+        
+        Map<Integer, Mask> layers = new HashMap<Integer, Mask>();
+        
+        NodeList coloredLayers = maskElement.getElementsByTagName("colored_layer");
+        
+        for(int i = 0; i < coloredLayers.getLength(); i++)
+        {
+            Node coloredLayerNode = coloredLayers.item(i);
+            if(coloredLayerNode.getNodeType() != Node.ELEMENT_NODE)
+                throw new RuntimeException("invalid \"colored_layer\" node");
+            Element coloredLayerElement = (Element) coloredLayerNode;
+            Pair<Integer, Mask> layerData = parseColoredLayerElement(coloredLayerElement);
+            if(layers.containsKey(layerData.first))
+                throw new RuntimeException("duplicate layer height");
+            layers.put(layerData.first, layerData.second);
+        }
+        
+        Set<Integer> heights = layers.keySet();
+        for(Integer height : heights)
+            mask.addLayer(layers.get(height));
+        
+        @SuppressWarnings("unused")
+        PhysicsBody followingBody = namedPhysicsBodies.get(follow);
+        
+        return new Pair<String, Mask>(name, mask);
     }
 }

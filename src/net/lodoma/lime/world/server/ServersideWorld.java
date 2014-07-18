@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Set;
 
 import net.lodoma.lime.physics.PhysicsWorld;
-import net.lodoma.lime.physics.ServersidePhysicsPool;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.world.TileGrid;
 import net.lodoma.lime.world.material.Material;
@@ -38,12 +37,12 @@ public class ServersideWorld implements TileGrid
         this.server = server;
         this.palette = new HashMap<Short, Material>();
         
-        physicsWorld = new PhysicsWorld(new ServersidePhysicsPool());
+        physicsWorld = new PhysicsWorld();
     }
     
     public void fetch()
     {
-        physicsWorld.getPool().fetch();
+        
     }
     
     public void init(int width, int height)

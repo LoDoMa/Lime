@@ -12,9 +12,6 @@ import org.jbox2d.dynamics.FixtureDef;
 
 public class PhysicsBody
 {
-    private static long counterID = 0;
-    private long ID;
-    
     private BodyDef bd;
     private Shape shape;
     private FixtureDef fd;
@@ -26,16 +23,6 @@ public class PhysicsBody
     {
         bd = new BodyDef();
         fd = new FixtureDef();
-    }
-    
-    public long getID()
-    {
-        return ID;
-    }
-    
-    public void generateID()
-    {
-        ID = counterID++;
     }
     
     public void setPosition(Vector2 pos)

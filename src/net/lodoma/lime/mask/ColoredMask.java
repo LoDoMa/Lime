@@ -12,8 +12,9 @@ public class ColoredMask extends Mask
     protected float[] r;
     protected float[] g;
     protected float[] b;
+    protected float[] a;
     
-    public ColoredMask(int n, float[] x, float[] y, float[] r, float[] g, float[] b)
+    public ColoredMask(int n, float[] x, float[] y, float[] r, float[] g, float[] b, float[] a)
     {
         this.n = n;
         
@@ -23,6 +24,7 @@ public class ColoredMask extends Mask
         this.r = r;
         this.g = g;
         this.b = b;
+        this.a = a;
     }
     
     @Override
@@ -31,7 +33,7 @@ public class ColoredMask extends Mask
         GL11.glBegin(GL11.GL_POLYGON);
         for(int i = 0; i < n; i++)
         {
-            GL11.glColor3f(r[i], g[i], b[i]);
+            GL11.glColor4f(r[i], g[i], b[i], a[i]);
             GL11.glVertex2f(x[i], y[i]);
         }
         GL11.glEnd();
