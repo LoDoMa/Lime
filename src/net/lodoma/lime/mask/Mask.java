@@ -4,11 +4,11 @@ import org.lwjgl.opengl.GL11;
 
 public abstract class Mask
 {
-    protected int displayList;
+    protected int displayList = 0;
     
     public Mask()
-    {        
-        displayList = GL11.glGenLists(1);
+    {
+        
     }
     
     public void compile()
@@ -25,11 +25,12 @@ public abstract class Mask
     
     public void call()
     {
+        if(displayList == 0) compile();
         GL11.glCallList(displayList);
     }
     
     public void destroy()
     {
-        GL11.glDeleteLists(displayList, 1);
+        if(displayList != 0) GL11.glDeleteLists(displayList, 1);
     }
 }
