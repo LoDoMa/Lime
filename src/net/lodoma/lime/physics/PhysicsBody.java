@@ -47,12 +47,14 @@ public class PhysicsBody
     {
         shape = new CircleShape();
         shape.m_radius = radius;
+        fd.shape = shape;
     }
     
     public void setPolygonShape(Vector2... vertices)
     {
         shape = new PolygonShape();
         ((PolygonShape) shape).set(Vector2.toVec2Array(vertices), vertices.length);
+        fd.shape = shape;
     }
     
     public void setDensity(float density)

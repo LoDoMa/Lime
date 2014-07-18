@@ -22,14 +22,10 @@ public class ServerLogicPool implements Runnable
     
     public void init()
     {
-        for(ServerLogic logic : logicSet)
-            logic.baseInit(server);
-        for(ServerLogic logic : logicSet)
-            logic.propertyInit();
-        for(ServerLogic logic : logicSet)
-            logic.fetchInit();
-        for(ServerLogic logic : logicSet)
-            logic.generalInit();
+        for(ServerLogic logic : logicSet) logic.baseInit(server);
+        for(ServerLogic logic : logicSet) logic.propertyInit();
+        for(ServerLogic logic : logicSet) logic.fetchInit();
+        for(ServerLogic logic : logicSet) logic.generalInit();
     }
     
     public void start()

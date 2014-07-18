@@ -8,6 +8,7 @@ import java.util.List;
 import net.lodoma.lime.mask.Mask;
 import net.lodoma.lime.physics.PhysicsBody;
 import net.lodoma.lime.physics.PhysicsJoint;
+import net.lodoma.lime.physics.PhysicsWorld;
 import net.lodoma.lime.script.LuaScript;
 
 public class Entity
@@ -85,7 +86,6 @@ public class Entity
     {
         try
         {
-            System.out.println(script);
             scripts.add(new LuaScript(new File(script)));
         }
         catch (IOException e)
@@ -94,8 +94,21 @@ public class Entity
         }
     }
     
-    public void destroy()
+    public void create(PhysicsWorld world)
     {
+        for(PhysicsBody body : bodies)
+            body.create(world);
+        for(PhysicsJoint joint : joints)
+            joint.create(world);
+    }
+    
+    public void destroy(PhysicsWorld world)
+    {
+        for(PhysicsBody body : bodies)
+            body.destroy(world);
+        for(PhysicsJoint joint : joints)
+            joint.destroy(world);
+        
         for(LuaScript script : scripts)
             script.close();
         
@@ -106,10 +119,10 @@ public class Entity
         scripts.clear();
     }
     
-    public void update()
+    public void update(double timeDelta)
     {
         for(LuaScript script : scripts)
-            script.call("Lime_FrameUpdate");
+            script.call("Lime_FrameUpdate", timeDelta);
         
         for(PhysicsBody body : bodies)
             body.update();

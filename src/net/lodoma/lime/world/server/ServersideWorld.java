@@ -1,11 +1,14 @@
 package net.lodoma.lime.world.server;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import net.lodoma.lime.physics.PhysicsWorld;
+import net.lodoma.lime.physics.entity.Entity;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.world.TileGrid;
 import net.lodoma.lime.world.material.Material;
@@ -31,6 +34,7 @@ public class ServersideWorld implements TileGrid
     private boolean paletteLock;
     
     private PhysicsWorld physicsWorld;
+    private List<Entity> entities;
     
     public ServersideWorld(Server server)
     {
@@ -38,6 +42,7 @@ public class ServersideWorld implements TileGrid
         this.palette = new HashMap<Short, Material>();
         
         physicsWorld = new PhysicsWorld();
+        entities = new ArrayList<Entity>();
     }
     
     public void fetch()
@@ -45,8 +50,17 @@ public class ServersideWorld implements TileGrid
         
     }
     
+    public void clean()
+    {
+        for(Entity entity : entities)
+            entity.destroy(physicsWorld);
+        entities.clear();
+    }
+    
     public void init(int width, int height)
     {
+        clean();
+        
         chunkAX = width / CHUNKW + ((width % CHUNKW != 0) ? 1 : 0);
         chunkAY = height / CHUNKH + ((height % CHUNKH != 0) ? 1 : 0);
         chunks = new WorldChunk[chunkAX * chunkAY];
@@ -163,5 +177,21 @@ public class ServersideWorld implements TileGrid
         for(int y = 0; y < chunkAY; y++)
             for(int x = 0; x < chunkAX; x++)
                 chunks[y * chunkAX + x].lockState();
+    }
+    
+    public void createEntity(Entity entity)
+    {
+        entity.create(physicsWorld);
+    }
+    
+    public void addEntity(Entity entity)
+    {
+        entities.add(entity);
+    }
+    
+    public void update(double timeDelta)
+    {
+        for(Entity entity : entities)
+            entity.update(timeDelta);
     }
 }

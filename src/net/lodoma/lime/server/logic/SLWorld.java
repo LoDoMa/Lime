@@ -2,6 +2,7 @@ package net.lodoma.lime.server.logic;
 
 import java.io.File;
 
+import net.lodoma.lime.physics.entity.Entity;
 import net.lodoma.lime.physics.entity.EntityLoader;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.server.ServerInputHandler;
@@ -9,6 +10,7 @@ import net.lodoma.lime.server.ServerOutput;
 import net.lodoma.lime.server.io.world.SIHInitialWorldRequest;
 import net.lodoma.lime.server.io.world.SOInitialWorldData;
 import net.lodoma.lime.util.HashPool;
+import net.lodoma.lime.util.Timer;
 import net.lodoma.lime.world.builder.WorldFileLoader;
 import net.lodoma.lime.world.server.ServersideWorld;
 
@@ -19,6 +21,8 @@ public class SLWorld implements ServerLogic
     private HashPool<ServerOutput> soPool;
     private ServersideWorld world;
     private EntityLoader entityLoader;
+    
+    private Timer timer;
     
     @Override
     public void baseInit(Server server)
@@ -56,7 +60,9 @@ public class SLWorld implements ServerLogic
         
         try
         {
-            entityLoader.loadFromXML(new File("model/zombie.xml"));
+            Entity entity = entityLoader.loadFromXML(new File("model/zombie.xml"));
+            world.createEntity(entity);
+            world.addEntity(entity);
         }
         catch (Exception e)
         {
@@ -73,6 +79,8 @@ public class SLWorld implements ServerLogic
     @Override
     public void logic()
     {
-        
+        if(timer == null) timer = new Timer();
+        timer.update();
+        world.update(timer.getDelta());
     }
 }

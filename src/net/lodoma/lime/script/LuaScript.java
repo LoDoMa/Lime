@@ -24,10 +24,11 @@ public class LuaScript
         luaState.call(0, 0);
     }
     
-    public void call(String function)
+    public void call(String function, double argument)
     {
         luaState.getGlobal(function);
-        luaState.call(0, 0);
+        luaState.pushNumber(argument);
+        luaState.call(1, 0);
     }
     
     public void close()
