@@ -11,24 +11,36 @@ public class LuaScript
 {
     private LuaState luaState;
     
-    public LuaScript(File file) throws IOException
+    public LuaScript(File file, Object toLimeModule) throws IOException
     {
-        this(new String(Files.readAllBytes(Paths.get(file.toURI()))));
+        this(new String(Files.readAllBytes(Paths.get(file.toURI()))), toLimeModule);
     }
     
-    public LuaScript(String source)
+    public LuaScript(String source, Object toLimeModule)
     {
         luaState = new LuaState();
         luaState.openLibs();
-        luaState.load(source, "=simple");
+        
+        luaState.pushJavaObject(toLimeModule);
+        luaState.setGlobal("LIME_INIT");
+        luaState.load("require \"script/lime\" LIME_INIT = nil", "requirement");
+        luaState.call(0, 0);
+        
+        luaState.load(source, "script");
         luaState.call(0, 0);
     }
     
-    public void call(String function, double argument)
+    public void call(String function, Object... arguments)
     {
         luaState.getGlobal(function);
-        luaState.pushNumber(argument);
-        luaState.call(1, 0);
+        for(Object argument : arguments)
+        {
+                 if(argument instanceof Double) luaState.pushNumber((Double) argument);
+            else if(argument instanceof Float) luaState.pushNumber((Float) argument);
+            else if(argument instanceof String) luaState.pushString((String) argument);
+        }
+        
+        luaState.call(arguments.length, 0);
     }
     
     public void close()

@@ -19,6 +19,8 @@ import net.lodoma.lime.physics.PhysicsBody;
 import net.lodoma.lime.physics.PhysicsBodyType;
 import net.lodoma.lime.physics.PhysicsJoint;
 import net.lodoma.lime.physics.PhysicsJointType;
+import net.lodoma.lime.script.LuaScript;
+import net.lodoma.lime.util.HashHelper;
 import net.lodoma.lime.util.Pair;
 import net.lodoma.lime.util.Vector2;
 import net.lodoma.lime.util.XMLHelper;
@@ -103,9 +105,11 @@ public class EntityLoader
         String visualName = XMLHelper.getDeepValue(docElement, "model_visual");
         String version    = XMLHelper.getDeepValue(docElement, "model_version");
         
-        entity.setInternalName(name);
-        entity.setVisualName(visualName);
-        entity.setVersion(version);
+        entity.internalName = name;
+        entity.visualName = visualName;
+        entity.version = version;
+        
+        entity.hash = HashHelper.hash64(entity.internalName);
         
         NodeList bodies         = docElement.getElementsByTagName("body");
         NodeList revoluteJoints = docElement.getElementsByTagName("revolute_joint");
@@ -120,7 +124,7 @@ public class EntityLoader
                 throw new RuntimeException("invalid \"body\" node");
             Pair<String, PhysicsBody> bodyData = parseBodyElement((Element) bodyNode);
             namedBodies.put(bodyData.first, bodyData.second);
-            entity.addPhysicsBody(bodyData.second);
+            entity.bodies.add(bodyData.second);
         }
         for(int i = 0; i < revoluteJoints.getLength(); i++)
         {
@@ -129,7 +133,7 @@ public class EntityLoader
                 throw new RuntimeException("invalid \"revolute_joint\" node");
             Pair<String, PhysicsJoint> jointData = parseRevoluteJointElement((Element) jointNode, entity);
             namedJoints.put(jointData.first, jointData.second);
-            entity.addPhysicsJoint(jointData.second);
+            entity.joints.add(jointData.second);
         }
         for(int i = 0; i < masks.getLength(); i++)
         {
@@ -138,7 +142,7 @@ public class EntityLoader
                 throw new RuntimeException("invalid \"mask\" node");
             Pair<String, Mask> maskData = parseMaskElement((Element) maskNode, entity);
             namedMasks.put(maskData.first, maskData.second);
-            entity.addMask(maskData.second);
+            entity.masks.add(maskData.second);
         }
         for(int i = 0; i < properties.getLength(); i++)
         {
@@ -147,14 +151,14 @@ public class EntityLoader
                 throw new RuntimeException("invalid \"property\" node");
             Pair<String, String> propertyData = parsePropertyElement((Element) propertyNode);
             namedProperties.put(propertyData.first, propertyData.second);
-            entity.addProperty(propertyData.second);
+            entity.properties.add(propertyData.second);
         }
         for(int i = 0; i < scripts.getLength(); i++)
         {
             Node scriptNode = scripts.item(i);
             NodeList childNodes = scriptNode.getChildNodes();
             String scriptPath = childNodes.item(0).getNodeValue().trim();
-            entity.addScript(scriptPath);
+            entity.scripts.add(new LuaScript(new File(scriptPath), entity.getLuaEntity()));
         }
         
         return entity;

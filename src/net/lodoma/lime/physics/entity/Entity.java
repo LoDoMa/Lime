@@ -1,7 +1,5 @@
 package net.lodoma.lime.physics.entity;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,15 +11,18 @@ import net.lodoma.lime.script.LuaScript;
 
 public class Entity
 {
-    private String internalName;
-    private String visualName;
-    private String version;
+    long hash;
+    String internalName;
+    String visualName;
+    String version;
     
-    private List<PhysicsBody> bodies;
-    private List<PhysicsJoint> joints;
-    private List<Mask> masks;
-    private List<String> properties;
-    private List<LuaScript> scripts;
+    List<PhysicsBody> bodies;
+    List<PhysicsJoint> joints;
+    List<Mask> masks;
+    List<String> properties;
+    List<LuaScript> scripts;
+    
+    LuaEntity luaEntity;
     
     public Entity()
     {
@@ -30,6 +31,8 @@ public class Entity
         masks = new ArrayList<Mask>();
         properties = new ArrayList<String>();
         scripts = new ArrayList<LuaScript>();
+        
+        luaEntity = new LuaEntity(this);
     }
     
     public String getInternalName()
@@ -47,51 +50,9 @@ public class Entity
         return version;
     }
     
-    public void setInternalName(String internalName)
+    public LuaEntity getLuaEntity()
     {
-        this.internalName = internalName;
-    }
-    
-    public void setVisualName(String visualName)
-    {
-        this.visualName = visualName;
-    }
-    
-    public void setVersion(String version)
-    {
-        this.version = version;
-    }
-    
-    public void addPhysicsBody(PhysicsBody body)
-    {
-        bodies.add(body);
-    }
-    
-    public void addPhysicsJoint(PhysicsJoint joint)
-    {
-        joints.add(joint);
-    }
-    
-    public void addMask(Mask mask)
-    {
-        masks.add(mask);
-    }
-    
-    public void addProperty(String type)
-    {
-        properties.add(type);
-    }
-    
-    public void addScript(String script)
-    {
-        try
-        {
-            scripts.add(new LuaScript(new File(script)));
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        return luaEntity;
     }
     
     public void create(PhysicsWorld world)
