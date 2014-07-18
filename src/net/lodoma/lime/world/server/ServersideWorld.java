@@ -11,9 +11,10 @@ import net.lodoma.lime.physics.PhysicsWorld;
 import net.lodoma.lime.physics.entity.Entity;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.world.TileGrid;
+import net.lodoma.lime.world.entity.EntityWorld;
 import net.lodoma.lime.world.material.Material;
 
-public class ServersideWorld implements TileGrid
+public class ServersideWorld implements TileGrid, EntityWorld
 {
     /* limit: NetworkSettings.MAX_PACKET_SIZE */
     private static final int CHUNKW = 30;
@@ -34,7 +35,7 @@ public class ServersideWorld implements TileGrid
     private boolean paletteLock;
     
     private PhysicsWorld physicsWorld;
-    private List<Entity> entities;
+    private Map<Long, Entity> entities;
     
     public ServersideWorld(Server server)
     {
@@ -42,7 +43,7 @@ public class ServersideWorld implements TileGrid
         this.palette = new HashMap<Short, Material>();
         
         physicsWorld = new PhysicsWorld();
-        entities = new ArrayList<Entity>();
+        entities = new HashMap<Long, Entity>();
     }
     
     public void fetch()
@@ -52,7 +53,8 @@ public class ServersideWorld implements TileGrid
     
     public void clean()
     {
-        for(Entity entity : entities)
+        List<Entity> entityList = new ArrayList<Entity>(entities.values());
+        for(Entity entity : entityList)
             entity.destroy(physicsWorld);
         entities.clear();
     }
@@ -184,14 +186,29 @@ public class ServersideWorld implements TileGrid
         entity.create(physicsWorld);
     }
     
+    @Override
     public void addEntity(Entity entity)
     {
-        entities.add(entity);
+        entity.generateID();
+        entities.put(entity.getID(), entity);
+    }
+
+    @Override
+    public Entity getEntity(long id)
+    {
+        return entities.get(id);
+    }
+
+    @Override
+    public void removeEntity(long id)
+    {
+        entities.remove(id);
     }
     
     public void update(double timeDelta)
     {
-        for(Entity entity : entities)
+        List<Entity> entityList = new ArrayList<Entity>(entities.values());
+        for(Entity entity : entityList)
             entity.update(timeDelta);
     }
 }

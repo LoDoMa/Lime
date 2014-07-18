@@ -24,6 +24,7 @@ import net.lodoma.lime.util.HashHelper;
 import net.lodoma.lime.util.Pair;
 import net.lodoma.lime.util.Vector2;
 import net.lodoma.lime.util.XMLHelper;
+import net.lodoma.lime.world.entity.EntityWorld;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -82,7 +83,8 @@ public class EntityLoader
         namedProperties = new HashMap<String, String>();
     }
     
-    public Entity loadFromXML(File xmlFile) throws IOException, SAXException, ParserConfigurationException
+    public Entity loadFromXML(File xmlFile, EntityWorld world)
+            throws IOException, SAXException, ParserConfigurationException
     {
         namedBodies.clear();
         namedJoints.clear();
@@ -110,6 +112,7 @@ public class EntityLoader
         entity.version = version;
         
         entity.hash = HashHelper.hash64(entity.internalName);
+        entity.world = world;
         
         NodeList bodies         = docElement.getElementsByTagName("body");
         NodeList revoluteJoints = docElement.getElementsByTagName("revolute_joint");

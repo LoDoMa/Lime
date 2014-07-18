@@ -60,7 +60,7 @@ public class SLWorld implements ServerLogic
         
         try
         {
-            Entity entity = entityLoader.loadFromXML(new File("model/zombie.xml"));
+            Entity entity = entityLoader.loadFromXML(new File("model/zombie.xml"), world);
             world.createEntity(entity);
             world.addEntity(entity);
         }

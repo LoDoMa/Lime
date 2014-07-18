@@ -8,13 +8,21 @@ import net.lodoma.lime.physics.PhysicsBody;
 import net.lodoma.lime.physics.PhysicsJoint;
 import net.lodoma.lime.physics.PhysicsWorld;
 import net.lodoma.lime.script.LuaScript;
+import net.lodoma.lime.world.entity.EntityWorld;
 
 public class Entity
 {
+    private static long counterID = 0;
+    
+    boolean generatedID = false;
+    long ID;
+    
     long hash;
     String internalName;
     String visualName;
     String version;
+    
+    EntityWorld world;
     
     List<PhysicsBody> bodies;
     List<PhysicsJoint> joints;
@@ -33,6 +41,23 @@ public class Entity
         scripts = new ArrayList<LuaScript>();
         
         luaEntity = new LuaEntity(this);
+    }
+    
+    public void generateID()
+    {
+        if(generatedID) return;
+        generatedID = true;
+        ID = counterID++;
+    }
+    
+    public long getID()
+    {
+        return ID;
+    }
+    
+    public long getHash()
+    {
+        return hash;
     }
     
     public String getInternalName()
