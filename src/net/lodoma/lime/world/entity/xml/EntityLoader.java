@@ -2,6 +2,8 @@ package net.lodoma.lime.world.entity.xml;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.naming.InvalidNameException;
 import javax.xml.parsers.DocumentBuilder;
@@ -10,6 +12,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import net.lodoma.lime.physics.PhysicsBody;
 import net.lodoma.lime.physics.PhysicsBodyType;
+import net.lodoma.lime.physics.PhysicsJoint;
 import net.lodoma.lime.util.Pair;
 import net.lodoma.lime.util.Vector2;
 import net.lodoma.lime.util.XMLHelper;
@@ -57,9 +60,21 @@ public class EntityLoader
     {
         
     }
+
+    private Map<String, PhysicsBody> namedPhysicsBodies;
+    private Map<String, PhysicsBody> namedPhysicsJoints;
+    
+    public EntityLoader()
+    {
+        namedPhysicsBodies = new HashMap<String, PhysicsBody>();
+        namedPhysicsJoints = new HashMap<String, PhysicsJoint>();
+    }
     
     public void loadFromXML(File xmlFile) throws IOException, SAXException, ParserConfigurationException
     {
+        namedPhysicsBodies.clear();
+        namedPhysicsJoints.clear();
+        
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         Document doc = dBuilder.parse(xmlFile);
@@ -74,19 +89,27 @@ public class EntityLoader
         String visualName   = XMLHelper.getDeepValue(docElement, "model_visual");
         String version      = XMLHelper.getDeepValue(docElement, "model_version");
         
-        NodeList bodies     = docElement.getElementsByTagName("body");
-        NodeList joints     = docElement.getElementsByTagName("joint");
-        NodeList masks      = docElement.getElementsByTagName("mask");
-        NodeList properties = docElement.getElementsByTagName("property");
-        NodeList scripts    = docElement.getElementsByTagName("script");
+        NodeList bodies         = docElement.getElementsByTagName("body");
+        NodeList revoluteJoints = docElement.getElementsByTagName("revolute_joint");
+        NodeList masks          = docElement.getElementsByTagName("mask");
+        NodeList properties     = docElement.getElementsByTagName("property");
+        NodeList scripts        = docElement.getElementsByTagName("script");
 
         for(int i = 0; i < bodies.getLength(); i++)
         {
             Node bodyNode = bodies.item(i);
             if(bodyNode.getNodeType() != Node.ELEMENT_NODE)
                 throw new RuntimeException("invalid \"body\" node");
-            Pair<String, PhysicsBody> bodyData = parseBodyElement((Element) bodies.item(i));
-            
+            Pair<String, PhysicsBody> bodyData = parseBodyElement((Element) bodyNode);
+            namedPhysicsBodies.put(bodyData.first, bodyData.second);
+        }
+        for(int i = 0; i < revoluteJoints.getLength(); i++)
+        {
+            Node jointNode = revoluteJoints.item(i);
+            if(jointNode.getNodeType() != Node.ELEMENT_NODE)
+                throw new RuntimeException("invalid \"revolute_joint\" node");
+            Pair<String, PhysicsJoint> jointData = parseRevoluteJointElement((Element) jointNode);
+            namedPhysicsJoints.put(jointData.first, jointData.second);
         }
     }
     
@@ -166,10 +189,17 @@ public class EntityLoader
         return kinematicBehavior;
     }
     
+    private Vector2 parseVectorElement(Element vectorElement)
+    {
+        float x = XMLHelper.getDeepValueFloat(vectorElement, "x");
+        float y = XMLHelper.getDeepValueFloat(vectorElement, "y");
+        return new Vector2(x, y);
+    }
+    
     private Pair<String, PhysicsBody> parseBodyElement(Element bodyElement)
     {
         PhysicsBody body = new PhysicsBody();
-        String name     = XMLHelper.getDeepValue(bodyElement, "name");
+        String name = XMLHelper.getDeepValue(bodyElement, "name");
         
         NodeList polygonShapes = bodyElement.getElementsByTagName("polygon_shape");
         NodeList circleShapes  = bodyElement.getElementsByTagName("circle_shape");
@@ -250,5 +280,45 @@ public class EntityLoader
         }
         
         return new Pair<String, PhysicsBody>(name, body);
+    }
+    
+    private Pair<String, PhysicsJoint> parseRevoluteJointElement(Element revoluteJointElement)
+    {
+        PhysicsJoint joint = new PhysicsJoint();
+        String name = XMLHelper.getDeepValue(revoluteJointElement, "name");
+
+        String nameBodyA = XMLHelper.getDeepValue(revoluteJointElement, "body_a");
+        String nameBodyB = XMLHelper.getDeepValue(revoluteJointElement, "body_b");
+        boolean collision = XMLHelper.getDeepValueBoolean(revoluteJointElement, "collision");
+        
+        float rotation = XMLHelper.getDeepValueFloat(revoluteJointElement, "rotation");
+        boolean fixedRotation = XMLHelper.getDeepValueBoolean(revoluteJointElement, "fixed_rotation");
+        
+        NodeList anchorAs = revoluteJointElement.getElementsByTagName("anchor_a");
+        NodeList anchorBs = revoluteJointElement.getElementsByTagName("anchor_b");
+
+        if(anchorAs.getLength() < 1)
+            throw new RuntimeException("missing \"anchor_a\" node in \"revolute_joint\"");
+        if(anchorAs.getLength() > 1)
+            throw new RuntimeException("multiple \"anchor_a\" nodes not allowed in \"revolute_joint\"");
+        
+        if(anchorBs.getLength() < 1)
+            throw new RuntimeException("missing \"anchor_b\" node in \"revolute_joint\"");
+        if(anchorBs.getLength() > 1)
+            throw new RuntimeException("multiple \"anchor_b\" nodes not allowed in \"revolute_joint\"");
+
+        Node anchorANode = anchorAs.item(0);
+        if(anchorANode.getNodeType() != Node.ELEMENT_NODE)
+            throw new RuntimeException("invalid \"anchor_a\" node");
+        Element anchorAElement = (Element) anchorANode;
+        Vector2 anchorA = parseVectorElement(anchorAElement);
+        
+        Node anchorBNode = anchorBs.item(0);
+        if(anchorBNode.getNodeType() != Node.ELEMENT_NODE)
+            throw new RuntimeException("invalid \"anchor_b\" node");
+        Element anchorBElement = (Element) anchorBNode;
+        Vector2 anchorB = parseVectorElement(anchorBElement);
+        
+        return new Pair<String, PhysicsJoint>(name, joint);
     }
 }

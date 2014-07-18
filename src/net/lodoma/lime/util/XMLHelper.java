@@ -46,4 +46,17 @@ public class XMLHelper
             throw new RuntimeException("\"" + tag + "\" in \"" + element.getNodeName() + "\" is expected to be an integer");
         }
     }
+    
+    public static boolean getDeepValueBoolean(Element element, String tag)
+    {
+        String value = getDeepValue(element, tag);
+        try
+        {
+            return Boolean.parseBoolean(value);
+        }
+        catch(NumberFormatException e)
+        {
+            throw new RuntimeException("\"" + tag + "\" in \"" + element.getNodeName() + "\" is expected to be a boolean");
+        }
+    }
 }
