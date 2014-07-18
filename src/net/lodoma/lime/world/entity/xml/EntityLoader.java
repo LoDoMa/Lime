@@ -3,6 +3,7 @@ package net.lodoma.lime.world.entity.xml;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -71,6 +72,7 @@ public class EntityLoader
     private Map<String, PhysicsJoint> namedPhysicsJoints;
     private Map<String, Mask> namedMasks;
     private Map<String, String> namedProperties;
+    private List<String> namedScripts;
     
     public EntityLoader()
     {
@@ -95,9 +97,9 @@ public class EntityLoader
         if(rootName != "model")
             new InvalidNameException("root of an entity XML file must be named \"model\"");
         
-        String name         = XMLHelper.getDeepValue(docElement, "model_name");
-        String visualName   = XMLHelper.getDeepValue(docElement, "model_visual");
-        String version      = XMLHelper.getDeepValue(docElement, "model_version");
+        String name          = XMLHelper.getDeepValue(docElement, "model_name");
+        String visualName    = XMLHelper.getDeepValue(docElement, "model_visual");
+        String version       = XMLHelper.getDeepValue(docElement, "model_version");
         
         NodeList bodies         = docElement.getElementsByTagName("body");
         NodeList revoluteJoints = docElement.getElementsByTagName("revolute_joint");
@@ -136,6 +138,12 @@ public class EntityLoader
                 throw new RuntimeException("invalid \"property\" node");
             Pair<String, String> propertyData = parsePropertyElement((Element) propertyNode);
             namedProperties.put(propertyData.first, propertyData.second);
+        }
+        for(int i = 0; i < scripts.getLength(); i++)
+        {
+            Node scriptNode = properties.item(i);
+            NodeList childNodes = scriptNode.getChildNodes();
+            namedScripts.add(childNodes.item(0).getNodeName());
         }
     }
     
