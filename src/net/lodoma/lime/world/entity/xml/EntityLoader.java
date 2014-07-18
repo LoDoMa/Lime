@@ -71,6 +71,7 @@ public class EntityLoader
     private Map<String, PhysicsBody> namedPhysicsBodies;
     private Map<String, PhysicsJoint> namedPhysicsJoints;
     private Map<String, Mask> namedMasks;
+    private Map<String, String> namedProperties;
     
     public EntityLoader()
     {
@@ -128,6 +129,14 @@ public class EntityLoader
                 throw new RuntimeException("invalid \"mask\" node");
             Pair<String, Mask> maskData = parseMaskElement((Element) maskNode);
             namedMasks.put(maskData.first, maskData.second);
+        }
+        for(int i = 0; i < properties.getLength(); i++)
+        {
+            Node propertyNode = properties.item(i);
+            if(propertyNode.getNodeType() != Node.ELEMENT_NODE)
+                throw new RuntimeException("invalid \"property\" node");
+            Pair<String, String> propertyData = parsePropertyElement((Element) propertyNode);
+            namedProperties.put(propertyData.first, propertyData.second);
         }
     }
     
@@ -413,5 +422,12 @@ public class EntityLoader
         PhysicsBody followingBody = namedPhysicsBodies.get(follow);
         
         return new Pair<String, Mask>(name, mask);
+    }
+    
+    private Pair<String, String> parsePropertyElement(Element propertyElement)
+    {
+        String name = XMLHelper.getDeepValue(propertyElement, "name");
+        String type = XMLHelper.getDeepValue(propertyElement, "type");
+        return new Pair<String, String>(name, type);
     }
 }
