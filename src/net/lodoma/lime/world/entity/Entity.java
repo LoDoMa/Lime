@@ -94,4 +94,18 @@ public class Entity
     {
         scripts.add(script);
     }
+    
+    public void update()
+    {
+        List<PhysicsBody> bodies = new ArrayList<PhysicsBody>(physicsBodies.values());
+        for(PhysicsBody body : bodies)
+            body.update();
+    }
+    
+    public void render()
+    {
+        List<Mask> maskList = new ArrayList<Mask>(masks.values());
+        for(Mask mask : maskList)
+            mask.call();
+    }
 }

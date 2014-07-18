@@ -1,10 +1,15 @@
 package net.lodoma.lime.physics;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import net.lodoma.lime.mask.Mask;
 import net.lodoma.lime.util.Vector2;
 
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
+import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.Fixture;
@@ -19,10 +24,13 @@ public class PhysicsBody
     private Fixture fixture;
     private Body body;
     
+    private List<Mask> masks;
+    
     public PhysicsBody()
     {
         bd = new BodyDef();
         fd = new FixtureDef();
+        masks = new ArrayList<Mask>();
     }
     
     public void setPosition(Vector2 pos)
@@ -67,6 +75,11 @@ public class PhysicsBody
         return body;
     }
     
+    public void addMask(Mask mask)
+    {
+        masks.add(mask);
+    }
+    
     public void create(PhysicsWorld world)
     {
         body = world.getEngineWorld().createBody(bd);
@@ -77,5 +90,16 @@ public class PhysicsBody
     {
         body.destroyFixture(fixture);
         world.getEngineWorld().destroyBody(body);
+    }
+    
+    public void update()
+    {
+        Vec2 position = body.getPosition();
+        float angle = body.getAngle();
+        for(Mask mask : masks)
+        {
+            mask.setTranslation(position.x, position.y);
+            mask.setRotation(angle);
+        }
     }
 }

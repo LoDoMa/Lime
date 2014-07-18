@@ -415,8 +415,8 @@ public class EntityLoader
         for(Integer height : heights)
             mask.addLayer(layers.get(height));
         
-        @SuppressWarnings("unused")
         PhysicsBody followingBody = entity.getPhysicsBodyByName(follow);
+        followingBody.addMask(mask);
         
         return new Pair<String, Mask>(name, mask);
     }
