@@ -13,7 +13,6 @@ import net.lodoma.lime.common.net.NetStage;
 import net.lodoma.lime.util.BinaryHelper;
 import net.lodoma.lime.util.HashPool;
 import net.lodoma.lime.world.TileGrid;
-import net.lodoma.lime.world.entity.Entity;
 import net.lodoma.lime.world.material.Material;
 
 import org.jbox2d.dynamics.World;
@@ -75,14 +74,12 @@ public class ClientsideWorld implements TileGrid
     private WorldRenderer renderer;
     
     private World world;
-    private Set<Entity> entities;
     
     public ClientsideWorld(Client client)
     {
         this.client = client;
         palette = new HashMap<Short, Material>();
         renderer = new WorldRenderer(this);
-        entities = new HashSet<Entity>();
 
         startedSequence = false;
         reset(0, 0);
@@ -107,10 +104,6 @@ public class ClientsideWorld implements TileGrid
 
         renderReady = false;
         firstRender = true;
-        
-        for(Entity entity : entities)
-            entity.destroy();
-        entities.clear();
     }
     
     public void requestInitialData()
@@ -179,21 +172,6 @@ public class ClientsideWorld implements TileGrid
     public World getWorld()
     {
         return world;
-    }
-    
-    public Set<Entity> getEntitySet()
-    {
-        return new HashSet<Entity>(entities);
-    }
-    
-    public void addEntity(Entity entity)
-    {
-        entities.add(entity);
-    }
-    
-    public void removeEntity(Entity entity)
-    {
-        entities.remove(entity);
     }
     
     @Override
