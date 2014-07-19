@@ -8,6 +8,8 @@ import net.lodoma.lime.world.client.ClientsideWorld;
 
 public class VisualInstance
 {
+    private String host = "localhost";
+    
     private Client client;
     
     private void init()
@@ -32,7 +34,7 @@ public class VisualInstance
             e.printStackTrace();
         }
         
-        client.open(19424, "localhost");
+        client.open(19424, host);
     }
     
     private void loop()
