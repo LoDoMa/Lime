@@ -210,5 +210,6 @@ public class ServersideWorld implements TileGrid, EntityWorld
         List<Entity> entityList = new ArrayList<Entity>(entities.values());
         for(Entity entity : entityList)
             entity.update(timeDelta);
+        physicsWorld.update(timeDelta);
     }
 }

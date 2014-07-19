@@ -23,8 +23,8 @@ public class PhysicsWorld
         return world;
     }
     
-    public void update(float timeDelta)
+    public void update(double timeDelta)
     {
-        world.step(timeDelta, ENGINE_VELOCITY_ITERATIONS, ENGINE_POSITION_ITERATIONS);
+        world.step((float) timeDelta, ENGINE_VELOCITY_ITERATIONS, ENGINE_POSITION_ITERATIONS);
     }
 }
