@@ -1,13 +1,9 @@
 package net.lodoma.lime.physics.entity;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import net.lodoma.lime.mask.Mask;
 import net.lodoma.lime.physics.PhysicsBody;
@@ -45,6 +41,12 @@ public class Entity
         masks = new HashMap<String, Mask>();
         properties = new HashMap<String, String>();
         scripts = new ArrayList<LuaScript>();
+    }
+    
+    public void setID(long id)
+    {
+        this.ID = id;
+        generatedID = true;
     }
     
     public void setActor(boolean actor)
@@ -147,24 +149,5 @@ public class Entity
         
         for(Mask mask : maskList)
             mask.call();
-    }
-    
-    public void toDataOutputStream(DataOutputStream outputStream) throws IOException
-    {
-        outputStream.writeBoolean(actor);
-        outputStream.writeLong(ID);
-        outputStream.writeChars(internalName); outputStream.writeChar(0);
-        outputStream.writeChars(visualName); outputStream.writeChar(0);
-        outputStream.writeChars(version); outputStream.writeChar(0);
-        
-        outputStream.writeInt(bodies.size());
-        Set<Entry<String, PhysicsBody>> bodyEntries = bodies.entrySet();
-        for(Entry<String, PhysicsBody> entry : bodyEntries)
-        {
-            outputStream.writeChars(entry.getKey()); outputStream.writeChar(0);
-            entry.getValue().toDataOutputStream(outputStream);
-        }
-        
-        // TODO finish
     }
 }

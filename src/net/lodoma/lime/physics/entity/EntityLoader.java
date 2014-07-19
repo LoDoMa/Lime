@@ -70,6 +70,23 @@ public class EntityLoader
         
     }
     
+    private Map<Long, File> files;
+    
+    public EntityLoader()
+    {
+        files = new HashMap<Long, File>();
+    }
+    
+    public void addXMLFile(String internalName, File file)
+    {
+        files.put(HashHelper.hash64(internalName), file);
+    }
+    
+    public File getXMLFileByHash(long hash)
+    {
+        return files.get(hash);
+    }
+    
     public Entity loadFromXML(File xmlFile, EntityWorld world)
             throws IOException, SAXException, ParserConfigurationException
     {

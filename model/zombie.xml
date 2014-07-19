@@ -18,7 +18,7 @@
 		    <restitution> 0.2 </restitution>
 		</dynamic_behavior>
 	</body>
-	
+
 	<body>
 		<name> body </name>
 		<polygon_shape>

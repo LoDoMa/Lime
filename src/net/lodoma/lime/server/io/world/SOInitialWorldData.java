@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Set;
 import java.util.UUID;
 
-import net.lodoma.lime.physics.entity.Entity;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.server.ServerOutput;
 import net.lodoma.lime.server.ServerUser;
@@ -47,15 +46,12 @@ public class SOInitialWorldData extends ServerOutput
             user.outputStream.writeLong(uuid.getMostSignificantBits());
         }
         
-        // TODO finish
-        /*
         Set<Long> entityIDSet = world.getEntityIDSet();
-        user.outputStream.write(entityIDSet.size());
+        user.outputStream.writeInt(entityIDSet.size());
         for(long entityID : entityIDSet)
         {
-            Entity entity = world.getEntity(entityID);
-            entity.toDataOutputStream(user.outputStream);
+            user.outputStream.writeLong(entityID);
+            user.outputStream.writeLong(world.getEntity(entityID).getHash());
         }
-        */
     }
 }
