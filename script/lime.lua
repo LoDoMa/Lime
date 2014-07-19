@@ -39,6 +39,10 @@ local function checkWorkingElementSet(element, name, call)
 	assert(element ~= nil, name .. " not set before calling " .. call)
 end
 
+local function checkVectorType(value, argument, name)
+	assert(lime.util.vector.check(value), "invalid argument #" .. argument .. " to \"" .. name .. "\", expected vector2")
+end
+
 -- utilities
 
 local function round(num, idp)
@@ -99,8 +103,8 @@ end
 
 local function applyLinearImpulseToBody(impulse, point)
 	checkWorkingElementSet(workingBody, "body", "lime.body.impulse.linear")
-	assert(isVector(impulse), "invalid argument #1 to \"lime.body.impulse.linear\", expected vector")
-	assert(isVector(point), "invalid argument #2 to \"lime.body.impulse.linear\", expected vector")
+	checkVectorType(impulse, 1, "lime.body.impulse.linear")
+	checkVectorType(point, 2, "lime.body.impulse.linear")
 	javaImpulse = Vector2:newInstance(impulse.x, impulse.y)
 	javaPoint = Vector2:newInstance(point.x, point.y)
 	workingBody:applyLinearImpulse(javaImpulse, javaPoint)
@@ -136,7 +140,7 @@ end
 
 local function setMaskTranslation(translation)
 	checkWorkingElementSet(workingMask, "mask", "lime.mask.translation.set")
-	assert(isVector(translation), "invalid argument #1 to \"lime.mask.translation.set\", expected vector")
+	checkVectorType(translation, 1, "lime.mask.translation.set")
 	workingMask:setTranslation(translation.x, translation.y)
 end
 
@@ -231,9 +235,35 @@ lime = {
 		hash32 = hash32,
 		hash64 = hash64,
 		vector = {
-			new = buildVector
+			new = buildVector,
+			check = isVector,
 		},
 	},
+}
+
+-- extra utility functions
+
+local function follow(bodyEntityID, bodyName, maskEntityID, maskName)
+	checkType(bodyEntityID, "number", 1, "limex.follow")
+	checkType(bodyName, "string", 2, "limex.follow")
+	checkType(maskEntityID, "number", 3, "limex.follow")
+	checkType(maskName, "string", 4, "limex.follow")
+
+	setWorkingEntity(bodyEntityID)
+	setWorkingBody(bodyName)
+	local t = getBodyTranslation()
+	local r = getBodyRotation()
+
+	setWorkingEntity(maskEntityID)
+	setWorkingMask(maskName)
+	setMaskTranslation(t)
+	setMaskRotation(r)
+end
+
+-- limex table
+
+limex = {
+	follow = follow
 }
 
 -- dangerous tables are removed
