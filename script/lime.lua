@@ -20,9 +20,22 @@ end
 
 -- property interaction
 
-local function setProperty(propertyName)
-	print(propertyName)
+local properties = {}
+
+local function getProperty(name)
+	return properties[name]
 end
+
+function setProperty(name, value) -- this function is only visible to Lime
+	properties[name] = value
+end
+
+-- listeners
+
+local function addListener(limeType, listenerFunction)
+{
+	Lime.Listeners[limeType] = listenerFunction
+}
 
 -- utilities
 
@@ -41,7 +54,13 @@ Lime = {
 	-- joint interaction
 	-- mask interaction
 	-- property interaction
-	setProperty = setProperty,				-- NOTE: used by Lime, should not be called
+	getProperty = getProperty,
+	setProperty = setProperty,
+	-- listeners
+	addListener = addListener,
+	Listeners = {},
 	-- utilities
-	round = round;
+	Util = {
+		round = round;
+	},
 }

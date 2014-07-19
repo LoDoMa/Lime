@@ -43,21 +43,6 @@ public class LuaScript
         luaState.call(arguments.length, 0);
     }
     
-    public void callSpecial(Object... arguments)
-    {
-        luaState.getGlobal("Lime");
-        luaState.pushString("setProperty");
-        luaState.getTable(-2);
-        for(Object argument : arguments)
-        {
-                 if(argument instanceof Double) luaState.pushNumber((Double) argument);
-            else if(argument instanceof Float) luaState.pushNumber((Float) argument);
-            else if(argument instanceof String) luaState.pushString((String) argument);
-        }
-        luaState.call(arguments.length, 0);
-        luaState.pop(1);
-    }
-    
     public void close()
     {
         luaState.close();
