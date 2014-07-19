@@ -61,7 +61,7 @@ public class SLWorld implements ServerLogic
         try
         {
             Entity entity = entityLoader.loadFromXML(new File("model/zombie.xml"), world);
-            world.createEntity(entity);
+            world.createEntity(entity.getID());
             world.addEntity(entity);
         }
         catch (Exception e)

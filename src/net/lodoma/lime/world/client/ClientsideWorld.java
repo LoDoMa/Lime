@@ -215,7 +215,7 @@ public class ClientsideWorld implements TileGrid, EntityWorld
         entitiesToCreate.add(id);
     }
     
-    public void update(float timeDelta)
+    public void update(double timeDelta)
     {
         if(!startedSequence && ((NetStage) client.getProperty("networkStage")) == NetStage.USER)
         {
@@ -223,8 +223,19 @@ public class ClientsideWorld implements TileGrid, EntityWorld
             startedSequence = true;
         }
         
+        List<Long> createdEntities = new ArrayList<Long>();
         for(Long entityID : entitiesToCreate)
+        {
             entities.get(entityID).create(physicsWorld);
+            createdEntities.add(entityID);
+        }
+        entitiesToCreate.removeAll(createdEntities);
+        
+        List<Entity> entityList = new ArrayList<Entity>(entities.values());
+        for(Entity entity : entityList)
+            if(entity.isCreated())
+                entity.update(timeDelta);
+        
         physicsWorld.update(timeDelta);
     }
     

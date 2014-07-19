@@ -16,6 +16,8 @@ public class Entity
 {
     private static long counterID = 0;
     
+    boolean created = false;
+    
     boolean actor;
     
     boolean generatedID = false;
@@ -41,6 +43,11 @@ public class Entity
         masks = new HashMap<String, Mask>();
         properties = new HashMap<String, String>();
         scripts = new ArrayList<LuaScript>();
+    }
+    
+    public boolean isCreated()
+    {
+        return created;
     }
     
     public void setID(long id)
@@ -115,10 +122,14 @@ public class Entity
             body.create(world);
         for(PhysicsJoint joint : jointList)
             joint.create(world);
+        
+        created = true;
     }
     
     public void destroy(PhysicsWorld world)
     {
+        created = false;
+        
         List<PhysicsBody> bodyList = new ArrayList<PhysicsBody>(bodies.values());
         List<PhysicsJoint> jointList = new ArrayList<PhysicsJoint>(joints.values());
         

@@ -36,6 +36,7 @@ public class ServersideWorld implements TileGrid, EntityWorld
     
     private PhysicsWorld physicsWorld;
     private Map<Long, Entity> entities;
+    private List<Long> entitiesToCreate;
     
     public ServersideWorld(Server server)
     {
@@ -44,6 +45,7 @@ public class ServersideWorld implements TileGrid, EntityWorld
         
         physicsWorld = new PhysicsWorld();
         entities = new HashMap<Long, Entity>();
+        entitiesToCreate = new ArrayList<Long>();
     }
     
     @Override
@@ -187,9 +189,9 @@ public class ServersideWorld implements TileGrid, EntityWorld
                 chunks[y * chunkAX + x].lockState();
     }
     
-    public void createEntity(Entity entity)
+    public void createEntity(long id)
     {
-        entity.create(physicsWorld);
+        entitiesToCreate.add(id);
     }
     
     @Override
@@ -218,9 +220,19 @@ public class ServersideWorld implements TileGrid, EntityWorld
     
     public void update(double timeDelta)
     {
+        List<Long> createdEntities = new ArrayList<Long>();
+        for(Long entityID : entitiesToCreate)
+        {
+            entities.get(entityID).create(physicsWorld);
+            createdEntities.add(entityID);
+        }
+        entitiesToCreate.removeAll(createdEntities);
+        
         List<Entity> entityList = new ArrayList<Entity>(entities.values());
         for(Entity entity : entityList)
-            entity.update(timeDelta);
+            if(entity.isCreated())
+                entity.update(timeDelta);
+        
         physicsWorld.update(timeDelta);
     }
 }
