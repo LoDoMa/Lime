@@ -1,7 +1,9 @@
 package net.lodoma.lime.physics.entity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.lodoma.lime.mask.Mask;
 import net.lodoma.lime.physics.PhysicsBody;
@@ -24,23 +26,19 @@ public class Entity
     
     EntityWorld world;
     
-    List<PhysicsBody> bodies;
-    List<PhysicsJoint> joints;
-    List<Mask> masks;
-    List<String> properties;
+    Map<String, PhysicsBody> bodies;
+    Map<String, PhysicsJoint> joints;
+    Map<String, Mask> masks;
+    Map<String, String> properties;
     List<LuaScript> scripts;
-    
-    LuaEntity luaEntity;
     
     public Entity()
     {
-        bodies = new ArrayList<PhysicsBody>();
-        joints = new ArrayList<PhysicsJoint>();
-        masks = new ArrayList<Mask>();
-        properties = new ArrayList<String>();
+        bodies = new HashMap<String, PhysicsBody>();
+        joints = new HashMap<String, PhysicsJoint>();
+        masks = new HashMap<String, Mask>();
+        properties = new HashMap<String, String>();
         scripts = new ArrayList<LuaScript>();
-        
-        luaEntity = new LuaEntity(this);
     }
     
     public void generateID()
@@ -75,24 +73,45 @@ public class Entity
         return version;
     }
     
-    public LuaEntity getLuaEntity()
+    public EntityWorld getEntityWorld()
     {
-        return luaEntity;
+        return world;
+    }
+    
+    public PhysicsBody getBody(String name)
+    {
+        return bodies.get(name);
+    }
+    
+    public PhysicsJoint getJoint(String name)
+    {
+        return joints.get(name);
+    }
+    
+    public Mask getMask(String name)
+    {
+        return masks.get(name);
     }
     
     public void create(PhysicsWorld world)
     {
-        for(PhysicsBody body : bodies)
+        List<PhysicsBody> bodyList = new ArrayList<PhysicsBody>(bodies.values());
+        List<PhysicsJoint> jointList = new ArrayList<PhysicsJoint>(joints.values());
+        
+        for(PhysicsBody body : bodyList)
             body.create(world);
-        for(PhysicsJoint joint : joints)
+        for(PhysicsJoint joint : jointList)
             joint.create(world);
     }
     
     public void destroy(PhysicsWorld world)
     {
-        for(PhysicsBody body : bodies)
+        List<PhysicsBody> bodyList = new ArrayList<PhysicsBody>(bodies.values());
+        List<PhysicsJoint> jointList = new ArrayList<PhysicsJoint>(joints.values());
+        
+        for(PhysicsBody body : bodyList)
             body.destroy(world);
-        for(PhysicsJoint joint : joints)
+        for(PhysicsJoint joint : jointList)
             joint.destroy(world);
         
         for(LuaScript script : scripts)
@@ -109,14 +128,13 @@ public class Entity
     {
         for(LuaScript script : scripts)
             script.call("Lime_FrameUpdate", timeDelta);
-        
-        for(PhysicsBody body : bodies)
-            body.update();
     }
     
     public void render()
     {
-        for(Mask mask : masks)
+        List<Mask> maskList = new ArrayList<Mask>(masks.values());
+        
+        for(Mask mask : maskList)
             mask.call();
     }
 }

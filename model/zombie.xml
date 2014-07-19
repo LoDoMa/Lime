@@ -53,7 +53,6 @@
 
 	<mask>
 		<name> m_head </name>
-		<follow> head </follow>
 		<colored_layer>
 			<layer_height> 0 </layer_height>
 			<polygon_shape>
@@ -78,7 +77,6 @@
 
 	<mask>
 		<name> m_body </name>
-		<follow> body </follow>
 		<colored_layer>
 			<layer_height> 0 </layer_height>
 			<polygon_shape>

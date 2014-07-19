@@ -1,5 +1,7 @@
 package net.lodoma.lime.mask;
 
+import net.lodoma.lime.util.Vector2;
+
 import org.lwjgl.opengl.GL11;
 
 public abstract class Mask
@@ -15,10 +17,20 @@ public abstract class Mask
         
     }
     
+    public Vector2 getTranslation()
+    {
+        return new Vector2(translateX, translateY);
+    }
+    
     public void setTranslation(float x, float y)
     {
         translateX = x;
         translateY = y;
+    }
+    
+    public float getRotation()
+    {
+        return rotate;
     }
     
     public void setRotation(float r)

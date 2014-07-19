@@ -70,27 +70,9 @@ public class EntityLoader
         
     }
     
-    private Map<String, PhysicsBody> namedBodies;
-    private Map<String, PhysicsJoint> namedJoints;
-    private Map<String, Mask> namedMasks;
-    private Map<String, String> namedProperties;
-    
-    public EntityLoader()
-    {
-        namedBodies = new HashMap<String, PhysicsBody>();
-        namedJoints = new HashMap<String, PhysicsJoint>();
-        namedMasks = new HashMap<String, Mask>();
-        namedProperties = new HashMap<String, String>();
-    }
-    
     public Entity loadFromXML(File xmlFile, EntityWorld world)
             throws IOException, SAXException, ParserConfigurationException
     {
-        namedBodies.clear();
-        namedJoints.clear();
-        namedMasks.clear();
-        namedProperties.clear();
-        
         Entity entity = new Entity();
         
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -126,8 +108,7 @@ public class EntityLoader
             if(bodyNode.getNodeType() != Node.ELEMENT_NODE)
                 throw new RuntimeException("invalid \"body\" node");
             Pair<String, PhysicsBody> bodyData = parseBodyElement((Element) bodyNode);
-            namedBodies.put(bodyData.first, bodyData.second);
-            entity.bodies.add(bodyData.second);
+            entity.bodies.put(bodyData.first, bodyData.second);
         }
         for(int i = 0; i < revoluteJoints.getLength(); i++)
         {
@@ -135,8 +116,7 @@ public class EntityLoader
             if(jointNode.getNodeType() != Node.ELEMENT_NODE)
                 throw new RuntimeException("invalid \"revolute_joint\" node");
             Pair<String, PhysicsJoint> jointData = parseRevoluteJointElement((Element) jointNode, entity);
-            namedJoints.put(jointData.first, jointData.second);
-            entity.joints.add(jointData.second);
+            entity.joints.put(jointData.first, jointData.second);
         }
         for(int i = 0; i < masks.getLength(); i++)
         {
@@ -144,8 +124,7 @@ public class EntityLoader
             if(maskNode.getNodeType() != Node.ELEMENT_NODE)
                 throw new RuntimeException("invalid \"mask\" node");
             Pair<String, Mask> maskData = parseMaskElement((Element) maskNode, entity);
-            namedMasks.put(maskData.first, maskData.second);
-            entity.masks.add(maskData.second);
+            entity.masks.put(maskData.first, maskData.second);
         }
         for(int i = 0; i < properties.getLength(); i++)
         {
@@ -153,15 +132,14 @@ public class EntityLoader
             if(propertyNode.getNodeType() != Node.ELEMENT_NODE)
                 throw new RuntimeException("invalid \"property\" node");
             Pair<String, String> propertyData = parsePropertyElement((Element) propertyNode);
-            namedProperties.put(propertyData.first, propertyData.second);
-            entity.properties.add(propertyData.second);
+            entity.properties.put(propertyData.first, propertyData.second);
         }
         for(int i = 0; i < scripts.getLength(); i++)
         {
             Node scriptNode = scripts.item(i);
             NodeList childNodes = scriptNode.getChildNodes();
             String scriptPath = childNodes.item(0).getNodeValue().trim();
-            entity.scripts.add(new LuaScript(new File(scriptPath), entity.getLuaEntity()));
+            entity.scripts.add(new LuaScript(new File(scriptPath), entity));
         }
         
         return entity;
@@ -371,8 +349,8 @@ public class EntityLoader
         Element anchorBElement = (Element) anchorBNode;
         Vector2 anchorB = parseVectorElement(anchorBElement);
         
-        joint.setBodyA(namedBodies.get(nameBodyA));
-        joint.setBodyB(namedBodies.get(nameBodyB));
+        joint.setBodyA(entity.bodies.get(nameBodyA));
+        joint.setBodyB(entity.bodies.get(nameBodyB));
         joint.setCollisionEnabled(collision);
         joint.setAngle(rotation);
         joint.setAnchorA(anchorA);
@@ -423,7 +401,6 @@ public class EntityLoader
         LayeredMask mask = new LayeredMask(RenderingOrder.BOTTOM_TO_TOP);
         
         String name   = XMLHelper.getDeepValue(maskElement, "name");
-        String follow = XMLHelper.getDeepValue(maskElement, "follow");
         
         Map<Integer, Mask> layers = new HashMap<Integer, Mask>();
         
@@ -444,9 +421,6 @@ public class EntityLoader
         Set<Integer> heights = layers.keySet();
         for(Integer height : heights)
             mask.addLayer(layers.get(height));
-        
-        PhysicsBody followingBody = namedBodies.get(follow);
-        followingBody.addMask(mask);
         
         return new Pair<String, Mask>(name, mask);
     }
