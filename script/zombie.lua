@@ -1,29 +1,16 @@
 
-local this = lime.this
-local entity = lime.entity
-local body = lime.body
-local joint = lime.joint
-local mask = lime.mask
-local property = lime.property
-local listener = lime.listener
-local util = lime.util
+local function follow(mask, body)
+	lime.body.set(body)
+	local translation = lime.body.translation.get()
+	local rotation = lime.body.rotation.get()
+
+	lime.mask.set(mask)
+	lime.mask.translation.set(translation)
+	lime.mask.rotation.set(rotation)
+end
 
 function Lime_FrameUpdate(timeDelta)
-	entity.set(this.ID)
-
-	body.set("head")
-	local headTranslation = body.translation.get()
-	local headRotation = body.rotation.get()
-
-	mask.set("m_head")
-	mask.translation.set(headTranslation)
-	mask.rotation.set(headRotation)
-
-	body.set("body")
-	local bodyTranslation = body.translation.get()
-	local bodyRotation = body.rotation.get()
-
-	mask.set("m_body")
-	mask.translation.set(bodyTranslation)
-	mask.rotation.set(bodyRotation)
+	lime.entity.set(lime.this.ID)
+	follow("m_head", "head")
+	follow("m_body", "body")
 end

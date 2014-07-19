@@ -5,6 +5,7 @@ import net.lodoma.lime.util.Vector2;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
+import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.Fixture;
@@ -72,6 +73,16 @@ public class PhysicsBody
     public void setRestitution(float restitution)
     {
         fd.restitution = restitution;
+    }
+    
+    public void applyLinearImpulse(Vector2 impulse, Vector2 point)
+    {
+        body.applyLinearImpulse(new Vec2(impulse.x, impulse.y), new Vec2(point.x, point.y));
+    }
+    
+    public void applyAngularImpulse(float impulse)
+    {
+        body.applyAngularImpulse(impulse);
     }
     
     public Body getEngineBody()

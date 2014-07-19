@@ -28,6 +28,11 @@ public class Vector2
         x = v.x;
         y = v.y;
     }
+    
+    public static Vector2 newInstance(float x, float y)
+    {
+        return new Vector2(x, y);
+    }
 
     public static Vector2 add(Vector2 v1, float v2)
     {
