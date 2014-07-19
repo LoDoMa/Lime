@@ -7,4 +7,5 @@ public interface EntityWorld
     public void addEntity(Entity entity);
     public Entity getEntity(long id);
     public void removeEntity(long id);
+    public boolean isServer();
 }

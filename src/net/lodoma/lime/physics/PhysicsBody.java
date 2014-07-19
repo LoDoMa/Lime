@@ -1,5 +1,7 @@
 package net.lodoma.lime.physics;
 
+import java.io.DataOutputStream;
+
 import net.lodoma.lime.util.Vector2;
 
 import org.jbox2d.collision.shapes.CircleShape;
@@ -100,5 +102,10 @@ public class PhysicsBody
     {
         body.destroyFixture(fixture);
         world.getEngineWorld().destroyBody(body);
+    }
+    
+    public void toDataOutputStream(DataOutputStream outputStream)
+    {
+        
     }
 }

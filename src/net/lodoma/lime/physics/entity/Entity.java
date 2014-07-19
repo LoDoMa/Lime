@@ -1,9 +1,13 @@
 package net.lodoma.lime.physics.entity;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import net.lodoma.lime.mask.Mask;
 import net.lodoma.lime.physics.PhysicsBody;
@@ -15,6 +19,8 @@ import net.lodoma.lime.world.entity.EntityWorld;
 public class Entity
 {
     private static long counterID = 0;
+    
+    boolean actor;
     
     boolean generatedID = false;
     long ID;
@@ -39,6 +45,11 @@ public class Entity
         masks = new HashMap<String, Mask>();
         properties = new HashMap<String, String>();
         scripts = new ArrayList<LuaScript>();
+    }
+    
+    public void setActor(boolean actor)
+    {
+        this.actor = actor;
     }
     
     public void generateID()
@@ -127,7 +138,7 @@ public class Entity
     public void update(double timeDelta)
     {
         for(LuaScript script : scripts)
-            script.call("Lime_FrameUpdate", timeDelta);
+            script.call("Lime_FrameUpdate", timeDelta, actor, world.isServer() ? 0 : 1);
     }
     
     public void render()
@@ -136,5 +147,24 @@ public class Entity
         
         for(Mask mask : maskList)
             mask.call();
+    }
+    
+    public void toDataOutputStream(DataOutputStream outputStream) throws IOException
+    {
+        outputStream.writeBoolean(actor);
+        outputStream.writeLong(ID);
+        outputStream.writeChars(internalName); outputStream.writeChar(0);
+        outputStream.writeChars(visualName); outputStream.writeChar(0);
+        outputStream.writeChars(version); outputStream.writeChar(0);
+        
+        outputStream.writeInt(bodies.size());
+        Set<Entry<String, PhysicsBody>> bodyEntries = bodies.entrySet();
+        for(Entry<String, PhysicsBody> entry : bodyEntries)
+        {
+            outputStream.writeChars(entry.getKey()); outputStream.writeChar(0);
+            entry.getValue().toDataOutputStream(outputStream);
+        }
+        
+        // TODO finish
     }
 }

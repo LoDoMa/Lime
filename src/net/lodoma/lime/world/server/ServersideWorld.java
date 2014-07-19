@@ -46,6 +46,12 @@ public class ServersideWorld implements TileGrid, EntityWorld
         entities = new HashMap<Long, Entity>();
     }
     
+    @Override
+    public boolean isServer()
+    {
+        return true;
+    }
+    
     public void fetch()
     {
         
@@ -197,6 +203,11 @@ public class ServersideWorld implements TileGrid, EntityWorld
     public Entity getEntity(long id)
     {
         return entities.get(id);
+    }
+    
+    public Set<Long> getEntityIDSet()
+    {
+        return new HashSet<Long>(entities.keySet());
     }
 
     @Override

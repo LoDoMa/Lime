@@ -183,6 +183,10 @@ end
 -- lime table
 
 lime = {
+	netside = {
+		server = 0,
+		client = 1,
+	},
 	this = {
 		ID = entityID,
 		hash = entityHash,

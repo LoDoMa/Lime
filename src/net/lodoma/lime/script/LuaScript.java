@@ -37,6 +37,8 @@ public class LuaScript
         {
                  if(argument instanceof Double) luaState.pushNumber((Double) argument);
             else if(argument instanceof Float) luaState.pushNumber((Float) argument);
+            else if(argument instanceof Integer) luaState.pushNumber((Integer) argument);
+            else if(argument instanceof Boolean) luaState.pushBoolean((Boolean) argument);
             else if(argument instanceof String) luaState.pushString((String) argument);
         }
         
