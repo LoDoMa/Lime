@@ -8,3 +8,4 @@ Art-style: cartoon
 Platform: Linux, Windows, OS X ..... XBox one, PlayStation 4  
 
 Language: Java, Lua, GLSL
+Libraries: LWJGL, JBox2D, SLF4J, JNLua
