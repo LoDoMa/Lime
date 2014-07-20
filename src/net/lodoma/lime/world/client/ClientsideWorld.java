@@ -74,6 +74,14 @@ public class ClientsideWorld implements TileGrid, EntityWorld
     {
         return false;
     }
+    
+    public void clean()
+    {
+        List<Entity> entityList = new ArrayList<Entity>(entities.values());
+        for(Entity entity : entityList)
+            entity.destroy(physicsWorld);
+        entities.clear();
+    }
 
     @SuppressWarnings("unchecked")
     public void fetch()

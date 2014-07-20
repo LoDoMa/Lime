@@ -35,10 +35,18 @@ local function checkType(value, etype, argument, name)
 end
 
 local function checkWorkingElementSet(element, name, call)
-	assert(element ~= nil, name .. " not set before calling " .. call)
+	local name_type = type(name)
+	local call_type = type(call)
+	assert(name_type == "string", "invalid argument #2 to \"local utility checkWorkingElementSet\", expected string, got " .. name_type)
+	assert(call_type == "string", "invalid argument #3 to \"local utility checkWorkingElementSet\", expected string, got " .. call_type)
+	assert(element ~= nil, "\"" .. name .. "\" not set before calling \"" .. call .. "\"")
 end
 
 local function checkVectorType(value, argument, name)
+	local argument_type = type(argument)
+	local name_type = type(name)
+	assert(argument_type == "number", "invalid argument #2 to \"local utility checkVectorType\", expected number, got " .. argument_type)
+	assert(name_type == "string", "invalid argument #3 to \"local utility checkVectorType\", expected string, got " .. name_type)
 	assert(lime.util.vector.check(value), "invalid argument #" .. argument .. " to \"" .. name .. "\", expected vector2")
 end
 

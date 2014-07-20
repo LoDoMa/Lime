@@ -59,7 +59,7 @@ public class CLWorld implements ClientLogic
     @Override
     public void clean()
     {
-        
+        world.clean();
     }
     
     @Override
