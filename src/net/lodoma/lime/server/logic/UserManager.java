@@ -1,6 +1,8 @@
 package net.lodoma.lime.server.logic;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import net.lodoma.lime.server.Server;
@@ -13,7 +15,7 @@ public class UserManager implements ServerLogic
     
     public UserManager()
     {
-        users = new ArrayList<ServerUser>();
+        users = Collections.synchronizedList(new ArrayList<ServerUser>());
     }
     
     @Override
@@ -43,7 +45,9 @@ public class UserManager implements ServerLogic
     @Override
     public void clean()
     {
-        
+        for(ServerUser user : users)
+            user.stop();
+        users.clear();
     }
     
     public void addUser(ServerUser user)
@@ -59,9 +63,19 @@ public class UserManager implements ServerLogic
     @Override
     public void logic()
     {
+        try
+        {
+            for(ServerUser user : users)
+                user.handleInput();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        
         long currentTime = SystemHelper.getTimeNanos();
         
-        List<ServerUser> removedUsers = new ArrayList<ServerUser>();
+        List<ServerUser> toRemove = new ArrayList<ServerUser>();
         for(ServerUser user : users)
         {
             long userLastTime = user.getLastResponseTime();
@@ -71,9 +85,9 @@ public class UserManager implements ServerLogic
             {
                 System.out.println("UserManager.java:58 - user removed - no response");
                 user.stop();
-                removedUsers.add(user);
+                toRemove.add(user);
             }
         }
-        users.removeAll(removedUsers);
+        users.removeAll(toRemove);
     }
 }

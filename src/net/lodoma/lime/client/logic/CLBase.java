@@ -1,5 +1,8 @@
 package net.lodoma.lime.client.logic;
 
+import java.util.Iterator;
+import java.util.List;
+
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.client.ClientInputHandler;
 import net.lodoma.lime.client.ClientOutput;
@@ -15,6 +18,7 @@ public class CLBase implements ClientLogic
     private Client client;
     private HashPool<ClientInputHandler> cihPool;
     private HashPool<ClientOutput> coPool;
+    private List<Long> handlePool;
     
     private boolean sendFirstRequest;
     
@@ -39,6 +43,7 @@ public class CLBase implements ClientLogic
     {
         cihPool = (HashPool<ClientInputHandler>) client.getProperty("cihPool");
         coPool = (HashPool<ClientOutput>) client.getProperty("coPool");
+        handlePool = (List<Long>) client.getProperty("handlePool");
     }
 
     @Override
@@ -70,6 +75,14 @@ public class CLBase implements ClientLogic
         {
             coPool.get("Lime::PresenceResponse").handle();
             responseCounter -= 3.5;
+        }
+        
+        Iterator<Long> iterator = handlePool.iterator();
+        while(iterator.hasNext())
+        {
+            long hash = iterator.next();
+            cihPool.get(hash).handle();
+            iterator.remove();
         }
     }
     

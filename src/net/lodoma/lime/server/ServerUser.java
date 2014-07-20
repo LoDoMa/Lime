@@ -3,6 +3,9 @@ package net.lodoma.lime.server;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.net.Socket;
 
 import net.lodoma.lime.common.net.NetStage;
@@ -13,10 +16,13 @@ public final class ServerUser implements Runnable
 {
     public NetStage stage;
     
-    private Server server;
     private HashPool<ServerInputHandler> sihPool;
     
     private Socket socket;
+    
+    private InputStream privateInputStream;
+    private PipedOutputStream privateOutputStream;
+    
     public DataInputStream inputStream;
     public DataOutputStream outputStream;
     
@@ -30,14 +36,16 @@ public final class ServerUser implements Runnable
     {
         this.stage = stage;
         
-        this.server = server;
-        this.sihPool = (HashPool<ServerInputHandler>) this.server.getProperty("sihPool");
+        sihPool = (HashPool<ServerInputHandler>) server.getProperty("sihPool");
         
         this.socket = socket;
         try
         {
-            inputStream = new DataInputStream(this.socket.getInputStream());
+            privateInputStream = this.socket.getInputStream();
             outputStream = new DataOutputStream(this.socket.getOutputStream());
+            
+            privateOutputStream = new PipedOutputStream();
+            inputStream = new DataInputStream(new PipedInputStream(privateOutputStream));
         }
         catch(IOException e)
         {
@@ -79,6 +87,17 @@ public final class ServerUser implements Runnable
         lastResponseTime = 0;
     }
     
+    public void handleInput() throws IOException
+    {
+        while(inputStream.available() >= 8)
+        {
+            long hash = inputStream.readLong();
+            ServerInputHandler handler = sihPool.get(hash);
+            if(handler != null)
+                handler.handle(this);
+        }
+    }
+    
     @Override
     public void run()
     {
@@ -86,11 +105,9 @@ public final class ServerUser implements Runnable
         {
             try
             {
-                long hash = inputStream.readLong();
-                lastResponseTime = SystemHelper.getTimeNanos();
-                ServerInputHandler sih = sihPool.get(hash);
-                if(sih != null)
-                    sihPool.get(hash).handle(this);
+                int readByte = privateInputStream.read();
+                if(readByte == -1) break;
+                privateOutputStream.write(readByte);
             }
             catch(IOException e)
             {

@@ -4,12 +4,13 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import net.lodoma.lime.client.error.ClientError;
 import net.lodoma.lime.client.logic.CLBase;
-import net.lodoma.lime.client.logic.CLChat;
 import net.lodoma.lime.client.logic.CLWorld;
 import net.lodoma.lime.client.logic.ClientLogicPool;
 import net.lodoma.lime.util.HashPool;
@@ -48,9 +49,10 @@ public class Client
 
         setProperty("cihPool", new HashPool<ClientInputHandler>());
         setProperty("coPool", new HashPool<ClientOutput>());
+        setProperty("handlePool", Collections.synchronizedList(new ArrayList<Long>()));
         
         logicPool.addLogic(new CLBase());
-        logicPool.addLogic(new CLChat());
+        //logicPool.addLogic(new CLChat());
         logicPool.addLogic(new CLWorld());
         
         logicPool.init();

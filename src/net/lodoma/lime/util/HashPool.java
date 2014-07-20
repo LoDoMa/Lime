@@ -14,6 +14,9 @@ public class HashPool<T>
     
     public void add(String name, T object)
     {
+        long hash = HashHelper.hash64(name);
+        if(elements.containsKey(hash))
+            throw new DuplicateHashException();
         elements.put(HashHelper.hash64(name), object);
     }
     

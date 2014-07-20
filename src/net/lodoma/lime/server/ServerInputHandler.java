@@ -30,7 +30,7 @@ public abstract class ServerInputHandler
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+            user.socketClosed();
         }
     }
 }
