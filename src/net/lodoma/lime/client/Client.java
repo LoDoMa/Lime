@@ -10,7 +10,6 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.lodoma.lime.client.error.ClientError;
 import net.lodoma.lime.client.logic.CLBase;
 import net.lodoma.lime.client.logic.CLWorld;
 import net.lodoma.lime.client.logic.ClientLogicPool;
@@ -100,21 +99,6 @@ public class Client
     public DataOutputStream getOutputStream()
     {
         return outputStream;
-    }
-    
-    public void handleError(final ClientError error)
-    {
-        logicPool.disable();
-        final Client thisClient = this;
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                thisClient.close();
-                error.onClientTermination(thisClient);
-            }
-        }).start();
     }
     
     public boolean isRunning()
