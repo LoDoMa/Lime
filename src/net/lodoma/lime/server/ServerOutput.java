@@ -35,6 +35,7 @@ public abstract class ServerOutput
         }
         catch (IOException e)
         {
+            // TODO fix on server termination
             e.printStackTrace();
         }
     }

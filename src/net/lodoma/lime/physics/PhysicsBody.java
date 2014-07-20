@@ -120,8 +120,7 @@ public class PhysicsBody
         linVelY = inputStream.readFloat();
         angVel = inputStream.readFloat();
         
-        bd.position.set(posX, posY);
-        bd.angle = angle;
+        body.getTransform().set(new Vec2(posX, posY), angle);
         body.setLinearVelocity(new Vec2(linVelX, linVelY));
         body.setAngularVelocity(angVel);
     }

@@ -5,6 +5,7 @@ import java.io.File;
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.client.ClientInputHandler;
 import net.lodoma.lime.client.ClientOutput;
+import net.lodoma.lime.client.io.world.CIHEntityCorrection;
 import net.lodoma.lime.client.io.world.CIHInitialWorldData;
 import net.lodoma.lime.client.io.world.COInitialWorldRequest;
 import net.lodoma.lime.physics.entity.EntityLoader;
@@ -52,6 +53,7 @@ public class CLWorld implements ClientLogic
     {
         coPool.add("Lime::InitialWorldRequest", new COInitialWorldRequest(client, "Lime::InitialWorldRequest"));
         cihPool.add("Lime::InitialWorldData", new CIHInitialWorldData(client));
+        cihPool.add("Lime::EntityCorrection", new CIHEntityCorrection(client));
         
         entityLoader.addXMLFile("lime::zombie", new File("model/zombie.xml"));
     }

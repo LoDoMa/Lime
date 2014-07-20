@@ -1,13 +1,18 @@
 package net.lodoma.lime.server.logic;
 
 import java.io.File;
+import java.util.List;
+import java.util.Set;
 
 import net.lodoma.lime.physics.entity.Entity;
 import net.lodoma.lime.physics.entity.EntityLoader;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.server.ServerInputHandler;
 import net.lodoma.lime.server.ServerOutput;
+import net.lodoma.lime.server.ServerUser;
+import net.lodoma.lime.server.UserManager;
 import net.lodoma.lime.server.io.world.SIHInitialWorldRequest;
+import net.lodoma.lime.server.io.world.SOEntityCorrection;
 import net.lodoma.lime.server.io.world.SOInitialWorldData;
 import net.lodoma.lime.util.HashPool;
 import net.lodoma.lime.util.Timer;
@@ -19,10 +24,15 @@ public class SLWorld implements ServerLogic
     private Server server;
     private HashPool<ServerInputHandler> sihPool;
     private HashPool<ServerOutput> soPool;
+    
+    private UserManager userManager;
     private ServersideWorld world;
     private EntityLoader entityLoader;
     
     private Timer timer;
+    
+    private double correctionTime = 0;
+    private double correctionGoal = 2;
     
     @Override
     public void baseInit(Server server)
@@ -43,6 +53,7 @@ public class SLWorld implements ServerLogic
     {
         sihPool = (HashPool<ServerInputHandler>) server.getProperty("sihPool");
         soPool = (HashPool<ServerOutput>) server.getProperty("soPool");
+        userManager = (UserManager) server.getProperty("userManager");
         world = (ServersideWorld) server.getProperty("world");
         entityLoader = (EntityLoader) server.getProperty("entityLoader");
         
@@ -54,6 +65,7 @@ public class SLWorld implements ServerLogic
     {
         sihPool.add("Lime::InitialWorldRequest", new SIHInitialWorldRequest(server));
         soPool.add("Lime::InitialWorldData", new SOInitialWorldData(server, "Lime::InitialWorldData"));
+        soPool.add("Lime::EntityCorrection", new SOEntityCorrection(server, "Lime::EntityCorrection"));
         
         WorldFileLoader fileLoader = new WorldFileLoader();
         fileLoader.build(world);
@@ -81,6 +93,28 @@ public class SLWorld implements ServerLogic
     {
         if(timer == null) timer = new Timer();
         timer.update();
-        world.update(timer.getDelta());
+        
+        double timeDelta = timer.getDelta();
+        correctionTime += timeDelta;
+        if(correctionTime >= correctionGoal)
+        {
+            System.out.println("sending...");
+            correctionTime -= correctionGoal;
+            
+            ServerOutput serverOutput = soPool.get("Lime::EntityCorrection");
+            
+            List<ServerUser> serverUsers = userManager.getUserList();
+            Set<Integer> entityIDSet = world.getEntityIDSet();
+            
+            for(ServerUser serverUser : serverUsers)
+                for(int entityID : entityIDSet)
+                {
+                    Entity entity = world.getEntity(entityID);
+                    if(entity.isCreated())
+                        serverOutput.handle(serverUser, world.getEntity(entityID));
+                }
+        }
+        
+        world.update(timeDelta);
     }
 }
