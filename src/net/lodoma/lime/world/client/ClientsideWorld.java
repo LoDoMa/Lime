@@ -47,8 +47,8 @@ public class ClientsideWorld implements TileGrid, EntityWorld
     private Map<Short, Material> palette;
 
     private PhysicsWorld physicsWorld;
-    private Map<Long, Entity> entities;
-    private List<Long> entitiesToCreate;
+    private Map<Integer, Entity> entities;
+    private List<Integer> entitiesToCreate;
     
     private boolean renderReady;
     private boolean firstRender;
@@ -61,8 +61,8 @@ public class ClientsideWorld implements TileGrid, EntityWorld
         this.client = client;
         palette = new HashMap<Short, Material>();
         physicsWorld = new PhysicsWorld();
-        entities = new HashMap<Long, Entity>();
-        entitiesToCreate = new ArrayList<Long>();
+        entities = new HashMap<Integer, Entity>();
+        entitiesToCreate = new ArrayList<Integer>();
         renderer = new WorldRenderer(this);
 
         startedSequence = false;
@@ -194,23 +194,23 @@ public class ClientsideWorld implements TileGrid, EntityWorld
     }
 
     @Override
-    public Entity getEntity(long id)
+    public Entity getEntity(int id)
     {
         return entities.get(id);
     }
     
-    public Set<Long> getEntityIDSet()
+    public Set<Integer> getEntityIDSet()
     {
-        return new HashSet<Long>(entities.keySet());
+        return new HashSet<Integer>(entities.keySet());
     }
 
     @Override
-    public void removeEntity(long id)
+    public void removeEntity(int id)
     {
         entities.remove(id);
     }
     
-    public void createEntity(long id)
+    public void createEntity(int id)
     {
         entitiesToCreate.add(id);
     }
@@ -223,8 +223,8 @@ public class ClientsideWorld implements TileGrid, EntityWorld
             startedSequence = true;
         }
         
-        List<Long> createdEntities = new ArrayList<Long>();
-        for(Long entityID : entitiesToCreate)
+        List<Integer> createdEntities = new ArrayList<Integer>();
+        for(int entityID : entitiesToCreate)
         {
             entities.get(entityID).create(physicsWorld);
             createdEntities.add(entityID);

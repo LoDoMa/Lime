@@ -57,7 +57,7 @@ public class CIHInitialWorldData extends ClientInputHandler
         int entityCount = inputStream.readInt();
         for(int i = 0; i < entityCount; i++)
         {
-            long id = inputStream.readLong();
+            int id = inputStream.readInt();
             long hash = inputStream.readLong();
             
             try

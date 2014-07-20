@@ -46,11 +46,11 @@ public class SOInitialWorldData extends ServerOutput
             user.outputStream.writeLong(uuid.getMostSignificantBits());
         }
         
-        Set<Long> entityIDSet = world.getEntityIDSet();
+        Set<Integer> entityIDSet = world.getEntityIDSet();
         user.outputStream.writeInt(entityIDSet.size());
-        for(long entityID : entityIDSet)
+        for(int entityID : entityIDSet)
         {
-            user.outputStream.writeLong(entityID);
+            user.outputStream.writeInt(entityID);
             user.outputStream.writeLong(world.getEntity(entityID).getHash());
         }
     }

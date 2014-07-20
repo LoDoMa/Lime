@@ -14,14 +14,14 @@ import net.lodoma.lime.world.entity.EntityWorld;
 
 public class Entity
 {
-    private static long counterID = 0;
+    private static int counterID = 0;
     
     boolean created = false;
     
     boolean actor;
     
     boolean generatedID = false;
-    long ID;
+    int ID;
     
     long hash;
     String internalName;
@@ -29,19 +29,19 @@ public class Entity
     String version;
     
     EntityWorld world;
-    
-    Map<String, PhysicsBody> bodies;
-    Map<String, PhysicsJoint> joints;
-    Map<String, Mask> masks;
-    Map<String, String> properties;
+
+    Map<Integer, PhysicsBody> bodies;
+    Map<Integer, PhysicsJoint> joints;
+    Map<Integer, Mask> masks;
+    Map<Integer, String> properties;
     List<LuaScript> scripts;
     
     public Entity()
     {
-        bodies = new HashMap<String, PhysicsBody>();
-        joints = new HashMap<String, PhysicsJoint>();
-        masks = new HashMap<String, Mask>();
-        properties = new HashMap<String, String>();
+        bodies = new HashMap<Integer, PhysicsBody>();
+        joints = new HashMap<Integer, PhysicsJoint>();
+        masks = new HashMap<Integer, Mask>();
+        properties = new HashMap<Integer, String>();
         scripts = new ArrayList<LuaScript>();
     }
     
@@ -50,7 +50,7 @@ public class Entity
         return created;
     }
     
-    public void setID(long id)
+    public void setID(int id)
     {
         this.ID = id;
         generatedID = true;
@@ -68,7 +68,7 @@ public class Entity
         ID = counterID++;
     }
     
-    public long getID()
+    public int getID()
     {
         return ID;
     }
@@ -98,17 +98,17 @@ public class Entity
         return world;
     }
     
-    public PhysicsBody getBody(String name)
+    public PhysicsBody getBody(int name)
     {
         return bodies.get(name);
     }
     
-    public PhysicsJoint getJoint(String name)
+    public PhysicsJoint getJoint(int name)
     {
         return joints.get(name);
     }
     
-    public Mask getMask(String name)
+    public Mask getMask(int name)
     {
         return masks.get(name);
     }

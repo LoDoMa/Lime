@@ -125,7 +125,7 @@ public class EntityLoader
             if(bodyNode.getNodeType() != Node.ELEMENT_NODE)
                 throw new RuntimeException("invalid \"body\" node");
             Pair<String, PhysicsBody> bodyData = parseBodyElement((Element) bodyNode);
-            entity.bodies.put(bodyData.first, bodyData.second);
+            entity.bodies.put(HashHelper.hash32(bodyData.first), bodyData.second);
         }
         for(int i = 0; i < revoluteJoints.getLength(); i++)
         {
@@ -133,7 +133,7 @@ public class EntityLoader
             if(jointNode.getNodeType() != Node.ELEMENT_NODE)
                 throw new RuntimeException("invalid \"revolute_joint\" node");
             Pair<String, PhysicsJoint> jointData = parseRevoluteJointElement((Element) jointNode, entity);
-            entity.joints.put(jointData.first, jointData.second);
+            entity.joints.put(HashHelper.hash32(jointData.first), jointData.second);
         }
         for(int i = 0; i < masks.getLength(); i++)
         {
@@ -141,7 +141,7 @@ public class EntityLoader
             if(maskNode.getNodeType() != Node.ELEMENT_NODE)
                 throw new RuntimeException("invalid \"mask\" node");
             Pair<String, Mask> maskData = parseMaskElement((Element) maskNode, entity);
-            entity.masks.put(maskData.first, maskData.second);
+            entity.masks.put(HashHelper.hash32(maskData.first), maskData.second);
         }
         for(int i = 0; i < properties.getLength(); i++)
         {
@@ -149,7 +149,7 @@ public class EntityLoader
             if(propertyNode.getNodeType() != Node.ELEMENT_NODE)
                 throw new RuntimeException("invalid \"property\" node");
             Pair<String, String> propertyData = parsePropertyElement((Element) propertyNode);
-            entity.properties.put(propertyData.first, propertyData.second);
+            entity.properties.put(HashHelper.hash32(propertyData.first), propertyData.second);
         }
         for(int i = 0; i < scripts.getLength(); i++)
         {
@@ -366,8 +366,8 @@ public class EntityLoader
         Element anchorBElement = (Element) anchorBNode;
         Vector2 anchorB = parseVectorElement(anchorBElement);
         
-        joint.setBodyA(entity.bodies.get(nameBodyA));
-        joint.setBodyB(entity.bodies.get(nameBodyB));
+        joint.setBodyA(entity.bodies.get(HashHelper.hash32(nameBodyA)));
+        joint.setBodyB(entity.bodies.get(HashHelper.hash32(nameBodyB)));
         joint.setCollisionEnabled(collision);
         joint.setAngle(rotation);
         joint.setAnchorA(anchorA);

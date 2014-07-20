@@ -4,21 +4,51 @@ local firstUpdate = true
 local this = lime.this.ID
 local round = lime.util.round
 local newVector = lime.util.vector.new
+local hash32 = lime.util.hash32
+
+local hashes = {}
+
+local function addHash(str)
+	hashes[str] = hash32(str)
+end
+
+local function loadHashes()
+	addHash("head")
+	addHash("body")
+	addHash("m_head")
+	addHash("m_body")
+end
+
+local function serverUpdate()
+	if firstUpdate then
+		lime.entity.set(this)
+
+		lime.body.set(hashes["head"])
+		lime.body.impulse.linear(newVector(100, 0), newVector(0, 0))
+	end
+end
+
+local function clientUpdate()
+	lime.entity.set(this)
+
+	lime.body.set(hashes["head"])
+	local translation = lime.body.translation.get()
+	--print(round(translation.x, 2) .. " " .. round(translation.y, 2))
+
+	limex.follow(this, hashes["head"], this, hashes["m_head"])
+	limex.follow(this, hashes["body"], this, hashes["m_body"])
+end
 
 function Lime_FrameUpdate(timeDelta, isActor, side)
-	lime.entity.set(this)
-	if side == lime.netside.server then
-		if firstUpdate then
-			lime.body.set("head")
-			lime.body.impulse.linear(newVector(100, 0), newVector(0, 0))
-			firstUpdate = false
-		end
-	elseif side == lime.netside.client then
-		lime.body.set("head")
-		local translation = lime.body.translation.get()
-		--print(round(translation.x, 2) .. " " .. round(translation.y, 2))
-
-		limex.follow(this, "head", this, "m_head")
-		limex.follow(this, "body", this, "m_body")
+	if firstUpdate then
+		loadHashes()
 	end
+
+	if side == lime.netside.server then
+		serverUpdate()
+	elseif side == lime.netside.client then
+		clientUpdate()
+	end
+
+	firstUpdate = false
 end

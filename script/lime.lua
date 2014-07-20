@@ -5,7 +5,6 @@ local HashHelper = java.require("net.lodoma.lime.util.HashHelper")
 local entity = LIME_INIT
 
 local entityID = entity:getID()
-local entityHash = entity:getHash()
 local entityInternalName = entity:getInternalName()
 local entityVisualName = entity:getVisualName()
 local entityVersion = entity:getVersion()
@@ -84,10 +83,10 @@ end
 
 -- body
 
-local function setWorkingBody(bodyName)
+local function setWorkingBody(hash)
 	checkWorkingElementSet(workingEntity, "entity", "lime.body.set")
-	checkType(bodyName, "string", 1, "lime.body.set")
-	workingBody = entity:getBody(bodyName)
+	checkType(hash, "number", 1, "lime.body.set")
+	workingBody = entity:getBody(hash)
 end
 
 local function getBodyTranslation()
@@ -118,18 +117,18 @@ end
 
 -- joint
 
-local function setWorkingJoint(jointName)
+local function setWorkingJoint(hash)
 	checkWorkingElementSet(workingEntity, "entity", "lime.joint.set")
-	checkType(jointName, "string", 1, "lime.joint.set")
-	workingJoint = entity:getJoint(jointName)
+	checkType(hash, "number", 1, "lime.joint.set")
+	workingJoint = entity:getJoint(hash)
 end
 
 -- mask
 
-local function setWorkingMask(maskName)
+local function setWorkingMask(hash)
 	checkWorkingElementSet(workingEntity, "entity", "lime.mask.set")
-	checkType(maskName, "string", 1, "lime.mask.set")
-	workingMask = entity:getMask(maskName)
+	checkType(hash, "number", 1, "lime.mask.set")
+	workingMask = entity:getMask(hash)
 end
 
 local function getMaskTranslation()
@@ -157,14 +156,14 @@ end
 
 -- property
 
-local function getProperty(name)
-	checkType(name, "string", 1, "lime.property.get")
-	return properties[name]
+local function getProperty(hash)
+	checkType(hash, "number", 1, "lime.property.get")
+	return properties[hash]
 end
 
-local function setProperty(name, value)
-	checkType(name, "string", 1, "lime.property.set")
-	properties[name] = value
+local function setProperty(hash, value)
+	checkType(hash, "number", 1, "lime.property.set")
+	properties[hash] = value
 end
 
 -- listener
@@ -189,7 +188,6 @@ lime = {
 	},
 	this = {
 		ID = entityID,
-		hash = entityHash,
 		name = {
 			internal = entityInternalName,
 			visual = entityVisualName,
@@ -247,19 +245,19 @@ lime = {
 
 -- extra utility functions
 
-local function follow(bodyEntityID, bodyName, maskEntityID, maskName)
+local function follow(bodyEntityID, bodyHash, maskEntityID, maskHash)
 	checkType(bodyEntityID, "number", 1, "limex.follow")
-	checkType(bodyName, "string", 2, "limex.follow")
+	checkType(bodyHash, "number", 2, "limex.follow")
 	checkType(maskEntityID, "number", 3, "limex.follow")
-	checkType(maskName, "string", 4, "limex.follow")
+	checkType(maskHash, "number", 4, "limex.follow")
 
 	setWorkingEntity(bodyEntityID)
-	setWorkingBody(bodyName)
+	setWorkingBody(bodyHash)
 	local t = getBodyTranslation()
 	local r = getBodyRotation()
 
 	setWorkingEntity(maskEntityID)
-	setWorkingMask(maskName)
+	setWorkingMask(maskHash)
 	setMaskTranslation(t)
 	setMaskRotation(r)
 end

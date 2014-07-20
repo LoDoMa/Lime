@@ -5,7 +5,7 @@ import net.lodoma.lime.physics.entity.Entity;
 public interface EntityWorld
 {
     public void addEntity(Entity entity);
-    public Entity getEntity(long id);
-    public void removeEntity(long id);
+    public Entity getEntity(int id);
+    public void removeEntity(int id);
     public boolean isServer();
 }
