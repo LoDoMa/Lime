@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.net.ConnectException;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +34,7 @@ public class Client
     private ClientLogicPool logicPool;
     private Map<String, Object> properties;
     
-    public final void open(int port, String host)
+    public final void open(int port, String host) throws ClientConnectionException
     {
         if(isRunning)
             throw new IllegalStateException("client is already open");
@@ -50,6 +51,8 @@ public class Client
         }
         catch (IOException e)
         {
+            if(e instanceof ConnectException)
+                throw new ClientConnectionException(e);
             e.printStackTrace();
         }
         

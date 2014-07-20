@@ -1,6 +1,7 @@
 package net.lodoma.lime.client.start;
 
 import net.lodoma.lime.client.Client;
+import net.lodoma.lime.client.ClientConnectionException;
 import net.lodoma.lime.client.window.DisplayModeSearchException;
 import net.lodoma.lime.client.window.InvalidWindowPropertyException;
 import net.lodoma.lime.client.window.Window;
@@ -9,6 +10,7 @@ import net.lodoma.lime.world.client.ClientsideWorld;
 public class VisualInstance
 {
     private String host = "localhost";
+    private boolean connected;
     
     private Client client;
     
@@ -34,12 +36,21 @@ public class VisualInstance
             e.printStackTrace();
         }
         
-        client.open(19424, host);
+        try
+        {
+            connected = false;
+            client.open(19424, host);
+            connected = true;
+        }
+        catch (ClientConnectionException e)
+        {
+            e.printStackTrace();
+        }
     }
     
     private void loop()
     {
-        while(!Window.isCloseRequested())
+        while(connected && !Window.isCloseRequested())
         {
             Window.clear();
             
@@ -62,8 +73,11 @@ public class VisualInstance
     
     private void clean()
     {
-        if(client.isRunning())
-            client.close();
+        if(connected)
+        {
+            if(client.isRunning())
+                client.close();
+        }
         Window.close();
     }
     
