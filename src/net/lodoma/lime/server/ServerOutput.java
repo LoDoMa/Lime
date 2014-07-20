@@ -37,7 +37,7 @@ public abstract class ServerOutput
         catch (IOException e)
         {
             if(e instanceof SocketException)
-                user.socketClosed();
+                user.closed();
             else
                 e.printStackTrace();
         }

@@ -3,9 +3,10 @@ package net.lodoma.lime.client;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,6 +21,10 @@ public class Client
     private boolean isRunning = false;
     
     private Socket socket;
+    
+    InputStream privateInputStream;
+    PipedOutputStream privateOutputStream;
+
     private DataInputStream inputStream;
     private DataOutputStream outputStream;
    
@@ -36,7 +41,11 @@ public class Client
         try
         {
             socket = new Socket(host, port);
-            inputStream = new DataInputStream(socket.getInputStream());
+            
+            privateInputStream = socket.getInputStream();
+            privateOutputStream = new PipedOutputStream();
+
+            inputStream = new DataInputStream(new PipedInputStream(privateOutputStream));
             outputStream = new DataOutputStream(socket.getOutputStream());
         }
         catch (IOException e)
@@ -46,10 +55,11 @@ public class Client
         
         logicPool = new ClientLogicPool(this);
         properties = new HashMap<String, Object>();
-
+        
         setProperty("cihPool", new HashPool<ClientInputHandler>());
+        reader = new ClientReader(this);
         setProperty("coPool", new HashPool<ClientOutput>());
-        setProperty("handlePool", Collections.synchronizedList(new ArrayList<Long>()));
+        setProperty("reader", reader);
         
         logicPool.addLogic(new CLBase());
         //logicPool.addLogic(new CLChat());
@@ -57,11 +67,8 @@ public class Client
         
         logicPool.init();
         
-        reader = new ClientReader(this);
         reader.start();
-        
         isRunning = true;
-        
         logicPool.start();
     }
     

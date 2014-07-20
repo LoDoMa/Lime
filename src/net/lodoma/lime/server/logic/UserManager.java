@@ -63,21 +63,20 @@ public class UserManager implements ServerLogic
     @Override
     public void logic()
     {
-        try
-        {
-            for(ServerUser user : users)
-                user.handleInput();
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        
         long currentTime = SystemHelper.getTimeNanos();
         
         List<ServerUser> toRemove = new ArrayList<ServerUser>();
         for(ServerUser user : users)
         {
+            try
+            {
+                user.handleInput();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+            
             long userLastTime = user.getLastResponseTime();
             long timeDiff = currentTime - userLastTime;
             

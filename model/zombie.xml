@@ -35,6 +35,22 @@
 		</dynamic_behavior>
 	</body>
 
+	<revolute_joint>
+		<name> head_body </name>
+		<body_a> head </body_a>
+		<body_b> body </body_b>
+		<collision> false </collision>
+		<rotation> 0 </rotation>
+		<anchor_a>
+			<x> 0.25 </x>
+			<y> 0.00 </y>
+		</anchor_a>
+		<anchor_b>
+			<x> 0.20 </x>
+			<y> 1.00 </y>
+		</anchor_b>
+	</revolute_joint>
+
 	<mask>
 		<name> m_head </name>
 		<colored_layer>

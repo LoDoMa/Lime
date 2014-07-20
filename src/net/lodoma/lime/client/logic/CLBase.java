@@ -1,11 +1,11 @@
 package net.lodoma.lime.client.logic;
 
-import java.util.Iterator;
-import java.util.List;
+import java.io.IOException;
 
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.client.ClientInputHandler;
 import net.lodoma.lime.client.ClientOutput;
+import net.lodoma.lime.client.ClientReader;
 import net.lodoma.lime.client.io.base.CIHNetworkStageChange;
 import net.lodoma.lime.client.io.base.CODependencyRequest;
 import net.lodoma.lime.client.io.base.COPresenceResponse;
@@ -16,9 +16,9 @@ import net.lodoma.lime.util.Timer;
 public class CLBase implements ClientLogic
 {
     private Client client;
+    private ClientReader reader;
     private HashPool<ClientInputHandler> cihPool;
     private HashPool<ClientOutput> coPool;
-    private List<Long> handlePool;
     
     private boolean sendFirstRequest;
     
@@ -43,7 +43,7 @@ public class CLBase implements ClientLogic
     {
         cihPool = (HashPool<ClientInputHandler>) client.getProperty("cihPool");
         coPool = (HashPool<ClientOutput>) client.getProperty("coPool");
-        handlePool = (List<Long>) client.getProperty("handlePool");
+        reader = (ClientReader) client.getProperty("reader");
     }
 
     @Override
@@ -77,12 +77,13 @@ public class CLBase implements ClientLogic
             responseCounter -= 3.5;
         }
         
-        Iterator<Long> iterator = handlePool.iterator();
-        while(iterator.hasNext())
+        try
         {
-            long hash = iterator.next();
-            cihPool.get(hash).handle();
-            iterator.remove();
+            reader.handleInput();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
         }
     }
     

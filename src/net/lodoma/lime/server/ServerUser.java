@@ -82,7 +82,7 @@ public final class ServerUser implements Runnable
         return lastResponseTime;
     }
     
-    public void socketClosed()
+    public void closed()
     {
         lastResponseTime = 0;
     }
@@ -107,20 +107,16 @@ public final class ServerUser implements Runnable
             {
                 int readByte = privateInputStream.read();
                 if(readByte == -1) break;
+                lastResponseTime = System.nanoTime();
                 privateOutputStream.write(readByte);
             }
             catch(IOException e)
             {
-                if(running)
-                {
-                    running = false;
-                    break;
-                }
+                break;
             }
         }
         
         if(!socket.isClosed())
-        {
             try
             {
                 socket.close();
@@ -129,6 +125,7 @@ public final class ServerUser implements Runnable
             {
                 e.printStackTrace();
             }
-        }
+        
+        closed();
     }
 }
