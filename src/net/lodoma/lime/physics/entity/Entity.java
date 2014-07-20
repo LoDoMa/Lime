@@ -1,9 +1,14 @@
 package net.lodoma.lime.physics.entity;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.lodoma.lime.mask.Mask;
 import net.lodoma.lime.physics.PhysicsBody;
@@ -160,5 +165,25 @@ public class Entity
         
         for(Mask mask : maskList)
             mask.call();
+    }
+    
+    public void receiveCorrection(DataInputStream inputStream) throws IOException
+    {
+        int count = bodies.size();
+        for(int i = 0; i < count; i++)
+        {
+            int hash = inputStream.readInt();
+            bodies.get(hash).receiveCorrection(inputStream);
+        }
+    }
+    
+    public void sendCorrection(DataOutputStream outputStream) throws IOException
+    {
+        Set<Integer> hashes = new HashSet<Integer>(bodies.keySet());
+        for(Integer hash : hashes)
+        {
+            outputStream.writeInt(hash);
+            bodies.get(hash).sendCorrection(outputStream);
+        }
     }
 }

@@ -1,5 +1,9 @@
 package net.lodoma.lime.physics;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 import net.lodoma.lime.util.Vector2;
 
 import org.jbox2d.collision.shapes.CircleShape;
@@ -100,5 +104,40 @@ public class PhysicsBody
     {
         body.destroyFixture(fixture);
         world.getEngineWorld().destroyBody(body);
+    }
+    
+    public void receiveCorrection(DataInputStream inputStream) throws IOException
+    {
+        float posX, posY;
+        float angle;
+        float linVelX, linVelY;
+        float angVel;
+
+        posX = inputStream.readFloat();
+        posY = inputStream.readFloat();
+        angle = inputStream.readFloat();
+        linVelX = inputStream.readFloat();
+        linVelY = inputStream.readFloat();
+        angVel = inputStream.readFloat();
+        
+        bd.position.set(posX, posY);
+        bd.angle = angle;
+        body.setLinearVelocity(new Vec2(linVelX, linVelY));
+        body.setAngularVelocity(angVel);
+    }
+    
+    public void sendCorrection(DataOutputStream outputStream) throws IOException
+    {
+        Vec2 position = body.getPosition();
+        float angle = body.getAngle();
+        Vec2 linearVelocity = body.getLinearVelocity();
+        float angularVelocity = body.getAngularVelocity();
+        
+        outputStream.writeFloat(position.x);
+        outputStream.writeFloat(position.y);
+        outputStream.writeFloat(angle);
+        outputStream.writeFloat(linearVelocity.x);
+        outputStream.writeFloat(linearVelocity.y);
+        outputStream.writeFloat(angularVelocity);
     }
 }
