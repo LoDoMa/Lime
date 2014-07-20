@@ -66,6 +66,7 @@ public class ClientReader implements Runnable
                 if(readByte == -1)
                     throw new IOException();
                 privateOutputStream.write(readByte);
+                privateOutputStream.flush();
             }
             catch(IOException e)
             {

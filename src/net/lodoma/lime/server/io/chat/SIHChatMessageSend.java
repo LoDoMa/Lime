@@ -25,7 +25,9 @@ public class SIHChatMessageSend extends ServerInputHandler
         StringBuilder builder = new StringBuilder();
         char readChar;
         while((readChar = user.inputStream.readChar()) != 0)
+        {
             builder.append(readChar);
+        }
         
         String message = builder.toString();
         

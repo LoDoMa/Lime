@@ -109,6 +109,7 @@ public final class ServerUser implements Runnable
                 if(readByte == -1) break;
                 lastResponseTime = System.nanoTime();
                 privateOutputStream.write(readByte);
+                privateOutputStream.flush();
             }
             catch(IOException e)
             {

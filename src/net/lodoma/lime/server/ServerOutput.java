@@ -33,6 +33,8 @@ public abstract class ServerOutput
                     throw new IllegalArgumentException();
             
             localHandle(user, args);
+            
+            user.outputStream.flush();
         }
         catch (IOException e)
         {

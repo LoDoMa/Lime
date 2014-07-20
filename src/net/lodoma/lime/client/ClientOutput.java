@@ -37,6 +37,8 @@ public abstract class ClientOutput
                     throw new IllegalArgumentException();
             
             localHandle(args);
+            
+            outputStream.flush();
         }
         catch (IOException e)
         {
