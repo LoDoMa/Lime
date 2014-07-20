@@ -1,7 +1,7 @@
 Lime
 ====
 
-Lime - action-oriented side-scrolling video game
+Lime - action-oriented side-scrolling video game  
 Developed by: Dominik Fistrić, Lovro Kalinovčić, Matej Varzić  
 
 Art-style: cartoon  
