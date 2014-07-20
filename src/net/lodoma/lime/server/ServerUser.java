@@ -74,6 +74,11 @@ public final class ServerUser implements Runnable
         return lastResponseTime;
     }
     
+    public void socketClosed()
+    {
+        lastResponseTime = 0;
+    }
+    
     @Override
     public void run()
     {
@@ -83,7 +88,9 @@ public final class ServerUser implements Runnable
             {
                 long hash = inputStream.readLong();
                 lastResponseTime = SystemHelper.getTimeNanos();
-                sihPool.get(hash).handle(this);
+                ServerInputHandler sih = sihPool.get(hash);
+                if(sih != null)
+                    sihPool.get(hash).handle(this);
             }
             catch(IOException e)
             {

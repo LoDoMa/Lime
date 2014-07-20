@@ -1,7 +1,6 @@
 package net.lodoma.lime.server;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import net.lodoma.lime.server.dependency.DependencyPool;
@@ -9,6 +8,7 @@ import net.lodoma.lime.server.logic.SLBase;
 import net.lodoma.lime.server.logic.SLChat;
 import net.lodoma.lime.server.logic.SLWorld;
 import net.lodoma.lime.server.logic.ServerLogicPool;
+import net.lodoma.lime.server.logic.UserManager;
 import net.lodoma.lime.util.HashPool;
 
 public class Server
@@ -28,14 +28,17 @@ public class Server
         logicPool = new ServerLogicPool(this);
         properties = new HashMap<String, Object>();
         
-        setProperty("userManager", new UserManager());
+        UserManager userManager = new UserManager();
+        
         setProperty("sihPool", new HashPool<ServerInputHandler>());
         setProperty("soPool", new HashPool<ServerOutput>());
         setProperty("dependencyPool", new DependencyPool());
-
+        setProperty("userManager", userManager);
+        
         logicPool.addLogic(new SLBase());
         logicPool.addLogic(new SLChat());
         logicPool.addLogic(new SLWorld());
+        logicPool.addLogic(userManager);
         
         logicPool.init();
         
@@ -52,11 +55,6 @@ public class Server
     {
         if (!isRunning)
             new IllegalStateException("server is already closed");
-
-        UserManager manager = (UserManager) getProperty("userManager");
-        List<ServerUser> serverUsers = manager.getUserList();
-        for(ServerUser serverUser : serverUsers)
-            serverUser.stop();
         
         logicPool.stop();
         service.stop();

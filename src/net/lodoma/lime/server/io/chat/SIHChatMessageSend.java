@@ -8,7 +8,7 @@ import net.lodoma.lime.server.Server;
 import net.lodoma.lime.server.ServerInputHandler;
 import net.lodoma.lime.server.ServerOutput;
 import net.lodoma.lime.server.ServerUser;
-import net.lodoma.lime.server.UserManager;
+import net.lodoma.lime.server.logic.UserManager;
 import net.lodoma.lime.util.HashPool;
 
 public class SIHChatMessageSend extends ServerInputHandler

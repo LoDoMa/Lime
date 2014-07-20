@@ -10,7 +10,6 @@ import net.lodoma.lime.server.Server;
 import net.lodoma.lime.server.ServerInputHandler;
 import net.lodoma.lime.server.ServerOutput;
 import net.lodoma.lime.server.ServerUser;
-import net.lodoma.lime.server.UserManager;
 import net.lodoma.lime.server.io.world.SIHInitialWorldRequest;
 import net.lodoma.lime.server.io.world.SOEntityCorrection;
 import net.lodoma.lime.server.io.world.SOInitialWorldData;
@@ -98,7 +97,6 @@ public class SLWorld implements ServerLogic
         correctionTime += timeDelta;
         if(correctionTime >= correctionGoal)
         {
-            System.out.println("sending...");
             correctionTime -= correctionGoal;
             
             ServerOutput serverOutput = soPool.get("Lime::EntityCorrection");

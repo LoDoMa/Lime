@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import net.lodoma.lime.common.net.NetStage;
+import net.lodoma.lime.server.logic.UserManager;
 
 public class ServerService implements Runnable
 {

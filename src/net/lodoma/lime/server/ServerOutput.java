@@ -1,6 +1,7 @@
 package net.lodoma.lime.server;
 
 import java.io.IOException;
+import java.net.SocketException;
 
 import net.lodoma.lime.util.HashHelper;
 
@@ -35,8 +36,10 @@ public abstract class ServerOutput
         }
         catch (IOException e)
         {
-            // TODO fix on server termination
-            e.printStackTrace();
+            if(e instanceof SocketException)
+                user.socketClosed();
+            else
+                e.printStackTrace();
         }
     }
 }
