@@ -10,7 +10,6 @@ import net.lodoma.lime.world.client.ClientsideWorld;
 public class VisualInstance
 {
     private String host = "localhost";
-    private boolean connected;
     
     private Client client;
     
@@ -38,9 +37,7 @@ public class VisualInstance
         
         try
         {
-            connected = false;
             client.open(19424, host);
-            connected = true;
         }
         catch (ClientConnectionException e)
         {
@@ -73,11 +70,8 @@ public class VisualInstance
     
     private void clean()
     {
-        if(connected)
-        {
-            if(client.isRunning())
-                client.close();
-        }
+        if(client.isRunning())
+            client.close();
         Window.close();
     }
     
