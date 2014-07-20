@@ -8,7 +8,6 @@ import net.lodoma.lime.client.ClientOutput;
 import net.lodoma.lime.client.io.chat.CIHChatMessageReceive;
 import net.lodoma.lime.client.io.chat.COChatMessageSend;
 import net.lodoma.lime.util.HashPool;
-import net.lodoma.lime.util.ThreadHelper;
 
 public class CLChat implements ClientLogic
 {
@@ -45,29 +44,23 @@ public class CLChat implements ClientLogic
     {
         cihPool.add("Lime::ChatMessageReceive", new CIHChatMessageReceive(client));
         coPool.add("Lime::ChatMessageSend", new COChatMessageSend(client, "Lime::ChatMessageSend"));
+        chatManager.generalInit();
         
-        chatConsole = new ChatConsole(client);
-        chatConsole.start();
-        
-        chatManager.addHandler(chatConsole);
+        chatConsole = new ChatConsole();
+
+        chatManager.addSender(chatConsole);
+        chatManager.addReceiver(chatConsole);
     }
 
     @Override
     public void clean()
     {
-        try
-        {
-            ThreadHelper.interruptAndWait(chatConsole);
-        }
-        catch(InterruptedException e)
-        {
-            e.printStackTrace();
-        }
+        chatManager.close();
     }
 
     @Override
     public void logic()
     {
-        
+        chatManager.send();
     }
 }

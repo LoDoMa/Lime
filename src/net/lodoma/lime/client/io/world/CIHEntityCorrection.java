@@ -21,7 +21,7 @@ public class CIHEntityCorrection extends ClientInputHandler
         
         int id = inputStream.readInt();
         Entity entity = world.getEntity(id);
-        if(entity.isCreated())
+        if(entity != null && entity.isCreated())
             entity.receiveCorrection(inputStream);
     }
 }

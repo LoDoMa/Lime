@@ -1,7 +1,7 @@
 package net.lodoma.lime.chat;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.client.ClientOutput;
@@ -10,35 +10,59 @@ import net.lodoma.lime.util.HashPool;
 public class ChatManager
 {
     private Client client;
-    private ClientOutput sendOutput;
+    private ClientOutput send;
     
-    private Set<ChatHandler> handlers;
+    private List<ChatSender> senders;
+    private List<ChatReceiver> receivers;
     
     public ChatManager(Client client)
     {
         this.client = client;
-        handlers = new HashSet<ChatHandler>();
+        
+        senders = new ArrayList<ChatSender>();
+        receivers = new ArrayList<ChatReceiver>();
     }
     
-    public void addHandler(ChatHandler handler)
+    @SuppressWarnings("unchecked")
+    public void generalInit()
     {
-        handlers.add(handler);
+        send = ((HashPool<ClientOutput>) client.getProperty("coPool")).get("Lime::ChatMessageSend");
+    }
+    
+    public void addSender(ChatSender sender)
+    {
+        senders.add(sender);
+        sender.addChatManager(this);
+    }
+    
+    public void addReceiver(ChatReceiver receiver)
+    {
+        receivers.add(receiver);
     }
     
     public void send(String message)
     {
-        if(sendOutput == null)
-        {
-            @SuppressWarnings("unchecked")
-            HashPool<ClientOutput> coPool = (HashPool<ClientOutput>) client.getProperty("coPool");
-            sendOutput = coPool.get("Lime::ChatMessageSend");
-        }
-        sendOutput.handle(message);
+        send.handle(message);
+    }
+    
+    public void send()
+    {
+        for(ChatSender sender : senders)
+            sender.sendChat();
     }
     
     public void receive(String message)
     {
-        for(ChatHandler handler : handlers)
-            handler.receive(message);
+        for(ChatReceiver receiver : receivers)
+            receiver.receiveChat(message);
+    }
+    
+    public void close()
+    {
+        for(ChatSender sender : senders)
+            sender.closeChatSender();
+        
+        for(ChatReceiver receiver : receivers)
+            receiver.closeChatReceiver();
     }
 }

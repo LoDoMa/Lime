@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.lodoma.lime.client.logic.CLBase;
+import net.lodoma.lime.client.logic.CLChat;
 import net.lodoma.lime.client.logic.CLWorld;
 import net.lodoma.lime.client.logic.ClientLogicPool;
 import net.lodoma.lime.util.HashPool;
@@ -61,7 +62,7 @@ public class Client
         setProperty("reader", reader);
         
         logicPool.addLogic(new CLBase());
-        //logicPool.addLogic(new CLChat());
+        logicPool.addLogic(new CLChat());
         logicPool.addLogic(new CLWorld());
         
         logicPool.init();
