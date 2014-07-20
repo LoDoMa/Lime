@@ -50,7 +50,7 @@ public class VisualInstance
     
     private void loop()
     {
-        while(connected && !Window.isCloseRequested())
+        while(client.isRunning() && !Window.isCloseRequested())
         {
             Window.clear();
             

@@ -2,6 +2,7 @@ package net.lodoma.lime.client;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.SocketException;
 
 import net.lodoma.lime.util.HashHelper;
 
@@ -42,7 +43,19 @@ public abstract class ClientOutput
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+            if(e instanceof SocketException)
+            {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run()
+                    {
+                        System.out.println("client closing - server closed");
+                        client.close();
+                    }
+                }).start();
+            }
+            else
+                e.printStackTrace();
         }
     }
 }
