@@ -14,6 +14,7 @@ import net.lodoma.lime.server.ServerOutput;
 import net.lodoma.lime.server.ServerUser;
 import net.lodoma.lime.server.event.EventListener;
 import net.lodoma.lime.server.event.EventManager;
+import net.lodoma.lime.server.logic.UserManager;
 import net.lodoma.lime.util.HashPool;
 import net.lodoma.lime.world.entity.EntityWorld;
 import net.lodoma.lime.world.platform.Platform;
@@ -22,11 +23,13 @@ public class ServersideWorld implements EntityWorld
 {
     private final class SendOnEvent implements EventListener
     {
+        private ServersideWorld world;
         private EventManager manager;
         private ServerOutput output;
         
-        public SendOnEvent(EventManager manager, ServerOutput output)
+        public SendOnEvent(ServersideWorld world, EventManager manager, ServerOutput output)
         {
+            this.world = world;
             this.manager = manager;
             this.output = output;
             
@@ -37,7 +40,13 @@ public class ServersideWorld implements EntityWorld
         public void onEvent(Object eventObject)
         {
             ServerUser user = (ServerUser) eventObject;
-            output.handle(user);
+            
+            Set<Integer> entityIDSet = world.getEntityIDSet();
+            for(Integer id : entityIDSet)
+            {
+                Entity entity = world.getEntity(id);
+                output.handle(user, entity);
+            }
         }
         
         public void remove()
@@ -47,12 +56,14 @@ public class ServersideWorld implements EntityWorld
     }
     
     private Server server;
+    private UserManager userManager;
     
     private PhysicsWorld physicsWorld;
     private List<Platform> platforms;
     private Map<Integer, Entity> entities;
     
     private SendOnEvent initialWorldDataSender;
+    private ServerOutput entityCreation;
     
     public ServersideWorld(Server server)
     {
@@ -77,9 +88,14 @@ public class ServersideWorld implements EntityWorld
     @SuppressWarnings("unchecked")
     public void generalInit()
     {
+        userManager = (UserManager) server.getProperty("userManager");
+        
+        HashPool<ServerOutput> soPool = (HashPool<ServerOutput>) server.getProperty("soPool");
         EventManager manager = ((HashPool<EventManager>) server.getProperty("emanPool")).get("Lime::onNewUser");
-        ServerOutput output = ((HashPool<ServerOutput>) server.getProperty("soPool")).get("Lime::InitialWorldData");
-        initialWorldDataSender = new SendOnEvent(manager, output);
+        
+        entityCreation = soPool.get("Lime::EntityCreation");
+        
+        initialWorldDataSender = new SendOnEvent(this, manager, entityCreation);
     }
     
     public void clean()
@@ -123,6 +139,10 @@ public class ServersideWorld implements EntityWorld
         entity.generateID();
         entity.create(physicsWorld);
         entities.put(entity.getID(), entity);
+        
+        List<ServerUser> userList = userManager.getUserList();
+        for(ServerUser user : userList)
+            entityCreation.handle(user, entity);
     }
 
     @Override

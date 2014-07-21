@@ -6,7 +6,7 @@ import net.lodoma.lime.client.Client;
 import net.lodoma.lime.client.ClientInputHandler;
 import net.lodoma.lime.client.ClientOutput;
 import net.lodoma.lime.client.io.world.CIHEntityCorrection;
-import net.lodoma.lime.client.io.world.CIHInitialWorldData;
+import net.lodoma.lime.client.io.world.CIHEntityCreation;
 import net.lodoma.lime.physics.entity.EntityLoader;
 import net.lodoma.lime.util.HashPool;
 import net.lodoma.lime.util.Timer;
@@ -51,7 +51,7 @@ public class CLWorld implements ClientLogic
     @Override
     public void generalInit()
     {
-        cihPool.add("Lime::InitialWorldData", new CIHInitialWorldData(client));
+        cihPool.add("Lime::EntityCreation", new CIHEntityCreation(client));
         cihPool.add("Lime::EntityCorrection", new CIHEntityCorrection(client));
         
         entityLoader.addXMLFile("lime::zombie", new File("model/zombie.xml"));

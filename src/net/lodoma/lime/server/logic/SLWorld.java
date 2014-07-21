@@ -10,7 +10,7 @@ import net.lodoma.lime.server.ServerInputHandler;
 import net.lodoma.lime.server.ServerOutput;
 import net.lodoma.lime.server.ServerUser;
 import net.lodoma.lime.server.io.world.SOEntityCorrection;
-import net.lodoma.lime.server.io.world.SOInitialWorldData;
+import net.lodoma.lime.server.io.world.SOEntityCreation;
 import net.lodoma.lime.util.HashPool;
 import net.lodoma.lime.util.Timer;
 import net.lodoma.lime.world.builder.WorldFileLoader;
@@ -57,7 +57,7 @@ public class SLWorld implements ServerLogic
     @Override
     public void generalInit()
     {
-        soPool.add("Lime::InitialWorldData", new SOInitialWorldData(server, "Lime::InitialWorldData"));
+        soPool.add("Lime::EntityCreation", new SOEntityCreation(server, "Lime::EntityCreation"));
         soPool.add("Lime::EntityCorrection", new SOEntityCorrection(server, "Lime::EntityCorrection"));
         
         world.generalInit();
