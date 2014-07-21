@@ -6,6 +6,7 @@ import net.lodoma.lime.client.Client;
 import net.lodoma.lime.client.ClientInputHandler;
 import net.lodoma.lime.client.ClientOutput;
 import net.lodoma.lime.client.ClientReader;
+import net.lodoma.lime.client.io.base.CIHModificationCheck;
 import net.lodoma.lime.client.io.base.CIHNetworkStageChange;
 import net.lodoma.lime.client.io.base.CODependencyRequest;
 import net.lodoma.lime.client.io.base.COPresenceResponse;
@@ -53,6 +54,8 @@ public class CLBase implements ClientLogic
         coPool.add("Lime::DependencyRequest", new CODependencyRequest(client, "Lime::DependencyRequest"));
         coPool.add("Lime::PresenceResponse", new COPresenceResponse(client, "Lime::PresenceResponse"));
         cihPool.add("Lime::NetworkStageChange", new CIHNetworkStageChange(client));
+        
+        cihPool.add("Lime::ModificationCheck", new CIHModificationCheck(client));
     }
     
     @Override
