@@ -7,7 +7,6 @@ import net.lodoma.lime.client.ClientInputHandler;
 import net.lodoma.lime.client.ClientOutput;
 import net.lodoma.lime.client.io.world.CIHEntityCorrection;
 import net.lodoma.lime.client.io.world.CIHInitialWorldData;
-import net.lodoma.lime.client.io.world.COInitialWorldRequest;
 import net.lodoma.lime.physics.entity.EntityLoader;
 import net.lodoma.lime.util.HashPool;
 import net.lodoma.lime.util.Timer;
@@ -17,6 +16,7 @@ public class CLWorld implements ClientLogic
 {
     private Client client;
     private HashPool<ClientInputHandler> cihPool;
+    @SuppressWarnings("unused")
     private HashPool<ClientOutput> coPool;
     private ClientsideWorld world;
     private EntityLoader entityLoader;
@@ -51,7 +51,6 @@ public class CLWorld implements ClientLogic
     @Override
     public void generalInit()
     {
-        coPool.add("Lime::InitialWorldRequest", new COInitialWorldRequest(client, "Lime::InitialWorldRequest"));
         cihPool.add("Lime::InitialWorldData", new CIHInitialWorldData(client));
         cihPool.add("Lime::EntityCorrection", new CIHEntityCorrection(client));
         

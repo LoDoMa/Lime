@@ -20,7 +20,7 @@ public abstract class ServerOutput
     
     protected abstract void localHandle(ServerUser user, Object... args) throws IOException;
     
-    public synchronized final void handle(ServerUser user, Object... args)
+    public final void handle(ServerUser user, Object... args)
     {
         try
         {

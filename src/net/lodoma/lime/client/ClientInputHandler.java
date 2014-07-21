@@ -16,7 +16,7 @@ public abstract class ClientInputHandler
     
     protected abstract void localHandle() throws IOException;
     
-    public synchronized void handle()
+    public final void handle()
     {
         try
         {

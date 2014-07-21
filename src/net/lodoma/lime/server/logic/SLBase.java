@@ -3,6 +3,7 @@ package net.lodoma.lime.server.logic;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.server.ServerInputHandler;
 import net.lodoma.lime.server.ServerOutput;
+import net.lodoma.lime.server.event.EventManager;
 import net.lodoma.lime.server.io.base.SIHDependencyRequest;
 import net.lodoma.lime.server.io.base.SONetworkStageChange;
 import net.lodoma.lime.util.HashPool;
@@ -12,6 +13,7 @@ public class SLBase implements ServerLogic
     private Server server;
     private HashPool<ServerInputHandler> sihPool;
     private HashPool<ServerOutput> soPool;
+    private HashPool<EventManager> emanPool; 
     
     @Override
     public void baseInit(Server server)
@@ -31,6 +33,9 @@ public class SLBase implements ServerLogic
     {
         sihPool = (HashPool<ServerInputHandler>) server.getProperty("sihPool");
         soPool = (HashPool<ServerOutput>) server.getProperty("soPool");
+        emanPool = (HashPool<EventManager>) server.getProperty("emanPool");
+        
+        emanPool.add("Lime::onNewUser", new EventManager());
     }
     
     @Override

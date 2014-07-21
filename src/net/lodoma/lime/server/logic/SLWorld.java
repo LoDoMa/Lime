@@ -10,7 +10,6 @@ import net.lodoma.lime.server.Server;
 import net.lodoma.lime.server.ServerInputHandler;
 import net.lodoma.lime.server.ServerOutput;
 import net.lodoma.lime.server.ServerUser;
-import net.lodoma.lime.server.io.world.SIHInitialWorldRequest;
 import net.lodoma.lime.server.io.world.SOEntityCorrection;
 import net.lodoma.lime.server.io.world.SOInitialWorldData;
 import net.lodoma.lime.util.HashPool;
@@ -21,6 +20,7 @@ import net.lodoma.lime.world.server.ServersideWorld;
 public class SLWorld implements ServerLogic
 {
     private Server server;
+    @SuppressWarnings("unused")
     private HashPool<ServerInputHandler> sihPool;
     private HashPool<ServerOutput> soPool;
     
@@ -55,14 +55,11 @@ public class SLWorld implements ServerLogic
         userManager = (UserManager) server.getProperty("userManager");
         world = (ServersideWorld) server.getProperty("world");
         entityLoader = (EntityLoader) server.getProperty("entityLoader");
-        
-        world.fetch();
     }
     
     @Override
     public void generalInit()
     {
-        sihPool.add("Lime::InitialWorldRequest", new SIHInitialWorldRequest(server));
         soPool.add("Lime::InitialWorldData", new SOInitialWorldData(server, "Lime::InitialWorldData"));
         soPool.add("Lime::EntityCorrection", new SOEntityCorrection(server, "Lime::EntityCorrection"));
         
@@ -79,6 +76,8 @@ public class SLWorld implements ServerLogic
         {
             e.printStackTrace();
         }
+        
+        world.generalInit();
     }
     
     @Override

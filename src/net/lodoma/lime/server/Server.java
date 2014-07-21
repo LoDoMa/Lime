@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.lodoma.lime.server.dependency.DependencyPool;
+import net.lodoma.lime.server.event.EventManager;
 import net.lodoma.lime.server.logic.SLBase;
 import net.lodoma.lime.server.logic.SLChat;
 import net.lodoma.lime.server.logic.SLWorld;
@@ -18,7 +19,7 @@ public class Server
     private ServerService service;
     
     private ServerLogicPool logicPool;
-    private  Map<String, Object> properties;
+    private Map<String, Object> properties;
     
     public final void open(int port)
     {
@@ -32,6 +33,7 @@ public class Server
         
         setProperty("sihPool", new HashPool<ServerInputHandler>());
         setProperty("soPool", new HashPool<ServerOutput>());
+        setProperty("emanPool", new HashPool<EventManager>());
         setProperty("dependencyPool", new DependencyPool());
         setProperty("userManager", userManager);
         

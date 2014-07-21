@@ -25,7 +25,7 @@ public abstract class ClientOutput
     
     protected abstract void localHandle(Object... args) throws IOException;
     
-    public synchronized final void handle(Object... args)
+    public final void handle(Object... args)
     {
         try
         {
