@@ -14,11 +14,18 @@ public class SONetworkStageChange extends ServerOutput
         super(server, soName, NetStage.class);
     }
     
+    private void onNewUser(ServerUser user)
+    {
+        
+    }
+    
     @Override
     protected void localHandle(ServerUser user, Object... args) throws IOException
     {
         NetStage stage = (NetStage) args[0];
         user.stage = stage;
         user.outputStream.writeInt(stage.ordinal());
+        if(stage == NetStage.USER)
+            onNewUser(user);
     }
 }

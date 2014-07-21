@@ -61,7 +61,7 @@ public class Button implements GUIElement
         GL11.glEnd();
         
         textColor.set();
-        ttfont.drawString(0, 0, text, (bounds.h * 0.75f) / 32, (bounds.h * 0.75f) / 32);
+        ttfont.drawString(bounds.w / 2, 0, text, (bounds.h * 0.75f) / 32, (bounds.h * 0.75f) / 32, TrueTypeFont.ALIGN_CENTER);
         
         GL11.glPopMatrix();
     }
