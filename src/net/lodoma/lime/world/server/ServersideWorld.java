@@ -25,13 +25,16 @@ public class ServersideWorld implements EntityWorld
     {
         private ServersideWorld world;
         private EventManager manager;
-        private ServerOutput output;
+        private ServerOutput platformOutput;
+        private ServerOutput entityOutput;
         
-        public SendOnEvent(ServersideWorld world, EventManager manager, ServerOutput output)
+        public SendOnEvent(ServersideWorld world, EventManager manager,
+                ServerOutput entityOutput, ServerOutput platformOutput)
         {
             this.world = world;
             this.manager = manager;
-            this.output = output;
+            this.platformOutput = platformOutput;
+            this.entityOutput = entityOutput;
             
             manager.addListener(this);
         }
@@ -41,12 +44,13 @@ public class ServersideWorld implements EntityWorld
         {
             ServerUser user = (ServerUser) eventObject;
             
+            List<Platform> platformList = world.getPlatformList();
+            for(Platform platform : platformList)
+                platformOutput.handle(user, platform);
+            
             Set<Integer> entityIDSet = world.getEntityIDSet();
             for(Integer id : entityIDSet)
-            {
-                Entity entity = world.getEntity(id);
-                output.handle(user, entity);
-            }
+                entityOutput.handle(user, world.getEntity(id));
         }
         
         public void remove()
@@ -63,6 +67,7 @@ public class ServersideWorld implements EntityWorld
     private Map<Integer, Entity> entities;
     
     private SendOnEvent initialWorldDataSender;
+    private ServerOutput platformCreation;
     private ServerOutput entityCreation;
     
     public ServersideWorld(Server server)
@@ -92,10 +97,11 @@ public class ServersideWorld implements EntityWorld
         
         HashPool<ServerOutput> soPool = (HashPool<ServerOutput>) server.getProperty("soPool");
         EventManager manager = ((HashPool<EventManager>) server.getProperty("emanPool")).get("Lime::onNewUser");
-        
+
+        platformCreation = soPool.get("Lime::PlatformCreation");
         entityCreation = soPool.get("Lime::EntityCreation");
         
-        initialWorldDataSender = new SendOnEvent(this, manager, entityCreation);
+        initialWorldDataSender = new SendOnEvent(this, manager, entityCreation, platformCreation);
     }
     
     public void clean()
@@ -121,6 +127,10 @@ public class ServersideWorld implements EntityWorld
     {
         platform.create(physicsWorld);
         platforms.add(platform);
+        
+        List<ServerUser> userList = userManager.getUserList();
+        for(ServerUser user : userList)
+            platformCreation.handle(user, platform);
     }
     
     public List<Platform> getPlatformList()
