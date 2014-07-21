@@ -11,18 +11,19 @@ import net.lodoma.lime.client.Client;
 import net.lodoma.lime.physics.PhysicsWorld;
 import net.lodoma.lime.physics.entity.Entity;
 import net.lodoma.lime.world.entity.EntityWorld;
+import net.lodoma.lime.world.platform.Platform;
 
 public class ClientsideWorld implements EntityWorld
 {
     private PhysicsWorld physicsWorld;
+    private List<Platform> platforms;
     private Map<Integer, Entity> entities;
-    private List<Integer> entitiesToCreate;
     
     public ClientsideWorld(Client client)
     {
         physicsWorld = new PhysicsWorld();
+        platforms = new ArrayList<Platform>();
         entities = new HashMap<Integer, Entity>();
-        entitiesToCreate = new ArrayList<Integer>();
     }
     
     @Override
@@ -33,6 +34,10 @@ public class ClientsideWorld implements EntityWorld
     
     public void clean()
     {
+        for(Platform platform : platforms)
+            platform.destroy(physicsWorld);
+        platforms.clear();
+        
         List<Entity> entityList = new ArrayList<Entity>(entities.values());
         for(Entity entity : entityList)
             if(entity.isCreated())
@@ -50,9 +55,26 @@ public class ClientsideWorld implements EntityWorld
         return physicsWorld;
     }
     
+    public void addPlatform(Platform platform)
+    {
+        platform.create(physicsWorld);
+        platforms.add(platform);
+    }
+    
+    public List<Platform> getPlatformList()
+    {
+        return platforms;
+    }
+    
+    public void removePlatform(Platform platform)
+    {
+        platforms.remove(platform);
+    }
+    
     @Override
     public void addEntity(Entity entity)
     {
+        entity.create(physicsWorld);
         entities.put(entity.getID(), entity);
     }
 
@@ -73,21 +95,8 @@ public class ClientsideWorld implements EntityWorld
         entities.remove(id);
     }
     
-    public void createEntity(int id)
-    {
-        entitiesToCreate.add(id);
-    }
-    
     public void update(double timeDelta)
     {
-        List<Integer> createdEntities = new ArrayList<Integer>();
-        for(int entityID : entitiesToCreate)
-        {
-            entities.get(entityID).create(physicsWorld);
-            createdEntities.add(entityID);
-        }
-        entitiesToCreate.removeAll(createdEntities);
-        
         List<Entity> entityList = new ArrayList<Entity>(entities.values());
         for(Entity entity : entityList)
             if(entity.isCreated())

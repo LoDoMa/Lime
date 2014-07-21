@@ -16,6 +16,7 @@ import net.lodoma.lime.server.event.EventListener;
 import net.lodoma.lime.server.event.EventManager;
 import net.lodoma.lime.util.HashPool;
 import net.lodoma.lime.world.entity.EntityWorld;
+import net.lodoma.lime.world.platform.Platform;
 
 public class ServersideWorld implements EntityWorld
 {
@@ -48,8 +49,8 @@ public class ServersideWorld implements EntityWorld
     private Server server;
     
     private PhysicsWorld physicsWorld;
+    private List<Platform> platforms;
     private Map<Integer, Entity> entities;
-    private List<Integer> entitiesToCreate;
     
     private SendOnEvent initialWorldDataSender;
     
@@ -58,14 +59,19 @@ public class ServersideWorld implements EntityWorld
         this.server = server;
         
         physicsWorld = new PhysicsWorld();
+        platforms = new ArrayList<Platform>();
         entities = new HashMap<Integer, Entity>();
-        entitiesToCreate = new ArrayList<Integer>();
     }
     
     @Override
     public boolean isServer()
     {
         return true;
+    }
+    
+    public Server getServer()
+    {
+        return server;
     }
     
     @SuppressWarnings("unchecked")
@@ -80,10 +86,13 @@ public class ServersideWorld implements EntityWorld
     {
         initialWorldDataSender.remove();
         
+        for(Platform platform : platforms)
+            platform.destroy(physicsWorld);
+        platforms.clear();
+        
         List<Entity> entityList = new ArrayList<Entity>(entities.values());
         for(Entity entity : entityList)
-            if(entity.isCreated())
-                entity.destroy(physicsWorld);
+            entity.destroy(physicsWorld);
         entities.clear();
     }
     
@@ -92,15 +101,27 @@ public class ServersideWorld implements EntityWorld
         return physicsWorld;
     }
     
-    public void createEntity(int id)
+    public void addPlatform(Platform platform)
     {
-        entitiesToCreate.add(id);
+        platform.create(physicsWorld);
+        platforms.add(platform);
+    }
+    
+    public List<Platform> getPlatformList()
+    {
+        return platforms;
+    }
+    
+    public void removePlatform(Platform platform)
+    {
+        platforms.remove(platform);
     }
     
     @Override
     public void addEntity(Entity entity)
     {
         entity.generateID();
+        entity.create(physicsWorld);
         entities.put(entity.getID(), entity);
     }
 
@@ -123,14 +144,6 @@ public class ServersideWorld implements EntityWorld
     
     public void update(double timeDelta)
     {
-        List<Integer> createdEntities = new ArrayList<Integer>();
-        for(int entityID : entitiesToCreate)
-        {
-            entities.get(entityID).create(physicsWorld);
-            createdEntities.add(entityID);
-        }
-        entitiesToCreate.removeAll(createdEntities);
-        
         List<Entity> entityList = new ArrayList<Entity>(entities.values());
         for(Entity entity : entityList)
             if(entity.isCreated())

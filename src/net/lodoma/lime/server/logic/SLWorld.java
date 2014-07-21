@@ -1,6 +1,5 @@
 package net.lodoma.lime.server.logic;
 
-import java.io.File;
 import java.util.List;
 import java.util.Set;
 
@@ -26,7 +25,6 @@ public class SLWorld implements ServerLogic
     
     private UserManager userManager;
     private ServersideWorld world;
-    private EntityLoader entityLoader;
     
     private Timer timer;
     
@@ -54,7 +52,6 @@ public class SLWorld implements ServerLogic
         soPool = (HashPool<ServerOutput>) server.getProperty("soPool");
         userManager = (UserManager) server.getProperty("userManager");
         world = (ServersideWorld) server.getProperty("world");
-        entityLoader = (EntityLoader) server.getProperty("entityLoader");
     }
     
     @Override
@@ -63,21 +60,10 @@ public class SLWorld implements ServerLogic
         soPool.add("Lime::InitialWorldData", new SOInitialWorldData(server, "Lime::InitialWorldData"));
         soPool.add("Lime::EntityCorrection", new SOEntityCorrection(server, "Lime::EntityCorrection"));
         
+        world.generalInit();
+        
         WorldFileLoader fileLoader = new WorldFileLoader();
         fileLoader.build(world);
-        
-        try
-        {
-            Entity entity = entityLoader.loadFromXML(new File("model/zombie.xml"), world);
-            world.createEntity(entity.getID());
-            world.addEntity(entity);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        
-        world.generalInit();
     }
     
     @Override

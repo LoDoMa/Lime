@@ -9,6 +9,7 @@ import net.lodoma.lime.client.ClientInputHandler;
 import net.lodoma.lime.physics.entity.Entity;
 import net.lodoma.lime.physics.entity.EntityLoader;
 import net.lodoma.lime.world.client.ClientsideWorld;
+import net.lodoma.lime.world.platform.Platform;
 
 import org.xml.sax.SAXException;
 
@@ -24,6 +25,10 @@ public class CIHInitialWorldData extends ClientInputHandler
     {
         ClientsideWorld world = (ClientsideWorld) client.getProperty("world");
         
+        int platformCount = inputStream.readInt();
+        for(int i = 0; i < platformCount; i++)
+            world.addPlatform(new Platform(inputStream));
+        
         EntityLoader entityLoader = (EntityLoader) client.getProperty("entityLoader");
         
         int entityCount = inputStream.readInt();
@@ -37,7 +42,6 @@ public class CIHInitialWorldData extends ClientInputHandler
                 Entity entity = entityLoader.loadFromXML(entityLoader.getXMLFileByHash(hash), world);
                 entity.setID(id);
                 world.addEntity(entity);
-                world.createEntity(id);
             }
             catch (SAXException e)
             {
