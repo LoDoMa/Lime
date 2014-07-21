@@ -1,10 +1,13 @@
 package net.lodoma.lime.client.start;
 
+import java.io.File;
+
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.client.ClientConnectionException;
 import net.lodoma.lime.client.window.DisplayModeSearchException;
 import net.lodoma.lime.client.window.InvalidWindowPropertyException;
 import net.lodoma.lime.client.window.Window;
+import net.lodoma.lime.util.FontHelper;
 import net.lodoma.lime.world.client.ClientsideWorld;
 
 public class VisualInstance
@@ -34,6 +37,8 @@ public class VisualInstance
         {
             e.printStackTrace();
         }
+        
+        FontHelper.registerFont(new File("fonts/mytype.ttf"));
         
         try
         {
