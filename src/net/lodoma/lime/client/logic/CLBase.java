@@ -9,7 +9,7 @@ import net.lodoma.lime.client.ClientReader;
 import net.lodoma.lime.client.io.base.CIHNetworkStageChange;
 import net.lodoma.lime.client.io.base.CODependencyRequest;
 import net.lodoma.lime.client.io.base.COPresenceResponse;
-import net.lodoma.lime.common.net.NetStage;
+import net.lodoma.lime.common.NetStage;
 import net.lodoma.lime.util.HashPool;
 import net.lodoma.lime.util.Timer;
 

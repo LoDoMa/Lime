@@ -3,7 +3,7 @@ package net.lodoma.lime.server.io.chat;
 import java.io.IOException;
 import java.util.List;
 
-import net.lodoma.lime.common.net.NetStage;
+import net.lodoma.lime.common.NetStage;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.server.ServerInputHandler;
 import net.lodoma.lime.server.ServerOutput;

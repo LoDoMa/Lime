@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.client.ClientInputHandler;
-import net.lodoma.lime.common.net.NetStage;
+import net.lodoma.lime.common.NetStage;
 
 public class CIHNetworkStageChange extends ClientInputHandler
 {

@@ -8,7 +8,7 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.net.Socket;
 
-import net.lodoma.lime.common.net.NetStage;
+import net.lodoma.lime.common.NetStage;
 import net.lodoma.lime.util.HashPool;
 import net.lodoma.lime.util.SystemHelper;
 

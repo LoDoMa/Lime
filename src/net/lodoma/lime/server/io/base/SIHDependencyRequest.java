@@ -2,7 +2,7 @@ package net.lodoma.lime.server.io.base;
 
 import java.io.IOException;
 
-import net.lodoma.lime.common.net.NetStage;
+import net.lodoma.lime.common.NetStage;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.server.ServerInputHandler;
 import net.lodoma.lime.server.ServerOutput;

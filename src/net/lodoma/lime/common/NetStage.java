@@ -1,4 +1,4 @@
-package net.lodoma.lime.common.net;
+package net.lodoma.lime.common;
 
 public enum NetStage
 {
