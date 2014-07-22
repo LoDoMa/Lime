@@ -30,9 +30,12 @@ public class LuaScript
         luaState.call(0, 0);
     }
     
-    public void call(String function, Object... arguments)
+    public void call(String functionPath, Object... arguments)
     {
-        luaState.getGlobal(function);
+        String[] segm = functionPath.split("\\.");
+        if(segm.length >= 1) luaState.getGlobal(segm[0]);
+        for(int i = 1; i < segm.length; i++)
+            luaState.getField(-1, segm[i]);
         for(Object argument : arguments)
         {
                  if(argument instanceof Double) luaState.pushNumber((Double) argument);
@@ -41,8 +44,8 @@ public class LuaScript
             else if(argument instanceof Boolean) luaState.pushBoolean((Boolean) argument);
             else if(argument instanceof String) luaState.pushString((String) argument);
         }
-        
         luaState.call(arguments.length, 0);
+        luaState.pop(segm.length - 1);
     }
     
     public void close()

@@ -15,11 +15,11 @@ import net.lodoma.lime.server.ServerUser;
 import net.lodoma.lime.server.event.EventBundle;
 import net.lodoma.lime.server.event.EventListener;
 import net.lodoma.lime.server.event.EventManager;
+import net.lodoma.lime.server.event.InvalidEventBundleException;
 import net.lodoma.lime.server.logic.UserManager;
 import net.lodoma.lime.util.HashPool;
 import net.lodoma.lime.world.entity.EntityWorld;
 import net.lodoma.lime.world.platform.Platform;
-import net.lodoma.lime.world.server.event.InvalidEventBundleException;
 
 public class ServersideWorld implements EntityWorld
 {

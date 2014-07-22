@@ -1,4 +1,4 @@
-package net.lodoma.lime.world.server.event;
+package net.lodoma.lime.server.event;
 
 public class InvalidEventBundleException extends RuntimeException
 {
