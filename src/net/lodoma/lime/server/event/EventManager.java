@@ -22,9 +22,9 @@ public final class EventManager
         listeners.remove(listener);
     }
     
-    public void onEvent(Object eventObject)
+    public void onEvent(EventBundle bundle)
     {
         for(EventListener listener : listeners)
-            listener.onEvent(eventObject);
+            listener.onEvent(bundle);
     }
 }

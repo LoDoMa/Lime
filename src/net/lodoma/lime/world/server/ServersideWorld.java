@@ -12,12 +12,14 @@ import net.lodoma.lime.physics.entity.Entity;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.server.ServerOutput;
 import net.lodoma.lime.server.ServerUser;
+import net.lodoma.lime.server.event.EventBundle;
 import net.lodoma.lime.server.event.EventListener;
 import net.lodoma.lime.server.event.EventManager;
 import net.lodoma.lime.server.logic.UserManager;
 import net.lodoma.lime.util.HashPool;
 import net.lodoma.lime.world.entity.EntityWorld;
 import net.lodoma.lime.world.platform.Platform;
+import net.lodoma.lime.world.server.event.InvalidEventBundleException;
 
 public class ServersideWorld implements EntityWorld
 {
@@ -41,9 +43,14 @@ public class ServersideWorld implements EntityWorld
         }
         
         @Override
-        public void onEvent(Object eventObject)
+        public void onEvent(EventBundle bundle)
         {
-            ServerUser user = (ServerUser) eventObject;
+            if(!bundle.has("serverUser"))
+                throw new InvalidEventBundleException();
+            Object userObject = bundle.get("serverUser");
+            if(!(userObject instanceof ServerUser))
+                throw new InvalidEventBundleException();
+            ServerUser user = (ServerUser) userObject;
             
             List<Platform> platformList = world.getPlatformList();
             for(Platform platform : platformList)

@@ -182,7 +182,7 @@ local function setListener(limeType, listenerFunction)
 	listeners[limeType] = listenerFunction
 end
 
-local function invokeListener(limeType, eventObject)
+local function invokeListener(limeType, eventBundle)
 	checkType(limeType, "string", 1, "lime.listener.invoke")
 	listeners[limeType](eventObject)
 end
