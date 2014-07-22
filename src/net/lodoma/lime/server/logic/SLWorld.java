@@ -1,14 +1,9 @@
 package net.lodoma.lime.server.logic;
 
-import java.util.List;
-import java.util.Set;
-
-import net.lodoma.lime.physics.entity.Entity;
 import net.lodoma.lime.physics.entity.EntityLoader;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.server.ServerInputHandler;
 import net.lodoma.lime.server.ServerOutput;
-import net.lodoma.lime.server.ServerUser;
 import net.lodoma.lime.server.io.world.SOEntityCorrection;
 import net.lodoma.lime.server.io.world.SOEntityCreation;
 import net.lodoma.lime.server.io.world.SOPlatformCreation;
@@ -24,13 +19,9 @@ public class SLWorld implements ServerLogic
     private HashPool<ServerInputHandler> sihPool;
     private HashPool<ServerOutput> soPool;
     
-    private UserManager userManager;
     private ServersideWorld world;
     
     private Timer timer;
-    
-    private double correctionTime = 0;
-    private double correctionGoal = 2;
     
     @Override
     public void baseInit(Server server)
@@ -51,7 +42,6 @@ public class SLWorld implements ServerLogic
     {
         sihPool = (HashPool<ServerInputHandler>) server.getProperty("sihPool");
         soPool = (HashPool<ServerOutput>) server.getProperty("soPool");
-        userManager = (UserManager) server.getProperty("userManager");
         world = (ServersideWorld) server.getProperty("world");
     }
     
@@ -79,27 +69,7 @@ public class SLWorld implements ServerLogic
     {
         if(timer == null) timer = new Timer();
         timer.update();
-        
         double timeDelta = timer.getDelta();
-        correctionTime += timeDelta;
-        if(correctionTime >= correctionGoal)
-        {
-            correctionTime -= correctionGoal;
-            
-            ServerOutput serverOutput = soPool.get("Lime::EntityCorrection");
-            
-            List<ServerUser> serverUsers = userManager.getUserList();
-            Set<Integer> entityIDSet = world.getEntityIDSet();
-            
-            for(ServerUser serverUser : serverUsers)
-                for(int entityID : entityIDSet)
-                {
-                    Entity entity = world.getEntity(entityID);
-                    if(entity.isCreated())
-                        serverOutput.handle(serverUser, world.getEntity(entityID));
-                }
-        }
-        
         world.update(timeDelta);
     }
 }

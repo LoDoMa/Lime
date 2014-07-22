@@ -25,16 +25,17 @@ public class ServersideWorld implements EntityWorld
     {
         private ServersideWorld world;
         private EventManager manager;
-        private ServerOutput platformOutput;
-        private ServerOutput entityOutput;
+        private ServerOutput platformCreation;
+        private ServerOutput entityCreation;
+        private ServerOutput entityCorrection;
         
-        public SendOnEvent(ServersideWorld world, EventManager manager,
-                ServerOutput entityOutput, ServerOutput platformOutput)
+        public SendOnEvent(ServersideWorld world, EventManager manager)
         {
             this.world = world;
             this.manager = manager;
-            this.platformOutput = platformOutput;
-            this.entityOutput = entityOutput;
+            this.platformCreation = world.platformCreation;
+            this.entityCreation = world.entityCreation;
+            this.entityCorrection = world.entityCorrection;
             
             manager.addListener(this);
         }
@@ -46,11 +47,14 @@ public class ServersideWorld implements EntityWorld
             
             List<Platform> platformList = world.getPlatformList();
             for(Platform platform : platformList)
-                platformOutput.handle(user, platform);
-            
-            Set<Integer> entityIDSet = world.getEntityIDSet();
-            for(Integer id : entityIDSet)
-                entityOutput.handle(user, world.getEntity(id));
+                platformCreation.handle(user, platform);
+
+            List<Entity> entityList = new ArrayList<Entity>(entities.values());
+            for(Entity entity : entityList)
+            {
+                entityCreation.handle(user, entity);
+                entityCorrection.handle(user, entity);
+            }
         }
         
         public void remove()
@@ -69,6 +73,10 @@ public class ServersideWorld implements EntityWorld
     private SendOnEvent initialWorldDataSender;
     private ServerOutput platformCreation;
     private ServerOutput entityCreation;
+    private ServerOutput entityCorrection;
+    
+    private static final double CORRECTION_TIME = 1.5;
+    private double correctionRemaining;
     
     public ServersideWorld(Server server)
     {
@@ -100,8 +108,9 @@ public class ServersideWorld implements EntityWorld
 
         platformCreation = soPool.get("Lime::PlatformCreation");
         entityCreation = soPool.get("Lime::EntityCreation");
+        entityCorrection = soPool.get("Lime::EntityCorrection");
         
-        initialWorldDataSender = new SendOnEvent(this, manager, entityCreation, platformCreation);
+        initialWorldDataSender = new SendOnEvent(this, manager);
     }
     
     public void clean()
@@ -174,6 +183,19 @@ public class ServersideWorld implements EntityWorld
     
     public void update(double timeDelta)
     {
+        correctionRemaining += timeDelta;
+        while(correctionRemaining >= CORRECTION_TIME)
+        {
+            correctionRemaining -= CORRECTION_TIME;
+            
+            List<Entity> entityList = new ArrayList<Entity>(entities.values());
+            List<ServerUser> userList = userManager.getUserList();
+            for(ServerUser user : userList)
+                for(Entity entity : entityList)
+                    if(entity.isCreated())
+                        entityCorrection.handle(user, entity);
+        }
+        
         List<Entity> entityList = new ArrayList<Entity>(entities.values());
         for(Entity entity : entityList)
             if(entity.isCreated())
