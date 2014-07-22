@@ -3,11 +3,11 @@ package net.lodoma.lime.server.io.base;
 import java.io.IOException;
 
 import net.lodoma.lime.common.NetStage;
+import net.lodoma.lime.event.EventBundle;
+import net.lodoma.lime.event.EventManager;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.server.ServerOutput;
 import net.lodoma.lime.server.ServerUser;
-import net.lodoma.lime.server.event.EventBundle;
-import net.lodoma.lime.server.event.EventManager;
 import net.lodoma.lime.util.HashPool;
 
 public class SONetworkStageChange extends ServerOutput

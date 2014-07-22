@@ -15,6 +15,7 @@ import net.lodoma.lime.client.logic.CLBase;
 import net.lodoma.lime.client.logic.CLChat;
 import net.lodoma.lime.client.logic.CLWorld;
 import net.lodoma.lime.client.logic.ClientLogicPool;
+import net.lodoma.lime.event.EventManager;
 import net.lodoma.lime.util.HashPool;
 
 public class Client
@@ -62,6 +63,7 @@ public class Client
         setProperty("cihPool", new HashPool<ClientInputHandler>());
         reader = new ClientReader(this);
         setProperty("coPool", new HashPool<ClientOutput>());
+        setProperty("emanPool", new HashPool<EventManager>());
         setProperty("reader", reader);
         
         logicPool.addLogic(new CLBase());

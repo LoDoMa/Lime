@@ -3,8 +3,8 @@ package net.lodoma.lime.server;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.lodoma.lime.event.EventManager;
 import net.lodoma.lime.server.dependency.DependencyPool;
-import net.lodoma.lime.server.event.EventManager;
 import net.lodoma.lime.server.logic.SLBase;
 import net.lodoma.lime.server.logic.SLChat;
 import net.lodoma.lime.server.logic.SLWorld;

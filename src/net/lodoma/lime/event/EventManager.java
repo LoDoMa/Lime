@@ -1,4 +1,4 @@
-package net.lodoma.lime.server.event;
+package net.lodoma.lime.event;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,10 +1,10 @@
 package net.lodoma.lime.server.logic;
 
+import net.lodoma.lime.event.EventManager;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.server.ServerInputHandler;
 import net.lodoma.lime.server.ServerOutput;
 import net.lodoma.lime.server.dependency.DependencyPool;
-import net.lodoma.lime.server.event.EventManager;
 import net.lodoma.lime.server.io.base.SIHDependencyRequest;
 import net.lodoma.lime.server.io.base.SOModificationCheck;
 import net.lodoma.lime.server.io.base.SONetworkStageChange;
