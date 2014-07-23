@@ -3,18 +3,18 @@ package net.lodoma.lime.util;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HashPool<T>
+public class HashPool32<T>
 {
-    private Map<Long, T> elements;
+    private Map<Integer, T> elements;
     
-    public HashPool()
+    public HashPool32()
     {
-        elements = new HashMap<Long, T>();
+        elements = new HashMap<Integer, T>();
     }
     
     public void add(String name, T object)
     {
-        long hash = HashHelper.hash64(name);
+        int hash = HashHelper.hash32(name);
         if(elements.containsKey(hash))
             throw new DuplicateHashException();
         elements.put(hash, object);
@@ -22,10 +22,10 @@ public class HashPool<T>
     
     public T get(String name)
     {
-        return elements.get(HashHelper.hash64(name));
+        return elements.get(HashHelper.hash32(name));
     }
     
-    public T get(long hash)
+    public T get(int hash)
     {
         return elements.get(hash);
     }

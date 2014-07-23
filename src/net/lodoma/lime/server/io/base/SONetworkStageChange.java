@@ -8,7 +8,7 @@ import net.lodoma.lime.event.EventManager;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.server.ServerOutput;
 import net.lodoma.lime.server.ServerUser;
-import net.lodoma.lime.util.HashPool;
+import net.lodoma.lime.util.HashPool32;
 
 public class SONetworkStageChange extends ServerOutput
 {
@@ -18,7 +18,7 @@ public class SONetworkStageChange extends ServerOutput
     public SONetworkStageChange(Server server, String soName)
     {
         super(server, soName, NetStage.class);
-        HashPool<EventManager> emanPool = (HashPool<EventManager>) server.getProperty("emanPool");
+        HashPool32<EventManager> emanPool = (HashPool32<EventManager>) server.getProperty("emanPool");
         manager = emanPool.get("Lime::onNewUser");
     }
     

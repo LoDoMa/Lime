@@ -1,6 +1,5 @@
-package net.lodoma.lime.world.entity;
+package net.lodoma.lime.physics.entity;
 
-import net.lodoma.lime.physics.entity.Entity;
 
 public interface EntityWorld
 {

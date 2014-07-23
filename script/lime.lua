@@ -2,7 +2,8 @@
 local Vector2 = java.require("net.lodoma.lime.util.Vector2")
 local HashHelper = java.require("net.lodoma.lime.util.HashHelper")
 
-local entity = LIME_INIT
+local entity = JAVA_ENTITY
+local script = JAVA_SCRIPT
 
 local entityID = entity:getID()
 local entityInternalName = entity:getInternalName()
@@ -179,12 +180,24 @@ end
 local function setListener(limeType, listenerFunction)
 	checkType(limeType, "string", 1, "lime.listener.set")
 	checkType(listenerFunction, "function", 2, "lime.listener.set")
-	listeners[limeType] = listenerFunction
+	local hash = HashHelper:hash32(limeType)
+	assert(listeners[hash] == nil, "listener not released before calling \"lime.listener.set\"")
+	listeners[hash] = listenerFunction
+	entity:addEventListener(hash);
+end
+
+local function releaseListener(limeType)
+	checkType(limeType, "string", 1, "lime.listener.release")
+	local hash = HashHelper:hash32(limeType)
+	assert(listeners[hash] ~= nil, "listener not set before calling \"lime.listener.release\"")
+	entity:removeEventListener(hash)
+	listeners[hash] = nil
 end
 
 local function invokeListener(limeType, eventBundle)
-	checkType(limeType, "string", 1, "lime.listener.invoke")
-	listeners[limeType](eventObject)
+	checkType(limeType, "number", 1, "lime.listener.invoke")
+	assert(listeners[limeType], "listener not set before calling \"lime.listener.invoke\"")
+	listeners[limeType](eventBundle)
 end
 
 -- lime table
@@ -238,6 +251,7 @@ lime = {
 	},
 	listener = {
 		set = setListener,
+		release = releaseListener,
 		invoke = invokeListener,
 	},
 	util = {

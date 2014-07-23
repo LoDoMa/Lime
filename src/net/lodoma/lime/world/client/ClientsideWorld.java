@@ -10,7 +10,7 @@ import java.util.Set;
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.physics.PhysicsWorld;
 import net.lodoma.lime.physics.entity.Entity;
-import net.lodoma.lime.world.entity.EntityWorld;
+import net.lodoma.lime.physics.entity.EntityWorld;
 import net.lodoma.lime.world.platform.Platform;
 
 public class ClientsideWorld implements EntityWorld

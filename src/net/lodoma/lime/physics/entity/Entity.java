@@ -10,12 +10,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.lodoma.lime.event.EventManager;
 import net.lodoma.lime.mask.Mask;
 import net.lodoma.lime.physics.PhysicsBody;
 import net.lodoma.lime.physics.PhysicsJoint;
 import net.lodoma.lime.physics.PhysicsWorld;
 import net.lodoma.lime.script.LuaScript;
-import net.lodoma.lime.world.entity.EntityWorld;
+import net.lodoma.lime.util.HashPool32;
 
 public class Entity
 {
@@ -39,15 +40,20 @@ public class Entity
     Map<Integer, PhysicsJoint> joints;
     Map<Integer, Mask> masks;
     Map<Integer, String> properties;
-    List<LuaScript> scripts;
+    LuaScript script;
     
-    public Entity()
+    private HashPool32<EventManager> emanPool;
+    private Map<Integer, EntityEventListener> listeners;
+    
+    public Entity(HashPool32<EventManager> emanPool)
     {
         bodies = new HashMap<Integer, PhysicsBody>();
         joints = new HashMap<Integer, PhysicsJoint>();
         masks = new HashMap<Integer, Mask>();
         properties = new HashMap<Integer, String>();
-        scripts = new ArrayList<LuaScript>();
+        
+        this.emanPool = emanPool;
+        listeners = new HashMap<Integer, EntityEventListener>();
     }
     
     public boolean isCreated()
@@ -118,6 +124,16 @@ public class Entity
         return masks.get(name);
     }
     
+    public void addEventListener(int hash)
+    {
+        listeners.put(hash, new EntityEventListener(hash, emanPool.get(hash), script));
+    }
+    
+    public void releaseEventListener(int hash)
+    {
+        listeners.remove(hash);
+    }
+    
     public void create(PhysicsWorld world)
     {
         List<PhysicsBody> bodyList = new ArrayList<PhysicsBody>(bodies.values());
@@ -143,20 +159,17 @@ public class Entity
         for(PhysicsJoint joint : jointList)
             joint.destroy(world);
         
-        for(LuaScript script : scripts)
-            script.close();
+        script.close();
         
         bodies.clear();
         joints.clear();
         masks.clear();
         properties.clear();
-        scripts.clear();
     }
     
     public void update(double timeDelta)
     {
-        for(LuaScript script : scripts)
-            script.call("Lime_FrameUpdate", timeDelta, actor, world.isServer() ? 0 : 1);
+        script.call("Lime_FrameUpdate", timeDelta, actor, world.isServer() ? 0 : 1);
     }
     
     public void render()

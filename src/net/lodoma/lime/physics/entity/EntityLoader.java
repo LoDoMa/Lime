@@ -11,6 +11,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import net.lodoma.lime.event.EventManager;
 import net.lodoma.lime.mask.ColoredMask;
 import net.lodoma.lime.mask.LayeredMask;
 import net.lodoma.lime.mask.Mask;
@@ -21,10 +22,10 @@ import net.lodoma.lime.physics.PhysicsJoint;
 import net.lodoma.lime.physics.PhysicsJointType;
 import net.lodoma.lime.script.LuaScript;
 import net.lodoma.lime.util.HashHelper;
+import net.lodoma.lime.util.HashPool32;
 import net.lodoma.lime.util.Pair;
 import net.lodoma.lime.util.Vector2;
 import net.lodoma.lime.util.XMLHelper;
-import net.lodoma.lime.world.entity.EntityWorld;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -87,10 +88,10 @@ public class EntityLoader
         return files.get(hash);
     }
     
-    public Entity loadFromXML(File xmlFile, EntityWorld world)
+    public Entity loadFromXML(File xmlFile, EntityWorld world, HashPool32<EventManager> emanPool)
             throws IOException, SAXException, ParserConfigurationException
     {
-        Entity entity = new Entity();
+        Entity entity = new Entity(emanPool);
         
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -117,7 +118,6 @@ public class EntityLoader
         NodeList revoluteJoints = docElement.getElementsByTagName("revolute_joint");
         NodeList masks          = docElement.getElementsByTagName("mask");
         NodeList properties     = docElement.getElementsByTagName("property");
-        NodeList scripts        = docElement.getElementsByTagName("script");
 
         for(int i = 0; i < bodies.getLength(); i++)
         {
@@ -151,13 +151,8 @@ public class EntityLoader
             Pair<String, String> propertyData = parsePropertyElement((Element) propertyNode);
             entity.properties.put(HashHelper.hash32(propertyData.first), propertyData.second);
         }
-        for(int i = 0; i < scripts.getLength(); i++)
-        {
-            Node scriptNode = scripts.item(i);
-            NodeList childNodes = scriptNode.getChildNodes();
-            String scriptPath = childNodes.item(0).getNodeValue().trim();
-            entity.scripts.add(new LuaScript(new File(scriptPath), entity));
-        }
+        
+        entity.script = new LuaScript(new File(XMLHelper.getDeepValue(docElement, "script")), entity);
         
         return entity;
     }

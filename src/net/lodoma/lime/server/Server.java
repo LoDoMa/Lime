@@ -11,6 +11,7 @@ import net.lodoma.lime.server.logic.SLWorld;
 import net.lodoma.lime.server.logic.ServerLogicPool;
 import net.lodoma.lime.server.logic.UserManager;
 import net.lodoma.lime.util.HashPool;
+import net.lodoma.lime.util.HashPool32;
 
 public class Server
 {
@@ -33,7 +34,7 @@ public class Server
         
         setProperty("sihPool", new HashPool<ServerInputHandler>());
         setProperty("soPool", new HashPool<ServerOutput>());
-        setProperty("emanPool", new HashPool<EventManager>());
+        setProperty("emanPool", new HashPool32<EventManager>());
         setProperty("dependencyPool", new DependencyPool());
         setProperty("userManager", userManager);
         

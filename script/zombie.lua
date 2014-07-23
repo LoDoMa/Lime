@@ -19,12 +19,18 @@ local function loadHashes()
 	addHash("m_body")
 end
 
+local function onNewUser()
+	print("new user")
+end
+
 local function serverUpdate()
 	if firstUpdate then
 		lime.entity.set(this)
 
 		lime.body.set(hashes["head"])
 		lime.body.impulse.linear(newVector(100, 0), newVector(0, 0))
+
+		lime.listener.set("Lime::onNewUser", onNewUser)
 	end
 end
 
