@@ -27,7 +27,7 @@ public class Server
         if (isRunning)
             throw new IllegalStateException("server is already open");
         
-        logicPool = new ServerLogicPool(this);
+        logicPool = new ServerLogicPool(this, 60.0f);
         properties = new HashMap<String, Object>();
         
         UserManager userManager = new UserManager();

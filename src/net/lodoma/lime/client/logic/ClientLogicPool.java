@@ -4,19 +4,23 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.lodoma.lime.client.Client;
+import net.lodoma.lime.util.Timer;
 
 public class ClientLogicPool implements Runnable
 {
     private Client client;
+    private double ups;
     
     private boolean running = false;
     private Thread thread;
     
     private Set<ClientLogic> logicSet;
     
-    public ClientLogicPool(Client client)
+    public ClientLogicPool(Client client, double ups)
     {
         this.client = client;
+        this.ups = ups;
+        
         logicSet = new HashSet<ClientLogic>();
     }
     
@@ -59,10 +63,27 @@ public class ClientLogicPool implements Runnable
     
     public void run()
     {
+        Timer timer = new Timer();
         while(running)
         {
+            timer.update();
             for(ClientLogic logic : logicSet)
                 logic.logic();
+            timer.update();
+            double delta = timer.getDelta();
+            double required = 1.0f / ups;
+            double freetime = required - delta;
+            int millis = (int) (freetime * 1000);
+            int nanos = (int) (freetime * 1000000000 - millis * 1000000);
+            if(nanos > 0)
+                try
+                {
+                    Thread.sleep(millis, nanos);
+                }
+                catch(InterruptedException e)
+                {
+                    e.printStackTrace();
+                }
         }
         
         for(ClientLogic logic : logicSet)

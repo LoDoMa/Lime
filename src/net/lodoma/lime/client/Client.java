@@ -58,7 +58,7 @@ public class Client
             e.printStackTrace();
         }
         
-        logicPool = new ClientLogicPool(this);
+        logicPool = new ClientLogicPool(this, 60.0);
         properties = new HashMap<String, Object>();
         
         setProperty("cihPool", new HashPool<ClientInputHandler>());
