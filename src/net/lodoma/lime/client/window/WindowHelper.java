@@ -6,7 +6,7 @@ import org.lwjgl.opengl.DisplayMode;
 
 public class WindowHelper
 {
-    public static void setDisplayMode(int width, int height, boolean fullscreen) throws DisplayModeSearchException
+    public static void setDisplayMode(int width, int height, boolean fullscreen)
     {
         if ((Display.getDisplayMode().getWidth() == width) && (Display.getDisplayMode().getHeight() == height)
                 && (Display.isFullscreen() == fullscreen))
@@ -42,7 +42,7 @@ public class WindowHelper
                 targetDisplayMode = new DisplayMode(width, height);
             
             if (targetDisplayMode == null)
-                throw new DisplayModeSearchException();
+                throw new NullPointerException();
             
             Display.setDisplayMode(targetDisplayMode);
             Display.setFullscreen(fullscreen);
@@ -50,7 +50,7 @@ public class WindowHelper
         }
         catch (LWJGLException e)
         {
-            throw new DisplayModeSearchException();
+            throw new NullPointerException();
         }
     }
 }

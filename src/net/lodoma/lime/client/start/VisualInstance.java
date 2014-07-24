@@ -4,8 +4,6 @@ import java.io.File;
 
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.client.ClientConnectionException;
-import net.lodoma.lime.client.window.DisplayModeSearchException;
-import net.lodoma.lime.client.window.InvalidWindowPropertyException;
 import net.lodoma.lime.client.window.Window;
 import net.lodoma.lime.util.FontHelper;
 import net.lodoma.lime.world.client.ClientsideWorld;
@@ -26,18 +24,7 @@ public class VisualInstance
         Window.setFPS(60);
         Window.setOrtho(10.0f, 10.0f);
         
-        try
-        {
-            Window.open();
-        }
-        catch (InvalidWindowPropertyException e)
-        {
-            e.printStackTrace();
-        }
-        catch (DisplayModeSearchException e)
-        {
-            e.printStackTrace();
-        }
+        Window.open();
         
         FontHelper.registerFont(new File("fonts/mytype.ttf"));
         
@@ -63,14 +50,7 @@ public class VisualInstance
                 world.render();
             }
             
-            try
-            {
-                Window.update();
-            }
-            catch (InvalidWindowPropertyException e)
-            {
-                e.printStackTrace();
-            }
+            Window.update();
         }
     }
     

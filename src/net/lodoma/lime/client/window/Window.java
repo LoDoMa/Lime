@@ -80,7 +80,7 @@ public class Window
         return Display.isCloseRequested() || closeRequested;
     }
     
-    public static void open() throws InvalidWindowPropertyException, DisplayModeSearchException
+    public static void open()
     {
         apply();
         try
@@ -129,10 +129,10 @@ public class Window
         return supportFBO;
     }
     
-    public static void apply() throws InvalidWindowPropertyException, DisplayModeSearchException
+    public static void apply()
     {
-        if(width <= 0) throw new InvalidWindowPropertyException();
-        if(height <= 0) throw new InvalidWindowPropertyException();
+        if(width <= 0) throw new IllegalStateException();
+        if(height <= 0) throw new IllegalStateException();
         if(title == null) throw new NullPointerException();
         WindowHelper.setDisplayMode(width, height, fullscreen);
         Display.setTitle(title);
@@ -144,9 +144,9 @@ public class Window
         GL11.glLoadIdentity();
     }
     
-    public static void update() throws InvalidWindowPropertyException
+    public static void update()
     {
-        if(fps <= 0) throw new InvalidWindowPropertyException();
+        if(fps <= 0) throw new IllegalStateException();
         Display.update();
         Display.sync(fps);
     }
