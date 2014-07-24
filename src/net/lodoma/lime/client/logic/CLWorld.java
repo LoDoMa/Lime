@@ -8,6 +8,7 @@ import net.lodoma.lime.client.ClientOutput;
 import net.lodoma.lime.client.io.world.CIHEntityCorrection;
 import net.lodoma.lime.client.io.world.CIHEntityCreation;
 import net.lodoma.lime.client.io.world.CIHPlatformCreation;
+import net.lodoma.lime.input.Input;
 import net.lodoma.lime.physics.entity.EntityLoader;
 import net.lodoma.lime.util.HashPool;
 import net.lodoma.lime.util.Timer;
@@ -71,5 +72,6 @@ public class CLWorld implements ClientLogic
         if(timer == null) timer = new Timer();
         timer.update();
         world.update(timer.getDelta());
+        Input.update();
     }
 }

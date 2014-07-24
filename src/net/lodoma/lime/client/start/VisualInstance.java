@@ -24,6 +24,7 @@ public class VisualInstance
         Window.setFullscreen(false);
         Window.setTitle("Lime");
         Window.setFPS(60);
+        Window.setOrtho(10.0f, 10.0f);
         
         try
         {

@@ -96,6 +96,16 @@ public class Client
         }
         
         isRunning = false;
+        
+        try
+        {
+            while(logicPool.isRunning()) Thread.sleep(1);
+            while(reader.isRunning()) Thread.sleep(1);
+        }
+        catch(InterruptedException e)
+        {
+            e.printStackTrace();
+        }
     }
     
     public DataInputStream getInputStream()

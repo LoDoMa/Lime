@@ -14,8 +14,6 @@ public class ClientLogicPool implements Runnable
     
     private Set<ClientLogic> logicSet;
     
-    private boolean disabled;
-    
     public ClientLogicPool(Client client)
     {
         this.client = client;
@@ -39,20 +37,19 @@ public class ClientLogicPool implements Runnable
         if(running) return;
         running = true;
         
-        disabled = false;
         thread = new Thread(this);
         thread.start();
-    }
-    
-    public void disable()
-    {
-        disabled = true;
     }
     
     public void stop()
     {
         if(!running) return;
         running = false;
+    }
+    
+    public boolean isRunning()
+    {
+        return thread.isAlive();
     }
     
     public void addLogic(ClientLogic logic)
@@ -65,10 +62,7 @@ public class ClientLogicPool implements Runnable
         while(running)
         {
             for(ClientLogic logic : logicSet)
-            {
-                if(disabled) continue;
                 logic.logic();
-            }
         }
         
         for(ClientLogic logic : logicSet)

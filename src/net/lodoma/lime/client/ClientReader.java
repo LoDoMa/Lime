@@ -44,6 +44,11 @@ public class ClientReader implements Runnable
         running = false;
     }
     
+    public boolean isRunning()
+    {
+        return thread.isAlive();
+    }
+    
     public void handleInput() throws IOException
     {
         while(inputStream.available() >= 8)

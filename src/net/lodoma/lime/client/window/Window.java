@@ -16,11 +16,33 @@ public class Window
     private static boolean fullscreen = false;
     private static String title = null;
     private static int fps = 0;
+    private static float orthoWidth = 0;
+    private static float orthoHeight = 0;
     
     private static boolean closeRequested = false;
     
     private static boolean supportFBO;
     
+    public static int getWidth()
+    {
+        return width;
+    }
+
+    public static int getHeight()
+    {
+        return height;
+    }
+
+    public static float getOrthoWidth()
+    {
+        return orthoWidth;
+    }
+
+    public static float getOrthoHeight()
+    {
+        return orthoHeight;
+    }
+
     public static void setDimensions(int width, int height)
     {
         Window.width = width;
@@ -40,6 +62,12 @@ public class Window
     public static void setFPS(int fps)
     {
         Window.fps = fps;
+    }
+    
+    public static void setOrtho(float width, float height)
+    {
+        Window.orthoWidth = width;
+        Window.orthoHeight = height;
     }
     
     public static void requestClose()
@@ -85,7 +113,7 @@ public class Window
         
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glLoadIdentity();
-        GL11.glOrtho(0.0f, 10.0f, 0.0f, 10.0f, -1.0f, 1.0f);
+        GL11.glOrtho(0.0f, orthoWidth, 0.0f, orthoHeight, -1.0f, 1.0f);
         
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);

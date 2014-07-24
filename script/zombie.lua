@@ -39,7 +39,7 @@ local function clientUpdate()
 
 	lime.body.set(hashes["head"])
 	local translation = lime.body.translation.get()
-	--	print(round(translation.x, 2) .. " " .. round(translation.y, 2))
+	--print(round(translation.x, 2) .. " " .. round(translation.y, 2))
 
 	limex.follow(this, hashes["head"], this, hashes["m_head"])
 	limex.follow(this, hashes["body"], this, hashes["m_body"])

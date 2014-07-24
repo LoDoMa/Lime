@@ -9,6 +9,9 @@ public class Input
 {
     public static final int KEYCODE_COUNT = 256;
     public static final int MOUSEBUTTON_COUNT = 5;
+
+    public static final int LEFT_MOUSE_BUTTON = 0;
+    public static final int RIGHT_MOUSE_BUTTON = 0;
     
     public static final int KEY_NONE            = 0x00;
     public static final int KEY_ESCAPE          = 0x01;

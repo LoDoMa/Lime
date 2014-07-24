@@ -14,4 +14,9 @@ public final class Rectangle
         this.w = w;
         this.h = h;
     }
+    
+    public boolean inside(float x, float y)
+    {
+        return x >= this.x && y >= this.y && x <= (this.x + w) && y <= (this.y + h);
+    }
 }

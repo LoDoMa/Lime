@@ -2,7 +2,9 @@ package net.lodoma.lime.gui;
 
 import java.awt.Font;
 
+import net.lodoma.lime.input.Input;
 import net.lodoma.lime.util.TrueTypeFont;
+import net.lodoma.lime.util.Vector2;
 
 import org.lwjgl.opengl.GL11;
 
@@ -40,9 +42,13 @@ public class Button implements GUIElement
     }
     
     @Override
-    public void update(float timeDelta)
+    public void update(float timeDelta, Vector2 mousePosition)
     {
-        
+        if(Input.getMouseUp(Input.LEFT_MOUSE_BUTTON))
+            if(bounds.inside(mousePosition.x, mousePosition.y))
+            {
+                // TODO: on click
+            }
     }
     
     @Override

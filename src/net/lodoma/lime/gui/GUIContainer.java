@@ -3,6 +3,10 @@ package net.lodoma.lime.gui;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.lodoma.lime.client.window.Window;
+import net.lodoma.lime.input.Input;
+import net.lodoma.lime.util.Vector2;
+
 import org.lwjgl.opengl.GL11;
 
 public class GUIContainer
@@ -12,10 +16,10 @@ public class GUIContainer
     
     private List<GUIElement> elements;
     
-    public GUIContainer(float scaleX, float scaleY)
+    public GUIContainer()
     {
-        this.scaleX = scaleX;
-        this.scaleY = scaleY;
+        this.scaleX = Window.getOrthoWidth();
+        this.scaleY = Window.getOrthoHeight();
         
         elements = new ArrayList<GUIElement>();
     }
@@ -44,8 +48,11 @@ public class GUIContainer
     
     public void update(float timeDelta)
     {
+        Vector2 mousePosition = Input.getMousePosition();
+        mousePosition.divLocal(new Vector2(Window.getWidth(), Window.getHeight()));
+        
         for(GUIElement element : elements)
-            element.update(timeDelta);
+            element.update(timeDelta, mousePosition);
     }
     
     public void render()
