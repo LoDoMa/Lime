@@ -18,7 +18,7 @@ public class LuaScript
         this(new String(Files.readAllBytes(Paths.get(file.toURI()))), entity);
     }
     
-    public LuaScript(String source, Entity entity)
+    public LuaScript(String source, Entity entity) throws IOException
     {
         luaState = new LuaState();
         luaState.openLibs();
