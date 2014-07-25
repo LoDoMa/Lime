@@ -146,9 +146,10 @@ public class ClientsideWorld implements EntityWorld, ChatSender, ChatReceiver
     @Override
     public void sendChat()
     {
+        String alias = (String) client.getProperty("alias");
         for(String message : chatToSend)
             for(ChatManager manager : chatManagers)
-                manager.send(message);
+                manager.send(alias + ": " + message);
         chatToSend.clear();
     }
     

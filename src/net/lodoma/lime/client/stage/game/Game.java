@@ -12,11 +12,13 @@ public class Game extends Stage
     private Client client;
     
     private String host;
+    private String alias;
     
-    public Game(StageManager manager, String host)
+    public Game(StageManager manager, String host, String alias)
     {
         super(manager);
         this.host = host;
+        this.alias = alias;
     }
     
     @Override
@@ -32,7 +34,7 @@ public class Game extends Stage
         
         try
         {
-            client.open(19424, host);
+            client.open(19424, host, alias);
         }
         catch(ClientConnectionException e)
         {

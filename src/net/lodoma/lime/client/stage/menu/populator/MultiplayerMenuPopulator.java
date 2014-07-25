@@ -15,19 +15,22 @@ public class MultiplayerMenuPopulator implements MenuPopulator
         GUIContainer container = toPopulate.getContainer();
         
         container.removeAll();
-        
+
         final MenuTextField host = new MenuTextField(new Rectangle(0.05f, 0.5f, 0.4f, 0.05f), "localhost");
+        final MenuTextField alias = new MenuTextField(new Rectangle(0.05f, 0.44f, 0.4f, 0.05f), "alias");
         container.addElement(host);
+        container.addElement(alias);
         
-        container.addElement(new MenuButton(new Rectangle(0.05f, 0.44f, 0.4f, 0.05f), "Join", new Runnable()
+        container.addElement(new MenuButton(new Rectangle(0.05f, 0.38f, 0.4f, 0.05f), "Join", new Runnable()
         {
             private Menu menu = toPopulate;
             private MenuTextField hostTextField = host;
+            private MenuTextField aliasTextField = alias;
             
             @Override
             public void run()
             {
-                new Game(menu.getManager(), hostTextField.getText()).startStage();
+                new Game(menu.getManager(), hostTextField.getText(), aliasTextField.getText()).startStage();
             }
         }));
         

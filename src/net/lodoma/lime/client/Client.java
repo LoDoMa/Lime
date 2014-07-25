@@ -36,7 +36,7 @@ public class Client
     private ClientLogicPool logicPool;
     private Map<String, Object> properties;
     
-    public final void open(int port, String host) throws ClientConnectionException
+    public final void open(int port, String host, String alias) throws ClientConnectionException
     {
         if(isRunning)
             throw new IllegalStateException("client is already open");
@@ -64,6 +64,7 @@ public class Client
         setProperty("coPool", new HashPool<ClientOutput>());
         setProperty("emanPool", new HashPool32<EventManager>());
         setProperty("reader", reader);
+        setProperty("alias", alias);
         
         logicPool.addLogic(new CLBase());
         logicPool.addLogic(new CLChat());
