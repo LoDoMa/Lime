@@ -20,7 +20,7 @@ public class MainMenu extends Stage
     public void onStart()
     {
         container.removeAll();
-
+        
         container.addElement(new MainMenuButton(new Rectangle(0.05f, 0.50f, 0.4f, 0.05f), "Campaign"));
         container.addElement(new MainMenuButton(new Rectangle(0.05f, 0.44f, 0.4f, 0.05f), "Multiplayer"));
         container.addElement(new MainMenuButton(new Rectangle(0.05f, 0.38f, 0.4f, 0.05f), "Arcade"));

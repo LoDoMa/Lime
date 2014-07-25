@@ -24,7 +24,7 @@ public class MainMenuButton extends Button
     public MainMenuButton(Rectangle bounds, String text)
     {
         super(bounds);
-        this.text = new Text(bounds.w / 2.0f, 0.0f, (bounds.h * 0.75f) / 32, (bounds.h * 0.75f), text, TEXT_COLOR, FONT_NAME, Font.PLAIN, TrueTypeFont.ALIGN_CENTER);
+        this.text = new Text(bounds.w / 2.0f, 0.0f, (bounds.h * 0.75f), (bounds.h * 0.75f), text, TEXT_COLOR, FONT_NAME, Font.PLAIN, TrueTypeFont.ALIGN_CENTER);
     }
     
     @Override

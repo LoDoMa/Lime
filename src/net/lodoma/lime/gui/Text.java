@@ -21,7 +21,7 @@ public class Text implements GUIElement
     {
         this.x = x;
         this.y = y;
-        this.sx = sx;
+        this.sx = sx / (float) 32;
         this.sy = sy / (float) 32;
         
         this.text = text;
