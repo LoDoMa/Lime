@@ -26,4 +26,9 @@ public final class Color
     {
         GL11.glColor4f(r, g, b, a);
     }
+    
+    public void set(float a)
+    {
+        GL11.glColor4f(r, g, b, this.a * a);
+    }
 }

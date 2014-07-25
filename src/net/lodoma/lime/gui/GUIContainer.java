@@ -34,6 +34,11 @@ public class GUIContainer
         elements.remove(element);
     }
     
+    public void removeAll()
+    {
+        elements.clear();
+    }
+    
     public void create()
     {
         for(GUIElement element : elements)
@@ -46,7 +51,7 @@ public class GUIContainer
             element.destroy();
     }
     
-    public void update(float timeDelta)
+    public void update(double timeDelta)
     {
         Vector2 mousePosition = Input.getMousePosition();
         mousePosition.divLocal(new Vector2(Window.getWidth(), Window.getHeight()));

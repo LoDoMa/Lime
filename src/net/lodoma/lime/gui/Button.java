@@ -28,7 +28,7 @@ public abstract class Button implements GUIElement
     }
     
     @Override
-    public void update(float timeDelta, Vector2 mousePosition)
+    public void update(double timeDelta, Vector2 mousePosition)
     {
         mouseHover = bounds.inside(mousePosition.x, mousePosition.y);
         mouseClick = mouseHover && Input.getMouseDown(Input.LEFT_MOUSE_BUTTON);

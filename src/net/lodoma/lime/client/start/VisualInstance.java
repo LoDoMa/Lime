@@ -2,22 +2,18 @@ package net.lodoma.lime.client.start;
 
 import java.io.File;
 
-import net.lodoma.lime.client.Client;
-import net.lodoma.lime.client.ClientConnectionException;
+import net.lodoma.lime.client.stage.StageManager;
+import net.lodoma.lime.client.stage.mainmenu.MainMenu;
 import net.lodoma.lime.client.window.Window;
 import net.lodoma.lime.util.FontHelper;
-import net.lodoma.lime.world.client.ClientsideWorld;
+import net.lodoma.lime.util.Timer;
 
 public class VisualInstance
 {
-    private String host = "localhost";
-    
-    private Client client;
+    private StageManager stageManager;
     
     private void init()
     {
-        client = new Client();
-        
         Window.setDimensions(800, 600);
         Window.setFullscreen(false);
         Window.setTitle("Lime");
@@ -28,27 +24,22 @@ public class VisualInstance
         
         FontHelper.registerFont(new File("fonts/mytype.ttf"));
         
-        try
-        {
-            client.open(19424, host);
-        }
-        catch (ClientConnectionException e)
-        {
-            e.printStackTrace();
-        }
+        stageManager = new StageManager();
     }
     
     private void loop()
     {
-        while(client.isRunning() && !Window.isCloseRequested())
+        MainMenu mainMenu = new MainMenu(stageManager);
+        mainMenu.startStage();
+        
+        Timer timer = new Timer();
+        while(!Window.isCloseRequested())
         {
             Window.clear();
             
-            if(client.hasProperty("world"))
-            {
-                ClientsideWorld world = (ClientsideWorld) client.getProperty("world");
-                world.render();
-            }
+            timer.update();
+            stageManager.update(timer.getDelta());
+            stageManager.render();
             
             Window.update();
         }
@@ -56,8 +47,8 @@ public class VisualInstance
     
     private void clean()
     {
-        if(client.isRunning())
-            client.close();
+        stageManager.popAll();
+        
         Window.close();
     }
     

@@ -29,7 +29,7 @@ public abstract class TextButton extends Button
     }
     
     @Override
-    public void update(float timeDelta, Vector2 mousePosition)
+    public void update(double timeDelta, Vector2 mousePosition)
     {
         super.update(timeDelta, mousePosition);
     }
