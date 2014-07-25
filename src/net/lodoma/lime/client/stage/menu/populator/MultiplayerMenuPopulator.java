@@ -9,7 +9,7 @@ import net.lodoma.lime.gui.Rectangle;
 public class MultiplayerMenuPopulator implements MenuPopulator
 {
     @Override
-    public void populate(Menu toPopulate)
+    public void populate(final Menu toPopulate)
     {
         GUIContainer container = toPopulate.getContainer();
         

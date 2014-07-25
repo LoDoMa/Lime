@@ -1,5 +1,7 @@
 package net.lodoma.lime.client.stage.menu;
 
+import org.lwjgl.opengl.GL11;
+
 import net.lodoma.lime.client.stage.Stage;
 import net.lodoma.lime.client.stage.StageManager;
 import net.lodoma.lime.client.stage.menu.populator.MenuPopulator;

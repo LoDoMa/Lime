@@ -23,6 +23,8 @@ public class Window
     
     private static boolean supportFBO;
 
+    private static int initWidth;
+    private static int initHeight;
     private static int lastWidth = -1;
     private static int lastHeight = -1;
     
@@ -50,6 +52,8 @@ public class Window
     {
         Window.width = width;
         Window.height = height;
+        initWidth = width;
+        initHeight = height;
     }
     
     public static void setFullscreen(boolean fullscreen)
@@ -113,7 +117,25 @@ public class Window
     {
         loadLimitations();
         
-        GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
+        int dwidth = Display.getWidth();
+        int dheight = Display.getHeight();
+        
+        int vpwidth = (int) (dheight * (initWidth / (float) initHeight));
+        int vpheight;
+        if(vpwidth < dwidth)
+        {
+            vpheight = dheight;
+        }
+        else
+        {
+            vpwidth = dwidth;
+            vpheight = (int) (dwidth * (initHeight / (float) initWidth));
+        }
+        
+        int vpx = (dwidth - vpwidth) / 2;
+        int vpy = (dheight - vpheight) / 2;
+        
+        GL11.glViewport(vpx, vpy, vpwidth, vpheight);
         
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glLoadIdentity();
