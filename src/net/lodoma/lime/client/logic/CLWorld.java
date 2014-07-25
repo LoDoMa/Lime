@@ -47,7 +47,7 @@ public class CLWorld implements ClientLogic
         world = (ClientsideWorld) client.getProperty("world");
         entityLoader = (EntityLoader) client.getProperty("entityLoader");
         
-        world.fetch();
+        world.fetchInit();
     }
     
     @Override
@@ -58,6 +58,8 @@ public class CLWorld implements ClientLogic
         cihPool.add("Lime::EntityCorrection", new CIHEntityCorrection(client));
         
         entityLoader.addXMLFile("lime::zombie", new File("model/zombie.xml"));
+        
+        world.generalInit();
     }
     
     @Override

@@ -1,6 +1,5 @@
 package net.lodoma.lime.client.logic;
 
-import net.lodoma.lime.chat.ChatConsole;
 import net.lodoma.lime.chat.ChatManager;
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.client.ClientInputHandler;
@@ -15,7 +14,6 @@ public class CLChat implements ClientLogic
     private HashPool<ClientInputHandler> cihPool;
     private HashPool<ClientOutput> coPool;
     
-    private ChatConsole chatConsole;
     private ChatManager chatManager;
     
     @Override
@@ -45,11 +43,6 @@ public class CLChat implements ClientLogic
         cihPool.add("Lime::ChatMessageReceive", new CIHChatMessageReceive(client));
         coPool.add("Lime::ChatMessageSend", new COChatMessageSend(client, "Lime::ChatMessageSend"));
         chatManager.generalInit();
-        
-        chatConsole = new ChatConsole();
-
-        chatManager.addSender(chatConsole);
-        chatManager.addReceiver(chatConsole);
     }
 
     @Override

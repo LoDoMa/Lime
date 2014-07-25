@@ -16,7 +16,9 @@ public class Text implements GUIElement
     
     private String text;
     private Color textColor;
+    private String fontName;
     private TrueTypeFont font;
+    private int style;
     private int alignment;
     
     public Text(float x, float y, float sx, float sy, String text, Color textColor, String fontName, int style, int alignment)
@@ -28,7 +30,8 @@ public class Text implements GUIElement
         
         this.text = text;
         this.textColor = textColor;
-        this.font = new TrueTypeFont(new Font(fontName, style, SIZE), true);
+        this.fontName = fontName;
+        this.style = style;
         this.alignment = alignment;
     }
     
@@ -68,6 +71,8 @@ public class Text implements GUIElement
     @Override
     public void render()
     {
+        if(font == null)
+            font = new TrueTypeFont(new Font(fontName, style, SIZE), true);
         textColor.set();
         font.drawString(x, y, text, sx, sy, alignment);
     }
