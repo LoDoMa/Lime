@@ -2,7 +2,6 @@ package net.lodoma.lime.client.stage.menu.populator;
 
 import net.lodoma.lime.client.stage.menu.Menu;
 import net.lodoma.lime.client.stage.menu.MenuButton;
-import net.lodoma.lime.client.stage.menu.MenuTextField;
 import net.lodoma.lime.client.window.Window;
 import net.lodoma.lime.gui.GUIContainer;
 import net.lodoma.lime.gui.Rectangle;
@@ -37,6 +36,5 @@ public class MainMenuPopulator implements MenuPopulator
                 Window.requestClose();
             }
         }));
-        container.addElement(new MenuTextField(new Rectangle(0.05f, 0.60f, 0.4f, 0.05f), "initial"));
     }
 }

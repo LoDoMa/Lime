@@ -40,13 +40,13 @@ public abstract class TextField extends Button
         
         if(clicked)
         {
-            for(int letter : Input.LETTERS)
-                if(Input.getKeyDown(letter))
-                    if(Input.getKey(Input.KEY_LSHIFT))
-                        text.setText(text.getText() + Character.toUpperCase(Input.CHARS[letter]));
-                    else
-                        text.setText(text.getText() + Input.CHARS[letter]);
-            if(Input.getKeyDown(Input.KEY_SPACE)) text.setText(text.getText() + ' ');
+            for(int i = 0; i < Input.KEYCODE_COUNT; i++)
+                if(Input.getKeyDown(i))
+                    if(Input.CHARS[i] != 0)
+                        if(Input.getKey(Input.KEY_LSHIFT))
+                            text.setText(text.getText() + Character.toUpperCase(Input.CHARS[i]));
+                        else
+                            text.setText(text.getText() + Input.CHARS[i]);
             if(text.getText().length() > 0 && Input.getKeyDown(Input.KEY_BACK))
                 text.setText(text.getText().substring(0, text.getText().length() - 1));
         }

@@ -143,16 +143,6 @@ public class Input
     public static final int KEY_POWER           = 0xDE;
     public static final int KEY_SLEEP           = 0xDF;
     
-    public static final int[] LETTERS = new int[]
-    {
-        KEY_A, KEY_B, KEY_C, KEY_D, KEY_E,
-        KEY_F, KEY_G, KEY_H, KEY_I, KEY_J,
-        KEY_K, KEY_L, KEY_M, KEY_N, KEY_O,
-        KEY_P, KEY_Q, KEY_R, KEY_S, KEY_T,
-        KEY_U, KEY_V, KEY_W, KEY_X, KEY_Y,
-        KEY_Z,
-    };
-    
     public static final char[] CHARS = new char[KEYCODE_COUNT];
     static {
         CHARS[KEY_A] = 'a'; CHARS[KEY_B] = 'b'; CHARS[KEY_C] = 'c'; CHARS[KEY_D] = 'd';
@@ -162,6 +152,12 @@ public class Input
         CHARS[KEY_Q] = 'q'; CHARS[KEY_R] = 'r'; CHARS[KEY_S] = 's'; CHARS[KEY_T] = 't';
         CHARS[KEY_U] = 'u'; CHARS[KEY_V] = 'v'; CHARS[KEY_W] = 'w'; CHARS[KEY_X] = 'x';
         CHARS[KEY_Y] = 'y'; CHARS[KEY_Z] = 'z';
+
+        CHARS[KEY_0] = '0'; CHARS[KEY_1] = '1'; CHARS[KEY_2] = '2'; CHARS[KEY_3] = '3';
+        CHARS[KEY_4] = '4'; CHARS[KEY_5] = '5'; CHARS[KEY_6] = '6'; CHARS[KEY_7] = '7';
+        CHARS[KEY_8] = '8'; CHARS[KEY_9] = '9';
+        
+        CHARS[KEY_SPACE] = ' '; CHARS[KEY_PERIOD] = '.'; CHARS[KEY_COMMA] = ',';
     }
 
     private static boolean[] prevKeys = new boolean[KEYCODE_COUNT];
