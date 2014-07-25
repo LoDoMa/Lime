@@ -5,6 +5,7 @@ import net.lodoma.lime.client.ClientConnectionException;
 import net.lodoma.lime.client.stage.Stage;
 import net.lodoma.lime.client.stage.StageManager;
 import net.lodoma.lime.client.window.Window;
+import net.lodoma.lime.input.Input;
 import net.lodoma.lime.world.client.ClientsideWorld;
 
 public class Game extends Stage
@@ -41,8 +42,11 @@ public class Game extends Stage
     @Override
     public void update(double timeDelta)
     {
+        if(Input.getKey(Input.KEY_ESCAPE))
+            client.close();
+        
         if(!client.isRunning())
-            Window.requestClose();
+            endStage();
     }
     
     @Override
