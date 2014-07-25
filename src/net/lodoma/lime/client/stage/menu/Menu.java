@@ -4,6 +4,7 @@ import net.lodoma.lime.client.stage.Stage;
 import net.lodoma.lime.client.stage.StageManager;
 import net.lodoma.lime.client.stage.menu.populator.MenuPopulator;
 import net.lodoma.lime.gui.GUIContainer;
+import net.lodoma.lime.input.Input;
 
 public class Menu extends Stage
 {
@@ -64,6 +65,7 @@ public class Menu extends Stage
         }
         
         container.update(timeDelta);
+        Input.update();
     }
     
     @Override
