@@ -142,6 +142,27 @@ public class Input
     public static final int KEY_APPS            = 0xDD;
     public static final int KEY_POWER           = 0xDE;
     public static final int KEY_SLEEP           = 0xDF;
+    
+    public static final int[] LETTERS = new int[]
+    {
+        KEY_A, KEY_B, KEY_C, KEY_D, KEY_E,
+        KEY_F, KEY_G, KEY_H, KEY_I, KEY_J,
+        KEY_K, KEY_L, KEY_M, KEY_N, KEY_O,
+        KEY_P, KEY_Q, KEY_R, KEY_S, KEY_T,
+        KEY_U, KEY_V, KEY_W, KEY_X, KEY_Y,
+        KEY_Z,
+    };
+    
+    public static final char[] CHARS = new char[KEYCODE_COUNT];
+    static {
+        CHARS[KEY_A] = 'a'; CHARS[KEY_B] = 'b'; CHARS[KEY_C] = 'c'; CHARS[KEY_D] = 'd';
+        CHARS[KEY_E] = 'e'; CHARS[KEY_F] = 'f'; CHARS[KEY_G] = 'g'; CHARS[KEY_H] = 'h';
+        CHARS[KEY_I] = 'i'; CHARS[KEY_J] = 'j'; CHARS[KEY_K] = 'k'; CHARS[KEY_L] = 'l';
+        CHARS[KEY_M] = 'm'; CHARS[KEY_N] = 'n'; CHARS[KEY_O] = 'o'; CHARS[KEY_P] = 'p';
+        CHARS[KEY_Q] = 'q'; CHARS[KEY_R] = 'r'; CHARS[KEY_S] = 's'; CHARS[KEY_T] = 't';
+        CHARS[KEY_U] = 'u'; CHARS[KEY_V] = 'v'; CHARS[KEY_W] = 'w'; CHARS[KEY_X] = 'x';
+        CHARS[KEY_Y] = 'y'; CHARS[KEY_Z] = 'z';
+    }
 
     private static boolean[] prevKeys = new boolean[KEYCODE_COUNT];
     private static boolean[] prevMouse = new boolean[MOUSEBUTTON_COUNT];

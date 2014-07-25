@@ -2,6 +2,8 @@ package net.lodoma.lime.client.stage;
 
 import java.util.Stack;
 
+import net.lodoma.lime.input.Input;
+
 public class StageManager
 {
     private Stack<Stage> stack;
@@ -31,6 +33,7 @@ public class StageManager
     {
         if(!stack.isEmpty())
             stack.peek().update(timeDelta);
+        Input.update();
     }
     
     public void render()

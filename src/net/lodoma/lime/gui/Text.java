@@ -32,6 +32,16 @@ public class Text implements GUIElement
         this.alignment = alignment;
     }
     
+    public String getText()
+    {
+        return text;
+    }
+    
+    public void setText(String text)
+    {
+        this.text = text;
+    }
+    
     @Override
     public void create()
     {
