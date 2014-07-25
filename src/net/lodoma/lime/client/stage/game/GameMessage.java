@@ -11,23 +11,29 @@ import net.lodoma.lime.gui.Rectangle;
 import net.lodoma.lime.gui.Text;
 import net.lodoma.lime.util.TrueTypeFont;
 
-public class GameExceptionMessage extends Stage
+public class GameMessage extends Stage
 {
-    private Exception exception;
+    private String text;
     private GUIContainer container;
     
-    public GameExceptionMessage(StageManager manager, Exception e)
+    public GameMessage(StageManager manager, String text)
     {
         super(manager);
-        this.exception = e;
+        this.text = text;
         this.container = new GUIContainer();
+    }
+    
+    @Override
+    public void preStart()
+    {
+        
     }
     
     @Override
     public void onStart()
     {
         container.removeAll();
-        container.addElement(new Text(0.5f, 0.6f, 0.025f, 0.025f, exception.getMessage(), new Color(1.0f, 1.0f, 1.0f), "My type of font", Font.PLAIN, TrueTypeFont.ALIGN_CENTER));
+        container.addElement(new Text(0.5f, 0.6f, 0.025f, 0.025f, text, new Color(1.0f, 1.0f, 1.0f), "My type of font", Font.PLAIN, TrueTypeFont.ALIGN_CENTER));
         container.addElement(new MenuButton(new Rectangle(0.3f, 0.2f, 0.4f, 0.05f), "Back", new Runnable()
         {
             @Override
@@ -40,6 +46,12 @@ public class GameExceptionMessage extends Stage
     
     @Override
     public void onEnd()
+    {
+        
+    }
+    
+    @Override
+    public void postEnd()
     {
         
     }

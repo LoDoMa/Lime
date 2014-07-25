@@ -30,6 +30,12 @@ public class Menu extends Stage
     }
     
     @Override
+    public void preStart()
+    {
+        
+    }
+    
+    @Override
     public void onStart()
     {
         setPopulator(initialPopulator);
@@ -37,6 +43,12 @@ public class Menu extends Stage
     
     @Override
     public void onEnd()
+    {
+        
+    }
+    
+    @Override
+    public void postEnd()
     {
         
     }

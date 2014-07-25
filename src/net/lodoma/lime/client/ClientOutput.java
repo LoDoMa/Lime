@@ -49,7 +49,7 @@ public abstract class ClientOutput
                     @Override
                     public void run()
                     {
-                        System.out.println("client closing - server closed");
+                        client.setCloseMessage("Server closed");
                         client.close();
                     }
                 }).start();

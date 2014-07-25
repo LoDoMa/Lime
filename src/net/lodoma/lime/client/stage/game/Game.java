@@ -17,6 +17,12 @@ public class Game extends Stage
     }
     
     @Override
+    public void preStart()
+    {
+        
+    }
+    
+    @Override
     public void onStart()
     {
         client = new Client();
@@ -27,7 +33,7 @@ public class Game extends Stage
         }
         catch(ClientConnectionException e)
         {
-            new GameExceptionMessage(manager, e).startStage();
+            new GameMessage(manager, e.getCause().getMessage()).startStage();
         }
     }
     
@@ -36,6 +42,13 @@ public class Game extends Stage
     {
         if(client.isRunning())
             client.close();
+    }
+    
+    @Override
+    public void postEnd()
+    {
+        if(client.getCloseMessage() != null)
+            new GameMessage(manager, client.getCloseMessage()).startStage();
     }
     
     @Override

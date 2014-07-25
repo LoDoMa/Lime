@@ -16,6 +16,7 @@ public abstract class Stage
     
     public final void startStage()
     {
+        preStart();
         manager.pushStage(this);
         onStart();
     }
@@ -24,10 +25,13 @@ public abstract class Stage
     {
         onEnd();
         manager.popStage();
+        postEnd();
     }
     
+    public abstract void preStart();
     public abstract void onStart();
     public abstract void onEnd();
+    public abstract void postEnd();
     
     public abstract void update(double timeDelta);
     public abstract void render();

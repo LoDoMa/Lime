@@ -22,6 +22,7 @@ import net.lodoma.lime.util.HashPool32;
 public class Client
 {
     private boolean isRunning = false;
+    private String closeMessage;
     
     private Socket socket;
     
@@ -75,6 +76,7 @@ public class Client
         
         reader.start();
         isRunning = true;
+        closeMessage = null;
         logicPool.start();
     }
     
@@ -106,6 +108,16 @@ public class Client
         {
             e.printStackTrace();
         }
+    }
+    
+    public String getCloseMessage()
+    {
+        return closeMessage;
+    }
+    
+    public void setCloseMessage(String closeMessage)
+    {
+        this.closeMessage = closeMessage;
     }
     
     public DataInputStream getInputStream()
