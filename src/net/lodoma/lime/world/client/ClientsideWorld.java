@@ -155,7 +155,7 @@ public class ClientsideWorld implements EntityWorld, ChatSender, ChatReceiver
     @Override
     public void receiveChat(String message)
     {
-        Text text = new Text(0.02f, 0.2f, 0.03f, 0.0325f, message, new Color(1.0f, 1.0f, 1.0f), "My type of font", Font.PLAIN, TrueTypeFont.ALIGN_LEFT);
+        Text text = new Text(0.02f, 0.2f, 0.02f, 0.025f, message, new Color(1.0f, 1.0f, 1.0f), "My type of font", Font.PLAIN, TrueTypeFont.ALIGN_LEFT);
         chatTexts.add(text);
         enterTimes.put(text, SystemHelper.getTimeNanos() / 1000000000.0);
     }
@@ -195,7 +195,7 @@ public class ClientsideWorld implements EntityWorld, ChatSender, ChatReceiver
         }
         if(!inChat && Input.getKeyDown(Input.KEY_T))
         {
-            chatField = new ActiveTextField(new Rectangle(0.0f, 0.1f, 1.0f, 0.05f));
+            chatField = new ActiveTextField(new Rectangle(0.0f, 0.1f, 1.0f, 0.033f));
             gui.addElement(chatField);
             inChat = true;
         }
@@ -231,11 +231,11 @@ public class ClientsideWorld implements EntityWorld, ChatSender, ChatReceiver
 
         GL11.glPushMatrix();
         int textCount = chatTexts.size();
-        GL11.glTranslatef(0.0f, 0.0325f * textCount, 0.0f);
+        GL11.glTranslatef(0.0f, 0.025f * textCount, 0.0f);
         for(int i = 0; i < textCount; i++)
         {
             chatTexts.get(i).render();
-            GL11.glTranslatef(0.0f, -0.0325f, 0.0f);
+            GL11.glTranslatef(0.0f, -0.025f, 0.0f);
         }
         GL11.glPopMatrix();
     }
