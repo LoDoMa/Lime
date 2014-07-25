@@ -21,11 +21,11 @@ public class MainMenu extends Stage
     {
         container.removeAll();
 
-        container.addElement(new MainMenuButton(new Rectangle(0.05f, 0.50f, 0.4f, 0.05f), "Campaign", "My type of font"));
-        container.addElement(new MainMenuButton(new Rectangle(0.05f, 0.44f, 0.4f, 0.05f), "Multiplayer", "My type of font"));
-        container.addElement(new MainMenuButton(new Rectangle(0.05f, 0.38f, 0.4f, 0.05f), "Arcade", "My type of font"));
-        container.addElement(new MainMenuButton(new Rectangle(0.05f, 0.32f, 0.4f, 0.05f), "Options", "My type of font"));
-        container.addElement(new MainMenuButton(new Rectangle(0.05f, 0.26f, 0.4f, 0.05f), "Exit", "My type of font"));
+        container.addElement(new MainMenuButton(new Rectangle(0.05f, 0.50f, 0.4f, 0.05f), "Campaign"));
+        container.addElement(new MainMenuButton(new Rectangle(0.05f, 0.44f, 0.4f, 0.05f), "Multiplayer"));
+        container.addElement(new MainMenuButton(new Rectangle(0.05f, 0.38f, 0.4f, 0.05f), "Arcade"));
+        container.addElement(new MainMenuButton(new Rectangle(0.05f, 0.32f, 0.4f, 0.05f), "Options"));
+        container.addElement(new MainMenuButton(new Rectangle(0.05f, 0.26f, 0.4f, 0.05f), "Exit"));
     }
     
     @Override

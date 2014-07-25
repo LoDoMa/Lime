@@ -33,4 +33,10 @@ public abstract class Button implements GUIElement
         mouseHover = bounds.inside(mousePosition.x, mousePosition.y);
         mouseClick = mouseHover && Input.getMouseDown(Input.LEFT_MOUSE_BUTTON);
     }
+    
+    @Override
+    public void render()
+    {
+        
+    }
 }
