@@ -19,7 +19,7 @@ public class MultiplayerMenuPopulator implements MenuPopulator
         final MenuTextField host = new MenuTextField(new Rectangle(0.05f, 0.5f, 0.4f, 0.05f), "localhost");
         container.addElement(host);
         
-        container.addElement(new MenuButton(new Rectangle(0.05f, 0.44f, 0.4f, 0.05f), "join", new Runnable()
+        container.addElement(new MenuButton(new Rectangle(0.05f, 0.44f, 0.4f, 0.05f), "Join", new Runnable()
         {
             private Menu menu = toPopulate;
             private MenuTextField hostTextField = host;

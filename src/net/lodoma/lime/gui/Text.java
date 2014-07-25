@@ -32,6 +32,11 @@ public class Text implements GUIElement
         this.alignment = alignment;
     }
     
+    public TrueTypeFont getFont()
+    {
+        return font;
+    }
+    
     public String getText()
     {
         return text;

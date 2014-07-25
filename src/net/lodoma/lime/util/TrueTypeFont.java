@@ -246,6 +246,33 @@ public class TrueTypeFont
         return totalwidth;
     }
     
+    public int getTotalWidth(String whatchars)
+    {
+        return getTotalWidth(whatchars, 0, whatchars.length() - 1);
+    }
+    
+    public int getTotalWidth(String whatchars, int startIndex, int endIndex)
+    {
+        IntObject intObject = null;
+        int totalwidth = 0;
+        for(int l = startIndex; l <= endIndex; l++)
+        {
+            int charCurrent = whatchars.charAt(l);
+            if(charCurrent == '\n')
+                break;
+            if(charCurrent < 256)
+            {
+                intObject = charArray[charCurrent];
+            }
+            else
+            {
+                intObject = (IntObject) customChars.get(new Character((char) charCurrent));
+            }
+            totalwidth += intObject.width - correctL;
+        }
+        return totalwidth;
+    }
+    
     public int getHeight()
     {
         return fontHeight;
@@ -299,22 +326,7 @@ public class TrueTypeFont
         }
         case ALIGN_CENTER:
         {
-            for(int l = startIndex; l <= endIndex; l++)
-            {
-                charCurrent = whatchars.charAt(l);
-                if(charCurrent == '\n')
-                    break;
-                if(charCurrent < 256)
-                {
-                    intObject = charArray[charCurrent];
-                }
-                else
-                {
-                    intObject = (IntObject) customChars.get(new Character((char) charCurrent));
-                }
-                totalwidth += intObject.width - correctL;
-            }
-            totalwidth /= -2;
+            totalwidth = getTotalWidth(whatchars, startIndex, endIndex) / -2;
         }
         case ALIGN_LEFT:
         default:
