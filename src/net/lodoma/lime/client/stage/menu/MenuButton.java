@@ -14,7 +14,7 @@ import org.lwjgl.opengl.GL11;
 public class MenuButton extends Button
 {
     private static final String FONT_NAME = "My type of font";
-    private static final Color TEXT_COLOR = new Color(1.0f, 1.0f, 1.0f);
+    private static final Color TEXT_COLOR = new Color(0.0f, 0.5f, 1.0f);
     private static final Color BODY_COLOR = new Color(0.2f, 0.2f, 0.2f, 0.2f);
     private static final Color OUTLINE_COLOR = new Color(1.0f, 1.0f, 1.0f);
     
@@ -26,7 +26,7 @@ public class MenuButton extends Button
     public MenuButton(Rectangle bounds, String text, Runnable listener)
     {
         super(bounds);
-        this.text = new Text(bounds.w / 2.0f, 0.0f, (bounds.h * 0.75f), (bounds.h * 0.75f), text, TEXT_COLOR, FONT_NAME, Font.PLAIN, TrueTypeFont.ALIGN_CENTER);
+        this.text = new Text(bounds.w / 2.0f, 0.0f, (bounds.h * 0.60f), (bounds.h * 0.75f), text, TEXT_COLOR, FONT_NAME, Font.PLAIN, TrueTypeFont.ALIGN_CENTER);
         this.listener = listener;
     }
     
