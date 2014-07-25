@@ -7,6 +7,8 @@ import net.lodoma.lime.util.Vector2;
 
 public class Text implements GUIElement
 {
+    private static final int SIZE = 42;
+    
     private float x;
     private float y;
     private float sx;
@@ -21,12 +23,12 @@ public class Text implements GUIElement
     {
         this.x = x;
         this.y = y;
-        this.sx = sx / (float) 32;
-        this.sy = sy / (float) 32;
+        this.sx = sx / (float) SIZE;
+        this.sy = sy / (float) SIZE;
         
         this.text = text;
         this.textColor = textColor;
-        this.font = new TrueTypeFont(new Font(fontName, style, 32), true);
+        this.font = new TrueTypeFont(new Font(fontName, style, SIZE), true);
         this.alignment = alignment;
     }
     

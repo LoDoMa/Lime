@@ -54,7 +54,6 @@ public class GUIContainer
     public void update(double timeDelta)
     {
         Vector2 mousePosition = Input.getMousePosition();
-        mousePosition.divLocal(new Vector2(Window.getWidth(), Window.getHeight()));
         
         for(GUIElement element : elements)
             element.update(timeDelta, mousePosition);

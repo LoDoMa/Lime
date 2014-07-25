@@ -27,6 +27,11 @@ public class Window
     private static int initHeight;
     private static int lastWidth = -1;
     private static int lastHeight = -1;
+
+    private static int vpx;
+    private static int vpy;
+    private static int vpwidth;
+    private static int vpheight;
     
     public static int getWidth()
     {
@@ -46,6 +51,26 @@ public class Window
     public static float getOrthoHeight()
     {
         return orthoHeight;
+    }
+    
+    public static int getViewportX()
+    {
+        return vpx;
+    }
+    
+    public static int getViewportY()
+    {
+        return vpy;
+    }
+    
+    public static int getViewportWidth()
+    {
+        return vpwidth;
+    }
+    
+    public static int getViewportHeight()
+    {
+        return vpheight;
     }
 
     public static void setDimensions(int width, int height)
@@ -117,23 +142,17 @@ public class Window
     {
         loadLimitations();
         
-        int dwidth = Display.getWidth();
-        int dheight = Display.getHeight();
-        
-        int vpwidth = (int) (dheight * (initWidth / (float) initHeight));
-        int vpheight;
-        if(vpwidth < dwidth)
-        {
-            vpheight = dheight;
-        }
+        vpwidth = (int) (height * (initWidth / (float) initHeight));
+        if(vpwidth < width)
+            vpheight = height;
         else
         {
-            vpwidth = dwidth;
-            vpheight = (int) (dwidth * (initHeight / (float) initWidth));
+            vpwidth = width;
+            vpheight = (int) (width * (initHeight / (float) initWidth));
         }
         
-        int vpx = (dwidth - vpwidth) / 2;
-        int vpy = (dheight - vpheight) / 2;
+        vpx = (width - vpwidth) / 2;
+        vpy = (height - vpheight) / 2;
         
         GL11.glViewport(vpx, vpy, vpwidth, vpheight);
         

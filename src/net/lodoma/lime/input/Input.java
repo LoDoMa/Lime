@@ -1,5 +1,6 @@
 package net.lodoma.lime.input;
 
+import net.lodoma.lime.client.window.Window;
 import net.lodoma.lime.util.Vector2;
 
 import org.lwjgl.input.Keyboard;
@@ -186,7 +187,21 @@ public class Input
 
     public static Vector2 getMousePosition()
     {
-        return new Vector2(Mouse.getX(), Mouse.getY());
+        int mx = Mouse.getX();
+        int my = Mouse.getY();
+
+        int vpx = Window.getViewportX();
+        int vpy = Window.getViewportY();
+        int vpw = Window.getViewportWidth();
+        int vph = Window.getViewportHeight();
+
+        int tx = mx - vpx;
+        int ty = my - vpy;
+        
+        float ux = tx / (float) vpw;
+        float uy = ty / (float) vph;
+        
+        return new Vector2(ux, uy);
     }
 
     public static void setMousePosition(Vector2 pos)
