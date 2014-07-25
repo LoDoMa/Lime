@@ -9,6 +9,11 @@ public abstract class Stage
         this.manager = manager;
     }
     
+    public final StageManager getManager()
+    {
+        return manager;
+    }
+    
     public final void startStage()
     {
         manager.pushStage(this);

@@ -27,8 +27,8 @@ public class WorldFileLoader implements WorldBuilder
             world.addEntity(entity);
             
             Platform platform = new Platform(new Vector2(0, 0),
-                    new Vector2(-10, 0),
-                    new Vector2(10, 0),
+                    new Vector2(-10, 0.5f),
+                    new Vector2(10, 0.5f),
                     new Vector2(10, -5),
                     new Vector2(-10, -5));
             world.addPlatform(platform);

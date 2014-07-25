@@ -30,6 +30,7 @@ public class ColoredMask extends Mask
     @Override
     public void render()
     {
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
         GL11.glBegin(GL11.GL_POLYGON);
         for(int i = 0; i < n; i++)
         {

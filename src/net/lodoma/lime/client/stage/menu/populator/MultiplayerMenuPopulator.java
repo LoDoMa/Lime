@@ -1,5 +1,6 @@
 package net.lodoma.lime.client.stage.menu.populator;
 
+import net.lodoma.lime.client.stage.game.Game;
 import net.lodoma.lime.client.stage.menu.Menu;
 import net.lodoma.lime.client.stage.menu.MenuButton;
 import net.lodoma.lime.gui.GUIContainer;
@@ -22,6 +23,16 @@ public class MultiplayerMenuPopulator implements MenuPopulator
             public void run()
             {
                 menu.setPopulator(new MainMenuPopulator());
+            }
+        }));
+        container.addElement(new MenuButton(new Rectangle(0.05f, 0.70f, 0.4f, 0.05f), "localhost", new Runnable()
+        {
+            private Menu menu = toPopulate;
+            
+            @Override
+            public void run()
+            {
+                new Game(menu.getManager()).startStage();
             }
         }));
     }

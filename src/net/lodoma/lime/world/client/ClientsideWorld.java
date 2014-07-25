@@ -107,6 +107,9 @@ public class ClientsideWorld implements EntityWorld
     
     public void render()
     {
+        for(Platform platform : platforms)
+            platform.render();
+        
         List<Entity> entityList = new ArrayList<Entity>(entities.values());
         for(Entity entity : entityList)
             entity.render();
