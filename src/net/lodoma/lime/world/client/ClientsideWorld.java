@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.lwjgl.opengl.GL11;
+
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.physics.PhysicsWorld;
 import net.lodoma.lime.physics.entity.Entity;
@@ -107,11 +109,16 @@ public class ClientsideWorld implements EntityWorld
     
     public void render()
     {
+        GL11.glPushMatrix();
+        GL11.glScalef(1.0f / 16.0f, 1.0f / 12.0f, 1.0f);
+        
         for(Platform platform : platforms)
             platform.render();
         
         List<Entity> entityList = new ArrayList<Entity>(entities.values());
         for(Entity entity : entityList)
             entity.render();
+        
+        GL11.glPopMatrix();
     }
 }
