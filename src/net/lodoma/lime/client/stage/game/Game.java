@@ -36,7 +36,8 @@ public class Game extends Stage
         }
         catch(ClientConnectionException e)
         {
-            new GameMessage(manager, e.getCause().getMessage()).startStage();
+            Throwable cause = e.getCause();
+            new GameMessage(manager, cause.getClass().getSimpleName() + ": " + cause.getMessage()).startStage();
         }
     }
     

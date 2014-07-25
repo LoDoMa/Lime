@@ -43,10 +43,12 @@ public class MenuButton extends Button
                 if(hoverTransparency > 1.0f)
                     hoverTransparency = 1.0f;
             }
-
+            
             if(listener != null)
+            {
                 if(mouseClick)
                     listener.run();
+            }
         }
         else
             hoverTransparency = 0.0f;

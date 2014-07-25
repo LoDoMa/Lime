@@ -8,7 +8,7 @@ public abstract class Button implements GUIElement
     protected Rectangle bounds;
     
     protected boolean mouseHover;
-    protected boolean mouseDown;
+    protected boolean mouseUp;
     protected boolean mouseClick;
     
     public Button(Rectangle bounds)
@@ -32,8 +32,8 @@ public abstract class Button implements GUIElement
     public void update(double timeDelta, Vector2 mousePosition)
     {
         mouseHover = bounds.inside(mousePosition.x, mousePosition.y);
-        mouseDown = Input.getMouseDown(Input.LEFT_MOUSE_BUTTON);
-        mouseClick = mouseHover && mouseDown;
+        mouseUp = Input.getMouseUp(Input.LEFT_MOUSE_BUTTON);
+        mouseClick = mouseHover && mouseUp;
     }
     
     @Override

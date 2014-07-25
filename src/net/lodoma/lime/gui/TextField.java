@@ -35,7 +35,7 @@ public abstract class TextField extends Button
             clicked = true;
         }
         else
-            if(mouseDown)
+            if(mouseUp)
                 clicked = false;
         
         if(clicked)

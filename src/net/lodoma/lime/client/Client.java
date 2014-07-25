@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
-import java.net.ConnectException;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
@@ -54,9 +53,7 @@ public class Client
         }
         catch (IOException e)
         {
-            if(e instanceof ConnectException)
-                throw new ClientConnectionException(e);
-            e.printStackTrace();
+            throw new ClientConnectionException(e);
         }
         
         logicPool = new ClientLogicPool(this, 60.0);
