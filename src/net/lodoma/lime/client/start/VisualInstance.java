@@ -3,7 +3,8 @@ package net.lodoma.lime.client.start;
 import java.io.File;
 
 import net.lodoma.lime.client.stage.StageManager;
-import net.lodoma.lime.client.stage.mainmenu.MainMenu;
+import net.lodoma.lime.client.stage.menu.Menu;
+import net.lodoma.lime.client.stage.menu.populator.MainMenuPopulator;
 import net.lodoma.lime.client.window.Window;
 import net.lodoma.lime.util.FontHelper;
 import net.lodoma.lime.util.Timer;
@@ -29,7 +30,7 @@ public class VisualInstance
     
     private void loop()
     {
-        MainMenu mainMenu = new MainMenu(stageManager);
+        Menu mainMenu = new Menu(stageManager, new MainMenuPopulator());
         mainMenu.startStage();
         
         Timer timer = new Timer();

@@ -22,6 +22,9 @@ public class Window
     private static boolean closeRequested = false;
     
     private static boolean supportFBO;
+
+    private static int lastWidth = -1;
+    private static int lastHeight = -1;
     
     public static int getWidth()
     {
@@ -90,6 +93,7 @@ public class Window
             // .withForwardCompatible(true);
             // .withProfileCore(true);        for 3.2+
         
+            Display.setResizable(true);
             Display.create(pixelFormat, contextAtrributes);
             Keyboard.create();
             Mouse.create();
@@ -98,8 +102,6 @@ public class Window
         {
             e.printStackTrace();
         }
-        
-        setupGL();
     }
     
     private static void loadLimitations()
@@ -110,6 +112,8 @@ public class Window
     private static void setupGL()
     {
         loadLimitations();
+        
+        GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
         
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glLoadIdentity();
@@ -140,6 +144,13 @@ public class Window
     
     public static void clear()
     {
+        width = Display.getWidth();
+        height = Display.getHeight();
+        if(width != lastWidth || height != lastHeight)
+            setupGL();
+        lastWidth = width;
+        lastHeight = height;
+        
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
         GL11.glLoadIdentity();
     }

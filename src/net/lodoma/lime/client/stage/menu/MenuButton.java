@@ -1,4 +1,4 @@
-package net.lodoma.lime.client.stage.mainmenu;
+package net.lodoma.lime.client.stage.menu;
 
 import java.awt.Font;
 
@@ -11,7 +11,7 @@ import net.lodoma.lime.util.Vector2;
 
 import org.lwjgl.opengl.GL11;
 
-public class MainMenuButton extends Button
+public class MenuButton extends Button
 {
     private static final String FONT_NAME = "My type of font";
     private static final Color TEXT_COLOR = new Color(1.0f, 1.0f, 1.0f);
@@ -19,12 +19,15 @@ public class MainMenuButton extends Button
     private static final Color OUTLINE_COLOR = new Color(1.0f, 1.0f, 1.0f);
     
     private Text text;
+    private Runnable listener;
+    
     private float hoverTransparency = 0.0f;
     
-    public MainMenuButton(Rectangle bounds, String text)
+    public MenuButton(Rectangle bounds, String text, Runnable listener)
     {
         super(bounds);
         this.text = new Text(bounds.w / 2.0f, 0.0f, (bounds.h * 0.75f), (bounds.h * 0.75f), text, TEXT_COLOR, FONT_NAME, Font.PLAIN, TrueTypeFont.ALIGN_CENTER);
+        this.listener = listener;
     }
     
     @Override
@@ -40,6 +43,10 @@ public class MainMenuButton extends Button
                 if(hoverTransparency > 1.0f)
                     hoverTransparency = 1.0f;
             }
+
+            if(listener != null)
+                if(mouseClick)
+                    listener.run();
         }
         else
             hoverTransparency = 0.0f;
