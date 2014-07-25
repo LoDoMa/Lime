@@ -27,7 +27,7 @@ public class Game extends Stage
         }
         catch(ClientConnectionException e)
         {
-            e.printStackTrace();
+            new GameExceptionMessage(manager, e).startStage();
         }
     }
     

@@ -15,7 +15,7 @@ public class VisualInstance
     
     private void init()
     {
-        Window.setDimensions(800, 600);
+        Window.setDimensions(800, 450);
         Window.setFullscreen(false);
         Window.setTitle("Lime");
         Window.setFPS(60);

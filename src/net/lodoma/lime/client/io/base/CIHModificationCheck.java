@@ -20,6 +20,8 @@ public class CIHModificationCheck extends ClientInputHandler
     @Override
     protected void localHandle() throws IOException
     {
+        System.out.println("adfsasfadf");
+        
         long clientScript = ModificationCheck.sumCRC(new File("./script"));
         long clientModel = ModificationCheck.sumCRC(new File("./model"));
         
