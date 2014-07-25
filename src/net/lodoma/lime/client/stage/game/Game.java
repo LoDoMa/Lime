@@ -4,7 +4,6 @@ import net.lodoma.lime.client.Client;
 import net.lodoma.lime.client.ClientConnectionException;
 import net.lodoma.lime.client.stage.Stage;
 import net.lodoma.lime.client.stage.StageManager;
-import net.lodoma.lime.client.window.Window;
 import net.lodoma.lime.input.Input;
 import net.lodoma.lime.world.client.ClientsideWorld;
 
