@@ -15,6 +15,7 @@ import net.lodoma.lime.client.logic.CLChat;
 import net.lodoma.lime.client.logic.CLWorld;
 import net.lodoma.lime.client.logic.ClientLogicPool;
 import net.lodoma.lime.event.EventManager;
+import net.lodoma.lime.security.Credentials;
 import net.lodoma.lime.util.HashPool;
 import net.lodoma.lime.util.HashPool32;
 
@@ -36,7 +37,7 @@ public class Client
     private ClientLogicPool logicPool;
     private Map<String, Object> properties;
     
-    public final void open(int port, String host, String alias) throws ClientConnectionException
+    public final void open(int port, String host, Credentials credentials) throws ClientConnectionException
     {
         if(isRunning)
             throw new IllegalStateException("client is already open");
@@ -64,7 +65,7 @@ public class Client
         setProperty("coPool", new HashPool<ClientOutput>());
         setProperty("emanPool", new HashPool32<EventManager>());
         setProperty("reader", reader);
-        setProperty("alias", alias);
+        setProperty("credentials", credentials);
         
         logicPool.addLogic(new CLBase());
         logicPool.addLogic(new CLChat());

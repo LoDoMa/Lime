@@ -21,6 +21,7 @@ import net.lodoma.lime.input.Input;
 import net.lodoma.lime.physics.PhysicsWorld;
 import net.lodoma.lime.physics.entity.Entity;
 import net.lodoma.lime.physics.entity.EntityWorld;
+import net.lodoma.lime.security.Credentials;
 import net.lodoma.lime.util.SystemHelper;
 import net.lodoma.lime.util.TrueTypeFont;
 import net.lodoma.lime.world.platform.Platform;
@@ -146,10 +147,10 @@ public class ClientsideWorld implements EntityWorld, ChatSender, ChatReceiver
     @Override
     public void sendChat()
     {
-        String alias = (String) client.getProperty("alias");
+        String username = ((Credentials) client.getProperty("credentials")).getUsername();
         for(String message : chatToSend)
             for(ChatManager manager : chatManagers)
-                manager.send(alias + ": " + message);
+                manager.send(username + ": " + message);
         chatToSend.clear();
     }
     

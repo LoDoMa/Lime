@@ -48,6 +48,7 @@ public class SLBase implements ServerLogic
     {
         sihPool.add("Lime::DependencyRequest", new SIHDependencyRequest(server));
         soPool.add("Lime::NetworkStageChange", new SONetworkStageChange(server, "Lime::NetworkStageChange"));
+        
         dependencyPool.addDependency(new SOModificationCheck(server, "Lime::ModificationCheck"));
     }
     

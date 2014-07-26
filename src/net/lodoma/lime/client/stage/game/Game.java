@@ -5,6 +5,7 @@ import net.lodoma.lime.client.ClientConnectionException;
 import net.lodoma.lime.client.stage.Stage;
 import net.lodoma.lime.client.stage.StageManager;
 import net.lodoma.lime.input.Input;
+import net.lodoma.lime.security.Credentials;
 import net.lodoma.lime.world.client.ClientsideWorld;
 
 public class Game extends Stage
@@ -12,13 +13,14 @@ public class Game extends Stage
     private Client client;
     
     private String host;
-    private String alias;
     
-    public Game(StageManager manager, String host, String alias)
+    private Credentials credentials;
+    
+    public Game(StageManager manager, String host, Credentials credentials)
     {
         super(manager);
         this.host = host;
-        this.alias = alias;
+        this.credentials = credentials;
     }
     
     @Override
@@ -34,7 +36,7 @@ public class Game extends Stage
         
         try
         {
-            client.open(19424, host, alias);
+            client.open(19424, host, credentials);
         }
         catch(ClientConnectionException e)
         {

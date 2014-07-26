@@ -5,9 +5,17 @@ import net.lodoma.lime.client.stage.menu.MenuButton;
 import net.lodoma.lime.client.window.Window;
 import net.lodoma.lime.gui.GUIContainer;
 import net.lodoma.lime.gui.Rectangle;
+import net.lodoma.lime.security.Credentials;
 
 public class MainMenuPopulator implements MenuPopulator
 {
+    private Credentials credentials;
+    
+    public MainMenuPopulator(Credentials credentials)
+    {
+        this.credentials = credentials;
+    }
+    
     @Override
     public void populate(final Menu toPopulate)
     {
@@ -23,7 +31,7 @@ public class MainMenuPopulator implements MenuPopulator
             @Override
             public void run()
             {
-                menu.setPopulator(new MultiplayerMenuPopulator());
+                menu.setPopulator(new MultiplayerMenuPopulator(credentials));
             }
         }));
         container.addElement(new MenuButton(new Rectangle(0.05f, 0.38f, 0.4f, 0.05f), "Arcade", null));

@@ -14,10 +14,15 @@ public class MenuTextField extends TextField
     
     private float hoverTransparency = 0.0f;
     
+    public MenuTextField(Rectangle bounds, String text, char mask)
+    {
+        super(bounds, mask);
+        content = text;
+    }
+    
     public MenuTextField(Rectangle bounds, String text)
     {
-        super(bounds);
-        this.text.setText(text);
+        this(bounds, text, (char) 0);
     }
     
     @Override

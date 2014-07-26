@@ -6,9 +6,17 @@ import net.lodoma.lime.client.stage.menu.MenuButton;
 import net.lodoma.lime.client.stage.menu.MenuTextField;
 import net.lodoma.lime.gui.GUIContainer;
 import net.lodoma.lime.gui.Rectangle;
+import net.lodoma.lime.security.Credentials;
 
 public class MultiplayerMenuPopulator implements MenuPopulator
 {
+    private Credentials credentials;
+    
+    public MultiplayerMenuPopulator(Credentials credentials)
+    {
+        this.credentials = credentials;
+    }
+    
     @Override
     public void populate(final Menu toPopulate)
     {
@@ -17,20 +25,17 @@ public class MultiplayerMenuPopulator implements MenuPopulator
         container.removeAll();
 
         final MenuTextField host = new MenuTextField(new Rectangle(0.05f, 0.5f, 0.4f, 0.05f), "localhost");
-        final MenuTextField alias = new MenuTextField(new Rectangle(0.05f, 0.44f, 0.4f, 0.05f), "alias");
-        container.addElement(host);
-        container.addElement(alias);
         
-        container.addElement(new MenuButton(new Rectangle(0.05f, 0.38f, 0.4f, 0.05f), "Join", new Runnable()
+        container.addElement(host);
+        container.addElement(new MenuButton(new Rectangle(0.05f, 0.44f, 0.4f, 0.05f), "Join", new Runnable()
         {
             private Menu menu = toPopulate;
             private MenuTextField hostTextField = host;
-            private MenuTextField aliasTextField = alias;
             
             @Override
             public void run()
             {
-                new Game(menu.getManager(), hostTextField.getText(), aliasTextField.getText()).startStage();
+                new Game(menu.getManager(), hostTextField.getText(), credentials).startStage();
             }
         }));
         
@@ -41,7 +46,7 @@ public class MultiplayerMenuPopulator implements MenuPopulator
             @Override
             public void run()
             {
-                menu.setPopulator(new MainMenuPopulator());
+                menu.setPopulator(new MainMenuPopulator(credentials));
             }
         }));
     }
