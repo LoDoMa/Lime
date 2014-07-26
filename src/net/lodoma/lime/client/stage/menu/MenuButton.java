@@ -19,7 +19,6 @@ public class MenuButton extends Button
     private static final Color OUTLINE_COLOR = new Color(1.0f, 1.0f, 1.0f);
     
     private Text text;
-    private Runnable listener;
     
     private float hoverTransparency = 0.0f;
     
@@ -27,7 +26,12 @@ public class MenuButton extends Button
     {
         super(bounds);
         this.text = new Text(bounds.w / 2.0f, 0.0f, (bounds.h * 0.60f), (bounds.h * 0.75f), text, TEXT_COLOR, FONT_NAME, Font.PLAIN, TrueTypeFont.ALIGN_CENTER);
-        this.listener = listener;
+        setListener(listener);
+    }
+    
+    public void setText(String text)
+    {
+        this.text.setText(text);
     }
     
     @Override
@@ -42,12 +46,6 @@ public class MenuButton extends Button
                 hoverTransparency += timeDelta * 5.0f;
                 if(hoverTransparency > 1.0f)
                     hoverTransparency = 1.0f;
-            }
-            
-            if(listener != null)
-            {
-                if(mouseClick)
-                    listener.run();
             }
         }
         else

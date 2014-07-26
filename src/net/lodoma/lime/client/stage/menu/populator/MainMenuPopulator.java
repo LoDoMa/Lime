@@ -35,7 +35,16 @@ public class MainMenuPopulator implements MenuPopulator
             }
         }));
         container.addElement(new MenuButton(new Rectangle(0.05f, 0.38f, 0.4f, 0.05f), "Arcade", null));
-        container.addElement(new MenuButton(new Rectangle(0.05f, 0.32f, 0.4f, 0.05f), "Options", null));
+        container.addElement(new MenuButton(new Rectangle(0.05f, 0.32f, 0.4f, 0.05f), "Options", new Runnable()
+        {
+            private Menu menu = toPopulate;
+            
+            @Override
+            public void run()
+            {
+                menu.setPopulator(new OptionsMenuPopulator(credentials));
+            }
+        }));
         container.addElement(new MenuButton(new Rectangle(0.05f, 0.26f, 0.4f, 0.05f), "Exit", new Runnable()
         {
             @Override

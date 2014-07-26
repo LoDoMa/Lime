@@ -5,6 +5,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.ContextAttribs;
 import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
 import org.lwjgl.opengl.PixelFormat;
@@ -130,6 +131,8 @@ public class Window
     
     public static void open()
     {
+        WindowResolutionOptions.load();
+        
         apply();
         try
         {
@@ -156,7 +159,7 @@ public class Window
         supportFBO = GLContext.getCapabilities().GL_EXT_framebuffer_object;
     }
     
-    private static void setupGL()
+    public static void setupGL()
     {
         loadLimitations();
         
@@ -194,7 +197,18 @@ public class Window
     
     public static void apply()
     {
-        WindowHelper.setDisplayMode(ww, wh, fullscreen);
+        try
+        {
+            if(fullscreen)
+                Display.setDisplayMode(WindowResolutionOptions.displayModes.get(resw << 16 | resh));
+            else
+                Display.setDisplayMode(new DisplayMode(ww, wh));
+            Display.setFullscreen(fullscreen);
+        }
+        catch(LWJGLException e)
+        {
+            e.printStackTrace();
+        }
         Display.setTitle(title);
     }
     

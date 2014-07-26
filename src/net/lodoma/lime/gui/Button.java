@@ -11,9 +11,16 @@ public abstract class Button implements GUIElement
     protected boolean mouseUp;
     protected boolean mouseClick;
     
+    private Runnable listener;
+    
     public Button(Rectangle bounds)
     {
         this.bounds = bounds;
+    }
+    
+    public void setListener(Runnable listener)
+    {
+        this.listener = listener;
     }
     
     @Override
@@ -34,6 +41,11 @@ public abstract class Button implements GUIElement
         mouseHover = bounds.inside(mousePosition.x, mousePosition.y);
         mouseUp = Input.getMouseUp(Input.LEFT_MOUSE_BUTTON);
         mouseClick = mouseHover && mouseUp;
+
+        if(listener != null)
+            if(mouseHover)
+                if(mouseClick)
+                    listener.run();
     }
     
     @Override
