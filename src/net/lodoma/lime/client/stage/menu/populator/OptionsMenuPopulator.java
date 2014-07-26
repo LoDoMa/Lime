@@ -8,7 +8,6 @@ import net.lodoma.lime.client.window.Window;
 import net.lodoma.lime.gui.Color;
 import net.lodoma.lime.gui.GUIContainer;
 import net.lodoma.lime.gui.Rectangle;
-import net.lodoma.lime.gui.Slider;
 import net.lodoma.lime.gui.Text;
 import net.lodoma.lime.gui.Toggle;
 import net.lodoma.lime.gui.ToggleListener;
@@ -63,8 +62,6 @@ public class OptionsMenuPopulator implements MenuPopulator
                         Window.setVSyncEnabled(newState);
                     }
                 }));
-        
-        container.addElement(new Slider(new Rectangle(0.05f, 0.38f, 0.4f, 0.05f), 0.015f, 0.5f, new Color(0.0f, 0.5f, 1.0f), new Color(0.0f, 0.5f, 1.0f), new Color(1.0f, 1.0f, 1.0f)));
         
         container.addElement(new MenuButton(new Rectangle(0.05f, 0.26f, 0.4f, 0.05f), "Back", new Runnable()
         {

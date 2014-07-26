@@ -20,5 +20,6 @@ public class SOEntityCreation extends ServerOutput
         Entity entity = (Entity) args[0];
         user.outputStream.writeInt(entity.getID());
         user.outputStream.writeLong(entity.getHash());
+        entity.sendCreation(user.outputStream);
     }
 }

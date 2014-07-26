@@ -45,6 +45,11 @@ public class PhysicsBody
         bd.position.set(pos.x, pos.y);
     }
     
+    public void setAngle(float angle)
+    {
+        bd.angle = angle;
+    }
+    
     public void setBodyType(PhysicsBodyType type)
     {
         bd.type = type.getEngineValue();

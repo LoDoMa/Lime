@@ -28,7 +28,7 @@ local function serverUpdate()
 		lime.entity.set(this)
 
 		lime.body.set(hashes["head"])
-		lime.body.impulse.linear(newVector(100, 0), newVector(0, 0))
+		lime.body.impulse.linear(newVector(40, 0), newVector(0, 0))
 
 		lime.listener.set("Lime::onNewUser", onNewUser)
 	end
