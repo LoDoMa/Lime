@@ -5,7 +5,6 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.ContextAttribs;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GLContext;
 import org.lwjgl.opengl.PixelFormat;
@@ -131,8 +130,6 @@ public class Window
     
     public static void open()
     {
-        WindowResolutionOptions.load();
-        
         apply();
         try
         {
@@ -199,10 +196,7 @@ public class Window
     {
         try
         {
-            if(fullscreen)
-                Display.setDisplayMode(WindowResolutionOptions.displayModes.get(resw << 16 | resh));
-            else
-                Display.setDisplayMode(new DisplayMode(ww, wh));
+            Display.setDisplayMode(WindowResolutionOptions.getDisplayMode(fullscreen));
             Display.setFullscreen(fullscreen);
         }
         catch(LWJGLException e)

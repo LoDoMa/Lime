@@ -1,56 +1,46 @@
 package net.lodoma.lime.client.window;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 
 public class WindowResolutionOptions
 {
-    public static Map<Integer, DisplayMode> displayModes;
-    
-    public static void load()
+    public static DisplayMode getDisplayMode(boolean fullscreen)
     {
-        try
-        {
-            displayModes = new HashMap<Integer, DisplayMode>();
-            
-            DisplayMode[] modes = Display.getAvailableDisplayModes();
-            
-            for (DisplayMode current : modes)
+        if(fullscreen)
+            try
             {
-                int width = current.getWidth();
-                int height = current.getHeight();
-    
-                int shw = width;
-                int shh = height;
+                DisplayMode target = null;
+                int width = Display.getDesktopDisplayMode().getWidth();
+                int height = Display.getDesktopDisplayMode().getHeight();
                 
-                for(int i = (int) Math.min(width, height); i > 1; i--)
-                    if(width % i == 0 && height % i == 0)
+                DisplayMode[] modes = Display.getAvailableDisplayModes();
+                int freq = 0;
+                for (DisplayMode current : modes)
+                    if ((current.getWidth() == width) && (current.getHeight() == height))
                     {
-                        shw /= i;
-                        shh /= i;
-                        break;
+                        if((target == null) || (current.getFrequency() >= freq))
+                            if((target == null) || (current.getBitsPerPixel() > target.getBitsPerPixel()))
+                            {
+                                target = current;
+                                freq = target.getFrequency();
+                            }
+                        if ((current.getBitsPerPixel() == Display.getDesktopDisplayMode().getBitsPerPixel())
+                                && (current.getFrequency() == Display.getDesktopDisplayMode().getFrequency()))
+                        {
+                            target = current;
+                            break;
+                        }
                     }
-    
-                short sw = (short) shw;
-                short sh = (short) shh;
-                int dmc = ((int) sw) << 16 | ((int) sh);
-                
-                DisplayMode best = displayModes.get(dmc);
-                if(best == null)
-                    displayModes.put(dmc, current);
-                else if(current.getWidth() > best.getWidth() && current.getHeight() > best.getHeight())
-                    displayModes.put(dmc, current);
-                else if(current.getFrequency() >= best.getFrequency() && current.getBitsPerPixel() > best.getBitsPerPixel())
-                    displayModes.put(dmc, current);
+                return target;
             }
-        }
-        catch(LWJGLException e)
-        {
-            e.printStackTrace();
-        }
+            catch(LWJGLException e)
+            {
+                e.printStackTrace();
+            }
+        else
+            return new DisplayMode(Display.getDesktopDisplayMode().getWidth() / 2, Display.getDesktopDisplayMode().getHeight() / 2);
+        return null;
     }
 }
