@@ -11,34 +11,91 @@ import org.lwjgl.opengl.PixelFormat;
 
 public class Window
 {
-    private static int width = 0;
-    private static int height = 0;
+    
+    private static int ww;
+    private static int wh;
+    private static int lww;
+    private static int lwh;
+    private static int fps;
+
     private static boolean fullscreen = false;
-    private static String title = null;
-    private static int fps = 0;
     
-    private static boolean closeRequested = false;
+    private static String title = "";
     
-    private static boolean supportFBO;
-
-    private static int initWidth;
-    private static int initHeight;
-    private static int lastWidth = -1;
-    private static int lastHeight = -1;
-
+    private static int resw;
+    private static int resh;
+    
     private static int vpx;
     private static int vpy;
     private static int vpwidth;
     private static int vpheight;
     
-    public static int getWidth()
+    private static boolean closeRequested = false;
+    
+    private static boolean supportFBO;
+    
+    public static int getWindowWidth()
     {
-        return width;
+        return ww;
     }
 
-    public static int getHeight()
+    public static int getWindowHeight()
     {
-        return height;
+        return wh;
+    }
+    
+    public static void setWindowSize(int width, int height)
+    {
+        ww = width;
+        wh = height;
+        lww = ww;
+        lwh = wh;
+    }
+    
+    public static int getFPS()
+    {
+        return fps;
+    }
+    
+    public static void setFPS(int fps)
+    {
+        Window.fps = fps;
+    }
+    
+    public static boolean isFullscreen()
+    {
+        return fullscreen;
+    }
+    
+    public static void setFullscreen(boolean fs)
+    {
+        fullscreen = fs;
+    }
+    
+    public static String getTitle()
+    {
+        return title;
+    }
+    
+    public static void setTitle(String title)
+    {
+        Window.title = title;
+    }
+    
+    public static int getResolutionWidth()
+    {
+        return resw;
+    }
+    
+    public static int getResolutionHeight()
+    {
+        return resh;
+    }
+    
+    public static void setResolution(int w, int h)
+    {
+        resw = w;
+        resh = h;
     }
     
     public static int getViewportX()
@@ -59,29 +116,6 @@ public class Window
     public static int getViewportHeight()
     {
         return vpheight;
-    }
-
-    public static void setDimensions(int width, int height)
-    {
-        Window.width = width;
-        Window.height = height;
-        initWidth = width;
-        initHeight = height;
-    }
-    
-    public static void setFullscreen(boolean fullscreen)
-    {
-        Window.fullscreen = fullscreen;
-    }
-    
-    public static void setTitle(String title)
-    {
-        Window.title = title;
-    }
-    
-    public static void setFPS(int fps)
-    {
-        Window.fps = fps;
     }
     
     public static void requestClose()
@@ -113,6 +147,8 @@ public class Window
         {
             e.printStackTrace();
         }
+        
+        setupGL();
     }
     
     private static void loadLimitations()
@@ -124,17 +160,17 @@ public class Window
     {
         loadLimitations();
         
-        vpwidth = (int) (height * (initWidth / (float) initHeight));
-        if(vpwidth < width)
-            vpheight = height;
+        vpwidth = (int) (wh * (resw / (float) resh));
+        if(vpwidth < ww)
+            vpheight = wh;
         else
         {
-            vpwidth = width;
-            vpheight = (int) (width * (initHeight / (float) initWidth));
+            vpwidth = ww;
+            vpheight = (int) (ww * (resh / (float) resw));
         }
         
-        vpx = (width - vpwidth) / 2;
-        vpy = (height - vpheight) / 2;
+        vpx = (ww - vpwidth) / 2;
+        vpy = (wh - vpheight) / 2;
         
         GL11.glViewport(vpx, vpy, vpwidth, vpheight);
         
@@ -158,21 +194,21 @@ public class Window
     
     public static void apply()
     {
-        if(width <= 0) throw new IllegalStateException();
-        if(height <= 0) throw new IllegalStateException();
+        if(ww <= 0) throw new IllegalStateException();
+        if(wh <= 0) throw new IllegalStateException();
         if(title == null) throw new NullPointerException();
-        WindowHelper.setDisplayMode(width, height, fullscreen);
+        WindowHelper.setDisplayMode(ww, wh, fullscreen);
         Display.setTitle(title);
     }
     
     public static void clear()
     {
-        width = Display.getWidth();
-        height = Display.getHeight();
-        if(width != lastWidth || height != lastHeight)
+        ww = Display.getWidth();
+        wh = Display.getHeight();
+        if(ww != lww || wh != lwh)
             setupGL();
-        lastWidth = width;
-        lastHeight = height;
+        lww = ww;
+        lwh = wh;
         
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
         GL11.glLoadIdentity();
