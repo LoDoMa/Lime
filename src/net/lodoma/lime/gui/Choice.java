@@ -13,7 +13,7 @@ public class Choice implements GUIElement
 
     protected ChoiceListener listener;
     
-    public Choice(Button prev, Button set, Button next, String[] choices, ChoiceListener listener)
+    public Choice(Button prev, Button set, Button next, final String[] choices, ChoiceListener listener)
     {
         this.prev = prev;
         this.set = set;
