@@ -32,6 +32,7 @@ local function serverUpdate()
 
 		lime.body.set(hashes["body"])
 		lime.body.translation.set(newVector(1.0, 7.0))
+		lime.body.impulse.linear(newVector(0.5, 0.0), newVector(0.0, 0.0))
 
 		lime.listener.set("Lime::onNewUser", onNewUser)
 	end
