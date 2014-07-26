@@ -25,6 +25,8 @@ public class Window
     private static int resw;
     private static int resh;
     
+    private static boolean vsync;
+    
     private static int vpx;
     private static int vpy;
     private static int vpwidth;
@@ -96,6 +98,17 @@ public class Window
     {
         resw = w;
         resh = h;
+    }
+    
+    public static boolean isVSyncEnabled()
+    {
+        return vsync;
+    }
+    
+    public static void setVSyncEnabled(boolean vsync)
+    {
+        Window.vsync = vsync;
+        Display.setVSyncEnabled(vsync);
     }
     
     public static int getViewportX()
@@ -196,6 +209,7 @@ public class Window
     {
         try
         {
+            WindowResolutionOptions.centerWindowPosition();
             Display.setDisplayMode(WindowResolutionOptions.getDisplayMode(fullscreen));
             Display.setFullscreen(fullscreen);
         }

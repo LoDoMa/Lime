@@ -1,14 +1,18 @@
 package net.lodoma.lime.client.stage.menu.populator;
 
+import java.awt.Font;
+
 import net.lodoma.lime.client.stage.menu.Menu;
 import net.lodoma.lime.client.stage.menu.MenuButton;
 import net.lodoma.lime.client.window.Window;
-import net.lodoma.lime.client.window.WindowResolutionOptions;
-import net.lodoma.lime.gui.Choice;
-import net.lodoma.lime.gui.ChoiceListener;
+import net.lodoma.lime.gui.Color;
 import net.lodoma.lime.gui.GUIContainer;
 import net.lodoma.lime.gui.Rectangle;
+import net.lodoma.lime.gui.Text;
+import net.lodoma.lime.gui.Toggle;
+import net.lodoma.lime.gui.ToggleListener;
 import net.lodoma.lime.security.Credentials;
+import net.lodoma.lime.util.TrueTypeFont;
 
 public class OptionsMenuPopulator implements MenuPopulator
 {
@@ -45,6 +49,19 @@ public class OptionsMenuPopulator implements MenuPopulator
             }
         });
         container.addElement(fullscreenToggleButton);
+        
+        container.addElement(new Toggle(new Text(0.05f, 0.445f, 0.05f * 0.6f, 0.05f * 0.7f, "vsync off", new Color(1.0f, 1.0f, 1.0f), "My type of font", Font.PLAIN, TrueTypeFont.ALIGN_LEFT),
+                "vsync on", "vsync off",
+                new MenuButton(new Rectangle(0.25f, 0.44f, 0.1f, 0.05f), "on", null),
+                new MenuButton(new Rectangle(0.35f, 0.44f, 0.1f, 0.05f), "off", null),
+                new ToggleListener()
+                {
+                    @Override
+                    public void onToggle(boolean newState)
+                    {
+                        Window.setVSyncEnabled(newState);
+                    }
+                }));
         
         container.addElement(new MenuButton(new Rectangle(0.05f, 0.26f, 0.4f, 0.05f), "Back", new Runnable()
         {
