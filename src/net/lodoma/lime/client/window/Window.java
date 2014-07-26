@@ -194,9 +194,6 @@ public class Window
     
     public static void apply()
     {
-        if(ww <= 0) throw new IllegalStateException();
-        if(wh <= 0) throw new IllegalStateException();
-        if(title == null) throw new NullPointerException();
         WindowHelper.setDisplayMode(ww, wh, fullscreen);
         Display.setTitle(title);
     }
@@ -216,7 +213,6 @@ public class Window
     
     public static void update()
     {
-        if(fps <= 0) throw new IllegalStateException();
         Display.update();
         Display.sync(fps);
     }
