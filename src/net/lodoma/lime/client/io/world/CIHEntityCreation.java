@@ -36,7 +36,6 @@ public class CIHEntityCreation extends ClientInputHandler
         {
             Entity entity = entityLoader.loadFromXML(entityLoader.getXMLFileByHash(hash), world, emanPool);
             entity.setID(id);
-            entity.receiveCreation(inputStream);
             world.addEntity(entity);
         }
         catch (SAXException e)

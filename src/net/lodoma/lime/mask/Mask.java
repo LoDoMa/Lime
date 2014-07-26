@@ -35,7 +35,7 @@ public abstract class Mask
     
     public void setRotation(float r)
     {
-        rotate = r;
+        rotate = (float) Math.toDegrees(r);
     }
     
     public void compile()

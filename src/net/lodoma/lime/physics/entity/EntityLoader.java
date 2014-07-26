@@ -279,8 +279,8 @@ public class EntityLoader
 
         NodeList staticBehaviors  = bodyElement.getElementsByTagName("static_behavior");
         NodeList dynamicBehaviors = bodyElement.getElementsByTagName("dynamic_behavior");
-        NodeList kineticBehaviors = bodyElement.getElementsByTagName("kinetic_behavior");
-        int behaviorTotal = staticBehaviors.getLength() + dynamicBehaviors.getLength() + kineticBehaviors.getLength();
+        NodeList kinematicBehaviors = bodyElement.getElementsByTagName("kinematic_behavior");
+        int behaviorTotal = staticBehaviors.getLength() + dynamicBehaviors.getLength() + kinematicBehaviors.getLength();
 
         if(behaviorTotal == 0) throw new RuntimeException("missing behavior in \"body\"");
         if(behaviorTotal > 1) throw new RuntimeException("multiple behaviors not allowed in \"body\"");
@@ -310,7 +310,7 @@ public class EntityLoader
             body.setFriction(dynamicBehavior.friction);
             body.setRestitution(dynamicBehavior.restitution);
         }
-        else if(kineticBehaviors.getLength() == 1)
+        else if(kinematicBehaviors.getLength() == 1)
         {
             /*
             Node kinematicBehaviorNode = kinematicBehaviors.item(0);

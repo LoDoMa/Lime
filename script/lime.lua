@@ -104,9 +104,19 @@ local function getBodyTranslation()
 	return buildVector(v2_translation:getX(), v2_translation:getY())
 end
 
+local function setBodyTranslation(position)
+	checkVectorType(position, 1, "lime.body.translation.set")
+	workingBody:setPosition(Vector2:newInstance(position.x, position.y))
+end
+
 local function getBodyRotation()
 	checkWorkingElementSet(workingBody, "body", "lime.body.rotation.get")
 	return workingBody:getAngle()
+end
+
+local function setBodyRotation(rotation)
+	checkType(rotation, "number", 1, "lime.body.rotation.set")
+	workingBody:setAngle(rotation)
 end
 
 local function applyLinearImpulseToBody(impulse, point)
@@ -222,9 +232,11 @@ lime = {
 		set = setWorkingBody,
 		translation = {
 			get = getBodyTranslation,
+			set = setBodyTranslation,
 		},
 		rotation = {
 			get = getBodyRotation,
+			set = setBodyRotation,
 		},
 		impulse = {
 			linear = applyLinearImpulseToBody,

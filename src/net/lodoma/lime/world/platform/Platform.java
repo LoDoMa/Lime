@@ -46,7 +46,7 @@ public class Platform
         body = new PhysicsBody();
         body.setBodyType(PhysicsBodyType.STATIC);
         body.setPolygonShape(vertices);
-        body.setPosition(offset);
+        body.setDefPosition(offset);
     }
     
     public Platform(Mask mask, Vector2 offset, Vector2... vertices)
@@ -58,7 +58,7 @@ public class Platform
         body = new PhysicsBody();
         body.setBodyType(PhysicsBodyType.STATIC);
         body.setPolygonShape(vertices);
-        body.setPosition(offset);
+        body.setDefPosition(offset);
     }
     
     public Platform(Vector2 offset, Vector2... vertices)

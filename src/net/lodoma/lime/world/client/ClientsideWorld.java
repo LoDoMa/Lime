@@ -180,7 +180,6 @@ public class ClientsideWorld implements EntityWorld, ChatSender, ChatReceiver
         for(Entity entity : entityList)
             if(entity.isCreated())
                 entity.update(timeDelta);
-        
         physicsWorld.update(timeDelta);
         
         gui.update(timeDelta);

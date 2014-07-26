@@ -5,7 +5,7 @@ import org.jbox2d.dynamics.World;
 
 public class PhysicsWorld
 {
-    private static final Vec2 ENGINE_GRAVITY = new Vec2(0.0f, -10.0f);
+    private static final Vec2 ENGINE_GRAVITY = new Vec2(0.0f, -0.1f);
     private static final boolean ENGINE_SLEEP = false;
     
     private static final int ENGINE_VELOCITY_ITERATIONS = 6;

@@ -4,7 +4,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -18,7 +17,6 @@ import net.lodoma.lime.physics.PhysicsJoint;
 import net.lodoma.lime.physics.PhysicsWorld;
 import net.lodoma.lime.script.LuaScript;
 import net.lodoma.lime.util.HashPool32;
-import net.lodoma.lime.util.Vector2;
 
 public class Entity
 {
@@ -180,34 +178,6 @@ public class Entity
         
         for(Mask mask : maskList)
             mask.call();
-    }
-    
-    public void receiveCreation(DataInputStream inputStream) throws IOException
-    {
-        List<Integer> bodyKeys = new ArrayList<Integer>(bodies.keySet());
-        Collections.sort(bodyKeys);
-        
-        for(Integer i : bodyKeys)
-        {
-            PhysicsBody body = bodies.get(i);
-            body.setPosition(new Vector2(inputStream.readFloat(), inputStream.readFloat()));
-            body.setAngle(inputStream.readFloat());
-        }
-    }
-    
-    public void sendCreation(DataOutputStream outputStream) throws IOException
-    {
-        List<Integer> bodyKeys = new ArrayList<Integer>(bodies.keySet());
-        Collections.sort(bodyKeys);
-        
-        for(Integer i : bodyKeys)
-        {
-            PhysicsBody body = bodies.get(i);
-            Vector2 pos = body.getPosition();
-            outputStream.writeFloat(pos.x);
-            outputStream.writeFloat(pos.y);
-            outputStream.writeFloat(body.getAngle());
-        }
     }
     
     public void receiveCorrection(DataInputStream inputStream) throws IOException

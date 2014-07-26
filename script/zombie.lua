@@ -28,7 +28,10 @@ local function serverUpdate()
 		lime.entity.set(this)
 
 		lime.body.set(hashes["head"])
-		lime.body.impulse.linear(newVector(40, 0), newVector(0, 0))
+		lime.body.translation.set(newVector(1.0, 7.0))
+
+		lime.body.set(hashes["body"])
+		lime.body.translation.set(newVector(1.0, 7.0))
 
 		lime.listener.set("Lime::onNewUser", onNewUser)
 	end
@@ -36,10 +39,6 @@ end
 
 local function clientUpdate()
 	lime.entity.set(this)
-
-	lime.body.set(hashes["head"])
-	local translation = lime.body.translation.get()
-	--print(round(translation.x, 2) .. " " .. round(translation.y, 2))
 
 	limex.follow(this, hashes["head"], this, hashes["m_head"])
 	limex.follow(this, hashes["body"], this, hashes["m_body"])

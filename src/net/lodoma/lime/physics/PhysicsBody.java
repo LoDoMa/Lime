@@ -42,10 +42,20 @@ public class PhysicsBody
     
     public void setPosition(Vector2 pos)
     {
-        bd.position.set(pos.x, pos.y);
+        body.setTransform(Vector2.toVec2(pos), body.getAngle());
+    }
+    
+    public void setDefPosition(Vector2 pos)
+    {
+        bd.position = Vector2.toVec2(pos);
     }
     
     public void setAngle(float angle)
+    {
+        body.setTransform(body.getPosition(), angle);
+    }
+    
+    public void setDefAngle(float angle)
     {
         bd.angle = angle;
     }
@@ -125,7 +135,7 @@ public class PhysicsBody
         linVelY = inputStream.readFloat();
         angVel = inputStream.readFloat();
         
-        body.getTransform().set(new Vec2(posX, posY), angle);
+        body.setTransform(new Vec2(posX, posY), angle);
         body.setLinearVelocity(new Vec2(linVelX, linVelY));
         body.setAngularVelocity(angVel);
     }
