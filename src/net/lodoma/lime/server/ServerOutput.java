@@ -2,7 +2,9 @@ package net.lodoma.lime.server;
 
 import java.io.IOException;
 import java.net.SocketException;
+import java.util.List;
 
+import net.lodoma.lime.server.logic.UserManager;
 import net.lodoma.lime.util.HashHelper;
 
 public abstract class ServerOutput
@@ -29,7 +31,7 @@ public abstract class ServerOutput
             if(expected.length != args.length)
                 throw new IllegalArgumentException();
             for(int i = 0; i < expected.length; i++)
-                if(args[i].getClass() != expected[i])
+                if(args[i].getClass().isInstance(expected[i]))
                     throw new IllegalArgumentException();
             
             localHandle(user, args);
@@ -43,5 +45,13 @@ public abstract class ServerOutput
             else
                 e.printStackTrace();
         }
+    }
+    
+    public final void handleAll(Object... args)
+    {
+        UserManager userManager = ((UserManager) server.getProperty("userManager"));
+        List<ServerUser> users = userManager.getUserList();
+        for(ServerUser user : users)
+            handle(user, args);
     }
 }

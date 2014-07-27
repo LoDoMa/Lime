@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.lodoma.lime.common.NetworkSide;
 import net.lodoma.lime.event.EventBundle;
 import net.lodoma.lime.event.EventListener;
 import net.lodoma.lime.event.EventManager;
@@ -96,9 +97,9 @@ public class ServersideWorld implements EntityWorld
     }
     
     @Override
-    public boolean isServer()
+    public NetworkSide getNetworkSide()
     {
-        return true;
+        return NetworkSide.SERVER;
     }
     
     public Server getServer()

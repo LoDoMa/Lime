@@ -11,6 +11,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import net.lodoma.lime.common.PropertyPool;
 import net.lodoma.lime.event.EventManager;
 import net.lodoma.lime.mask.ColoredMask;
 import net.lodoma.lime.mask.LayeredMask;
@@ -88,9 +89,12 @@ public class EntityLoader
         return files.get(hash);
     }
     
-    public Entity loadFromXML(File xmlFile, EntityWorld world, HashPool32<EventManager> emanPool)
+    @SuppressWarnings("unchecked")
+    public Entity loadFromXML(File xmlFile, EntityWorld world, PropertyPool propertyPool)
             throws IOException, SAXException, ParserConfigurationException
     {
+        HashPool32<EventManager> emanPool = (HashPool32<EventManager>) propertyPool.getProperty("emanPool");
+        
         Entity entity = new Entity(emanPool);
         
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -113,6 +117,7 @@ public class EntityLoader
         
         entity.hash = HashHelper.hash64(entity.internalName);
         entity.world = world;
+        entity.propertyPool = propertyPool;
         
         NodeList bodies         = docElement.getElementsByTagName("body");
         NodeList revoluteJoints = docElement.getElementsByTagName("revolute_joint");

@@ -1,6 +1,7 @@
 
 local Vector2 = java.require("net.lodoma.lime.util.Vector2")
 local HashHelper = java.require("net.lodoma.lime.util.HashHelper")
+local NetworkSide = java.require("net.lodoma.lime.common.NetworkSide")
 
 local entity = JAVA_ENTITY
 local script = JAVA_SCRIPT
@@ -11,11 +12,22 @@ local entityVisualName = entity:getVisualName()
 local entityVersion = entity:getVersion()
 
 local entityWorld = entity:getEntityWorld()
+local propertyPool = entity:getPropertyPool()
+
+local networkSide = entityWorld:getNetworkSide():ordinal()
+local serverSide = networkSide == NetworkSide:valueOf("SERVER"):ordinal() and true or nil
+local clientSide = networkSide == NetworkSide:valueOf("CLIENT"):ordinal() and true or nil
+
+local inputHandlerHashPool = propertyPool:getProperty(serverSide and "sihPool" or (clientSide and "cihPool" or nil))
+local outputHashPool = propertyPool:getProperty(serverSide and "soPool" or (clientSide and "coPool" or nil))
 
 local workingEntity = nil
 local workingBody = nil
+local workingBodyHash = 0
 local workingJoint = nil
+local workingJointHash = 0
 local workingMask = nil
+local workingMaskHash = 0
 
 local properties = {}
 local listeners = {}
@@ -49,6 +61,11 @@ local function checkVectorType(value, argument, name)
 	assert(argument_type == "number", "invalid argument #2 to \"local utility checkVectorType\", expected number, got " .. argument_type)
 	assert(name_type == "string", "invalid argument #3 to \"local utility checkVectorType\", expected string, got " .. name_type)
 	assert(lime.util.vector.check(value), "invalid argument #" .. argument .. " to \"" .. name .. "\", expected vector2")
+end
+
+local function getOutput(name)
+	checkType(name, "string", 1, "local utility getOutput")
+	return outputHashPool:get(name)
 end
 
 -- utilities
@@ -96,27 +113,38 @@ local function setWorkingBody(hash)
 	checkWorkingElementSet(workingEntity, "entity", "lime.body.set")
 	checkType(hash, "number", 1, "lime.body.set")
 	workingBody = entity:getBody(hash)
+	workingBodyHash = hash
 end
 
 local function getBodyTranslation()
-	checkWorkingElementSet(workingBody, "body", "lime.body.translation.get")
+	checkWorkingElementSet(workingBody, "body", "lime.body.transform.position.get")
 	local v2_translation = workingBody:getPosition()
 	return buildVector(v2_translation:getX(), v2_translation:getY())
 end
 
 local function setBodyTranslation(position)
-	checkVectorType(position, 1, "lime.body.translation.set")
+	checkVectorType(position, 1, "lime.body.transform.position.set")
 	workingBody:setPosition(Vector2:newInstance(position.x, position.y))
 end
 
 local function getBodyRotation()
-	checkWorkingElementSet(workingBody, "body", "lime.body.rotation.get")
+	checkWorkingElementSet(workingBody, "body", "lime.body.transform.rotation.get")
 	return workingBody:getAngle()
 end
 
 local function setBodyRotation(rotation)
-	checkType(rotation, "number", 1, "lime.body.rotation.set")
+	checkType(rotation, "number", 1, "lime.body.transform.rotation.set")
 	workingBody:setAngle(rotation)
+end
+
+local function pushTransformModification()
+	checkWorkingElementSet(workingBody, "body", "lime.body.transform.push")
+	if serverSide then
+		local output = getOutput("Lime::EntityTransformModification")
+		output:handleAll(entity, workingBodyHash)
+	elseif clientSide then
+
+	end
 end
 
 local function applyLinearImpulseToBody(impulse, point)
@@ -140,6 +168,7 @@ local function setWorkingJoint(hash)
 	checkWorkingElementSet(workingEntity, "entity", "lime.joint.set")
 	checkType(hash, "number", 1, "lime.joint.set")
 	workingJoint = entity:getJoint(hash)
+	workingJointHash = hash
 end
 
 -- mask
@@ -148,6 +177,7 @@ local function setWorkingMask(hash)
 	checkWorkingElementSet(workingEntity, "entity", "lime.mask.set")
 	checkType(hash, "number", 1, "lime.mask.set")
 	workingMask = entity:getMask(hash)
+	workingMaskHash = hash
 end
 
 local function getMaskTranslation()
@@ -213,9 +243,11 @@ end
 -- lime table
 
 lime = {
-	netside = {
-		server = 0,
-		client = 1,
+	network = {
+		side = {
+			server = serverSide,
+			client = clientSide,
+		},
 	},
 	this = {
 		ID = entityID,
@@ -230,13 +262,16 @@ lime = {
 	},
 	body = {
 		set = setWorkingBody,
-		translation = {
-			get = getBodyTranslation,
-			set = setBodyTranslation,
-		},
-		rotation = {
-			get = getBodyRotation,
-			set = setBodyRotation,
+		transform = {
+			position = {
+				get = getBodyTranslation,
+				set = setBodyTranslation,
+			},
+			rotation = {
+				get = getBodyRotation,
+				set = setBodyRotation,
+			},
+			push = pushTransformModification
 		},
 		impulse = {
 			linear = applyLinearImpulseToBody,

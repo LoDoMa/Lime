@@ -1,4 +1,4 @@
-package net.lodoma.lime.client.io.world;
+package net.lodoma.lime.client.io.entity;
 
 import java.io.IOException;
 

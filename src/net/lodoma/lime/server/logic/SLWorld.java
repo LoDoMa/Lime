@@ -4,8 +4,9 @@ import net.lodoma.lime.physics.entity.EntityLoader;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.server.ServerInputHandler;
 import net.lodoma.lime.server.ServerOutput;
-import net.lodoma.lime.server.io.world.SOEntityCorrection;
-import net.lodoma.lime.server.io.world.SOEntityCreation;
+import net.lodoma.lime.server.io.entity.SOEntityCorrection;
+import net.lodoma.lime.server.io.entity.SOEntityCreation;
+import net.lodoma.lime.server.io.entity.SOEntityTransformModification;
 import net.lodoma.lime.server.io.world.SOPlatformCreation;
 import net.lodoma.lime.util.HashPool;
 import net.lodoma.lime.util.Timer;
@@ -49,8 +50,10 @@ public class SLWorld implements ServerLogic
     public void generalInit()
     {
         soPool.add("Lime::PlatformCreation", new SOPlatformCreation(server, "Lime::PlatformCreation"));
+        
         soPool.add("Lime::EntityCreation", new SOEntityCreation(server, "Lime::EntityCreation"));
         soPool.add("Lime::EntityCorrection", new SOEntityCorrection(server, "Lime::EntityCorrection"));
+        soPool.add("Lime::EntityTransformModification", new SOEntityTransformModification(server, "Lime::EntityTransformModification"));
         
         world.generalInit();
         

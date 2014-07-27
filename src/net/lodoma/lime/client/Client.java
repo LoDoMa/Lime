@@ -14,12 +14,13 @@ import net.lodoma.lime.client.logic.CLBase;
 import net.lodoma.lime.client.logic.CLChat;
 import net.lodoma.lime.client.logic.CLWorld;
 import net.lodoma.lime.client.logic.ClientLogicPool;
+import net.lodoma.lime.common.PropertyPool;
 import net.lodoma.lime.event.EventManager;
 import net.lodoma.lime.security.Credentials;
 import net.lodoma.lime.util.HashPool;
 import net.lodoma.lime.util.HashPool32;
 
-public class Client
+public class Client implements PropertyPool
 {
     private boolean isRunning = false;
     private String closeMessage;
@@ -134,21 +135,25 @@ public class Client
         return isRunning;
     }
     
+    @Override
     public Object getProperty(String name)
     {
         return properties.get(name);
     }
-    
+
+    @Override
     public void setProperty(String name, Object value)
     {
         properties.put(name, value);
     }
-    
+
+    @Override
     public boolean hasProperty(String name)
     {
         return properties.containsKey(name);
     }
-    
+
+    @Override
     public void removeProperty(String name)
     {
         properties.remove(name);

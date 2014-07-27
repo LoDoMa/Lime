@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.lodoma.lime.common.PropertyPool;
 import net.lodoma.lime.event.EventManager;
 import net.lodoma.lime.mask.Mask;
 import net.lodoma.lime.physics.PhysicsBody;
@@ -35,6 +36,7 @@ public class Entity
     String version;
     
     EntityWorld world;
+    PropertyPool propertyPool;
 
     Map<Integer, PhysicsBody> bodies;
     Map<Integer, PhysicsJoint> joints;
@@ -109,6 +111,11 @@ public class Entity
         return world;
     }
     
+    public PropertyPool getPropertyPool()
+    {
+        return propertyPool;
+    }
+    
     public PhysicsBody getBody(int name)
     {
         return bodies.get(name);
@@ -169,7 +176,7 @@ public class Entity
     
     public void update(double timeDelta)
     {
-        script.call("Lime_FrameUpdate", timeDelta, actor, world.isServer() ? 0 : 1);
+        script.call("Lime_FrameUpdate", timeDelta, actor);
     }
     
     public void render()

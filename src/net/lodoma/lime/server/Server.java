@@ -3,6 +3,7 @@ package net.lodoma.lime.server;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.lodoma.lime.common.PropertyPool;
 import net.lodoma.lime.event.EventManager;
 import net.lodoma.lime.server.dependency.DependencyPool;
 import net.lodoma.lime.server.logic.SLBase;
@@ -13,7 +14,7 @@ import net.lodoma.lime.server.logic.UserManager;
 import net.lodoma.lime.util.HashPool;
 import net.lodoma.lime.util.HashPool32;
 
-public class Server
+public class Server implements PropertyPool
 {
     private boolean isRunning = false;
     
@@ -64,22 +65,26 @@ public class Server
         
         isRunning = false;
     }
-    
+
+    @Override
     public final Object getProperty(String name)
     {
         return properties.get(name);
     }
-    
+
+    @Override
     public final void setProperty(String name, Object value)
     {
         properties.put(name, value);
     }
-    
+
+    @Override
     public final void removeProperty(String name)
     {
         properties.remove(name);
     }
-    
+
+    @Override
     public final boolean hasProperty(String name)
     {
         return properties.containsKey(name);

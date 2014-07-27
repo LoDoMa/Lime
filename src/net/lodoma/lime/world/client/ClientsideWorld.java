@@ -12,6 +12,7 @@ import net.lodoma.lime.chat.ChatManager;
 import net.lodoma.lime.chat.ChatReceiver;
 import net.lodoma.lime.chat.ChatSender;
 import net.lodoma.lime.client.Client;
+import net.lodoma.lime.common.NetworkSide;
 import net.lodoma.lime.gui.ActiveTextField;
 import net.lodoma.lime.gui.Color;
 import net.lodoma.lime.gui.GUIContainer;
@@ -64,9 +65,14 @@ public class ClientsideWorld implements EntityWorld, ChatSender, ChatReceiver
     }
     
     @Override
-    public boolean isServer()
+    public NetworkSide getNetworkSide()
     {
-        return false;
+        return NetworkSide.CLIENT;
+    }
+    
+    public Client getClient()
+    {
+        return client;
     }
     
     public void clean()
