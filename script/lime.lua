@@ -149,6 +149,24 @@ local function pushBodyTransformModification()
 	end
 end
 
+local function applyForceToBody(force, point)
+	checkWorkingElementSet(workingBody, "body", "lime.body.force")
+	checkVectorType(force, 1, "lime.body.force")
+	checkVectorType(point, 2, "lime.body.force")
+	javaForce = Vector2:newInstance(force.x, force.y)
+	javaPoint = Vector2:newInstance(point.x, point.y)
+	workingBody:applyForce(javaForce, javaPoint)
+
+	if serverSide then
+		local output = getOutput("Lime::EntityForce")
+		output:handleAll(entity, workingBodyHash, javaForce, javaPoint)
+	elseif clientSide then
+
+	else
+		assert(false, "internal problem: unknown network side")
+	end
+end
+
 local function applyLinearImpulseToBody(impulse, point)
 	checkWorkingElementSet(workingBody, "body", "lime.body.impulse.linear")
 	checkVectorType(impulse, 1, "lime.body.impulse.linear")
@@ -171,6 +189,15 @@ local function applyAngularImpulseToBody(impulse)
 	checkWorkingElementSet(workingBody, "body", "lime.body.impulse.angular")
 	checkType(impulse, "number", 1, "lime.body.impulse.angular")
 	workingBody:applyAngularImpulse(impulse)
+
+	if serverSide then
+		local output = getOutput("Lime::EntityAngularImpulse")
+		output:handleAll(entity, workingBodyHash, impulse)
+	elseif clientSide then
+
+	else
+		assert(false, "internal problem: unknown network side")
+	end
 end
 
 -- joint
@@ -284,6 +311,7 @@ lime = {
 			},
 			push = pushBodyTransformModification
 		},
+		force = applyForceToBody,
 		impulse = {
 			linear = applyLinearImpulseToBody,
 			angular = applyAngularImpulseToBody,

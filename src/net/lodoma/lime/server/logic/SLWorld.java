@@ -4,8 +4,10 @@ import net.lodoma.lime.physics.entity.EntityLoader;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.server.ServerInputHandler;
 import net.lodoma.lime.server.ServerOutput;
+import net.lodoma.lime.server.io.entity.SOEntityAngularImpulse;
 import net.lodoma.lime.server.io.entity.SOEntityCorrection;
 import net.lodoma.lime.server.io.entity.SOEntityCreation;
+import net.lodoma.lime.server.io.entity.SOEntityForce;
 import net.lodoma.lime.server.io.entity.SOEntityLinearImpulse;
 import net.lodoma.lime.server.io.entity.SOEntityTransformModification;
 import net.lodoma.lime.server.io.world.SOPlatformCreation;
@@ -56,6 +58,8 @@ public class SLWorld implements ServerLogic
         soPool.add("Lime::EntityCorrection", new SOEntityCorrection(server, "Lime::EntityCorrection"));
         soPool.add("Lime::EntityTransformModification", new SOEntityTransformModification(server, "Lime::EntityTransformModification"));
         soPool.add("Lime::EntityLinearImpulse", new SOEntityLinearImpulse(server, "Lime::EntityLinearImpulse"));
+        soPool.add("Lime::EntityAngularImpulse", new SOEntityAngularImpulse(server, "Lime::EntityAngularImpulse"));
+        soPool.add("Lime::EntityForce", new SOEntityForce(server, "Lime::EntityForce"));
         
         world.generalInit();
         

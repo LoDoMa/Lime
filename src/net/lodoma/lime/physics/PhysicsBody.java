@@ -94,9 +94,14 @@ public class PhysicsBody
         fd.restitution = restitution;
     }
     
+    public void applyForce(Vector2 force, Vector2 point)
+    {
+        body.applyForce(Vector2.toVec2(force), Vector2.toVec2(point));
+    }
+    
     public void applyLinearImpulse(Vector2 impulse, Vector2 point)
     {
-        body.applyLinearImpulse(new Vec2(impulse.x, impulse.y), new Vec2(point.x, point.y));
+        body.applyLinearImpulse(Vector2.toVec2(impulse), Vector2.toVec2(point));
     }
     
     public void applyAngularImpulse(float impulse)
