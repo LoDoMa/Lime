@@ -137,13 +137,15 @@ local function setBodyRotation(rotation)
 	workingBody:setAngle(rotation)
 end
 
-local function pushTransformModification()
+local function pushBodyTransformModification()
 	checkWorkingElementSet(workingBody, "body", "lime.body.transform.push")
 	if serverSide then
 		local output = getOutput("Lime::EntityTransformModification")
 		output:handleAll(entity, workingBodyHash)
 	elseif clientSide then
 
+	else
+		assert(false, "internal problem: unknown network side")
 	end
 end
 
@@ -154,6 +156,15 @@ local function applyLinearImpulseToBody(impulse, point)
 	javaImpulse = Vector2:newInstance(impulse.x, impulse.y)
 	javaPoint = Vector2:newInstance(point.x, point.y)
 	workingBody:applyLinearImpulse(javaImpulse, javaPoint)
+
+	if serverSide then
+		local output = getOutput("Lime::EntityLinearImpulse")
+		output:handleAll(entity, workingBodyHash, javaImpulse, javaPoint)
+	elseif clientSide then
+
+	else
+		assert(false, "internal problem: unknown network side")
+	end
 end
 
 local function applyAngularImpulseToBody(impulse)
@@ -271,7 +282,7 @@ lime = {
 				get = getBodyRotation,
 				set = setBodyRotation,
 			},
-			push = pushTransformModification
+			push = pushBodyTransformModification
 		},
 		impulse = {
 			linear = applyLinearImpulseToBody,
