@@ -82,7 +82,6 @@ public class UserManager implements ServerLogic
             
             if(timeDiff > 5000000000L)
             {
-                System.out.println("UserManager.java:58 - user removed - no response");
                 user.stop();
                 toRemove.add(user);
             }

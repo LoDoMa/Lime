@@ -36,7 +36,7 @@ public class ServerLogicPool implements Runnable
         if(running) return;
         running = true;
         
-        thread = new Thread(this);
+        thread = new Thread(this, "ServerLogicThread");
         thread.start();
     }
     

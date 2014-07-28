@@ -108,6 +108,20 @@ public class Client implements PropertyPool
         }
     }
     
+    public void closeInThread()
+    {
+        if(!isRunning) return;
+        
+        new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                close();
+            }
+        }, "ClientCloseThread").start();
+    }
+    
     public String getCloseMessage()
     {
         return closeMessage;

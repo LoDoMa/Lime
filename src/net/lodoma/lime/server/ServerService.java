@@ -58,7 +58,7 @@ public class ServerService implements Runnable
         if(running) return;
         running = true;
         openService();
-        thread = new Thread(this);
+        thread = new Thread(this, "ServerServiceThread");
         thread.start();
     }
     

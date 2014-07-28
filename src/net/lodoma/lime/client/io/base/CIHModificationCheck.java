@@ -28,14 +28,8 @@ public class CIHModificationCheck extends ClientInputHandler
         
         if((clientScript != serverScript) || (clientModel != serverModel))
         {
-            new Thread(new Runnable() {
-                @Override
-                public void run()
-                {
-                    System.out.println("client closing - illegal file content");
-                    client.close();
-                }
-            }).start();
+            client.setCloseMessage("Illegal file content");
+            client.closeInThread();
             return;
         }
         

@@ -322,13 +322,15 @@ lime = {
 	},
 	mask = {
 		set = setWorkingMask,
-		translation = {
-			get = getMaskTranslation,
-			set = setMaskTranslation,
-		},
-		rotation = {
-			get = getMaskRotation,
-			set = setMaskRotation,
+		transform = {
+			position = {
+				get = getMaskTranslation,
+				set = setMaskTranslation,
+			},
+			rotation = {
+				get = getMaskRotation,
+				set = setMaskRotation,
+			},
 		},
 	},
 	property = {

@@ -41,7 +41,7 @@ public class ClientLogicPool implements Runnable
         if(running) return;
         running = true;
         
-        thread = new Thread(this);
+        thread = new Thread(this, "ClientLogicThread");
         thread.start();
     }
     

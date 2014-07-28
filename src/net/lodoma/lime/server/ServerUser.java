@@ -59,7 +59,7 @@ public final class ServerUser implements Runnable
     {
         if(running) return;
         running = true;
-        thread = new Thread(this);
+        thread = new Thread(this, "ServerUserThread");
         thread.start();
     }
     

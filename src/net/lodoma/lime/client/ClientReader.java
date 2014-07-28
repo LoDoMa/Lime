@@ -9,6 +9,8 @@ import net.lodoma.lime.util.HashPool;
 
 public class ClientReader implements Runnable
 {
+    private Client client;
+    
     private Thread thread;
     private boolean running;
     
@@ -22,6 +24,8 @@ public class ClientReader implements Runnable
     @SuppressWarnings("unchecked")
     public ClientReader(Client client)
     {
+        this.client = client;
+        
         privateInputStream = client.privateInputStream;
         privateOutputStream = client.privateOutputStream;
         
@@ -34,7 +38,7 @@ public class ClientReader implements Runnable
     {
         if(running) return;
         running = true;
-        thread = new Thread(this);
+        thread = new Thread(this, "ClientReaderThread");
         thread.start();
     }
     
@@ -75,7 +79,9 @@ public class ClientReader implements Runnable
             }
             catch(IOException e)
             {
-                stop();
+                if(!running) break;
+                client.setCloseMessage("Server closed (reader exception)");
+                client.closeInThread();
                 break;
             }
         }

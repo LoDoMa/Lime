@@ -24,14 +24,8 @@ public abstract class ClientInputHandler
         }
         catch(IOException e)
         {
-            new Thread(new Runnable() {
-                @Override
-                public void run()
-                {
-                    client.setCloseMessage("Server closed");
-                    client.close();
-                }
-            }).start();
+            client.setCloseMessage("Server closed (input handler exception)");
+            client.closeInThread();
         }
     }
 }
