@@ -25,8 +25,7 @@ public class Server implements PropertyPool
     
     public final void open(int port)
     {
-        if (isRunning)
-            throw new IllegalStateException("server is already open");
+        if (isRunning) return;
         
         logicPool = new ServerLogicPool(this, 60.0f);
         properties = new HashMap<String, Object>();
@@ -57,8 +56,7 @@ public class Server implements PropertyPool
     
     public final void close()
     {
-        if (!isRunning)
-            new IllegalStateException("server is already closed");
+        if (!isRunning) return;
         
         logicPool.stop();
         service.stop();
