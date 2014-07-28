@@ -67,15 +67,18 @@ public class VisualInstance
             }
             
             Window.update();
-            frames++;
-            
-            fpsTimer.update();
-            fpsSeconds += timer.getDelta();
-            if(fpsSeconds >= 1.0)
+
+            if(Window.isDebugEnabled())
             {
-                fpsSeconds -= 1.0;
-                fps = frames;
-                frames = 0;
+                frames++;
+                fpsTimer.update();
+                fpsSeconds += timer.getDelta();
+                if(fpsSeconds >= 1.0)
+                {
+                    fpsSeconds -= 1.0;
+                    fps = frames;
+                    frames = 0;
+                }
             }
         }
     }
