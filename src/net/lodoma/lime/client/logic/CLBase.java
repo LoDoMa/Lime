@@ -86,7 +86,8 @@ public class CLBase implements ClientLogic
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+            client.setCloseMessage("Client logic error");
+            client.closeInThread();
         }
     }
     

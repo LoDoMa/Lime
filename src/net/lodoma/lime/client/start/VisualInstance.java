@@ -5,6 +5,7 @@ import java.io.File;
 import net.lodoma.lime.client.stage.StageManager;
 import net.lodoma.lime.client.stage.login.Login;
 import net.lodoma.lime.client.window.Window;
+import net.lodoma.lime.client.window.WindowException;
 import net.lodoma.lime.util.FontHelper;
 import net.lodoma.lime.util.Timer;
 
@@ -20,7 +21,14 @@ public class VisualInstance
         Window.setTitle("Lime");
         Window.setFPS(60);
         
-        Window.open();
+        try
+        {
+            Window.open();
+        }
+        catch(WindowException e)
+        {
+            e.printStackTrace();
+        }
         
         FontHelper.registerFont(new File("fonts/mytype.ttf"));
         

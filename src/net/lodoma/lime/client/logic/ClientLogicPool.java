@@ -82,7 +82,8 @@ public class ClientLogicPool implements Runnable
                 }
                 catch(InterruptedException e)
                 {
-                    e.printStackTrace();
+                    client.setCloseMessage("Logic pool failed to sleep");
+                    client.closeInThread();
                 }
         }
         

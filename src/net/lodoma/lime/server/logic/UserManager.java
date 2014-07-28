@@ -74,7 +74,9 @@ public class UserManager implements ServerLogic
             }
             catch (IOException e)
             {
-                e.printStackTrace();
+                user.stop();
+                toRemove.add(user);
+                continue;
             }
             
             long userLastTime = user.getLastResponseTime();

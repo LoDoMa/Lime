@@ -34,7 +34,7 @@ public class WindowResolutionOptions
         Display.setLocation(width / 4, height / 4);
     }
     
-    public static DisplayMode getDisplayMode(boolean fullscreen)
+    public static DisplayMode getDisplayMode(boolean fullscreen) throws WindowException
     {
         if(!initialized)
             initialize();
@@ -65,14 +65,15 @@ public class WindowResolutionOptions
                             break;
                         }
                     }
+                
+                if(target == null) throw new WindowException("Failed to find correct window display mode");
                 return target;
             }
             catch(LWJGLException e)
             {
-                e.printStackTrace();
+                throw new WindowException("Failed to get available window display modes");
             }
         else
             return new DisplayMode(width / 2, height / 2);
-        return null;
     }
 }

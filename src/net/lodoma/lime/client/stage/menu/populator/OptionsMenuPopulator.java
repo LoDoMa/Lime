@@ -5,6 +5,7 @@ import java.awt.Font;
 import net.lodoma.lime.client.stage.menu.Menu;
 import net.lodoma.lime.client.stage.menu.MenuButton;
 import net.lodoma.lime.client.window.Window;
+import net.lodoma.lime.client.window.WindowException;
 import net.lodoma.lime.gui.Color;
 import net.lodoma.lime.gui.GUIContainer;
 import net.lodoma.lime.gui.Rectangle;
@@ -45,7 +46,14 @@ public class OptionsMenuPopulator implements MenuPopulator
                 if(Window.isFullscreen()) fullscreenToggle.setText("Fullscreen");
                 else fullscreenToggle.setText("Windowed");
                 
-                Window.apply();
+                try
+                {
+                    Window.apply();
+                }
+                catch(WindowException e)
+                {
+                    e.printStackTrace();
+                }
             }
         });
         container.addElement(fullscreenToggleButton);

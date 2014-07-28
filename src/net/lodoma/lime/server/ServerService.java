@@ -37,7 +37,8 @@ public class ServerService implements Runnable
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+            server.setCloseMessage("Service failed to open");
+            server.closeInThread();
         }
     }
     
@@ -89,7 +90,11 @@ public class ServerService implements Runnable
             catch(IOException e)
             {
                 if(running)
-                    e.printStackTrace();
+                {
+                    // TODO: log exception
+                    server.setCloseMessage("Service exception");
+                    server.closeInThread();
+                }
             }
         }
     }

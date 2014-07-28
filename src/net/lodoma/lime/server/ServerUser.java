@@ -46,13 +46,13 @@ public final class ServerUser implements Runnable
             
             privateOutputStream = new PipedOutputStream();
             inputStream = new DataInputStream(new PipedInputStream(privateOutputStream));
+            
+            lastResponseTime = SystemHelper.getTimeNanos();
         }
         catch(IOException e)
         {
             e.printStackTrace();
         }
-        
-        lastResponseTime = SystemHelper.getTimeNanos();
     }
     
     public void start()

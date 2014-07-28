@@ -46,11 +46,11 @@ public final class Server implements PropertyPool
         
         logicPool.init();
         
+        isRunning = true;
+        
         service = new ServerService(this);
         service.setPort(port);
         service.start();
-        
-        isRunning = true;
         
         logicPool.start();
     }

@@ -11,7 +11,6 @@ import org.lwjgl.opengl.PixelFormat;
 
 public class Window
 {
-    
     private static int ww;
     private static int wh;
     private static int lww;
@@ -141,7 +140,7 @@ public class Window
         return Display.isCloseRequested() || closeRequested;
     }
     
-    public static void open()
+    public static void open() throws WindowException
     {
         apply();
         try
@@ -158,7 +157,7 @@ public class Window
         }
         catch (LWJGLException e)
         {
-            e.printStackTrace();
+            throw new WindowException("Failed to open window");
         }
         
         setupGL();
@@ -205,7 +204,7 @@ public class Window
         return supportFBO;
     }
     
-    public static void apply()
+    public static void apply() throws WindowException
     {
         try
         {
@@ -215,7 +214,7 @@ public class Window
         }
         catch(LWJGLException e)
         {
-            e.printStackTrace();
+            throw new WindowException("Failed to set window display mode");
         }
         Display.setTitle(title);
     }

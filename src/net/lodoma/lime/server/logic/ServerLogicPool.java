@@ -77,7 +77,8 @@ public class ServerLogicPool implements Runnable
                 }
                 catch(InterruptedException e)
                 {
-                    e.printStackTrace();
+                    server.setCloseMessage("Logic pool failed to sleep");
+                    server.closeInThread();
                 }
         }
         
