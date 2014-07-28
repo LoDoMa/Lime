@@ -69,6 +69,11 @@ public class ServerService implements Runnable
         closeService();
     }
     
+    public boolean isRunning()
+    {
+        return thread.isAlive();
+    }
+    
     @Override
     public void run()
     {

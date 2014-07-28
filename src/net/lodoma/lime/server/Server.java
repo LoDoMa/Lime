@@ -14,7 +14,7 @@ import net.lodoma.lime.server.logic.UserManager;
 import net.lodoma.lime.util.HashPool;
 import net.lodoma.lime.util.HashPool32;
 
-public class Server implements PropertyPool
+public final class Server implements PropertyPool
 {
     private boolean isRunning = false;
     
@@ -23,7 +23,7 @@ public class Server implements PropertyPool
     private ServerLogicPool logicPool;
     private Map<String, Object> properties;
     
-    public final void open(int port)
+    public void open(int port)
     {
         if (isRunning) return;
         
@@ -54,7 +54,7 @@ public class Server implements PropertyPool
         logicPool.start();
     }
     
-    public final void close()
+    public void close()
     {
         if (!isRunning) return;
         
@@ -62,28 +62,52 @@ public class Server implements PropertyPool
         service.stop();
         
         isRunning = false;
+        
+        try
+        {
+            while(logicPool.isRunning()) Thread.sleep(1);
+            while(service.isRunning()) Thread.sleep(1);
+        }
+        catch(InterruptedException e)
+        {
+            e.printStackTrace();
+        }
+    }
+     
+    public void closeInThread()
+    {
+        if(!isRunning) return;
+        
+        new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                close();
+            }
+        }, "ServerCloseThread").start();
     }
 
     @Override
-    public final Object getProperty(String name)
+    public Object getProperty(String name)
     {
         return properties.get(name);
     }
 
     @Override
-    public final void setProperty(String name, Object value)
+    public void setProperty(String name, Object value)
     {
         properties.put(name, value);
     }
 
     @Override
-    public final void removeProperty(String name)
+    public void removeProperty(String name)
     {
         properties.remove(name);
     }
 
     @Override
-    public final boolean hasProperty(String name)
+    public boolean hasProperty(String name)
     {
         return properties.containsKey(name);
     }

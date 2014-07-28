@@ -20,7 +20,7 @@ import net.lodoma.lime.security.Credentials;
 import net.lodoma.lime.util.HashPool;
 import net.lodoma.lime.util.HashPool32;
 
-public class Client implements PropertyPool
+public final class Client implements PropertyPool
 {
     private boolean isRunning = false;
     private String closeMessage;
@@ -38,7 +38,7 @@ public class Client implements PropertyPool
     private ClientLogicPool logicPool;
     private Map<String, Object> properties;
     
-    public final void open(int port, String host, Credentials credentials) throws ClientConnectionException
+    public void open(int port, String host, Credentials credentials) throws ClientConnectionException
     {
         if(isRunning) return;
         
@@ -79,7 +79,7 @@ public class Client implements PropertyPool
         logicPool.start();
     }
     
-    public final void close()
+    public void close()
     {
         if(!isRunning) return;
 

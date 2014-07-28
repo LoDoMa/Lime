@@ -46,6 +46,11 @@ public class ServerLogicPool implements Runnable
         running = false;
     }
     
+    public boolean isRunning()
+    {
+        return thread.isAlive();
+    }
+    
     public void addLogic(ServerLogic logic)
     {
         logicSet.add(logic);
