@@ -17,6 +17,7 @@ import net.lodoma.lime.util.HashPool32;
 public final class Server implements PropertyPool
 {
     private boolean isRunning = false;
+    private String closeMessage;
     
     private ServerService service;
     
@@ -58,6 +59,9 @@ public final class Server implements PropertyPool
     {
         if (!isRunning) return;
         
+        if(closeMessage != null)
+            System.err.println("close message: " + closeMessage);
+        
         logicPool.stop();
         service.stop();
         
@@ -86,6 +90,16 @@ public final class Server implements PropertyPool
                 close();
             }
         }, "ServerCloseThread").start();
+    }
+    
+    public String getCloseMessage()
+    {
+        return closeMessage;
+    }
+    
+    public void setCloseMessage(String closeMessage)
+    {
+        this.closeMessage = closeMessage;
     }
 
     @Override

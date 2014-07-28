@@ -33,8 +33,8 @@ public class CIHEntityCreation extends ClientInputHandler
         }
         catch (EntityLoaderException e)
         {
-            // TODO: log exception
-            client.setCloseMessage("Failed to create entity");
+            if(e.getCause() == null) client.setCloseMessage("Failed to load entity: " + e.getMessage());
+            else client.setCloseMessage("Failed to load entity: " + e.getCause().getClass().getCanonicalName());
             client.closeInThread();
         }
     }

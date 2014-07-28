@@ -32,7 +32,8 @@ public class WorldFileLoader implements WorldBuilder
         }
         catch (EntityLoaderException e)
         {
-            // TODO: log exception
+            if(e.getCause() == null) server.setCloseMessage("Failed to load entity: " + e.getMessage());
+            else server.setCloseMessage("Failed to load entity: " + e.getCause().getClass().getCanonicalName());
             server.closeInThread();
         }
     }
