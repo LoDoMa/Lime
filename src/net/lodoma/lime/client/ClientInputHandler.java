@@ -24,7 +24,14 @@ public abstract class ClientInputHandler
         }
         catch(IOException e)
         {
-            e.printStackTrace();
+            new Thread(new Runnable() {
+                @Override
+                public void run()
+                {
+                    client.setCloseMessage("Server closed");
+                    client.close();
+                }
+            }).start();
         }
     }
 }

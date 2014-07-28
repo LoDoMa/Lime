@@ -1,7 +1,6 @@
 package net.lodoma.lime.server;
 
 import java.io.IOException;
-import java.net.SocketException;
 import java.util.List;
 
 import net.lodoma.lime.server.logic.UserManager;
@@ -40,10 +39,7 @@ public abstract class ServerOutput
         }
         catch (IOException e)
         {
-            if(e instanceof SocketException)
-                user.closed();
-            else
-                e.printStackTrace();
+            user.closed();
         }
     }
     

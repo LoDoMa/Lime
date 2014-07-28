@@ -40,8 +40,7 @@ public class Client implements PropertyPool
     
     public final void open(int port, String host, Credentials credentials) throws ClientConnectionException
     {
-        if(isRunning)
-            throw new IllegalStateException("client is already open");
+        if(isRunning) return;
         
         try
         {
@@ -82,8 +81,7 @@ public class Client implements PropertyPool
     
     public final void close()
     {
-        if(!isRunning)
-            throw new IllegalStateException("client is already closed");
+        if(!isRunning) return;
 
         logicPool.stop();
         reader.stop();

@@ -22,12 +22,15 @@ end
 local function onNewUser()
 	lime.body.set(hashes["head"])
 	lime.body.transform.position.set(newVector(1.0, 7.0))
+	lime.body.transform.rotation.set(0)
 	lime.body.transform.push()
 
 	lime.body.set(hashes["body"])
 	lime.body.transform.position.set(newVector(1.0, 7.0))
-	lime.body.impulse.linear(newVector(0.5, 0.0), newVector(0.0, 0.0))
+	lime.body.transform.rotation.set(0)
 	lime.body.transform.push()
+	
+	lime.body.impulse.linear(newVector(0.5, 0.0), newVector(0.0, 0.0))
 end
 
 local function serverUpdate()
