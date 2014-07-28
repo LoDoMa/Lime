@@ -157,7 +157,10 @@ public class EntityLoader
                 entity.properties.put(HashHelper.hash32(propertyData.first), propertyData.second);
             }
             
-            entity.script = new LuaScript(new File(XMLHelper.getDeepValue(docElement, "script")), entity);
+            entity.script = new LuaScript();
+            entity.script.setGlobal("ENTITY", entity);
+            entity.script.require("script/lime");
+            entity.script.load(new File(XMLHelper.getDeepValue(docElement, "script")));
             
             return entity;
         }
