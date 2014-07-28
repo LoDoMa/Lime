@@ -15,6 +15,8 @@ public class Window
     private static int wh;
     private static int lww;
     private static int lwh;
+    
+    private static boolean debugEnabled;
     private static int fps;
 
     private static boolean fullscreen = false;
@@ -51,6 +53,16 @@ public class Window
         wh = height;
         lww = ww;
         lwh = wh;
+    }
+    
+    public static boolean isDebugEnabled()
+    {
+        return debugEnabled;
+    }
+    
+    public static void setDebugEnabled(boolean debug)
+    {
+        Window.debugEnabled = debug;
     }
     
     public static int getFPS()

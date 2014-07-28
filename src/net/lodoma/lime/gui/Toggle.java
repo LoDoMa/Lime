@@ -11,14 +11,15 @@ public class Toggle implements GUIElement
     private Button buttonFalse;
     private ToggleListener listener;
     
-    public Toggle(Text text, String textTrue, String textFalse, Button buttonTrue, Button buttonFalse, ToggleListener listener)
+    public Toggle(Text text, String textTrue, String textFalse, boolean initialState, Button buttonTrue, Button buttonFalse, ToggleListener listener)
     {
-        this.text = text;
+        this.text = text; 
         this.textTrue = textTrue;
         this.textFalse = textFalse;
         this.buttonTrue = buttonTrue;
         this.buttonFalse = buttonFalse;
         this.listener = listener;
+        this.text.setText(initialState ? textTrue : textFalse);
         
         setListeners();
     }

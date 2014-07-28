@@ -58,8 +58,8 @@ public class OptionsMenuPopulator implements MenuPopulator
         });
         container.addElement(fullscreenToggleButton);
         
-        container.addElement(new Toggle(new Text(0.05f, 0.445f, 0.05f * 0.6f, 0.05f * 0.7f, "vsync off", new Color(1.0f, 1.0f, 1.0f), "My type of font", Font.PLAIN, TrueTypeFont.ALIGN_LEFT),
-                "vsync on", "vsync off",
+        container.addElement(new Toggle(new Text(0.05f, 0.445f, 0.05f * 0.6f, 0.05f * 0.7f, null, new Color(1.0f, 1.0f, 1.0f), "My type of font", Font.PLAIN, TrueTypeFont.ALIGN_LEFT),
+                "vsync on", "vsync off", Window.isVSyncEnabled(),
                 new MenuButton(new Rectangle(0.25f, 0.44f, 0.1f, 0.05f), "on", null),
                 new MenuButton(new Rectangle(0.35f, 0.44f, 0.1f, 0.05f), "off", null),
                 new ToggleListener()
@@ -69,6 +69,18 @@ public class OptionsMenuPopulator implements MenuPopulator
                     {
                         Window.setVSyncEnabled(newState);
                     }
+                }));
+        
+        container.addElement(new Toggle(new Text(0.05f, 0.385f, 0.05f * 0.6f, 0.05f * 0.7f, null, new Color(1.0f, 1.0f, 1.0f), "My type of font", Font.PLAIN, TrueTypeFont.ALIGN_LEFT),
+                "debug on", "debug off", Window.isDebugEnabled(),
+                new MenuButton(new Rectangle(0.25f, 0.38f, 0.1f, 0.05f), "on", null),
+                new MenuButton(new Rectangle(0.35f, 0.38f, 0.1f, 0.05f), "off", null),
+                new ToggleListener()
+                {
+                    public void onToggle(boolean newState)
+                    {
+                        Window.setDebugEnabled(newState);
+                    };
                 }));
         
         container.addElement(new MenuButton(new Rectangle(0.05f, 0.26f, 0.4f, 0.05f), "Back", new Runnable()
