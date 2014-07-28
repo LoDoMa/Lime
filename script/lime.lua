@@ -3,8 +3,8 @@ local Vector2 = java.require("net.lodoma.lime.util.Vector2")
 local HashHelper = java.require("net.lodoma.lime.util.HashHelper")
 local NetworkSide = java.require("net.lodoma.lime.common.NetworkSide")
 
-local entity = JAVA_ENTITY
-local script = JAVA_SCRIPT
+local entity = LIME_ENTITY
+local script = LIME_SCRIPT
 
 local entityID = entity:getID()
 local entityInternalName = entity:getInternalName()

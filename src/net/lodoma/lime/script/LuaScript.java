@@ -21,13 +21,13 @@ public class LuaScript
     
     public void setGlobal(String name, Object value)
     {
-        luaState.pushJavaObject("LIME_" + value);
-        luaState.setGlobal(name);
+        luaState.pushJavaObject(value);
+        luaState.setGlobal("LIME_" + name);
     }
     
     public void require(String file)
     {
-        luaState.load("require + \"" + file + "\"", "requiremenet");
+        luaState.load("require \"" + file + "\"", "requirement");
         luaState.call(0, 0);
     }
     
@@ -53,11 +53,11 @@ public class LuaScript
                  if(argument instanceof Boolean)   luaState.pushBoolean((Boolean) argument);
             else if(argument instanceof Byte)      luaState.pushNumber((Byte) argument);
             else if(argument instanceof Character) luaState.pushNumber((Character) argument);
-            else if(argument instanceof Short)     luaState.pushNumber((Character) argument);
-            else if(argument instanceof Integer)   luaState.pushNumber((Character) argument);
-            else if(argument instanceof Float)     luaState.pushNumber((Character) argument);
-            else if(argument instanceof Long)      luaState.pushNumber((Character) argument);
-            else if(argument instanceof Double)    luaState.pushNumber((Character) argument);
+            else if(argument instanceof Short)     luaState.pushNumber((Short) argument);
+            else if(argument instanceof Integer)   luaState.pushNumber((Integer) argument);
+            else if(argument instanceof Float)     luaState.pushNumber((Float) argument);
+            else if(argument instanceof Long)      luaState.pushNumber((Long) argument);
+            else if(argument instanceof Double)    luaState.pushNumber((Double) argument);
             else if(argument instanceof String)    luaState.pushString((String) argument);
             else                                   luaState.pushJavaObject(argument);
         }
