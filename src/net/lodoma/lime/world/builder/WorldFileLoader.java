@@ -4,6 +4,7 @@ import java.io.File;
 
 import net.lodoma.lime.physics.entity.Entity;
 import net.lodoma.lime.physics.entity.EntityLoader;
+import net.lodoma.lime.physics.entity.EntityLoaderException;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.util.Vector2;
 import net.lodoma.lime.world.platform.Platform;
@@ -14,9 +15,9 @@ public class WorldFileLoader implements WorldBuilder
     @Override
     public void build(ServersideWorld world)
     {
+        Server server = world.getServer();
         try
         {
-            Server server = world.getServer();
             EntityLoader entityLoader = (EntityLoader) server.getProperty("entityLoader");
             
             Entity entity = entityLoader.loadFromXML(new File("model/zombie.xml"), world, server);
@@ -29,9 +30,10 @@ public class WorldFileLoader implements WorldBuilder
                     new Vector2(-10, -5));
             world.addPlatform(platform);
         }
-        catch (Exception e)
+        catch (EntityLoaderException e)
         {
-            e.printStackTrace();
+            // TODO: log exception
+            server.closeInThread();
         }
     }
 }

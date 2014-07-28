@@ -2,15 +2,12 @@ package net.lodoma.lime.client.io.entity;
 
 import java.io.IOException;
 
-import javax.xml.parsers.ParserConfigurationException;
-
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.client.ClientInputHandler;
 import net.lodoma.lime.physics.entity.Entity;
 import net.lodoma.lime.physics.entity.EntityLoader;
+import net.lodoma.lime.physics.entity.EntityLoaderException;
 import net.lodoma.lime.world.client.ClientsideWorld;
-
-import org.xml.sax.SAXException;
 
 public class CIHEntityCreation extends ClientInputHandler
 {
@@ -34,13 +31,11 @@ public class CIHEntityCreation extends ClientInputHandler
             entity.setID(id);
             world.addEntity(entity);
         }
-        catch (SAXException e)
+        catch (EntityLoaderException e)
         {
-            e.printStackTrace();
-        }
-        catch (ParserConfigurationException e)
-        {
-            e.printStackTrace();
+            // TODO: log exception
+            client.setCloseMessage("Failed to create entity");
+            client.closeInThread();
         }
     }
 }

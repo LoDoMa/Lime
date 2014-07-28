@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import javax.naming.InvalidNameException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -90,76 +89,82 @@ public class EntityLoader
     }
     
     @SuppressWarnings("unchecked")
-    public Entity loadFromXML(File xmlFile, EntityWorld world, PropertyPool propertyPool)
-            throws IOException, SAXException, ParserConfigurationException
+    public Entity loadFromXML(File xmlFile, EntityWorld world, PropertyPool propertyPool) throws EntityLoaderException
     {
-        HashPool32<EventManager> emanPool = (HashPool32<EventManager>) propertyPool.getProperty("emanPool");
-        
-        Entity entity = new Entity(emanPool);
-        
-        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-        Document doc = dBuilder.parse(xmlFile);
-        Element docElement = doc.getDocumentElement();
-        docElement.normalize();
-        
-        String rootName = docElement.getNodeName();
-        if(rootName != "model")
-            new InvalidNameException("root of an entity XML file must be named \"model\"");
-        
-        String name       = XMLHelper.getDeepValue(docElement, "model_name");
-        String visualName = XMLHelper.getDeepValue(docElement, "model_visual");
-        String version    = XMLHelper.getDeepValue(docElement, "model_version");
-        
-        entity.internalName = name;
-        entity.visualName = visualName;
-        entity.version = version;
-        
-        entity.hash = HashHelper.hash64(entity.internalName);
-        entity.world = world;
-        entity.propertyPool = propertyPool;
-        
-        NodeList bodies         = docElement.getElementsByTagName("body");
-        NodeList revoluteJoints = docElement.getElementsByTagName("revolute_joint");
-        NodeList masks          = docElement.getElementsByTagName("mask");
-        NodeList properties     = docElement.getElementsByTagName("property");
-
-        for(int i = 0; i < bodies.getLength(); i++)
+        try
         {
-            Node bodyNode = bodies.item(i);
-            if(bodyNode.getNodeType() != Node.ELEMENT_NODE)
-                throw new RuntimeException("invalid \"body\" node");
-            Pair<String, PhysicsBody> bodyData = parseBodyElement((Element) bodyNode);
-            entity.bodies.put(HashHelper.hash32(bodyData.first), bodyData.second);
+            HashPool32<EventManager> emanPool = (HashPool32<EventManager>) propertyPool.getProperty("emanPool");
+            
+            Entity entity = new Entity(emanPool);
+            
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(xmlFile);
+            Element docElement = doc.getDocumentElement();
+            docElement.normalize();
+            
+            String rootName = docElement.getNodeName();
+            if(rootName != "model")
+                throw new EntityLoaderException("root of an entity XML file must be named \"model\"");
+            
+            String name       = XMLHelper.getDeepValue(docElement, "model_name");
+            String visualName = XMLHelper.getDeepValue(docElement, "model_visual");
+            String version    = XMLHelper.getDeepValue(docElement, "model_version");
+            
+            entity.internalName = name;
+            entity.visualName = visualName;
+            entity.version = version;
+            
+            entity.hash = HashHelper.hash64(entity.internalName);
+            entity.world = world;
+            entity.propertyPool = propertyPool;
+            
+            NodeList bodies         = docElement.getElementsByTagName("body");
+            NodeList revoluteJoints = docElement.getElementsByTagName("revolute_joint");
+            NodeList masks          = docElement.getElementsByTagName("mask");
+            NodeList properties     = docElement.getElementsByTagName("property");
+    
+            for(int i = 0; i < bodies.getLength(); i++)
+            {
+                Node bodyNode = bodies.item(i);
+                if(bodyNode.getNodeType() != Node.ELEMENT_NODE)
+                    throw new EntityLoaderException("invalid \"body\" node");
+                Pair<String, PhysicsBody> bodyData = parseBodyElement((Element) bodyNode);
+                entity.bodies.put(HashHelper.hash32(bodyData.first), bodyData.second);
+            }
+            for(int i = 0; i < revoluteJoints.getLength(); i++)
+            {
+                Node jointNode = revoluteJoints.item(i);
+                if(jointNode.getNodeType() != Node.ELEMENT_NODE)
+                    throw new EntityLoaderException("invalid \"revolute_joint\" node");
+                Pair<String, PhysicsJoint> jointData = parseRevoluteJointElement((Element) jointNode, entity);
+                entity.joints.put(HashHelper.hash32(jointData.first), jointData.second);
+            }
+            for(int i = 0; i < masks.getLength(); i++)
+            {
+                Node maskNode = masks.item(i);
+                if(maskNode.getNodeType() != Node.ELEMENT_NODE)
+                    throw new EntityLoaderException("invalid \"mask\" node");
+                Pair<String, Mask> maskData = parseMaskElement((Element) maskNode, entity);
+                entity.masks.put(HashHelper.hash32(maskData.first), maskData.second);
+            }
+            for(int i = 0; i < properties.getLength(); i++)
+            {
+                Node propertyNode = properties.item(i);
+                if(propertyNode.getNodeType() != Node.ELEMENT_NODE)
+                    throw new EntityLoaderException("invalid \"property\" node");
+                Pair<String, String> propertyData = parsePropertyElement((Element) propertyNode);
+                entity.properties.put(HashHelper.hash32(propertyData.first), propertyData.second);
+            }
+            
+            entity.script = new LuaScript(new File(XMLHelper.getDeepValue(docElement, "script")), entity);
+            
+            return entity;
         }
-        for(int i = 0; i < revoluteJoints.getLength(); i++)
+        catch(IOException | SAXException | ParserConfigurationException e)
         {
-            Node jointNode = revoluteJoints.item(i);
-            if(jointNode.getNodeType() != Node.ELEMENT_NODE)
-                throw new RuntimeException("invalid \"revolute_joint\" node");
-            Pair<String, PhysicsJoint> jointData = parseRevoluteJointElement((Element) jointNode, entity);
-            entity.joints.put(HashHelper.hash32(jointData.first), jointData.second);
+            throw new EntityLoaderException(e);
         }
-        for(int i = 0; i < masks.getLength(); i++)
-        {
-            Node maskNode = masks.item(i);
-            if(maskNode.getNodeType() != Node.ELEMENT_NODE)
-                throw new RuntimeException("invalid \"mask\" node");
-            Pair<String, Mask> maskData = parseMaskElement((Element) maskNode, entity);
-            entity.masks.put(HashHelper.hash32(maskData.first), maskData.second);
-        }
-        for(int i = 0; i < properties.getLength(); i++)
-        {
-            Node propertyNode = properties.item(i);
-            if(propertyNode.getNodeType() != Node.ELEMENT_NODE)
-                throw new RuntimeException("invalid \"property\" node");
-            Pair<String, String> propertyData = parsePropertyElement((Element) propertyNode);
-            entity.properties.put(HashHelper.hash32(propertyData.first), propertyData.second);
-        }
-        
-        entity.script = new LuaScript(new File(XMLHelper.getDeepValue(docElement, "script")), entity);
-        
-        return entity;
     }
     
     private Vertex parseVertexElement(Element vertexElement)
@@ -176,7 +181,7 @@ public class EntityLoader
         return vertex;
     }
     
-    private PolygonShape parsePolygonShapeElement(Element polygonShapeElement)
+    private PolygonShape parsePolygonShapeElement(Element polygonShapeElement) throws EntityLoaderException
     {
         PolygonShape polygonShape = new PolygonShape();
         
@@ -189,7 +194,7 @@ public class EntityLoader
         {
             Node vertexNode = vertices.item(i);
             if(vertexNode.getNodeType() != Node.ELEMENT_NODE)
-                throw new RuntimeException("invalid \"vertex\" node");
+                throw new EntityLoaderException("invalid \"vertex\" node");
             Element vertexElement = (Element) vertexNode;
             Vertex vertex = parseVertexElement(vertexElement);
             polygonShape.vertices[vertex.index - 1] = vertex;
@@ -245,7 +250,7 @@ public class EntityLoader
         return new Vector2(x, y);
     }
     
-    private Pair<String, PhysicsBody> parseBodyElement(Element bodyElement)
+    private Pair<String, PhysicsBody> parseBodyElement(Element bodyElement) throws EntityLoaderException
     {
         PhysicsBody body = new PhysicsBody();
         String name = XMLHelper.getDeepValue(bodyElement, "name");
@@ -254,14 +259,14 @@ public class EntityLoader
         NodeList circleShapes  = bodyElement.getElementsByTagName("circle_shape");
         int shapeTotal = polygonShapes.getLength() + circleShapes.getLength();
         
-        if(shapeTotal == 0) throw new RuntimeException("missing shape in \"body\"");
-        if(shapeTotal > 1) throw new RuntimeException("multiple shapes not allowed in \"body\"");
+        if(shapeTotal == 0) throw new EntityLoaderException("missing shape in \"body\"");
+        if(shapeTotal > 1) throw new EntityLoaderException("multiple shapes not allowed in \"body\"");
         
         if(polygonShapes.getLength() == 1)
         {
             Node polygonShapeNode = polygonShapes.item(0);
             if(polygonShapeNode.getNodeType() != Node.ELEMENT_NODE)
-                throw new RuntimeException("invalid \"polygon_shape\" node");
+                throw new EntityLoaderException("invalid \"polygon_shape\" node");
             Element polygonShapeElement = (Element) polygonShapeNode;
             PolygonShape polygonShape = parsePolygonShapeElement(polygonShapeElement);
             
@@ -275,7 +280,7 @@ public class EntityLoader
         {
             Node circleShapeNode = circleShapes.item(0);
             if(circleShapeNode.getNodeType() != Node.ELEMENT_NODE)
-                throw new RuntimeException("invalid \"circle_shape\" node");
+                throw new EntityLoaderException("invalid \"circle_shape\" node");
             Element circleShapeElement = (Element) circleShapeNode;
             CircleShape circleShape = parseCircleShapeElement(circleShapeElement);
             
@@ -287,15 +292,15 @@ public class EntityLoader
         NodeList kinematicBehaviors = bodyElement.getElementsByTagName("kinematic_behavior");
         int behaviorTotal = staticBehaviors.getLength() + dynamicBehaviors.getLength() + kinematicBehaviors.getLength();
 
-        if(behaviorTotal == 0) throw new RuntimeException("missing behavior in \"body\"");
-        if(behaviorTotal > 1) throw new RuntimeException("multiple behaviors not allowed in \"body\"");
+        if(behaviorTotal == 0) throw new EntityLoaderException("missing behavior in \"body\"");
+        if(behaviorTotal > 1) throw new EntityLoaderException("multiple behaviors not allowed in \"body\"");
         
         if(staticBehaviors.getLength() == 1)
         {
             /*
             Node staticBehaviorNode = staticBehaviors.item(0);
             if(staticBehaviorNode.getNodeType() != Node.ELEMENT_NODE)
-                throw new RuntimeException("invalid \"static_behavior\" node");
+                throw new EntityLoaderException("invalid \"static_behavior\" node");
             Element staticBehaviorElement = (Element) staticBehaviorNode;
             StaticBehavior staticBehavior = parseStaticBehaviorElement(staticBehaviorElement);
             */
@@ -306,7 +311,7 @@ public class EntityLoader
         {
             Node dynamicBehaviorNode = dynamicBehaviors.item(0);
             if(dynamicBehaviorNode.getNodeType() != Node.ELEMENT_NODE)
-                throw new RuntimeException("invalid \"dynamic_behavior\" node");
+                throw new EntityLoaderException("invalid \"dynamic_behavior\" node");
             Element dynamicBehaviorElement = (Element) dynamicBehaviorNode;
             DynamicBehavior dynamicBehavior = parseDynamicBehaviorElement(dynamicBehaviorElement);
             
@@ -320,7 +325,7 @@ public class EntityLoader
             /*
             Node kinematicBehaviorNode = kinematicBehaviors.item(0);
             if(kinematicBehaviorNode.getNodeType() != Node.ELEMENT_NODE)
-                throw new RuntimeException("invalid \"kinematic_behavior\" node");
+                throw new EntityLoaderException("invalid \"kinematic_behavior\" node");
             Element kinematicBehaviorElement = (Element) kinematicBehaviorNode;
             KinematicBehavior kinematicBehavior = parseKinematicBehaviorElement(kinematicBehaviorElement);
             */
@@ -331,7 +336,7 @@ public class EntityLoader
         return new Pair<String, PhysicsBody>(name, body);
     }
     
-    private Pair<String, PhysicsJoint> parseRevoluteJointElement(Element revoluteJointElement, Entity entity)
+    private Pair<String, PhysicsJoint> parseRevoluteJointElement(Element revoluteJointElement, Entity entity) throws EntityLoaderException
     {
         PhysicsJoint joint = new PhysicsJoint(PhysicsJointType.REVOLUTE);
         String name = XMLHelper.getDeepValue(revoluteJointElement, "name");
@@ -345,24 +350,24 @@ public class EntityLoader
         NodeList anchorBs = revoluteJointElement.getElementsByTagName("anchor_b");
 
         if(anchorAs.getLength() < 1)
-            throw new RuntimeException("missing \"anchor_a\" node in \"revolute_joint\"");
+            throw new EntityLoaderException("missing \"anchor_a\" node in \"revolute_joint\"");
         if(anchorAs.getLength() > 1)
-            throw new RuntimeException("multiple \"anchor_a\" nodes not allowed in \"revolute_joint\"");
+            throw new EntityLoaderException("multiple \"anchor_a\" nodes not allowed in \"revolute_joint\"");
         
         if(anchorBs.getLength() < 1)
-            throw new RuntimeException("missing \"anchor_b\" node in \"revolute_joint\"");
+            throw new EntityLoaderException("missing \"anchor_b\" node in \"revolute_joint\"");
         if(anchorBs.getLength() > 1)
-            throw new RuntimeException("multiple \"anchor_b\" nodes not allowed in \"revolute_joint\"");
+            throw new EntityLoaderException("multiple \"anchor_b\" nodes not allowed in \"revolute_joint\"");
 
         Node anchorANode = anchorAs.item(0);
         if(anchorANode.getNodeType() != Node.ELEMENT_NODE)
-            throw new RuntimeException("invalid \"anchor_a\" node");
+            throw new EntityLoaderException("invalid \"anchor_a\" node");
         Element anchorAElement = (Element) anchorANode;
         Vector2 anchorA = parseVectorElement(anchorAElement);
         
         Node anchorBNode = anchorBs.item(0);
         if(anchorBNode.getNodeType() != Node.ELEMENT_NODE)
-            throw new RuntimeException("invalid \"anchor_b\" node");
+            throw new EntityLoaderException("invalid \"anchor_b\" node");
         Element anchorBElement = (Element) anchorBNode;
         Vector2 anchorB = parseVectorElement(anchorBElement);
         
@@ -376,18 +381,18 @@ public class EntityLoader
         return new Pair<String, PhysicsJoint>(name, joint);
     }
     
-    private Pair<Integer, Mask> parseColoredLayerElement(Element coloredLayerElement)
+    private Pair<Integer, Mask> parseColoredLayerElement(Element coloredLayerElement) throws EntityLoaderException
     {
         int layerHeight = XMLHelper.getDeepValueInteger(coloredLayerElement, "layer_height");
         
         NodeList polygonShapes = coloredLayerElement.getElementsByTagName("polygon_shape");
         if(polygonShapes.getLength() < 1)
-            throw new RuntimeException("missing \"polygon_shape\" node in \"colored_layer\"");
+            throw new EntityLoaderException("missing \"polygon_shape\" node in \"colored_layer\"");
         if(polygonShapes.getLength() > 1)
-            throw new RuntimeException("multiple \"polygon_shape\" nodes not allowed in \"colored_layer\"");
+            throw new EntityLoaderException("multiple \"polygon_shape\" nodes not allowed in \"colored_layer\"");
         Node polygonShapeNode = polygonShapes.item(0);
         if(polygonShapeNode.getNodeType() != Node.ELEMENT_NODE)
-            throw new RuntimeException("invalid \"polygon_shape\" node");
+            throw new EntityLoaderException("invalid \"polygon_shape\" node");
         Element polygonShapeElement = (Element) polygonShapeNode;
         PolygonShape polygonShape = parsePolygonShapeElement(polygonShapeElement);
         
@@ -413,7 +418,7 @@ public class EntityLoader
         return new Pair<Integer, Mask>(layerHeight, mask);
     }
     
-    private Pair<String, Mask> parseMaskElement(Element maskElement, Entity entity)
+    private Pair<String, Mask> parseMaskElement(Element maskElement, Entity entity) throws EntityLoaderException
     {
         LayeredMask mask = new LayeredMask(RenderingOrder.BOTTOM_TO_TOP);
         
@@ -427,11 +432,11 @@ public class EntityLoader
         {
             Node coloredLayerNode = coloredLayers.item(i);
             if(coloredLayerNode.getNodeType() != Node.ELEMENT_NODE)
-                throw new RuntimeException("invalid \"colored_layer\" node");
+                throw new EntityLoaderException("invalid \"colored_layer\" node");
             Element coloredLayerElement = (Element) coloredLayerNode;
             Pair<Integer, Mask> layerData = parseColoredLayerElement(coloredLayerElement);
             if(layers.containsKey(layerData.first))
-                throw new RuntimeException("duplicate layer height");
+                throw new EntityLoaderException("duplicate layer height");
             layers.put(layerData.first, layerData.second);
         }
         
