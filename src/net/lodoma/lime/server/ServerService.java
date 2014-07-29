@@ -46,7 +46,8 @@ public class ServerService implements Runnable
     {
         try
         {
-            serviceSocket.close();
+            if(serviceSocket != null && !serviceSocket.isClosed())
+                serviceSocket.close();
         }
         catch (IOException e)
         {
@@ -80,6 +81,7 @@ public class ServerService implements Runnable
     {
         while(running)
         {
+            if(serviceSocket == null) break;
             try
             {
                 Socket clientSocket = serviceSocket.accept();
