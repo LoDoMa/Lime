@@ -63,6 +63,11 @@ local function checkVectorType(value, argument, name)
 	assert(lime.util.vector.check(value), "invalid argument #" .. argument .. " to \"" .. name .. "\", expected vector2")
 end
 
+local function getInputHandler(name)
+	checkType(name, "string", 1, "local utility getInputHandler")
+	return inputHandlerHashPool:get(name)
+end
+
 local function getOutput(name)
 	checkType(name, "string", 1, "local utility getOutput")
 	return outputHashPool:get(name)
