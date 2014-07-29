@@ -1,5 +1,5 @@
 <model>
-	<model_name> lime::zombie </model_name>
+	<model_name> Lime::Zombie </model_name>
 	<model_visual> Zombie </model_visual>
 	<model_version> 1 </model_version>
 

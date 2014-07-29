@@ -1,0 +1,5 @@
+<world>
+	<name> Lime::TestWorld </name>
+	<visual> Test World </world_visual>
+	<script> script/testworld.lua </script>
+</world>
