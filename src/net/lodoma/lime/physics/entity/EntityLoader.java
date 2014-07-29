@@ -159,7 +159,10 @@ public class EntityLoader
             
             entity.script = new LuaScript();
             entity.script.setGlobal("ENTITY", entity);
+            entity.script.setGlobal("SCRIPT", entity.script);
             entity.script.require("script/lime");
+            entity.script.removeGlobal("ENTITY");
+            entity.script.removeGlobal("SCRIPT");
             entity.script.load(new File(XMLHelper.getDeepValue(docElement, "script")));
             
             return entity;

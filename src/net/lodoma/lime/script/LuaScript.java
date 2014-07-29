@@ -15,13 +15,31 @@ public class LuaScript
     {
         luaState = new LuaState();
         luaState.openLibs();
-        
-        setGlobal("SCRIPT", this);
+    }
+    
+    public void push(Object object)
+    {
+            if(object instanceof Boolean)   luaState.pushBoolean((Boolean) object);
+       else if(object instanceof Byte)      luaState.pushNumber((Byte) object);
+       else if(object instanceof Character) luaState.pushNumber((Character) object);
+       else if(object instanceof Short)     luaState.pushNumber((Short) object);
+       else if(object instanceof Integer)   luaState.pushNumber((Integer) object);
+       else if(object instanceof Float)     luaState.pushNumber((Float) object);
+       else if(object instanceof Long)      luaState.pushNumber((Long) object);
+       else if(object instanceof Double)    luaState.pushNumber((Double) object);
+       else if(object instanceof String)    luaState.pushString((String) object);
+       else                                 luaState.pushJavaObject(object);
     }
     
     public void setGlobal(String name, Object value)
     {
-        luaState.pushJavaObject(value);
+        push(value);
+        luaState.setGlobal("LIME_" + name);
+    }
+    
+    public void removeGlobal(String name)
+    {
+        luaState.pushNil();
         luaState.setGlobal("LIME_" + name);
     }
     
@@ -48,19 +66,9 @@ public class LuaScript
         if(segm.length >= 1) luaState.getGlobal(segm[0]);
         for(int i = 1; i < segm.length; i++)
             luaState.getField(-1, segm[i]);
+        
         for(Object argument : arguments)
-        {
-                 if(argument instanceof Boolean)   luaState.pushBoolean((Boolean) argument);
-            else if(argument instanceof Byte)      luaState.pushNumber((Byte) argument);
-            else if(argument instanceof Character) luaState.pushNumber((Character) argument);
-            else if(argument instanceof Short)     luaState.pushNumber((Short) argument);
-            else if(argument instanceof Integer)   luaState.pushNumber((Integer) argument);
-            else if(argument instanceof Float)     luaState.pushNumber((Float) argument);
-            else if(argument instanceof Long)      luaState.pushNumber((Long) argument);
-            else if(argument instanceof Double)    luaState.pushNumber((Double) argument);
-            else if(argument instanceof String)    luaState.pushString((String) argument);
-            else                                   luaState.pushJavaObject(argument);
-        }
+            push(argument);
         luaState.call(arguments.length, 0);
         luaState.pop(segm.length - 1);
     }
