@@ -4,12 +4,16 @@ import java.io.IOException;
 
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.client.ClientOutput;
+import net.lodoma.lime.util.HashHelper;
 
 public class COChatMessageSend extends ClientOutput
 {
-    public COChatMessageSend(Client client, String coName)
+    public static final String NAME = "Lime::ChatMessageSend";
+    public static final int HASH = HashHelper.hash32(NAME);
+    
+    public COChatMessageSend(Client client)
     {
-        super(client, coName, String.class);
+        super(client, HASH, String.class);
     }
 
     @Override

@@ -4,12 +4,16 @@ import java.io.IOException;
 
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.client.ClientOutput;
+import net.lodoma.lime.util.HashHelper;
 
 public class COPresenceResponse extends ClientOutput
 {
-    public COPresenceResponse(Client client, String coName)
+    public static final String NAME = "Lime::PresenceResponse";
+    public static final int HASH = HashHelper.hash32(NAME);
+    
+    public COPresenceResponse(Client client)
     {
-        super(client, coName);
+        super(client, HASH);
     }
 
     @Override

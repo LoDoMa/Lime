@@ -5,7 +5,8 @@ import java.util.List;
 
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.client.ClientOutput;
-import net.lodoma.lime.util.HashPool;
+import net.lodoma.lime.client.io.chat.COChatMessageSend;
+import net.lodoma.lime.util.HashPool32;
 
 public class ChatManager
 {
@@ -26,7 +27,7 @@ public class ChatManager
     @SuppressWarnings("unchecked")
     public void generalInit()
     {
-        send = ((HashPool<ClientOutput>) client.getProperty("coPool")).get("Lime::ChatMessageSend");
+        send = ((HashPool32<ClientOutput>) client.getProperty("coPool")).get(COChatMessageSend.HASH);
     }
     
     public void addSender(ChatSender sender)

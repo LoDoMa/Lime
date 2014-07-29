@@ -3,26 +3,20 @@ package net.lodoma.lime.util;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HashPool<T>
+public class HashPool64<T>
 {
     private Map<Long, T> elements;
     
-    public HashPool()
+    public HashPool64()
     {
         elements = new HashMap<Long, T>();
     }
     
-    public void add(String name, T object)
+    public void add(long hash, T object)
     {
-        long hash = HashHelper.hash64(name);
         if(elements.containsKey(hash))
             throw new DuplicateHashException();
         elements.put(hash, object);
-    }
-    
-    public T get(String name)
-    {
-        return elements.get(HashHelper.hash64(name));
     }
     
     public T get(long hash)

@@ -12,17 +12,11 @@ public class HashPool32<T>
         elements = new HashMap<Integer, T>();
     }
     
-    public void add(String name, T object)
+    public void add(int hash, T object)
     {
-        int hash = HashHelper.hash32(name);
         if(elements.containsKey(hash))
             throw new DuplicateHashException();
         elements.put(hash, object);
-    }
-    
-    public T get(String name)
-    {
-        return elements.get(HashHelper.hash32(name));
     }
     
     public T get(int hash)

@@ -17,7 +17,6 @@ import net.lodoma.lime.client.logic.ClientLogicPool;
 import net.lodoma.lime.common.PropertyPool;
 import net.lodoma.lime.event.EventManager;
 import net.lodoma.lime.security.Credentials;
-import net.lodoma.lime.util.HashPool;
 import net.lodoma.lime.util.HashPool32;
 
 public class Client implements PropertyPool
@@ -60,9 +59,9 @@ public class Client implements PropertyPool
         logicPool = new ClientLogicPool(this, 60.0);
         properties = new HashMap<String, Object>();
         
-        setProperty("cihPool", new HashPool<ClientInputHandler>());
+        setProperty("cihPool", new HashPool32<ClientInputHandler>());
         reader = new ClientReader(this);
-        setProperty("coPool", new HashPool<ClientOutput>());
+        setProperty("coPool", new HashPool32<ClientOutput>());
         setProperty("emanPool", new HashPool32<EventManager>());
         setProperty("reader", reader);
         setProperty("credentials", credentials);

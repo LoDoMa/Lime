@@ -36,7 +36,7 @@ end
 local function serverUpdate()
 	if firstUpdate then
 		lime.entity.set(this)
-		lime.listener.set("Lime::onNewUser", onNewUser)
+		lime.listener.set("Lime::OnNewUser", onNewUser)
 	end
 end
 

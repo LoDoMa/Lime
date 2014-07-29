@@ -18,8 +18,10 @@ import net.lodoma.lime.physics.entity.EntityWorld;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.server.ServerOutput;
 import net.lodoma.lime.server.ServerUser;
+import net.lodoma.lime.server.io.entity.SOEntityCorrection;
+import net.lodoma.lime.server.io.entity.SOEntityCreation;
+import net.lodoma.lime.server.io.world.SOPlatformCreation;
 import net.lodoma.lime.server.logic.UserManager;
-import net.lodoma.lime.util.HashPool;
 import net.lodoma.lime.util.HashPool32;
 import net.lodoma.lime.world.platform.Platform;
 
@@ -112,12 +114,12 @@ public class ServersideWorld implements EntityWorld
     {
         userManager = (UserManager) server.getProperty("userManager");
         
-        HashPool<ServerOutput> soPool = (HashPool<ServerOutput>) server.getProperty("soPool");
-        EventManager manager = ((HashPool32<EventManager>) server.getProperty("emanPool")).get("Lime::onNewUser");
+        HashPool32<ServerOutput> soPool = (HashPool32<ServerOutput>) server.getProperty("soPool");
+        EventManager manager = ((HashPool32<EventManager>) server.getProperty("emanPool")).get(EventManager.ON_NEW_USER_HASH);
 
-        platformCreation = soPool.get("Lime::PlatformCreation");
-        entityCreation = soPool.get("Lime::EntityCreation");
-        entityCorrection = soPool.get("Lime::EntityCorrection");
+        platformCreation = soPool.get(SOPlatformCreation.HASH);
+        entityCreation = soPool.get(SOEntityCreation.HASH);
+        entityCorrection = soPool.get(SOEntityCorrection.HASH);
         
         initialWorldDataSender = new SendOnEvent(this, manager);
     }

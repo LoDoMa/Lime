@@ -4,18 +4,17 @@ import java.io.IOException;
 import java.util.List;
 
 import net.lodoma.lime.server.logic.UserManager;
-import net.lodoma.lime.util.HashHelper;
 
 public abstract class ServerOutput
 {
     protected Server server;
-    private long hash;
+    private int hash;
     private Class<?>[] expected;
     
-    public ServerOutput(Server server, String soName, Class<?>... expected)
+    public ServerOutput(Server server, int hash, Class<?>... expected)
     {
         this.server = server;
-        hash = HashHelper.hash64(soName);
+        this.hash = hash;
         this.expected = expected;
     }
     
@@ -25,7 +24,7 @@ public abstract class ServerOutput
     {
         try
         {
-            user.outputStream.writeLong(hash);
+            user.outputStream.writeInt(hash);
             
             if(expected.length != args.length)
                 throw new IllegalArgumentException();

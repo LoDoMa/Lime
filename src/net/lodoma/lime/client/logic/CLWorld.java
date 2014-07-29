@@ -14,16 +14,16 @@ import net.lodoma.lime.client.io.entity.CIHEntityTransformModification;
 import net.lodoma.lime.client.io.world.CIHPlatformCreation;
 import net.lodoma.lime.input.Input;
 import net.lodoma.lime.physics.entity.EntityLoader;
-import net.lodoma.lime.util.HashPool;
+import net.lodoma.lime.util.HashPool32;
 import net.lodoma.lime.util.Timer;
 import net.lodoma.lime.world.client.ClientsideWorld;
 
 public class CLWorld implements ClientLogic
 {
     private Client client;
-    private HashPool<ClientInputHandler> cihPool;
+    private HashPool32<ClientInputHandler> cihPool;
     @SuppressWarnings("unused")
-    private HashPool<ClientOutput> coPool;
+    private HashPool32<ClientOutput> coPool;
     private ClientsideWorld world;
     private EntityLoader entityLoader;
     
@@ -46,8 +46,8 @@ public class CLWorld implements ClientLogic
     @Override
     public void fetchInit()
     {
-        cihPool = (HashPool<ClientInputHandler>) client.getProperty("cihPool");
-        coPool = (HashPool<ClientOutput>) client.getProperty("coPool");
+        cihPool = (HashPool32<ClientInputHandler>) client.getProperty("cihPool");
+        coPool = (HashPool32<ClientOutput>) client.getProperty("coPool");
         world = (ClientsideWorld) client.getProperty("world");
         entityLoader = (EntityLoader) client.getProperty("entityLoader");
         
@@ -57,14 +57,14 @@ public class CLWorld implements ClientLogic
     @Override
     public void generalInit()
     {
-        cihPool.add("Lime::PlatformCreation", new CIHPlatformCreation(client));
+        cihPool.add(CIHPlatformCreation.HASH, new CIHPlatformCreation(client));
         
-        cihPool.add("Lime::EntityCreation", new CIHEntityCreation(client));
-        cihPool.add("Lime::EntityCorrection", new CIHEntityCorrection(client));
-        cihPool.add("Lime::EntityTransformModification", new CIHEntityTransformModification(client));
-        cihPool.add("Lime::EntityLinearImpulse", new CIHEntityLinearImpulse(client));
-        cihPool.add("Lime::EntityAngularImpulse", new CIHEntityAngularImpulse(client));
-        cihPool.add("Lime::EntityForce", new CIHEntityForce(client));
+        cihPool.add(CIHEntityCreation.HASH, new CIHEntityCreation(client));
+        cihPool.add(CIHEntityCorrection.HASH, new CIHEntityCorrection(client));
+        cihPool.add(CIHEntityTransformModification.HASH, new CIHEntityTransformModification(client));
+        cihPool.add(CIHEntityLinearImpulse.HASH, new CIHEntityLinearImpulse(client));
+        cihPool.add(CIHEntityAngularImpulse.HASH, new CIHEntityAngularImpulse(client));
+        cihPool.add(CIHEntityForce.HASH, new CIHEntityForce(client));
         
         entityLoader.addXMLFile("Lime::Zombie", new File("model/zombie.xml"));
         

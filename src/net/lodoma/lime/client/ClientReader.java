@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PipedOutputStream;
 
-import net.lodoma.lime.util.HashPool;
+import net.lodoma.lime.util.HashPool32;
 
 public class ClientReader implements Runnable
 {
@@ -19,7 +19,7 @@ public class ClientReader implements Runnable
     
     private DataInputStream inputStream;
     
-    private HashPool<ClientInputHandler> cihPool;
+    private HashPool32<ClientInputHandler> cihPool;
     
     @SuppressWarnings("unchecked")
     public ClientReader(Client client)
@@ -31,7 +31,7 @@ public class ClientReader implements Runnable
         
         inputStream = client.getInputStream();
         
-        cihPool = (HashPool<ClientInputHandler>) client.getProperty("cihPool");
+        cihPool = (HashPool32<ClientInputHandler>) client.getProperty("cihPool");
     }
     
     public void start()
@@ -57,7 +57,7 @@ public class ClientReader implements Runnable
     {
         while(inputStream.available() >= 8)
         {
-            long hash = inputStream.readLong();
+            int hash = inputStream.readInt();
             ClientInputHandler handler = cihPool.get(hash);
             if(handler != null)
                 handler.handle();

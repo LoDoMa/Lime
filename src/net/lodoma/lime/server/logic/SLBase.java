@@ -8,14 +8,13 @@ import net.lodoma.lime.server.dependency.DependencyPool;
 import net.lodoma.lime.server.io.base.SIHDependencyRequest;
 import net.lodoma.lime.server.io.base.SOModificationCheck;
 import net.lodoma.lime.server.io.base.SONetworkStageChange;
-import net.lodoma.lime.util.HashPool;
 import net.lodoma.lime.util.HashPool32;
 
 public class SLBase implements ServerLogic
 {
     private Server server;
-    private HashPool<ServerInputHandler> sihPool;
-    private HashPool<ServerOutput> soPool;
+    private HashPool32<ServerInputHandler> sihPool;
+    private HashPool32<ServerOutput> soPool;
     private HashPool32<EventManager> emanPool;
     private DependencyPool dependencyPool;
     
@@ -35,21 +34,21 @@ public class SLBase implements ServerLogic
     @Override
     public void fetchInit()
     {
-        sihPool = (HashPool<ServerInputHandler>) server.getProperty("sihPool");
-        soPool = (HashPool<ServerOutput>) server.getProperty("soPool");
+        sihPool = (HashPool32<ServerInputHandler>) server.getProperty("sihPool");
+        soPool = (HashPool32<ServerOutput>) server.getProperty("soPool");
         emanPool = (HashPool32<EventManager>) server.getProperty("emanPool");
         dependencyPool = (DependencyPool) server.getProperty("dependencyPool");
         
-        emanPool.add("Lime::onNewUser", new EventManager());
+        emanPool.add(EventManager.ON_NEW_USER_HASH, new EventManager());
     }
     
     @Override
     public void generalInit()
     {
-        sihPool.add("Lime::DependencyRequest", new SIHDependencyRequest(server));
-        soPool.add("Lime::NetworkStageChange", new SONetworkStageChange(server, "Lime::NetworkStageChange"));
+        sihPool.add(SIHDependencyRequest.HASH, new SIHDependencyRequest(server));
+        soPool.add(SONetworkStageChange.HASH, new SONetworkStageChange(server));
         
-        dependencyPool.addDependency(new SOModificationCheck(server, "Lime::ModificationCheck"));
+        dependencyPool.addDependency(new SOModificationCheck(server));
     }
     
     @Override

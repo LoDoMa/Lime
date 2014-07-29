@@ -9,14 +9,14 @@ import java.io.PipedOutputStream;
 import java.net.Socket;
 
 import net.lodoma.lime.common.NetStage;
-import net.lodoma.lime.util.HashPool;
+import net.lodoma.lime.util.HashPool32;
 import net.lodoma.lime.util.SystemHelper;
 
 public final class ServerUser implements Runnable
 {
     public NetStage stage;
     
-    private HashPool<ServerInputHandler> sihPool;
+    private HashPool32<ServerInputHandler> sihPool;
     
     private Socket socket;
     
@@ -36,7 +36,7 @@ public final class ServerUser implements Runnable
     {
         this.stage = stage;
         
-        sihPool = (HashPool<ServerInputHandler>) server.getProperty("sihPool");
+        sihPool = (HashPool32<ServerInputHandler>) server.getProperty("sihPool");
         
         this.socket = socket;
         try
@@ -91,7 +91,7 @@ public final class ServerUser implements Runnable
     {
         while(inputStream.available() >= 8)
         {
-            long hash = inputStream.readLong();
+            int hash = inputStream.readInt();
             ServerInputHandler handler = sihPool.get(hash);
             if(handler != null)
                 handler.handle(this);

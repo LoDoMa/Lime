@@ -3,22 +3,20 @@ package net.lodoma.lime.client;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import net.lodoma.lime.util.HashHelper;
-
 public abstract class ClientOutput
 {
     protected Client client;
     protected DataOutputStream outputStream;
     
-    private long hash;
+    private int hash;
     private Object[] expected;
     
-    public ClientOutput(Client client, String coName, Object... expected)
+    public ClientOutput(Client client, int hash, Object... expected)
     {
         this.client = client;
         outputStream = this.client.getOutputStream();
         
-        hash = HashHelper.hash64(coName);
+        this.hash = hash;
         this.expected = expected;
     }
     
@@ -28,7 +26,7 @@ public abstract class ClientOutput
     {
         try
         {
-            outputStream.writeLong(hash);
+            outputStream.writeInt(hash);
             
             if(expected.length != args.length)
                 throw new IllegalArgumentException();

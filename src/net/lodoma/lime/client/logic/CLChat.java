@@ -6,13 +6,13 @@ import net.lodoma.lime.client.ClientInputHandler;
 import net.lodoma.lime.client.ClientOutput;
 import net.lodoma.lime.client.io.chat.CIHChatMessageReceive;
 import net.lodoma.lime.client.io.chat.COChatMessageSend;
-import net.lodoma.lime.util.HashPool;
+import net.lodoma.lime.util.HashPool32;
 
 public class CLChat implements ClientLogic
 {
     private Client client;
-    private HashPool<ClientInputHandler> cihPool;
-    private HashPool<ClientOutput> coPool;
+    private HashPool32<ClientInputHandler> cihPool;
+    private HashPool32<ClientOutput> coPool;
     
     private ChatManager chatManager;
     
@@ -32,16 +32,16 @@ public class CLChat implements ClientLogic
     @Override
     public void fetchInit()
     {
-        cihPool = (HashPool<ClientInputHandler>) client.getProperty("cihPool");
-        coPool = (HashPool<ClientOutput>) client.getProperty("coPool");
+        cihPool = (HashPool32<ClientInputHandler>) client.getProperty("cihPool");
+        coPool = (HashPool32<ClientOutput>) client.getProperty("coPool");
         chatManager = (ChatManager) client.getProperty("chatManager");
     }
 
     @Override
     public void generalInit()
     {
-        cihPool.add("Lime::ChatMessageReceive", new CIHChatMessageReceive(client));
-        coPool.add("Lime::ChatMessageSend", new COChatMessageSend(client, "Lime::ChatMessageSend"));
+        cihPool.add(CIHChatMessageReceive.HASH, new CIHChatMessageReceive(client));
+        coPool.add(COChatMessageSend.HASH, new COChatMessageSend(client));
         chatManager.generalInit();
     }
 

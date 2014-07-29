@@ -7,13 +7,17 @@ import net.lodoma.lime.physics.entity.Entity;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.server.ServerOutput;
 import net.lodoma.lime.server.ServerUser;
+import net.lodoma.lime.util.HashHelper;
 import net.lodoma.lime.util.Vector2;
 
 public class SOEntityTransformModification extends ServerOutput
 {
-    public SOEntityTransformModification(Server server, String soName)
+    public static final String NAME = "Lime::EntityTransformModification";
+    public static final int HASH = HashHelper.hash32(NAME);
+    
+    public SOEntityTransformModification(Server server)
     {
-        super(server, soName, Entity.class, Object.class);
+        super(server, HASH, Entity.class, Object.class);
     }
     
     @Override

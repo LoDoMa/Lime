@@ -7,10 +7,14 @@ import net.lodoma.lime.client.ClientInputHandler;
 import net.lodoma.lime.physics.entity.Entity;
 import net.lodoma.lime.physics.entity.EntityLoader;
 import net.lodoma.lime.physics.entity.EntityLoaderException;
+import net.lodoma.lime.util.HashHelper;
 import net.lodoma.lime.world.client.ClientsideWorld;
 
 public class CIHEntityCreation extends ClientInputHandler
 {
+    public static final String NAME = "Lime::EntityCreation";
+    public static final int HASH = HashHelper.hash32(NAME);
+    
     public CIHEntityCreation(Client client)
     {
         super(client);

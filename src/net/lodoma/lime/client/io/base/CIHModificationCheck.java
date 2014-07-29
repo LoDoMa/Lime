@@ -7,10 +7,14 @@ import net.lodoma.lime.client.Client;
 import net.lodoma.lime.client.ClientInputHandler;
 import net.lodoma.lime.client.ClientOutput;
 import net.lodoma.lime.security.ModificationCheck;
-import net.lodoma.lime.util.HashPool;
+import net.lodoma.lime.util.HashHelper;
+import net.lodoma.lime.util.HashPool32;
 
 public class CIHModificationCheck extends ClientInputHandler
 {
+    public static final String NAME = "Lime::ModificationCheck";
+    public static final int HASH = HashHelper.hash32(NAME);
+    
     public CIHModificationCheck(Client client)
     {
         super(client);
@@ -33,6 +37,6 @@ public class CIHModificationCheck extends ClientInputHandler
             return;
         }
         
-        ((HashPool<ClientOutput>) client.getProperty("coPool")).get("Lime::DependencyRequest").handle();
+        ((HashPool32<ClientOutput>) client.getProperty("coPool")).get(CODependencyRequest.HASH).handle();
     }
 }

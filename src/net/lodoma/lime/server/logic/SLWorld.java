@@ -11,7 +11,7 @@ import net.lodoma.lime.server.io.entity.SOEntityForce;
 import net.lodoma.lime.server.io.entity.SOEntityLinearImpulse;
 import net.lodoma.lime.server.io.entity.SOEntityTransformModification;
 import net.lodoma.lime.server.io.world.SOPlatformCreation;
-import net.lodoma.lime.util.HashPool;
+import net.lodoma.lime.util.HashPool32;
 import net.lodoma.lime.util.Timer;
 import net.lodoma.lime.world.builder.WorldFileLoader;
 import net.lodoma.lime.world.server.ServersideWorld;
@@ -20,8 +20,8 @@ public class SLWorld implements ServerLogic
 {
     private Server server;
     @SuppressWarnings("unused")
-    private HashPool<ServerInputHandler> sihPool;
-    private HashPool<ServerOutput> soPool;
+    private HashPool32<ServerInputHandler> sihPool;
+    private HashPool32<ServerOutput> soPool;
     
     private ServersideWorld world;
     
@@ -44,22 +44,22 @@ public class SLWorld implements ServerLogic
     @Override
     public void fetchInit()
     {
-        sihPool = (HashPool<ServerInputHandler>) server.getProperty("sihPool");
-        soPool = (HashPool<ServerOutput>) server.getProperty("soPool");
+        sihPool = (HashPool32<ServerInputHandler>) server.getProperty("sihPool");
+        soPool = (HashPool32<ServerOutput>) server.getProperty("soPool");
         world = (ServersideWorld) server.getProperty("world");
     }
     
     @Override
     public void generalInit()
     {
-        soPool.add("Lime::PlatformCreation", new SOPlatformCreation(server, "Lime::PlatformCreation"));
+        soPool.add(SOPlatformCreation.HASH, new SOPlatformCreation(server));
         
-        soPool.add("Lime::EntityCreation", new SOEntityCreation(server, "Lime::EntityCreation"));
-        soPool.add("Lime::EntityCorrection", new SOEntityCorrection(server, "Lime::EntityCorrection"));
-        soPool.add("Lime::EntityTransformModification", new SOEntityTransformModification(server, "Lime::EntityTransformModification"));
-        soPool.add("Lime::EntityLinearImpulse", new SOEntityLinearImpulse(server, "Lime::EntityLinearImpulse"));
-        soPool.add("Lime::EntityAngularImpulse", new SOEntityAngularImpulse(server, "Lime::EntityAngularImpulse"));
-        soPool.add("Lime::EntityForce", new SOEntityForce(server, "Lime::EntityForce"));
+        soPool.add(SOEntityCreation.HASH, new SOEntityCreation(server));
+        soPool.add(SOEntityCorrection.HASH, new SOEntityCorrection(server));
+        soPool.add(SOEntityTransformModification.HASH, new SOEntityTransformModification(server));
+        soPool.add(SOEntityLinearImpulse.HASH, new SOEntityLinearImpulse(server));
+        soPool.add(SOEntityAngularImpulse.HASH, new SOEntityAngularImpulse(server));
+        soPool.add(SOEntityForce.HASH, new SOEntityForce(server));
         
         world.generalInit();
         

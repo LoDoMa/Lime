@@ -4,12 +4,16 @@ import java.io.IOException;
 
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.client.ClientOutput;
+import net.lodoma.lime.util.HashHelper;
 
 public class CODependencyRequest extends ClientOutput
 {
-    public CODependencyRequest(Client client, String coName)
+    public static final String NAME = "Lime::DependencyRequest";
+    public static final int HASH = HashHelper.hash32(NAME);
+    
+    public CODependencyRequest(Client client)
     {
-        super(client, coName);
+        super(client, HASH);
     }
 
     @Override

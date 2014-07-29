@@ -4,10 +4,14 @@ import java.io.IOException;
 
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.client.ClientInputHandler;
+import net.lodoma.lime.util.HashHelper;
 import net.lodoma.lime.world.client.ClientsideWorld;
 
 public class CIHEntityAngularImpulse extends ClientInputHandler
 {
+    public static final String NAME = "Lime::EntityAngularImpulse";
+    public static final int HASH = HashHelper.hash32(NAME);
+    
     public CIHEntityAngularImpulse(Client client)
     {
         super(client);

@@ -63,14 +63,14 @@ local function checkVectorType(value, argument, name)
 	assert(lime.util.vector.check(value), "invalid argument #" .. argument .. " to \"" .. name .. "\", expected vector2")
 end
 
-local function getInputHandler(name)
-	checkType(name, "string", 1, "local utility getInputHandler")
-	return inputHandlerHashPool:get(name)
+local function getInputHandler(hash)
+	checkType(hash, "number", 1, "local utility getInputHandler")
+	return inputHandlerHashPool:get(hash)
 end
 
-local function getOutput(name)
-	checkType(name, "string", 1, "local utility getOutput")
-	return outputHashPool:get(name)
+local function getOutput(hash)
+	checkType(hash, "number", 1, "local utility getOutput")
+	return outputHashPool:get(hash)
 end
 
 -- utilities
@@ -104,6 +104,26 @@ local function isVector(vecTable)
 	if(type(vecTable.y) ~= "number") then return false end
 	return true;
 end
+
+-- hashes
+
+local hashes32 = {}
+local hashes64 = {}
+
+local function addHash32(str)
+	checkType(str, "string", 1, "local utility addHash32")
+	hashes32[str] = hash32(str)
+end
+
+local function addHash64(str)
+	checkType(str, "string", 1, "local utility addHash64")
+	hashes64[str] = hash64(str)
+end
+
+addHash32("Lime::EntityTransformModification")
+addHash32("Lime::EntityForce")
+addHash32("Lime::EntityLinearImpulse")
+addHash32("Lime::EntityAngularImpulse")
 
 -- entity
 
@@ -145,7 +165,7 @@ end
 local function pushBodyTransformModification()
 	checkWorkingElementSet(workingBody, "body", "lime.body.transform.push")
 	if serverSide then
-		local output = getOutput("Lime::EntityTransformModification")
+		local output = getOutput(hashes32["Lime::EntityTransformModification"])
 		output:handleAll(entity, workingBodyHash)
 	elseif clientSide then
 
@@ -163,7 +183,7 @@ local function applyForceToBody(force, point)
 	workingBody:applyForce(javaForce, javaPoint)
 
 	if serverSide then
-		local output = getOutput("Lime::EntityForce")
+		local output = getOutput(hashes32["Lime::EntityForce"])
 		output:handleAll(entity, workingBodyHash, javaForce, javaPoint)
 	elseif clientSide then
 
@@ -181,7 +201,7 @@ local function applyLinearImpulseToBody(impulse, point)
 	workingBody:applyLinearImpulse(javaImpulse, javaPoint)
 
 	if serverSide then
-		local output = getOutput("Lime::EntityLinearImpulse")
+		local output = getOutput(hashes32["Lime::EntityLinearImpulse"])
 		output:handleAll(entity, workingBodyHash, javaImpulse, javaPoint)
 	elseif clientSide then
 
@@ -196,7 +216,7 @@ local function applyAngularImpulseToBody(impulse)
 	workingBody:applyAngularImpulse(impulse)
 
 	if serverSide then
-		local output = getOutput("Lime::EntityAngularImpulse")
+		local output = getOutput(hashes32["Lime::EntityAngularImpulse"])
 		output:handleAll(entity, workingBodyHash, impulse)
 	elseif clientSide then
 

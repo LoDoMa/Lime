@@ -11,15 +11,15 @@ import net.lodoma.lime.client.io.base.CIHNetworkStageChange;
 import net.lodoma.lime.client.io.base.CODependencyRequest;
 import net.lodoma.lime.client.io.base.COPresenceResponse;
 import net.lodoma.lime.common.NetStage;
-import net.lodoma.lime.util.HashPool;
+import net.lodoma.lime.util.HashPool32;
 import net.lodoma.lime.util.Timer;
 
 public class CLBase implements ClientLogic
 {
     private Client client;
     private ClientReader reader;
-    private HashPool<ClientInputHandler> cihPool;
-    private HashPool<ClientOutput> coPool;
+    private HashPool32<ClientInputHandler> cihPool;
+    private HashPool32<ClientOutput> coPool;
     
     private boolean sendFirstRequest;
     
@@ -42,8 +42,8 @@ public class CLBase implements ClientLogic
     @Override
     public void fetchInit()
     {
-        cihPool = (HashPool<ClientInputHandler>) client.getProperty("cihPool");
-        coPool = (HashPool<ClientOutput>) client.getProperty("coPool");
+        cihPool = (HashPool32<ClientInputHandler>) client.getProperty("cihPool");
+        coPool = (HashPool32<ClientOutput>) client.getProperty("coPool");
         reader = (ClientReader) client.getProperty("reader");
     }
 
@@ -51,11 +51,11 @@ public class CLBase implements ClientLogic
     public void generalInit()
     {
         sendFirstRequest = true;
-        coPool.add("Lime::DependencyRequest", new CODependencyRequest(client, "Lime::DependencyRequest"));
-        coPool.add("Lime::PresenceResponse", new COPresenceResponse(client, "Lime::PresenceResponse"));
-        cihPool.add("Lime::NetworkStageChange", new CIHNetworkStageChange(client));
+        coPool.add(CODependencyRequest.HASH, new CODependencyRequest(client));
+        coPool.add(COPresenceResponse.HASH, new COPresenceResponse(client));
+        cihPool.add(CIHNetworkStageChange.HASH, new CIHNetworkStageChange(client));
         
-        cihPool.add("Lime::ModificationCheck", new CIHModificationCheck(client));
+        cihPool.add(CIHModificationCheck.HASH, new CIHModificationCheck(client));
     }
     
     @Override
@@ -64,7 +64,7 @@ public class CLBase implements ClientLogic
         if(sendFirstRequest)
         {
             client.setProperty("dependencyProgress", 0);
-            coPool.get("Lime::DependencyRequest").handle();
+            coPool.get(CODependencyRequest.HASH).handle();
             sendFirstRequest = false;
         }
         
@@ -76,7 +76,7 @@ public class CLBase implements ClientLogic
         
         if(responseCounter >= 3.5)
         {
-            coPool.get("Lime::PresenceResponse").handle();
+            coPool.get(COPresenceResponse.HASH).handle();
             responseCounter -= 3.5;
         }
         

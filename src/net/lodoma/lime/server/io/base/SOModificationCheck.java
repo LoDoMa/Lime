@@ -7,12 +7,16 @@ import net.lodoma.lime.security.ModificationCheck;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.server.ServerOutput;
 import net.lodoma.lime.server.ServerUser;
+import net.lodoma.lime.util.HashHelper;
 
 public class SOModificationCheck extends ServerOutput
 {
-    public SOModificationCheck(Server server, String soName)
+    public static final String NAME = "Lime::ModificationCheck";
+    public static final int HASH = HashHelper.hash32(NAME);
+    
+    public SOModificationCheck(Server server)
     {
-        super(server, soName);
+        super(server, HASH);
     }
     
     @Override

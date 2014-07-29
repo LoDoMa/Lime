@@ -9,10 +9,14 @@ import net.lodoma.lime.server.ServerInputHandler;
 import net.lodoma.lime.server.ServerOutput;
 import net.lodoma.lime.server.ServerUser;
 import net.lodoma.lime.server.logic.UserManager;
-import net.lodoma.lime.util.HashPool;
+import net.lodoma.lime.util.HashHelper;
+import net.lodoma.lime.util.HashPool32;
 
 public class SIHChatMessageSend extends ServerInputHandler
 {
+    public static final String NAME = "Lime::ChatMessageSend";
+    public static final int HASH = HashHelper.hash32(NAME);
+    
     public SIHChatMessageSend(Server server)
     {
         super(server, NetStage.USER);
@@ -31,8 +35,8 @@ public class SIHChatMessageSend extends ServerInputHandler
         
         String message = builder.toString();
         
-        HashPool<ServerOutput> soPool = (HashPool<ServerOutput>) server.getProperty("soPool");
-        ServerOutput output = soPool.get("Lime::ChatMessageReceive");
+        HashPool32<ServerOutput> soPool = (HashPool32<ServerOutput>) server.getProperty("soPool");
+        ServerOutput output = soPool.get(SOChatMessageReceive.HASH);
         
         UserManager manager = (UserManager) server.getProperty("userManager");
         List<ServerUser> users = manager.getUserList();
