@@ -17,6 +17,7 @@ local function loadHashes()
 	addHash("body")
 	addHash("m_head")
 	addHash("m_body")
+	addHash("Lime::OnNewUser")
 end
 
 local function onNewUser()
@@ -36,7 +37,7 @@ end
 local function serverUpdate()
 	if firstUpdate then
 		lime.entity.set(this)
-		lime.listener.set("Lime::OnNewUser", onNewUser)
+		lime.listener.set(hashes["Lime::OnNewUser"], onNewUser)
 	end
 end
 

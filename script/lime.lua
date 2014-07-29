@@ -280,27 +280,25 @@ end
 
 -- listener
 
-local function setListener(limeType, listenerFunction)
-	checkType(limeType, "string", 1, "lime.listener.set")
+local function setListener(hash, listenerFunction)
+	checkType(hash, "number", 1, "lime.listener.set")
 	checkType(listenerFunction, "function", 2, "lime.listener.set")
-	local hash = HashHelper:hash32(limeType)
-	assert(listeners[hash] == nil, "listener not released before calling \"lime.listener.set\"")
+	assert(not listeners[hash], "listener not released before calling \"lime.listener.set\"")
 	listeners[hash] = listenerFunction
 	entity:addEventListener(hash);
 end
 
-local function releaseListener(limeType)
-	checkType(limeType, "string", 1, "lime.listener.release")
-	local hash = HashHelper:hash32(limeType)
-	assert(listeners[hash] ~= nil, "listener not set before calling \"lime.listener.release\"")
+local function releaseListener(hash)
+	checkType(hash, "number", 1, "lime.listener.release")
+	assert(listeners[hash], "listener not set before calling \"lime.listener.release\"")
 	entity:removeEventListener(hash)
 	listeners[hash] = nil
 end
 
-local function invokeListener(limeType, eventBundle)
-	checkType(limeType, "number", 1, "lime.listener.invoke")
-	assert(listeners[limeType], "listener not set before calling \"lime.listener.invoke\"")
-	listeners[limeType](eventBundle)
+local function invokeListener(hash, eventBundle)
+	checkType(hash, "number", 1, "lime.listener.invoke")
+	assert(listeners[hash], "listener not set before calling \"lime.listener.invoke\"")
+	listeners[hash](eventBundle)
 end
 
 -- lime table
