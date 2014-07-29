@@ -383,7 +383,3 @@ limex = {
 	follow = follow
 }
 
--- dangerous tables are removed
-
-java = nil
-os = nil

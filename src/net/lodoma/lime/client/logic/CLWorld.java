@@ -66,7 +66,7 @@ public class CLWorld implements ClientLogic
         cihPool.add("Lime::EntityAngularImpulse", new CIHEntityAngularImpulse(client));
         cihPool.add("Lime::EntityForce", new CIHEntityForce(client));
         
-        entityLoader.addXMLFile("lime::zombie", new File("model/zombie.xml"));
+        entityLoader.addXMLFile("Lime::Zombie", new File("model/zombie.xml"));
         
         world.generalInit();
     }
