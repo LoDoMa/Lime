@@ -6,6 +6,8 @@ local round = lime.util.round
 local newVector = lime.util.vector.new
 local hash32 = lime.util.hash32
 
+local tdelta = timeDelta;
+
 local hashes = {}
 
 local function addHash(str)
@@ -31,7 +33,7 @@ local function onNewUser()
 	lime.body.transform.rotation.set(0)
 	lime.body.transform.push()
 	
-	lime.body.impulse.linear(newVector(0.5, 0.0), newVector(0.0, 0.0))
+	--lime.body.impulse.linear(newVector(0.5, 0.0), newVector(0.0, 0.0))
 end
 
 local function serverUpdate()
@@ -49,6 +51,8 @@ local function clientUpdate()
 end
 
 function Lime_FrameUpdate(timeDelta, isActor)
+	tdelta = timeDelta
+
 	if firstUpdate then
 		loadHashes()
 	end

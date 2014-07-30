@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.client.ClientInputHandler;
+import net.lodoma.lime.physics.entity.Entity;
 import net.lodoma.lime.util.HashHelper;
 import net.lodoma.lime.world.client.ClientsideWorld;
 
@@ -24,6 +25,9 @@ public class CIHEntityAngularImpulse extends ClientInputHandler
         int bodyID = inputStream.readInt();
         float impulse = inputStream.readFloat();
         
-        ((ClientsideWorld) client.getProperty("world")).getEntity(entityID).getBody(bodyID).applyAngularImpulse(impulse);
+        Entity entity = ((ClientsideWorld) client.getProperty("world")).getEntity(entityID);
+        if(entity == null || !entity.isCreated()) return;
+        
+        entity.getBody(bodyID).applyAngularImpulse(impulse);
     }
 }

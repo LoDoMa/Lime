@@ -21,11 +21,11 @@ public class CIHEntityCorrection extends ClientInputHandler
     @Override
     protected void localHandle() throws IOException
     {
-        ClientsideWorld world = (ClientsideWorld) client.getProperty("world");
+        int entityID = inputStream.readInt();
         
-        int id = inputStream.readInt();
-        Entity entity = world.getEntity(id);
-        if(entity != null && entity.isCreated())
-            entity.receiveCorrection(inputStream);
+        Entity entity = ((ClientsideWorld) client.getProperty("world")).getEntity(entityID);
+        if(entity == null || !entity.isCreated()) return;
+        
+        entity.receiveCorrection(inputStream);
     }
 }

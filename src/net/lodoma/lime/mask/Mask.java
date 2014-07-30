@@ -30,7 +30,7 @@ public abstract class Mask
     
     public float getRotation()
     {
-        return rotate;
+        return (float) Math.toRadians(rotate);
     }
     
     public void setRotation(float r)
