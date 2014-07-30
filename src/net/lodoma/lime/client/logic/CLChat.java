@@ -54,6 +54,6 @@ public class CLChat implements ClientLogic
     @Override
     public void logic()
     {
-        chatManager.send();
+        chatManager.update();
     }
 }

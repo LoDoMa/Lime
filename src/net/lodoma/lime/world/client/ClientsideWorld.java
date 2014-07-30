@@ -151,17 +151,17 @@ public class ClientsideWorld implements EntityWorld, ChatSender, ChatReceiver
     }
     
     @Override
-    public void sendChat()
+    public void update(ChatManager manager)
     {
         String username = ((Credentials) client.getProperty("credentials")).getUsername();
         for(String message : chatToSend)
-            for(ChatManager manager : chatManagers)
-                manager.send(username + ": " + message);
+            for(ChatManager cmanager : chatManagers)
+                cmanager.send(username + ": " + message);
         chatToSend.clear();
     }
     
     @Override
-    public void receiveChat(String message)
+    public void receiveChat(ChatManager manager, String message)
     {
         Text text = new Text(0.02f, 0.2f, 0.02f, 0.025f, message, new Color(1.0f, 1.0f, 1.0f), "My type of font", Font.PLAIN, TrueTypeFont.ALIGN_LEFT);
         chatTexts.add(text);
@@ -169,15 +169,9 @@ public class ClientsideWorld implements EntityWorld, ChatSender, ChatReceiver
     }
     
     @Override
-    public void closeChatSender()
+    public void removeChatManager(ChatManager manager)
     {
-        
-    }
-    
-    @Override
-    public void closeChatReceiver()
-    {
-        
+        chatManagers.remove(manager);
     }
     
     public void update(double timeDelta)
