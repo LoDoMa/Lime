@@ -3,23 +3,23 @@ package net.lodoma.lime.server.dependency;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.lodoma.lime.server.ServerOutput;
+import net.lodoma.lime.server.ServerPacket;
 
 public class DependencyPool
 {
-    private List<ServerOutput> dependencies;
+    private List<ServerPacket> dependencies;
     
     public DependencyPool()
     {
-        dependencies = new ArrayList<ServerOutput>();
+        dependencies = new ArrayList<ServerPacket>();
     }
     
-    public void addDependency(ServerOutput dependency)
+    public void addDependency(ServerPacket dependency)
     {
         dependencies.add(dependency);
     }
     
-    public ServerOutput getDependency(int index)
+    public ServerPacket getDependency(int index)
     {
         if(dependencies.size() <= index)
             return null;

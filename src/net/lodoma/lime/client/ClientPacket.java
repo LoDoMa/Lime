@@ -4,14 +4,14 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 /**
- * ClientOutput writes output to the server of any format starting with
+ * ClientPacket writes output to the server of any format starting with
  * a specified 32-bit hash. The output should always be in the same format.
- * CO is often used instead of ClientOutput. Names of classes
- * that extend ClientOutput should start with "CO".
+ * CP is often used instead of ClientPacket. Names of classes
+ * that extend ClientPacket should start with "CP".
  * 
  * @author Lovro Kalinovčić
  */
-public abstract class ClientOutput
+public abstract class ClientPacket
 {
     private static final String FAILURE_CLOSE_MESSAGE = "Server closed (output exception)";
     
@@ -27,7 +27,7 @@ public abstract class ClientOutput
      * @param hash - 32-bit hash at the start of the packet
      * @param expected - expected arguments to the handle function
      */
-    public ClientOutput(Client client, int hash, Object... expected)
+    public ClientPacket(Client client, int hash, Object... expected)
     {
         this.client = client;
         outputStream = this.client.getOutputStream();
@@ -42,7 +42,7 @@ public abstract class ClientOutput
      * @param args - given arguments
      * @throws IOException if writing to the output stream fails
      */
-    protected abstract void localHandle(Object... args) throws IOException;
+    protected abstract void localWrite(Object... args) throws IOException;
     
     /**
      * Writes to the output stream. Closes the client
@@ -50,7 +50,7 @@ public abstract class ClientOutput
      * 
      * @param args - given arguments
      */
-    public final void handle(Object... args)
+    public final void write(Object... args)
     {
         try
         {
@@ -62,7 +62,7 @@ public abstract class ClientOutput
                 if(args[i].getClass() != expected[i])
                     throw new IllegalArgumentException();
             
-            localHandle(args);
+            localWrite(args);
             
             outputStream.flush();
         }

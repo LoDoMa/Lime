@@ -4,18 +4,18 @@ import java.io.File;
 import java.io.IOException;
 
 import net.lodoma.lime.client.Client;
-import net.lodoma.lime.client.ClientInputHandler;
-import net.lodoma.lime.client.ClientOutput;
+import net.lodoma.lime.client.ClientPacketHandler;
+import net.lodoma.lime.client.ClientPacket;
 import net.lodoma.lime.security.ModificationCheck;
 import net.lodoma.lime.util.HashHelper;
 import net.lodoma.lime.util.HashPool32;
 
-public class CIHModificationCheck extends ClientInputHandler
+public class CPHModificationCheck extends ClientPacketHandler
 {
     public static final String NAME = "Lime::ModificationCheck";
     public static final int HASH = HashHelper.hash32(NAME);
     
-    public CIHModificationCheck(Client client)
+    public CPHModificationCheck(Client client)
     {
         super(client);
     }
@@ -37,6 +37,6 @@ public class CIHModificationCheck extends ClientInputHandler
             return;
         }
         
-        ((HashPool32<ClientOutput>) client.getProperty("coPool")).get(CODependencyRequest.HASH).handle();
+        ((HashPool32<ClientPacket>) client.getProperty("cpPool")).get(CPDependencyRequest.HASH).write();
     }
 }

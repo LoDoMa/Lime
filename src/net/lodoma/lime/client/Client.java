@@ -65,8 +65,8 @@ public class Client implements PropertyPool
         setProperty("reader", reader);
         setProperty("credentials", credentials);
         
-        setProperty("cihPool", new HashPool32<ClientInputHandler>());
-        setProperty("coPool", new HashPool32<ClientOutput>());
+        setProperty("cphPool", new HashPool32<ClientPacketHandler>());
+        setProperty("cpPool", new HashPool32<ClientPacket>());
         setProperty("emanPool", new HashPool32<EventManager>());
         
         logicPool.addLogic(new CLBase());

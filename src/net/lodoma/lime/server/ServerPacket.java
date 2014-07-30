@@ -5,22 +5,22 @@ import java.util.List;
 
 import net.lodoma.lime.server.logic.UserManager;
 
-public abstract class ServerOutput
+public abstract class ServerPacket
 {
     protected Server server;
     private int hash;
     private Class<?>[] expected;
     
-    public ServerOutput(Server server, int hash, Class<?>... expected)
+    public ServerPacket(Server server, int hash, Class<?>... expected)
     {
         this.server = server;
         this.hash = hash;
         this.expected = expected;
     }
     
-    protected abstract void localHandle(ServerUser user, Object... args) throws IOException;
+    protected abstract void localWrite(ServerUser user, Object... args) throws IOException;
     
-    public final void handle(ServerUser user, Object... args)
+    public final void write(ServerUser user, Object... args)
     {
         try
         {
@@ -32,7 +32,7 @@ public abstract class ServerOutput
                 if(args[i].getClass().isInstance(expected[i]))
                     throw new IllegalArgumentException();
             
-            localHandle(user, args);
+            localWrite(user, args);
             
             user.outputStream.flush();
         }
@@ -47,6 +47,6 @@ public abstract class ServerOutput
         UserManager userManager = ((UserManager) server.getProperty("userManager"));
         List<ServerUser> users = userManager.getUserList();
         for(ServerUser user : users)
-            handle(user, args);
+            write(user, args);
     }
 }

@@ -3,15 +3,15 @@ package net.lodoma.lime.client.logic;
 import java.io.File;
 
 import net.lodoma.lime.client.Client;
-import net.lodoma.lime.client.ClientInputHandler;
-import net.lodoma.lime.client.ClientOutput;
-import net.lodoma.lime.client.io.entity.CIHEntityAngularImpulse;
-import net.lodoma.lime.client.io.entity.CIHEntityCorrection;
-import net.lodoma.lime.client.io.entity.CIHEntityCreation;
-import net.lodoma.lime.client.io.entity.CIHEntityForce;
-import net.lodoma.lime.client.io.entity.CIHEntityLinearImpulse;
-import net.lodoma.lime.client.io.entity.CIHEntityTransformModification;
-import net.lodoma.lime.client.io.world.CIHPlatformCreation;
+import net.lodoma.lime.client.ClientPacketHandler;
+import net.lodoma.lime.client.ClientPacket;
+import net.lodoma.lime.client.io.entity.CPHEntityAngularImpulse;
+import net.lodoma.lime.client.io.entity.CPHEntityCorrection;
+import net.lodoma.lime.client.io.entity.CPHEntityCreation;
+import net.lodoma.lime.client.io.entity.CPHEntityForce;
+import net.lodoma.lime.client.io.entity.CPHEntityLinearImpulse;
+import net.lodoma.lime.client.io.entity.CPHEntityTransformModification;
+import net.lodoma.lime.client.io.world.CPHPlatformCreation;
 import net.lodoma.lime.input.Input;
 import net.lodoma.lime.physics.entity.EntityLoader;
 import net.lodoma.lime.util.HashPool32;
@@ -21,9 +21,9 @@ import net.lodoma.lime.world.client.ClientsideWorld;
 public class CLWorld implements ClientLogic
 {
     private Client client;
-    private HashPool32<ClientInputHandler> cihPool;
+    private HashPool32<ClientPacketHandler> cphPool;
     @SuppressWarnings("unused")
-    private HashPool32<ClientOutput> coPool;
+    private HashPool32<ClientPacket> cpPool;
     private ClientsideWorld world;
     private EntityLoader entityLoader;
     
@@ -46,8 +46,8 @@ public class CLWorld implements ClientLogic
     @Override
     public void fetchInit()
     {
-        cihPool = (HashPool32<ClientInputHandler>) client.getProperty("cihPool");
-        coPool = (HashPool32<ClientOutput>) client.getProperty("coPool");
+        cphPool = (HashPool32<ClientPacketHandler>) client.getProperty("cphPool");
+        cpPool = (HashPool32<ClientPacket>) client.getProperty("cpPool");
         world = (ClientsideWorld) client.getProperty("world");
         entityLoader = (EntityLoader) client.getProperty("entityLoader");
         
@@ -57,14 +57,14 @@ public class CLWorld implements ClientLogic
     @Override
     public void generalInit()
     {
-        cihPool.add(CIHPlatformCreation.HASH, new CIHPlatformCreation(client));
+        cphPool.add(CPHPlatformCreation.HASH, new CPHPlatformCreation(client));
         
-        cihPool.add(CIHEntityCreation.HASH, new CIHEntityCreation(client));
-        cihPool.add(CIHEntityCorrection.HASH, new CIHEntityCorrection(client));
-        cihPool.add(CIHEntityTransformModification.HASH, new CIHEntityTransformModification(client));
-        cihPool.add(CIHEntityLinearImpulse.HASH, new CIHEntityLinearImpulse(client));
-        cihPool.add(CIHEntityAngularImpulse.HASH, new CIHEntityAngularImpulse(client));
-        cihPool.add(CIHEntityForce.HASH, new CIHEntityForce(client));
+        cphPool.add(CPHEntityCreation.HASH, new CPHEntityCreation(client));
+        cphPool.add(CPHEntityCorrection.HASH, new CPHEntityCorrection(client));
+        cphPool.add(CPHEntityTransformModification.HASH, new CPHEntityTransformModification(client));
+        cphPool.add(CPHEntityLinearImpulse.HASH, new CPHEntityLinearImpulse(client));
+        cphPool.add(CPHEntityAngularImpulse.HASH, new CPHEntityAngularImpulse(client));
+        cphPool.add(CPHEntityForce.HASH, new CPHEntityForce(client));
         
         entityLoader.addXMLFile("Lime::Zombie", new File("model/zombie.xml"));
         

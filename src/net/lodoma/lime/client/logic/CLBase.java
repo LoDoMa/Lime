@@ -4,12 +4,12 @@ import java.io.DataInputStream;
 import java.io.IOException;
 
 import net.lodoma.lime.client.Client;
-import net.lodoma.lime.client.ClientInputHandler;
-import net.lodoma.lime.client.ClientOutput;
-import net.lodoma.lime.client.io.base.CIHModificationCheck;
-import net.lodoma.lime.client.io.base.CIHNetworkStageChange;
-import net.lodoma.lime.client.io.base.CODependencyRequest;
-import net.lodoma.lime.client.io.base.COPresenceResponse;
+import net.lodoma.lime.client.ClientPacketHandler;
+import net.lodoma.lime.client.ClientPacket;
+import net.lodoma.lime.client.io.base.CPHModificationCheck;
+import net.lodoma.lime.client.io.base.CPHNetworkStageChange;
+import net.lodoma.lime.client.io.base.CPDependencyRequest;
+import net.lodoma.lime.client.io.base.CPPresenceResponse;
 import net.lodoma.lime.common.NetStage;
 import net.lodoma.lime.util.HashPool32;
 import net.lodoma.lime.util.Timer;
@@ -17,8 +17,8 @@ import net.lodoma.lime.util.Timer;
 public class CLBase implements ClientLogic
 {
     private Client client;
-    private HashPool32<ClientInputHandler> cihPool;
-    private HashPool32<ClientOutput> coPool;
+    private HashPool32<ClientPacketHandler> cphPool;
+    private HashPool32<ClientPacket> cpPool;
     
     private boolean sendFirstRequest;
     
@@ -44,19 +44,19 @@ public class CLBase implements ClientLogic
     @Override
     public void fetchInit()
     {
-        cihPool = (HashPool32<ClientInputHandler>) client.getProperty("cihPool");
-        coPool = (HashPool32<ClientOutput>) client.getProperty("coPool");
+        cphPool = (HashPool32<ClientPacketHandler>) client.getProperty("cphPool");
+        cpPool = (HashPool32<ClientPacket>) client.getProperty("cpPool");
     }
 
     @Override
     public void generalInit()
     {
         sendFirstRequest = true;
-        coPool.add(CODependencyRequest.HASH, new CODependencyRequest(client));
-        coPool.add(COPresenceResponse.HASH, new COPresenceResponse(client));
-        cihPool.add(CIHNetworkStageChange.HASH, new CIHNetworkStageChange(client));
+        cpPool.add(CPDependencyRequest.HASH, new CPDependencyRequest(client));
+        cpPool.add(CPPresenceResponse.HASH, new CPPresenceResponse(client));
+        cphPool.add(CPHNetworkStageChange.HASH, new CPHNetworkStageChange(client));
         
-        cihPool.add(CIHModificationCheck.HASH, new CIHModificationCheck(client));
+        cphPool.add(CPHModificationCheck.HASH, new CPHModificationCheck(client));
     }
     
     @Override
@@ -65,7 +65,7 @@ public class CLBase implements ClientLogic
         if(sendFirstRequest)
         {
             client.setProperty("dependencyProgress", 0);
-            coPool.get(CODependencyRequest.HASH).handle();
+            cpPool.get(CPDependencyRequest.HASH).write();
             sendFirstRequest = false;
         }
         
@@ -77,7 +77,7 @@ public class CLBase implements ClientLogic
         
         if(responseCounter >= 3.5)
         {
-            coPool.get(COPresenceResponse.HASH).handle();
+            cpPool.get(CPPresenceResponse.HASH).write();
             responseCounter -= 3.5;
         }
         
@@ -86,7 +86,7 @@ public class CLBase implements ClientLogic
             while(stream.available() >= 4)
             {
                 int hash = stream.readInt();
-                ClientInputHandler cih = cihPool.get(hash);
+                ClientPacketHandler cih = cphPool.get(hash);
                 if(cih != null)
                     cih.handle();
             }

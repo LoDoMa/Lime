@@ -32,8 +32,8 @@ public final class Server implements PropertyPool
         
         UserManager userManager = new UserManager();
         
-        setProperty("sihPool", new HashPool32<ServerInputHandler>());
-        setProperty("soPool", new HashPool32<ServerOutput>());
+        setProperty("sphPool", new HashPool32<ServerPacketHandler>());
+        setProperty("spPool", new HashPool32<ServerPacket>());
         setProperty("emanPool", new HashPool32<EventManager>());
         setProperty("dependencyPool", new DependencyPool());
         setProperty("userManager", userManager);

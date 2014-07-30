@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.lodoma.lime.client.Client;
-import net.lodoma.lime.client.ClientOutput;
-import net.lodoma.lime.client.io.chat.COChatMessageSend;
+import net.lodoma.lime.client.ClientPacket;
+import net.lodoma.lime.client.io.chat.CPChatMessageSend;
 import net.lodoma.lime.util.HashPool32;
 
 /**
@@ -19,7 +19,7 @@ import net.lodoma.lime.util.HashPool32;
 public class ChatManager
 {
     private Client client;
-    private ClientOutput send;  // client output used to send a message
+    private ClientPacket send;  // packet used to send a message
     
     private List<ChatSender> senders;       // list of senders this manager is managing
     private List<ChatReceiver> receivers;   // list of receivers this manager is managing
@@ -34,12 +34,12 @@ public class ChatManager
     
     /**
      * Should be invoked on generalInit in client logic or after it.
-     * Gets the ClientOutput for sending messages.
+     * Gets the ClientPacket for sending messages.
      */
     @SuppressWarnings("unchecked")
     public void generalInit()
     { 
-        send = ((HashPool32<ClientOutput>) client.getProperty("coPool")).get(COChatMessageSend.HASH);
+        send = ((HashPool32<ClientPacket>) client.getProperty("cpPool")).get(CPChatMessageSend.HASH);
     }
     
     /**
@@ -89,7 +89,7 @@ public class ChatManager
      */
     public void send(String message)
     {
-        send.handle(message);
+        send.write(message);
     }
     
     /**

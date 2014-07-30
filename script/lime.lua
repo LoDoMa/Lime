@@ -18,8 +18,8 @@ local networkSide = entityWorld:getNetworkSide():ordinal()
 local serverSide = networkSide == NetworkSide:valueOf("SERVER"):ordinal() and true or nil
 local clientSide = networkSide == NetworkSide:valueOf("CLIENT"):ordinal() and true or nil
 
-local inputHandlerHashPool = propertyPool:getProperty(serverSide and "sihPool" or (clientSide and "cihPool" or nil))
-local outputHashPool = propertyPool:getProperty(serverSide and "soPool" or (clientSide and "coPool" or nil))
+local inputHandlerHashPool = propertyPool:getProperty(serverSide and "sphPool" or (clientSide and "cphPool" or nil))
+local outputHashPool = propertyPool:getProperty(serverSide and "spPool" or (clientSide and "cpPool" or nil))
 
 local workingEntity = nil
 local workingBody = nil

@@ -4,15 +4,15 @@ import java.io.IOException;
 
 import net.lodoma.lime.chat.ChatManager;
 import net.lodoma.lime.client.Client;
-import net.lodoma.lime.client.ClientInputHandler;
+import net.lodoma.lime.client.ClientPacketHandler;
 import net.lodoma.lime.util.HashHelper;
 
-public class CIHChatMessageReceive extends ClientInputHandler
+public class CPHChatMessageReceive extends ClientPacketHandler
 {
     public static final String NAME = "Lime::ChatMessageReceive";
     public static final int HASH = HashHelper.hash32(NAME);
     
-    public CIHChatMessageReceive(Client client)
+    public CPHChatMessageReceive(Client client)
     {
         super(client);
     }

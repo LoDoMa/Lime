@@ -16,11 +16,11 @@ import net.lodoma.lime.physics.PhysicsWorld;
 import net.lodoma.lime.physics.entity.Entity;
 import net.lodoma.lime.physics.entity.EntityWorld;
 import net.lodoma.lime.server.Server;
-import net.lodoma.lime.server.ServerOutput;
+import net.lodoma.lime.server.ServerPacket;
 import net.lodoma.lime.server.ServerUser;
-import net.lodoma.lime.server.io.entity.SOEntityCorrection;
-import net.lodoma.lime.server.io.entity.SOEntityCreation;
-import net.lodoma.lime.server.io.world.SOPlatformCreation;
+import net.lodoma.lime.server.io.entity.SPEntityCorrection;
+import net.lodoma.lime.server.io.entity.SPEntityCreation;
+import net.lodoma.lime.server.io.world.SPPlatformCreation;
 import net.lodoma.lime.server.logic.UserManager;
 import net.lodoma.lime.util.HashPool32;
 import net.lodoma.lime.world.platform.Platform;
@@ -31,9 +31,9 @@ public class ServersideWorld implements EntityWorld
     {
         private ServersideWorld world;
         private EventManager manager;
-        private ServerOutput platformCreation;
-        private ServerOutput entityCreation;
-        private ServerOutput entityCorrection;
+        private ServerPacket platformCreation;
+        private ServerPacket entityCreation;
+        private ServerPacket entityCorrection;
         
         public SendOnEvent(ServersideWorld world, EventManager manager)
         {
@@ -58,13 +58,13 @@ public class ServersideWorld implements EntityWorld
             
             List<Platform> platformList = world.getPlatformList();
             for(Platform platform : platformList)
-                platformCreation.handle(user, platform);
+                platformCreation.write(user, platform);
 
             List<Entity> entityList = new ArrayList<Entity>(entities.values());
             for(Entity entity : entityList)
             {
-                entityCreation.handle(user, entity);
-                entityCorrection.handle(user, entity);
+                entityCreation.write(user, entity);
+                entityCorrection.write(user, entity);
             }
         }
         
@@ -82,9 +82,9 @@ public class ServersideWorld implements EntityWorld
     private Map<Integer, Entity> entities;
     
     private SendOnEvent initialWorldDataSender;
-    private ServerOutput platformCreation;
-    private ServerOutput entityCreation;
-    private ServerOutput entityCorrection;
+    private ServerPacket platformCreation;
+    private ServerPacket entityCreation;
+    private ServerPacket entityCorrection;
     
     private static final double CORRECTION_TIME = 1.5;
     private double correctionRemaining;
@@ -114,12 +114,12 @@ public class ServersideWorld implements EntityWorld
     {
         userManager = (UserManager) server.getProperty("userManager");
         
-        HashPool32<ServerOutput> soPool = (HashPool32<ServerOutput>) server.getProperty("soPool");
+        HashPool32<ServerPacket> spPool = (HashPool32<ServerPacket>) server.getProperty("spPool");
         EventManager manager = ((HashPool32<EventManager>) server.getProperty("emanPool")).get(EventManager.ON_NEW_USER_HASH);
 
-        platformCreation = soPool.get(SOPlatformCreation.HASH);
-        entityCreation = soPool.get(SOEntityCreation.HASH);
-        entityCorrection = soPool.get(SOEntityCorrection.HASH);
+        platformCreation = spPool.get(SPPlatformCreation.HASH);
+        entityCreation = spPool.get(SPEntityCreation.HASH);
+        entityCorrection = spPool.get(SPEntityCorrection.HASH);
         
         initialWorldDataSender = new SendOnEvent(this, manager);
     }
@@ -150,7 +150,7 @@ public class ServersideWorld implements EntityWorld
         
         List<ServerUser> userList = userManager.getUserList();
         for(ServerUser user : userList)
-            platformCreation.handle(user, platform);
+            platformCreation.write(user, platform);
     }
     
     public List<Platform> getPlatformList()
@@ -172,7 +172,7 @@ public class ServersideWorld implements EntityWorld
         
         List<ServerUser> userList = userManager.getUserList();
         for(ServerUser user : userList)
-            entityCreation.handle(user, entity);
+            entityCreation.write(user, entity);
     }
 
     @Override
@@ -204,7 +204,7 @@ public class ServersideWorld implements EntityWorld
             for(ServerUser user : userList)
                 for(Entity entity : entityList)
                     if(entity.isCreated())
-                        entityCorrection.handle(user, entity);
+                        entityCorrection.write(user, entity);
         }
         
         List<Entity> entityList = new ArrayList<Entity>(entities.values());

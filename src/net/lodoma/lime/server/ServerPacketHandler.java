@@ -4,12 +4,12 @@ import java.io.IOException;
 
 import net.lodoma.lime.common.NetStage;
 
-public abstract class ServerInputHandler
+public abstract class ServerPacketHandler
 {
     protected Server server;
     private NetStage[] stages;
     
-    public ServerInputHandler(Server server, NetStage... stages)
+    public ServerPacketHandler(Server server, NetStage... stages)
     {
         this.server = server;
         this.stages = stages;

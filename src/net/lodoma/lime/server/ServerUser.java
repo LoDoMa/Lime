@@ -16,7 +16,7 @@ public final class ServerUser implements Runnable
 {
     public NetStage stage;
     
-    private HashPool32<ServerInputHandler> sihPool;
+    private HashPool32<ServerPacketHandler> sphPool;
     
     private Socket socket;
     
@@ -36,7 +36,7 @@ public final class ServerUser implements Runnable
     {
         this.stage = stage;
         
-        sihPool = (HashPool32<ServerInputHandler>) server.getProperty("sihPool");
+        sphPool = (HashPool32<ServerPacketHandler>) server.getProperty("sphPool");
         
         this.socket = socket;
         try
@@ -92,7 +92,7 @@ public final class ServerUser implements Runnable
         while(inputStream.available() >= 8)
         {
             int hash = inputStream.readInt();
-            ServerInputHandler handler = sihPool.get(hash);
+            ServerPacketHandler handler = sphPool.get(hash);
             if(handler != null)
                 handler.handle(this);
         }

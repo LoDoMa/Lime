@@ -2,19 +2,19 @@ package net.lodoma.lime.server.logic;
 
 import net.lodoma.lime.event.EventManager;
 import net.lodoma.lime.server.Server;
-import net.lodoma.lime.server.ServerInputHandler;
-import net.lodoma.lime.server.ServerOutput;
+import net.lodoma.lime.server.ServerPacketHandler;
+import net.lodoma.lime.server.ServerPacket;
 import net.lodoma.lime.server.dependency.DependencyPool;
-import net.lodoma.lime.server.io.base.SIHDependencyRequest;
-import net.lodoma.lime.server.io.base.SOModificationCheck;
-import net.lodoma.lime.server.io.base.SONetworkStageChange;
+import net.lodoma.lime.server.io.base.SPHDependencyRequest;
+import net.lodoma.lime.server.io.base.SPModificationCheck;
+import net.lodoma.lime.server.io.base.SPNetworkStageChange;
 import net.lodoma.lime.util.HashPool32;
 
 public class SLBase implements ServerLogic
 {
     private Server server;
-    private HashPool32<ServerInputHandler> sihPool;
-    private HashPool32<ServerOutput> soPool;
+    private HashPool32<ServerPacketHandler> sphPool;
+    private HashPool32<ServerPacket> spPool;
     private HashPool32<EventManager> emanPool;
     private DependencyPool dependencyPool;
     
@@ -34,8 +34,8 @@ public class SLBase implements ServerLogic
     @Override
     public void fetchInit()
     {
-        sihPool = (HashPool32<ServerInputHandler>) server.getProperty("sihPool");
-        soPool = (HashPool32<ServerOutput>) server.getProperty("soPool");
+        sphPool = (HashPool32<ServerPacketHandler>) server.getProperty("sphPool");
+        spPool = (HashPool32<ServerPacket>) server.getProperty("spPool");
         emanPool = (HashPool32<EventManager>) server.getProperty("emanPool");
         dependencyPool = (DependencyPool) server.getProperty("dependencyPool");
         
@@ -45,10 +45,10 @@ public class SLBase implements ServerLogic
     @Override
     public void generalInit()
     {
-        sihPool.add(SIHDependencyRequest.HASH, new SIHDependencyRequest(server));
-        soPool.add(SONetworkStageChange.HASH, new SONetworkStageChange(server));
+        sphPool.add(SPHDependencyRequest.HASH, new SPHDependencyRequest(server));
+        spPool.add(SPNetworkStageChange.HASH, new SPNetworkStageChange(server));
         
-        dependencyPool.addDependency(new SOModificationCheck(server));
+        dependencyPool.addDependency(new SPModificationCheck(server));
     }
     
     @Override

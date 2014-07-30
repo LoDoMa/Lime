@@ -2,15 +2,15 @@ package net.lodoma.lime.server.logic;
 
 import net.lodoma.lime.physics.entity.EntityLoader;
 import net.lodoma.lime.server.Server;
-import net.lodoma.lime.server.ServerInputHandler;
-import net.lodoma.lime.server.ServerOutput;
-import net.lodoma.lime.server.io.entity.SOEntityAngularImpulse;
-import net.lodoma.lime.server.io.entity.SOEntityCorrection;
-import net.lodoma.lime.server.io.entity.SOEntityCreation;
-import net.lodoma.lime.server.io.entity.SOEntityForce;
-import net.lodoma.lime.server.io.entity.SOEntityLinearImpulse;
-import net.lodoma.lime.server.io.entity.SOEntityTransformModification;
-import net.lodoma.lime.server.io.world.SOPlatformCreation;
+import net.lodoma.lime.server.ServerPacket;
+import net.lodoma.lime.server.ServerPacketHandler;
+import net.lodoma.lime.server.io.entity.SPEntityAngularImpulse;
+import net.lodoma.lime.server.io.entity.SPEntityCorrection;
+import net.lodoma.lime.server.io.entity.SPEntityCreation;
+import net.lodoma.lime.server.io.entity.SPEntityForce;
+import net.lodoma.lime.server.io.entity.SPEntityLinearImpulse;
+import net.lodoma.lime.server.io.entity.SPEntityTransformModification;
+import net.lodoma.lime.server.io.world.SPPlatformCreation;
 import net.lodoma.lime.util.HashPool32;
 import net.lodoma.lime.util.Timer;
 import net.lodoma.lime.world.builder.WorldFileLoader;
@@ -20,8 +20,8 @@ public class SLWorld implements ServerLogic
 {
     private Server server;
     @SuppressWarnings("unused")
-    private HashPool32<ServerInputHandler> sihPool;
-    private HashPool32<ServerOutput> soPool;
+    private HashPool32<ServerPacketHandler> sphPool;
+    private HashPool32<ServerPacket> spPool;
     
     private ServersideWorld world;
     
@@ -44,22 +44,22 @@ public class SLWorld implements ServerLogic
     @Override
     public void fetchInit()
     {
-        sihPool = (HashPool32<ServerInputHandler>) server.getProperty("sihPool");
-        soPool = (HashPool32<ServerOutput>) server.getProperty("soPool");
+        sphPool = (HashPool32<ServerPacketHandler>) server.getProperty("sphPool");
+        spPool = (HashPool32<ServerPacket>) server.getProperty("spPool");
         world = (ServersideWorld) server.getProperty("world");
     }
     
     @Override
     public void generalInit()
     {
-        soPool.add(SOPlatformCreation.HASH, new SOPlatformCreation(server));
+        spPool.add(SPPlatformCreation.HASH, new SPPlatformCreation(server));
         
-        soPool.add(SOEntityCreation.HASH, new SOEntityCreation(server));
-        soPool.add(SOEntityCorrection.HASH, new SOEntityCorrection(server));
-        soPool.add(SOEntityTransformModification.HASH, new SOEntityTransformModification(server));
-        soPool.add(SOEntityLinearImpulse.HASH, new SOEntityLinearImpulse(server));
-        soPool.add(SOEntityAngularImpulse.HASH, new SOEntityAngularImpulse(server));
-        soPool.add(SOEntityForce.HASH, new SOEntityForce(server));
+        spPool.add(SPEntityCreation.HASH, new SPEntityCreation(server));
+        spPool.add(SPEntityCorrection.HASH, new SPEntityCorrection(server));
+        spPool.add(SPEntityTransformModification.HASH, new SPEntityTransformModification(server));
+        spPool.add(SPEntityLinearImpulse.HASH, new SPEntityLinearImpulse(server));
+        spPool.add(SPEntityAngularImpulse.HASH, new SPEntityAngularImpulse(server));
+        spPool.add(SPEntityForce.HASH, new SPEntityForce(server));
         
         world.generalInit();
         

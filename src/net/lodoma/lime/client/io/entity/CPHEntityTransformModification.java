@@ -3,18 +3,18 @@ package net.lodoma.lime.client.io.entity;
 import java.io.IOException;
 
 import net.lodoma.lime.client.Client;
-import net.lodoma.lime.client.ClientInputHandler;
+import net.lodoma.lime.client.ClientPacketHandler;
 import net.lodoma.lime.physics.PhysicsBody;
 import net.lodoma.lime.util.HashHelper;
 import net.lodoma.lime.util.Vector2;
 import net.lodoma.lime.world.client.ClientsideWorld;
 
-public class CIHEntityTransformModification extends ClientInputHandler
+public class CPHEntityTransformModification extends ClientPacketHandler
 {
     public static final String NAME = "Lime::EntityTransformModification";
     public static final int HASH = HashHelper.hash32(NAME);
     
-    public CIHEntityTransformModification(Client client)
+    public CPHEntityTransformModification(Client client)
     {
         super(client);
     }
