@@ -4,8 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +17,7 @@ import net.lodoma.lime.common.PropertyPool;
 import net.lodoma.lime.event.EventManager;
 import net.lodoma.lime.security.Credentials;
 import net.lodoma.lime.util.HashPool32;
+import net.lodoma.lime.util.Pipe;
 
 public class Client implements PropertyPool
 {
@@ -26,15 +26,15 @@ public class Client implements PropertyPool
     
     private Socket socket;
     
-    InputStream privateInputStream;
-    PipedOutputStream privateOutputStream;
+    private Pipe pipe;
+    private InputStream socketInputStream;
+    private OutputStream socketOutputStream;
+    private DataInputStream publicInputStream;
+    private DataOutputStream publicOutputStream;
 
-    private DataInputStream inputStream;
-    private DataOutputStream outputStream;
-   
+    private ClientLogicPool logicPool;
     private ClientReader reader;
     
-    private ClientLogicPool logicPool;
     private Map<String, Object> properties;
     
     public final void open(int port, String host, Credentials credentials) throws ClientConnectionException
@@ -44,12 +44,12 @@ public class Client implements PropertyPool
         try
         {
             socket = new Socket(host, port);
-            
-            privateInputStream = socket.getInputStream();
-            privateOutputStream = new PipedOutputStream();
 
-            inputStream = new DataInputStream(new PipedInputStream(privateOutputStream));
-            outputStream = new DataOutputStream(socket.getOutputStream());
+            pipe = new Pipe();
+            socketInputStream = socket.getInputStream();
+            socketOutputStream = socket.getOutputStream();
+            publicInputStream = new DataInputStream(pipe.getInputStream());
+            publicOutputStream = new DataOutputStream(socketOutputStream);
         }
         catch (IOException e)
         {
@@ -57,14 +57,17 @@ public class Client implements PropertyPool
         }
         
         logicPool = new ClientLogicPool(this, 60.0);
-        properties = new HashMap<String, Object>();
+        reader = new ClientReader(this, socketInputStream, pipe.getOutputStream());
         
-        setProperty("cihPool", new HashPool32<ClientInputHandler>());
-        reader = new ClientReader(this);
-        setProperty("coPool", new HashPool32<ClientOutput>());
-        setProperty("emanPool", new HashPool32<EventManager>());
+        properties = new HashMap<String, Object>();
+
+        setProperty("logicPool", logicPool);
         setProperty("reader", reader);
         setProperty("credentials", credentials);
+        
+        setProperty("cihPool", new HashPool32<ClientInputHandler>());
+        setProperty("coPool", new HashPool32<ClientOutput>());
+        setProperty("emanPool", new HashPool32<EventManager>());
         
         logicPool.addLogic(new CLBase());
         logicPool.addLogic(new CLChat());
@@ -73,9 +76,10 @@ public class Client implements PropertyPool
         logicPool.init();
         
         reader.start();
-        isRunning = true;
-        closeMessage = null;
         logicPool.start();
+        
+        closeMessage = null;
+        isRunning = true;
     }
     
     public final void close()
@@ -133,12 +137,12 @@ public class Client implements PropertyPool
     
     public DataInputStream getInputStream()
     {
-        return inputStream;
+        return publicInputStream;
     }
     
     public DataOutputStream getOutputStream()
     {
-        return outputStream;
+        return publicOutputStream;
     }
     
     public boolean isRunning()

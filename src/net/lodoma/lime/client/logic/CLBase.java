@@ -1,11 +1,11 @@
 package net.lodoma.lime.client.logic;
 
+import java.io.DataInputStream;
 import java.io.IOException;
 
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.client.ClientInputHandler;
 import net.lodoma.lime.client.ClientOutput;
-import net.lodoma.lime.client.ClientReader;
 import net.lodoma.lime.client.io.base.CIHModificationCheck;
 import net.lodoma.lime.client.io.base.CIHNetworkStageChange;
 import net.lodoma.lime.client.io.base.CODependencyRequest;
@@ -17,11 +17,12 @@ import net.lodoma.lime.util.Timer;
 public class CLBase implements ClientLogic
 {
     private Client client;
-    private ClientReader reader;
     private HashPool32<ClientInputHandler> cihPool;
     private HashPool32<ClientOutput> coPool;
     
     private boolean sendFirstRequest;
+    
+    private DataInputStream stream;
     
     private Timer responseTimer;
     private double responseCounter;
@@ -30,6 +31,7 @@ public class CLBase implements ClientLogic
     public void baseInit(Client client)
     {
         this.client = client;
+        stream = client.getInputStream();
     }
 
     @Override
@@ -44,7 +46,6 @@ public class CLBase implements ClientLogic
     {
         cihPool = (HashPool32<ClientInputHandler>) client.getProperty("cihPool");
         coPool = (HashPool32<ClientOutput>) client.getProperty("coPool");
-        reader = (ClientReader) client.getProperty("reader");
     }
 
     @Override
@@ -82,12 +83,18 @@ public class CLBase implements ClientLogic
         
         try
         {
-            reader.handleInput();
+            while(stream.available() >= 4)
+            {
+                int hash = stream.readInt();
+                ClientInputHandler cih = cihPool.get(hash);
+                if(cih != null)
+                    cih.handle();
+            }
         }
-        catch (IOException e)
+        catch(IOException e)
         {
-            client.setCloseMessage("Client logic error");
-            client.closeInThread();
+            client.setCloseMessage("Client logic exception");
+            client.close();
         }
     }
     

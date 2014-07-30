@@ -3,8 +3,10 @@ package net.lodoma.lime.script;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import com.naef.jnlua.LuaException;
 import com.naef.jnlua.LuaState;
 
 public class LuaScript
@@ -19,7 +21,8 @@ public class LuaScript
     
     public void push(Object object)
     {
-            if(object instanceof Boolean)   luaState.pushBoolean((Boolean) object);
+            if(object == null)              luaState.pushNil();
+       else if(object instanceof Boolean)   luaState.pushBoolean((Boolean) object);
        else if(object instanceof Byte)      luaState.pushNumber((Byte) object);
        else if(object instanceof Character) luaState.pushNumber((Character) object);
        else if(object instanceof Short)     luaState.pushNumber((Short) object);
@@ -37,27 +40,39 @@ public class LuaScript
         luaState.setGlobal("LIME_" + name);
     }
     
-    public void removeGlobal(String name)
-    {
-        luaState.pushNil();
-        luaState.setGlobal("LIME_" + name);
-    }
-    
     public void require(String file)
     {
-        luaState.load("require \"" + file + "\"", "requirement");
-        luaState.call(0, 0);
-    }
-    
-    public void load(String source)
-    {
-        luaState.load(source, "script");
-        luaState.call(0, 0);
+        load("require \"" + file + "\"", "require");
     }
     
     public void load(File file) throws IOException
     {
-        load(new String(Files.readAllBytes(Paths.get(file.toURI()))));
+        Path path = Paths.get(file.toURI());
+        String source = new String(Files.readAllBytes(path));
+        load(source);
+    }
+    
+    public void load(String source)
+    {
+        load(source, "script");
+    }
+    
+    private void load(String source, String chunk)
+    {
+        luaState.load(source, chunk);
+        protectedCall(0, 0);
+    }
+    
+    private void protectedCall(int argc, int retc)
+    {
+        try
+        {
+            luaState.call(argc, retc);
+        }
+        catch(LuaException e)
+        {
+            // TODO handle later
+        }
     }
     
     public void call(String functionPath, Object... arguments)
@@ -69,7 +84,8 @@ public class LuaScript
         
         for(Object argument : arguments)
             push(argument);
-        luaState.call(arguments.length, 0);
+
+        protectedCall(arguments.length, 0);
         luaState.pop(segm.length - 1);
     }
     

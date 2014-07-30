@@ -1,37 +1,25 @@
 package net.lodoma.lime.client;
 
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PipedOutputStream;
-
-import net.lodoma.lime.util.HashPool32;
+import java.io.OutputStream;
 
 public class ClientReader implements Runnable
-{
-    private Client client;
-    
+{   
     private Thread thread;
     private boolean running;
     
-    private InputStream privateInputStream;
-    private PipedOutputStream privateOutputStream;
+    private Client client;
+
+    private InputStream inputStream;
+    private OutputStream outputStream;
     
-    private DataInputStream inputStream;
-    
-    private HashPool32<ClientInputHandler> cihPool;
-    
-    @SuppressWarnings("unchecked")
-    public ClientReader(Client client)
+    public ClientReader(Client client, InputStream inputStream, OutputStream outputStream)
     {
         this.client = client;
         
-        privateInputStream = client.privateInputStream;
-        privateOutputStream = client.privateOutputStream;
-        
-        inputStream = client.getInputStream();
-        
-        cihPool = (HashPool32<ClientInputHandler>) client.getProperty("cihPool");
+        this.inputStream = inputStream;
+        this.outputStream = outputStream;
     }
     
     public void start()
@@ -53,17 +41,6 @@ public class ClientReader implements Runnable
         return thread.isAlive();
     }
     
-    public void handleInput() throws IOException
-    {
-        while(inputStream.available() >= 8)
-        {
-            int hash = inputStream.readInt();
-            ClientInputHandler handler = cihPool.get(hash);
-            if(handler != null)
-                handler.handle();
-        }
-    }
-    
     @Override
     public void run()
     {
@@ -71,11 +48,10 @@ public class ClientReader implements Runnable
         {
             try
             {
-                int readByte = privateInputStream.read();
+                int readByte = inputStream.read();
                 if(readByte == -1)
                     throw new IOException();
-                privateOutputStream.write(readByte);
-                privateOutputStream.flush();
+                outputStream.write(readByte);
             }
             catch(IOException e)
             {
