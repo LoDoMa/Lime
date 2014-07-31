@@ -86,8 +86,8 @@ public class ServerService implements Runnable
             {
                 Socket clientSocket = serviceSocket.accept();
                 ServerUser serverUser = new ServerUser(NetStage.DEPENDENCY, clientSocket, server);
-                serverUser.start();
-                userManager.addUser(serverUser);
+                if(userManager.addUser(serverUser))
+                    serverUser.start();
             }
             catch(IOException e)
             {

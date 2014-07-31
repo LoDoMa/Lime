@@ -298,7 +298,21 @@ end
 local function invokeListener(hash, eventBundle)
 	checkType(hash, "number", 1, "lime.listener.invoke")
 	assert(listeners[hash], "listener not set before calling \"lime.listener.invoke\"")
-	listeners[hash](eventBundle)
+
+	local luaSafe = eventBundle:isLuaSafe()
+	assert(luaSafe, "event bundle is not safe")
+
+	local keyList = eventBundle:getKeyList()
+	local keyCount = keyList:size()
+
+	local bundle = {}
+
+	for index = 1, keyCount, 1 do
+		local key = keyList:get(index - 1)
+		bundle[key] = eventBundle:get(key)
+	end
+
+	listeners[hash](bundle)
 end
 
 -- lime table

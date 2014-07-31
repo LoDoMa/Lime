@@ -22,7 +22,9 @@ local function loadHashes()
 	addHash("Lime::OnNewUser")
 end
 
-local function onNewUser()
+local function onNewUser(bundle)
+	print("user ID: " .. bundle["userID"])
+
 	lime.body.set(hashes["head"])
 	lime.body.transform.position.set(newVector(1.0, 7.0))
 	lime.body.transform.rotation.set(0)

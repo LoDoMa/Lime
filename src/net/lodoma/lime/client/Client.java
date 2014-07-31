@@ -50,6 +50,12 @@ public class Client implements PropertyPool
             socketOutputStream = socket.getOutputStream();
             publicInputStream = new DataInputStream(pipe.getInputStream());
             publicOutputStream = new DataOutputStream(socketOutputStream);
+            
+            String username = credentials.getUsername();
+            int usernameLength = username.length();
+            for(int i = 0; i < usernameLength; i++)
+                publicOutputStream.writeChar(username.charAt(i));
+            publicOutputStream.writeChar((char) 0);
         }
         catch (IOException e)
         {

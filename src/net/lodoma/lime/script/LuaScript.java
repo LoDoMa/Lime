@@ -11,6 +11,21 @@ import com.naef.jnlua.LuaState;
 
 public class LuaScript
 {
+    public static boolean safeType(Object object)
+    {
+            if(object == null)              return true;
+       else if(object instanceof Boolean)   return true;
+       else if(object instanceof Byte)      return true;
+       else if(object instanceof Character) return true;
+       else if(object instanceof Short)     return true;
+       else if(object instanceof Integer)   return true;
+       else if(object instanceof Float)     return true;
+       else if(object instanceof Long)      return true;
+       else if(object instanceof Double)    return true;
+       else if(object instanceof String)    return true;
+       return false;
+    }
+    
     private LuaState luaState;
     
     public LuaScript()
@@ -72,6 +87,7 @@ public class LuaScript
         catch(LuaException e)
         {
             // TODO handle later
+            e.printStackTrace();
         }
     }
     

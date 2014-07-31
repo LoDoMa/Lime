@@ -33,6 +33,6 @@ public class SPNetworkStageChange extends ServerPacket
         user.stage = stage;
         user.outputStream.writeInt(stage.ordinal());
         if(stage == NetStage.USER)
-            manager.onEvent(new EventBundle(new String[] {"serverUser"}, new Object[] {user}));
+            manager.onEvent(new EventBundle(new String[] {"userID"}, new Object[] {user.getID()}));
     }
 }

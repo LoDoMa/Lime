@@ -1,12 +1,12 @@
 package net.lodoma.lime.server.io.chat;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Set;
 
 import net.lodoma.lime.common.NetStage;
 import net.lodoma.lime.server.Server;
-import net.lodoma.lime.server.ServerPacketHandler;
 import net.lodoma.lime.server.ServerPacket;
+import net.lodoma.lime.server.ServerPacketHandler;
 import net.lodoma.lime.server.ServerUser;
 import net.lodoma.lime.server.logic.UserManager;
 import net.lodoma.lime.util.HashHelper;
@@ -39,7 +39,7 @@ public class SPHChatMessageSend extends ServerPacketHandler
         ServerPacket output = spPool.get(SPChatMessageReceive.HASH);
         
         UserManager manager = (UserManager) server.getProperty("userManager");
-        List<ServerUser> users = manager.getUserList();
+        Set<ServerUser> users = manager.getUserSet();
         for(ServerUser userl : users)
             output.write(userl, message);
     }

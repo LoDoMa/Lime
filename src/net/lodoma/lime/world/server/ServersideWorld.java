@@ -49,12 +49,13 @@ public class ServersideWorld implements EntityWorld
         @Override
         public void onEvent(EventBundle bundle)
         {
-            if(!bundle.has("serverUser"))
+            if(!bundle.has("userID"))
                 throw new InvalidEventBundleException();
-            Object userObject = bundle.get("serverUser");
-            if(!(userObject instanceof ServerUser))
+            
+            Object userID = bundle.get("userID");
+            if(!(userID instanceof Integer))
                 throw new InvalidEventBundleException();
-            ServerUser user = (ServerUser) userObject;
+            ServerUser user = userManager.getUser((Integer) userID);
             
             List<Platform> platformList = world.getPlatformList();
             for(Platform platform : platformList)
@@ -147,9 +148,9 @@ public class ServersideWorld implements EntityWorld
     {
         platform.create(physicsWorld);
         platforms.add(platform);
-        
-        List<ServerUser> userList = userManager.getUserList();
-        for(ServerUser user : userList)
+
+        Set<ServerUser> userSet = userManager.getUserSet();
+        for(ServerUser user : userSet)
             platformCreation.write(user, platform);
     }
     
@@ -169,9 +170,9 @@ public class ServersideWorld implements EntityWorld
         entity.generateID();
         entity.create(physicsWorld);
         entities.put(entity.getID(), entity);
-        
-        List<ServerUser> userList = userManager.getUserList();
-        for(ServerUser user : userList)
+
+        Set<ServerUser> userSet = userManager.getUserSet();
+        for(ServerUser user : userSet)
             entityCreation.write(user, entity);
     }
 
@@ -200,8 +201,8 @@ public class ServersideWorld implements EntityWorld
             correctionRemaining -= CORRECTION_TIME;
             
             List<Entity> entityList = new ArrayList<Entity>(entities.values());
-            List<ServerUser> userList = userManager.getUserList();
-            for(ServerUser user : userList)
+            Set<ServerUser> userSet = userManager.getUserSet();
+            for(ServerUser user : userSet)
                 for(Entity entity : entityList)
                     if(entity.isCreated())
                         entityCorrection.write(user, entity);

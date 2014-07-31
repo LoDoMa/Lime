@@ -31,6 +31,9 @@ public final class ServerUser implements Runnable
     
     private long lastResponseTime;
     
+    private String username;
+    private int ID;
+    
     @SuppressWarnings("unchecked")
     public ServerUser(NetStage stage, Socket socket, Server server)
     {
@@ -48,6 +51,13 @@ public final class ServerUser implements Runnable
             inputStream = new DataInputStream(new PipedInputStream(privateOutputStream));
             
             lastResponseTime = SystemHelper.getTimeNanos();
+
+            DataInputStream usernameStream = new DataInputStream(privateInputStream);
+            char usernameChar;
+            
+            username = "";
+            while((usernameChar = usernameStream.readChar()) != (char) 0)
+                username += usernameChar;
         }
         catch(IOException e)
         {
@@ -80,6 +90,21 @@ public final class ServerUser implements Runnable
     public long getLastResponseTime()
     {
         return lastResponseTime;
+    }
+    
+    public String getUsername()
+    {
+        return username;
+    }
+    
+    public int getID()
+    {
+        return ID;
+    }
+    
+    public void setID(int id)
+    {
+        ID = id;
     }
     
     public void closed()
