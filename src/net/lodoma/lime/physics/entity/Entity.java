@@ -25,8 +25,6 @@ public class Entity
     
     boolean created = false;
     
-    boolean actor;
-    
     boolean generatedID = false;
     int ID;
     
@@ -67,11 +65,6 @@ public class Entity
     {
         this.ID = id;
         generatedID = true;
-    }
-    
-    public void setActor(boolean actor)
-    {
-        this.actor = actor;
     }
     
     public void generateID()
@@ -176,6 +169,7 @@ public class Entity
     
     public void update(double timeDelta)
     {
+        boolean actor = propertyPool.hasProperty("actor") && ((Integer) propertyPool.getProperty("actor")) == ID;
         script.call("Lime_FrameUpdate", timeDelta, actor);
     }
     
