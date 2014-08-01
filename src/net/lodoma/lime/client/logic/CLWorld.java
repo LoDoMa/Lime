@@ -11,6 +11,7 @@ import net.lodoma.lime.client.io.entity.CPHEntityCreation;
 import net.lodoma.lime.client.io.entity.CPHEntityForce;
 import net.lodoma.lime.client.io.entity.CPHEntityLinearImpulse;
 import net.lodoma.lime.client.io.entity.CPHEntityTransformModification;
+import net.lodoma.lime.client.io.entity.CPHSetActor;
 import net.lodoma.lime.client.io.world.CPHPlatformCreation;
 import net.lodoma.lime.input.Input;
 import net.lodoma.lime.physics.entity.EntityLoader;
@@ -65,6 +66,8 @@ public class CLWorld implements ClientLogic
         cphPool.add(CPHEntityLinearImpulse.HASH, new CPHEntityLinearImpulse(client));
         cphPool.add(CPHEntityAngularImpulse.HASH, new CPHEntityAngularImpulse(client));
         cphPool.add(CPHEntityForce.HASH, new CPHEntityForce(client));
+        
+        cphPool.add(CPHSetActor.HASH, new CPHSetActor(client));
         
         entityLoader.addXMLFile("Lime::Zombie", new File("model/zombie.xml"));
         

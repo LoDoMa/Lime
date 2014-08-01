@@ -1,5 +1,7 @@
 package net.lodoma.lime.server.logic;
 
+import java.util.HashMap;
+
 import net.lodoma.lime.physics.entity.EntityLoader;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.server.ServerPacket;
@@ -10,6 +12,7 @@ import net.lodoma.lime.server.io.entity.SPEntityCreation;
 import net.lodoma.lime.server.io.entity.SPEntityForce;
 import net.lodoma.lime.server.io.entity.SPEntityLinearImpulse;
 import net.lodoma.lime.server.io.entity.SPEntityTransformModification;
+import net.lodoma.lime.server.io.entity.SPSetActor;
 import net.lodoma.lime.server.io.world.SPPlatformCreation;
 import net.lodoma.lime.util.HashPool32;
 import net.lodoma.lime.util.Timer;
@@ -38,6 +41,7 @@ public class SLWorld implements ServerLogic
     {
         server.setProperty("world", new ServersideWorld(server));
         server.setProperty("entityLoader", new EntityLoader());
+        server.setProperty("actors", new HashMap<Integer, Integer>());
     }
     
     @SuppressWarnings("unchecked")
@@ -60,6 +64,8 @@ public class SLWorld implements ServerLogic
         spPool.add(SPEntityLinearImpulse.HASH, new SPEntityLinearImpulse(server));
         spPool.add(SPEntityAngularImpulse.HASH, new SPEntityAngularImpulse(server));
         spPool.add(SPEntityForce.HASH, new SPEntityForce(server));
+        
+        spPool.add(SPSetActor.HASH, new SPSetActor(server));
         
         world.generalInit();
         
