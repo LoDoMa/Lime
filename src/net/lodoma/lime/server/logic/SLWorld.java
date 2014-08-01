@@ -1,5 +1,6 @@
 package net.lodoma.lime.server.logic;
 
+import java.io.File;
 import java.util.HashMap;
 
 import net.lodoma.lime.physics.entity.EntityLoader;
@@ -16,7 +17,8 @@ import net.lodoma.lime.server.io.entity.SPSetActor;
 import net.lodoma.lime.server.io.world.SPPlatformCreation;
 import net.lodoma.lime.util.HashPool32;
 import net.lodoma.lime.util.Timer;
-import net.lodoma.lime.world.builder.WorldFileLoader;
+import net.lodoma.lime.world.WorldLoader;
+import net.lodoma.lime.world.WorldLoaderException;
 import net.lodoma.lime.world.server.ServersideWorld;
 
 public class SLWorld implements ServerLogic
@@ -27,6 +29,7 @@ public class SLWorld implements ServerLogic
     private HashPool32<ServerPacket> spPool;
     
     private ServersideWorld world;
+    private WorldLoader loader;
     
     private Timer timer;
     
@@ -41,6 +44,7 @@ public class SLWorld implements ServerLogic
     {
         server.setProperty("world", new ServersideWorld(server));
         server.setProperty("entityLoader", new EntityLoader());
+        server.setProperty("worldLoader", new WorldLoader());
         server.setProperty("actors", new HashMap<Integer, Integer>());
     }
     
@@ -51,6 +55,7 @@ public class SLWorld implements ServerLogic
         sphPool = (HashPool32<ServerPacketHandler>) server.getProperty("sphPool");
         spPool = (HashPool32<ServerPacket>) server.getProperty("spPool");
         world = (ServersideWorld) server.getProperty("world");
+        loader = (WorldLoader) server.getProperty("worldLoader");
     }
     
     @Override
@@ -69,8 +74,14 @@ public class SLWorld implements ServerLogic
         
         world.generalInit();
         
-        WorldFileLoader fileLoader = new WorldFileLoader();
-        fileLoader.build(world);
+        try
+        {
+            loader.loadFromXML(new File("world/test.xml"), world);
+        }
+        catch(WorldLoaderException e)
+        {
+            e.printStackTrace();
+        }
     }
     
     @Override

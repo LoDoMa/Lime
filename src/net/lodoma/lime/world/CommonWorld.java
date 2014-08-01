@@ -10,10 +10,17 @@ import java.util.Set;
 import net.lodoma.lime.physics.PhysicsWorld;
 import net.lodoma.lime.physics.entity.Entity;
 import net.lodoma.lime.physics.entity.EntityWorld;
+import net.lodoma.lime.script.LuaScript;
 import net.lodoma.lime.world.platform.Platform;
 
 public abstract class CommonWorld implements EntityWorld
 {
+    protected String internalName;
+    protected String visualName;
+    protected String version;
+    
+    protected LuaScript script;
+    
     protected PhysicsWorld physicsWorld;
     protected List<Platform> platforms;
     protected Map<Integer, Entity> entities;
