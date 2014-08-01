@@ -13,19 +13,22 @@ public class SPSetActor extends ServerPacket
     public static final String NAME = "Lime::SetActor";
     public static final int HASH = HashHelper.hash32(NAME);
     
+    private Map<Integer, Integer> actors;
+    
+    @SuppressWarnings("unchecked")
     public SPSetActor(Server server)
     {
         super(server, HASH, Integer.class);
+        
+        actors = (Map<Integer, Integer>) server.getProperty("actors");
     }
-
-    @SuppressWarnings("unchecked")
+    
     @Override
     protected void localWrite(ServerUser user, Object... args) throws IOException
     {
         int userID = user.getID();
         int entityID = (Integer) args[0];
         
-        Map<Integer, Integer> actors = (Map<Integer, Integer>) server.getProperty("actors");
         actors.put(userID, entityID);
         
         user.outputStream.writeInt(entityID);

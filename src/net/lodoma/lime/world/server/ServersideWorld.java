@@ -1,10 +1,7 @@
 package net.lodoma.lime.world.server;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import net.lodoma.lime.common.NetworkSide;
@@ -12,9 +9,7 @@ import net.lodoma.lime.event.EventBundle;
 import net.lodoma.lime.event.EventListener;
 import net.lodoma.lime.event.EventManager;
 import net.lodoma.lime.event.InvalidEventBundleException;
-import net.lodoma.lime.physics.PhysicsWorld;
 import net.lodoma.lime.physics.entity.Entity;
-import net.lodoma.lime.physics.entity.EntityWorld;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.server.ServerPacket;
 import net.lodoma.lime.server.ServerUser;
@@ -23,9 +18,10 @@ import net.lodoma.lime.server.io.entity.SPEntityCreation;
 import net.lodoma.lime.server.io.world.SPPlatformCreation;
 import net.lodoma.lime.server.logic.UserManager;
 import net.lodoma.lime.util.HashPool32;
+import net.lodoma.lime.world.CommonWorld;
 import net.lodoma.lime.world.platform.Platform;
 
-public class ServersideWorld implements EntityWorld
+public class ServersideWorld extends CommonWorld
 {
     private final class SendOnEvent implements EventListener
     {
@@ -78,10 +74,6 @@ public class ServersideWorld implements EntityWorld
     private Server server;
     private UserManager userManager;
     
-    private PhysicsWorld physicsWorld;
-    private List<Platform> platforms;
-    private Map<Integer, Entity> entities;
-    
     private SendOnEvent initialWorldDataSender;
     private ServerPacket platformCreation;
     private ServerPacket entityCreation;
@@ -93,10 +85,6 @@ public class ServersideWorld implements EntityWorld
     public ServersideWorld(Server server)
     {
         this.server = server;
-        
-        physicsWorld = new PhysicsWorld();
-        platforms = new ArrayList<Platform>();
-        entities = new HashMap<Integer, Entity>();
     }
     
     @Override
@@ -125,72 +113,31 @@ public class ServersideWorld implements EntityWorld
         initialWorldDataSender = new SendOnEvent(this, manager);
     }
     
+    @Override
     public void clean()
     {
+        super.clean();
         initialWorldDataSender.remove();
-        
-        for(Platform platform : platforms)
-            platform.destroy(physicsWorld);
-        platforms.clear();
-        
-        List<Entity> entityList = new ArrayList<Entity>(entities.values());
-        for(Entity entity : entityList)
-            entity.destroy(physicsWorld);
-        entities.clear();
     }
     
-    public PhysicsWorld getPhysicsWorld()
-    {
-        return physicsWorld;
-    }
-    
+    @Override
     public void addPlatform(Platform platform)
     {
-        platform.create(physicsWorld);
-        platforms.add(platform);
-
+        super.addPlatform(platform);
+        
         Set<ServerUser> userSet = userManager.getUserSet();
         for(ServerUser user : userSet)
             platformCreation.write(user, platform);
     }
     
-    public List<Platform> getPlatformList()
-    {
-        return platforms;
-    }
-    
-    public void removePlatform(Platform platform)
-    {
-        platforms.remove(platform);
-    }
-    
     @Override
     public void addEntity(Entity entity)
     {
-        entity.generateID();
-        entity.create(physicsWorld);
-        entities.put(entity.getID(), entity);
-
+        super.addEntity(entity);
+        
         Set<ServerUser> userSet = userManager.getUserSet();
         for(ServerUser user : userSet)
             entityCreation.write(user, entity);
-    }
-
-    @Override
-    public Entity getEntity(int id)
-    {
-        return entities.get(id);
-    }
-    
-    public Set<Integer> getEntityIDSet()
-    {
-        return new HashSet<Integer>(entities.keySet());
-    }
-
-    @Override
-    public void removeEntity(int id)
-    {
-        entities.remove(id);
     }
     
     public void update(double timeDelta)
@@ -208,11 +155,6 @@ public class ServersideWorld implements EntityWorld
                         entityCorrection.write(user, entity);
         }
         
-        List<Entity> entityList = new ArrayList<Entity>(entities.values());
-        for(Entity entity : entityList)
-            if(entity.isCreated())
-                entity.update(timeDelta);
-        
-        physicsWorld.update(timeDelta);
+        super.update(timeDelta);
     }
 }

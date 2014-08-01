@@ -3,10 +3,8 @@ package net.lodoma.lime.world.client;
 import java.awt.Font;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import net.lodoma.lime.chat.ChatManager;
 import net.lodoma.lime.chat.ChatReceiver;
@@ -19,23 +17,18 @@ import net.lodoma.lime.gui.GUIContainer;
 import net.lodoma.lime.gui.Rectangle;
 import net.lodoma.lime.gui.Text;
 import net.lodoma.lime.input.Input;
-import net.lodoma.lime.physics.PhysicsWorld;
 import net.lodoma.lime.physics.entity.Entity;
-import net.lodoma.lime.physics.entity.EntityWorld;
 import net.lodoma.lime.security.Credentials;
 import net.lodoma.lime.util.SystemHelper;
 import net.lodoma.lime.util.TrueTypeFont;
+import net.lodoma.lime.world.CommonWorld;
 import net.lodoma.lime.world.platform.Platform;
 
 import org.lwjgl.opengl.GL11;
 
-public class ClientsideWorld implements EntityWorld, ChatSender, ChatReceiver
+public class ClientsideWorld extends CommonWorld implements ChatSender, ChatReceiver
 {
     private Client client;
-    
-    private PhysicsWorld physicsWorld;
-    private List<Platform> platforms;
-    private Map<Integer, Entity> entities;
 
     private GUIContainer gui;
     
@@ -52,9 +45,6 @@ public class ClientsideWorld implements EntityWorld, ChatSender, ChatReceiver
     {
         this.client = client;
         
-        physicsWorld = new PhysicsWorld();
-        platforms = new ArrayList<Platform>();
-        entities = new HashMap<Integer, Entity>();
         gui = new GUIContainer();
         
         chatManagers = new ArrayList<ChatManager>();
@@ -75,73 +65,12 @@ public class ClientsideWorld implements EntityWorld, ChatSender, ChatReceiver
         return client;
     }
     
-    public void clean()
-    {
-        for(Platform platform : platforms)
-            platform.destroy(physicsWorld);
-        platforms.clear();
-        
-        List<Entity> entityList = new ArrayList<Entity>(entities.values());
-        for(Entity entity : entityList)
-            if(entity.isCreated())
-                entity.destroy(physicsWorld);
-        entities.clear();
-    }
-    
-    public void fetchInit()
-    {
-        chatManager = (ChatManager) client.getProperty("chatManager");
-    }
-    
     public void generalInit()
     {
+        chatManager = (ChatManager) client.getProperty("chatManager");
+        
         chatManager.addSender(this);
         chatManager.addReceiver(this);
-    }
-    
-    public PhysicsWorld getPhysicsWorld()
-    {
-        return physicsWorld;
-    }
-    
-    public void addPlatform(Platform platform)
-    {
-        platform.create(physicsWorld);
-        platforms.add(platform);
-    }
-    
-    public List<Platform> getPlatformList()
-    {
-        return platforms;
-    }
-    
-    public void removePlatform(Platform platform)
-    {
-        platforms.remove(platform);
-    }
-    
-    @Override
-    public void addEntity(Entity entity)
-    {
-        entity.create(physicsWorld);
-        entities.put(entity.getID(), entity);
-    }
-
-    @Override
-    public Entity getEntity(int id)
-    {
-        return entities.get(id);
-    }
-    
-    public Set<Integer> getEntityIDSet()
-    {
-        return new HashSet<Integer>(entities.keySet());
-    }
-
-    @Override
-    public void removeEntity(int id)
-    {
-        entities.remove(id);
     }
     
     @Override
@@ -176,11 +105,7 @@ public class ClientsideWorld implements EntityWorld, ChatSender, ChatReceiver
     
     public void update(double timeDelta)
     {
-        List<Entity> entityList = new ArrayList<Entity>(entities.values());
-        for(Entity entity : entityList)
-            if(entity.isCreated())
-                entity.update(timeDelta);
-        physicsWorld.update(timeDelta);
+        super.update(timeDelta);
         
         gui.update(timeDelta);
 
