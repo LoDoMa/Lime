@@ -9,7 +9,7 @@ import net.lodoma.lime.util.HashHelper;
 
 public class SPChatMessageReceive extends ServerPacket
 {
-    public static final String NAME = "Lime::";
+    public static final String NAME = "Lime::ChatMessageReceive";
     public static final int HASH = HashHelper.hash32(NAME);
     
     public SPChatMessageReceive(Server server)
