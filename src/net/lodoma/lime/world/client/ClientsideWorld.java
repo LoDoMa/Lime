@@ -110,7 +110,7 @@ public class ClientsideWorld extends CommonWorld implements ChatSender, ChatRece
         chatManagers.remove(manager);
     }
     
-    public void update(double timeDelta)
+    public synchronized void update(double timeDelta)
     {
         super.update(timeDelta);
         
@@ -146,7 +146,7 @@ public class ClientsideWorld extends CommonWorld implements ChatSender, ChatRece
             enterTimes.remove(toRemove);
     }
     
-    public void render()
+    public synchronized void render()
     {
         GL11.glPushMatrix();
         GL11.glScalef(1.0f / 16.0f, 1.0f / 12.0f, 1.0f);
