@@ -21,6 +21,7 @@ import net.lodoma.lime.input.Input;
 import net.lodoma.lime.physics.entity.Entity;
 import net.lodoma.lime.security.Credentials;
 import net.lodoma.lime.util.SystemHelper;
+import net.lodoma.lime.util.Timer;
 import net.lodoma.lime.util.TrueTypeFont;
 import net.lodoma.lime.world.CommonWorld;
 import net.lodoma.lime.world.platform.Platform;
@@ -148,8 +149,10 @@ public class ClientsideWorld extends CommonWorld implements ChatSender, ChatRece
     
     public synchronized void render()
     {
+        Timer timer = new Timer();
+        
         GL11.glPushMatrix();
-        GL11.glScalef(1.0f / 16.0f, 1.0f / 12.0f, 1.0f);
+        GL11.glScalef(1.0f / 32.0f, 1.0f / 24.0f, 1.0f);
         
         for(Platform platform : platforms)
             platform.render();
@@ -171,5 +174,9 @@ public class ClientsideWorld extends CommonWorld implements ChatSender, ChatRece
             GL11.glTranslatef(0.0f, -0.025f, 0.0f);
         }
         GL11.glPopMatrix();
+        
+        timer.update();
+        if(timer.getDelta() >= 0.001)
+            System.out.println(timer.getDelta());
     }
 }

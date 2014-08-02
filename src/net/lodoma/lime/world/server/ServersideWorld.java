@@ -80,8 +80,9 @@ public class ServersideWorld extends CommonWorld
     private ServerPacket entityCreation;
     private ServerPacket entityCorrection;
     
-    private static final double CORRECTION_TIME = 1.5;
+    private static final double CORRECTION_TIME = 5.0;
     private double correctionRemaining;
+    private int currentEntity;
     
     public ServersideWorld(Server server)
     {
@@ -149,16 +150,24 @@ public class ServersideWorld extends CommonWorld
     
     public void update(double timeDelta)
     {
-        correctionRemaining += timeDelta;
-        while(correctionRemaining >= CORRECTION_TIME)
+        if(entities.size() > 0)
         {
-            correctionRemaining -= CORRECTION_TIME;
-            
-            List<Entity> entityList = new ArrayList<Entity>(entities.values());
-            Set<ServerUser> userSet = userManager.getUserSet();
-            for(ServerUser user : userSet)
-                for(Entity entity : entityList)
+            correctionRemaining += timeDelta;
+            double time = CORRECTION_TIME / (double) entities.size();
+            if(time < 0.1) time = 0.1;
+            if(correctionRemaining >= time)
+            {
+                correctionRemaining = 0;
+    
+                List<Entity> entityList = new ArrayList<Entity>(entities.values());
+                if(currentEntity < 0 || currentEntity >= entityList.size())
+                    currentEntity = 0;
+                Entity entity = entityList.get(currentEntity++);
+                
+                Set<ServerUser> userSet = userManager.getUserSet();
+                for(ServerUser user : userSet)
                     entityCorrection.write(user, entity);
+            }
         }
         
         super.update(timeDelta);
