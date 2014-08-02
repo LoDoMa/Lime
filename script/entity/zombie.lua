@@ -35,7 +35,7 @@ local function onNewUser(bundle)
 	lime.body.transform.rotation.set(0)
 	lime.body.transform.push()
 	
-	lime.body.impulse.linear(newVector(0.5, 0.0), newVector(0.0, 0.0))
+	lime.body.impulse.linear(newVector(4, 0.0), newVector(0.0, 0.0))
 end
 
 local function serverUpdate()

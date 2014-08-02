@@ -24,7 +24,7 @@ public class CPHEntityCorrection extends ClientPacketHandler
         int entityID = inputStream.readInt();
         
         Entity entity = ((ClientsideWorld) client.getProperty("world")).getEntity(entityID);
-        if(entity == null || !entity.isCreated()) return;
+        if(entity == null) return;
         
         entity.receiveCorrection(inputStream);
     }

@@ -8,6 +8,7 @@ local Entity = java.require("net.lodoma.lime.physics.entity.Entity")
 local world = LIME_WORLD
 
 local propertyPool = world:getPropertyPool()
+local entityLoader = propertyPool:getProperty("entityLoader")
 
 local networkSide = world:getNetworkSide():ordinal()
 local serverSide = networkSide == NetworkSide:valueOf("SERVER"):ordinal() and true or nil
@@ -109,20 +110,42 @@ end
 local function addPlatformToWorld(offset, ...)
 	checkVectorType(offset, 1, "lime.platform.create")
 
-	local javaOffset = Vector2:newInstance(offset.x, offset.y)
+	if serverSide then
+		local javaOffset = Vector2:newInstance(offset.x, offset.y)
 
-	local i = 1
-	local vertices = {...}
-	local javaVertices = {}
-	while vertices[i] do
-		local vertex = vertices[i]
-		checkVectorType(vertex, i + 1, "lime.platform.create")
-		javaVertices[i] = Vector2:newInstance(vertex.x, vertex.y)
-		i = i + 1
+		local i = 1
+		local vertices = {...}
+		local javaVertices = {}
+		while vertices[i] do
+			local vertex = vertices[i]
+			checkVectorType(vertex, i + 1, "lime.platform.create")
+			javaVertices[i] = Vector2:newInstance(vertex.x, vertex.y)
+			i = i + 1
+		end
+
+		local platform = Platform:newInstance(javaOffset, javaVertices)
+		world:addPlatform(platform)
+	elseif clientSide then
+
+	else
+		assert(false, "internal problem: unknown network side")
 	end
+end
 
-	local platform = Platform:newInstance(javaOffset, javaVertices)
-	world:addPlatform(platform)
+-- entity
+
+local function addEntityToWorld(hash)
+	checkType(hash, "number", 1, "lime.entity.create")
+
+	if serverSide then
+		local file = entityLoader:getXMLFileByHash(hash)
+		local entity = entityLoader:loadFromXML(file, world, propertyPool)
+		world:addEntity(entity)
+	elseif clientSide then
+
+	else
+		assert(false, "internal problem: unknown network side")
+	end
 end
 
 -- lime table
@@ -135,7 +158,10 @@ lime = {
 		},
 	},
 	platform = {
-		create = serverSide and addPlatformToWorld or nil,
+		create = addPlatformToWorld,
+	},
+	entity = {
+		create = addEntityToWorld,
 	},
 	util = {
 		round = round,

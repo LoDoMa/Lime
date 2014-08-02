@@ -26,7 +26,7 @@ public class CPHEntityAngularImpulse extends ClientPacketHandler
         float impulse = inputStream.readFloat();
         
         Entity entity = ((ClientsideWorld) client.getProperty("world")).getEntity(entityID);
-        if(entity == null || !entity.isCreated()) return;
+        if(entity == null) return;
         
         entity.getBody(bodyID).applyAngularImpulse(impulse);
     }

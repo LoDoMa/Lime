@@ -158,8 +158,7 @@ public class ServersideWorld extends CommonWorld
             Set<ServerUser> userSet = userManager.getUserSet();
             for(ServerUser user : userSet)
                 for(Entity entity : entityList)
-                    if(entity.isCreated())
-                        entityCorrection.write(user, entity);
+                    entityCorrection.write(user, entity);
         }
         
         super.update(timeDelta);

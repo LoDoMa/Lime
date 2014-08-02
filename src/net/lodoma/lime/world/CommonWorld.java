@@ -96,12 +96,11 @@ public abstract class CommonWorld implements EntityWorld
     public void update(double timeDelta)
     {
         if(script != null)
-            script.call("Lime_WorldServerUpdate");
+            script.call("Lime_WorldUpdate");
         
         List<Entity> entityList = new ArrayList<Entity>(entities.values());
         for(Entity entity : entityList)
-            if(entity.isCreated())
-                entity.update(timeDelta);
+            entity.update(timeDelta);
         
         physicsWorld.update(timeDelta);
     }

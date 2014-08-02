@@ -71,19 +71,19 @@ public class EntityLoader
         
     }
     
-    private Map<Long, File> files;
+    private Map<Integer, File> files;
     
     public EntityLoader()
     {
-        files = new HashMap<Long, File>();
+        files = new HashMap<Integer, File>();
     }
     
     public void addXMLFile(String internalName, File file)
     {
-        files.put(HashHelper.hash64(internalName), file);
+        files.put(HashHelper.hash32(internalName), file);
     }
     
-    public File getXMLFileByHash(long hash)
+    public File getXMLFileByHash(int hash)
     {
         return files.get(hash);
     }
@@ -115,7 +115,7 @@ public class EntityLoader
             entity.visualName = visualName;
             entity.version = version;
             
-            entity.hash = HashHelper.hash64(entity.internalName);
+            entity.hash = HashHelper.hash32(entity.internalName);
             entity.world = world;
             entity.propertyPool = propertyPool;
             

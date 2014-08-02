@@ -23,6 +23,6 @@ public class SPEntityCreation extends ServerPacket
     {
         Entity entity = (Entity) args[0];
         user.outputStream.writeInt(entity.getID());
-        user.outputStream.writeLong(entity.getHash());
+        user.outputStream.writeInt(entity.getHash());
     }
 }

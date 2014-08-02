@@ -29,7 +29,8 @@ public class SLWorld implements ServerLogic
     private HashPool32<ServerPacket> spPool;
     
     private ServersideWorld world;
-    private WorldLoader loader;
+    private EntityLoader entityLoader;
+    private WorldLoader worldLoader;
     
     private Timer timer;
     
@@ -55,7 +56,8 @@ public class SLWorld implements ServerLogic
         sphPool = (HashPool32<ServerPacketHandler>) server.getProperty("sphPool");
         spPool = (HashPool32<ServerPacket>) server.getProperty("spPool");
         world = (ServersideWorld) server.getProperty("world");
-        loader = (WorldLoader) server.getProperty("worldLoader");
+        entityLoader = (EntityLoader) server.getProperty("entityLoader");
+        worldLoader = (WorldLoader) server.getProperty("worldLoader");
     }
     
     @Override
@@ -74,9 +76,11 @@ public class SLWorld implements ServerLogic
         
         world.generalInit();
         
+        entityLoader.addXMLFile("Lime::Zombie", new File("model/zombie.xml"));
+        
         try
         {
-            loader.loadFromXML(new File("world/test.xml"), world);
+            worldLoader.loadFromXML(new File("world/test.xml"), world);
         }
         catch(WorldLoaderException e)
         {

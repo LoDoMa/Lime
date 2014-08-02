@@ -28,7 +28,7 @@ public class CPHEntityForce extends ClientPacketHandler
         Vector2 point = new Vector2(inputStream.readFloat(), inputStream.readFloat());
         
         Entity entity = ((ClientsideWorld) client.getProperty("world")).getEntity(entityID);
-        if(entity == null || !entity.isCreated()) return;
+        if(entity == null) return;
         
         entity.getBody(bodyID).applyForce(force, point);
     }

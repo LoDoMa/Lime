@@ -27,7 +27,7 @@ public class CPHEntityCreation extends ClientPacketHandler
         EntityLoader entityLoader = (EntityLoader) client.getProperty("entityLoader");
         
         int id = inputStream.readInt();
-        long hash = inputStream.readLong();
+        int hash = inputStream.readInt();
         
         try
         {

@@ -23,12 +23,10 @@ public class Entity
 {
     private static int counterID = 0;
     
-    boolean created = false;
-    
     boolean generatedID = false;
     int ID;
     
-    long hash;
+    int hash;
     String internalName;
     String visualName;
     String version;
@@ -56,11 +54,6 @@ public class Entity
         listeners = new HashMap<Integer, EntityEventListener>();
     }
     
-    public boolean isCreated()
-    {
-        return created;
-    }
-    
     public void setID(int id)
     {
         this.ID = id;
@@ -79,7 +72,7 @@ public class Entity
         return ID;
     }
     
-    public long getHash()
+    public int getHash()
     {
         return hash;
     }
@@ -143,14 +136,10 @@ public class Entity
             body.create(world);
         for(PhysicsJoint joint : jointList)
             joint.create(world);
-        
-        created = true;
     }
     
     public void destroy(PhysicsWorld world)
     {
-        created = false;
-        
         List<PhysicsBody> bodyList = new ArrayList<PhysicsBody>(bodies.values());
         List<PhysicsJoint> jointList = new ArrayList<PhysicsJoint>(joints.values());
         

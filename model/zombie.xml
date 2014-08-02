@@ -99,5 +99,5 @@
 		<type> float1 </type>
 	</property>
 
-	<script> script/zombie.lua </script>
+	<script> script/entity/zombie.lua </script>
 </model>

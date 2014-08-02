@@ -5,15 +5,29 @@ local round = lime.util.round
 local newVector = lime.util.vector.new
 local hash32 = lime.util.hash32
 
-function Lime_WorldServerUpdate()
-	if firstUpdate == true then
-		lime.platform.create(newVector(0, 0), newVector(0, 0), newVector(10, 0), newVector(10, 2), newVector(0, 2))
-		firstUpdate = false
-	end
+local hashes = {}
+
+local function addHash(str)
+	hashes[str] = hash32(str)
 end
 
-function Lime_WorldClientUpdate()
-	
+local function loadHashes()
+	addHash("Lime::Zombie")
+end
+
+function Lime_WorldUpdate()
+	if lime.network.side.server then
+		if firstUpdate == true then
+			loadHashes()
+
+			lime.platform.create(newVector(6, 0), newVector(-5, -2), newVector(5, -2), newVector(5, 2), newVector(-5, 2))
+			firstUpdate = false
+
+			lime.entity.create(hashes["Lime::Zombie"])
+		end
+	elseif lime.network.side.client then
+
+	end
 end
 
 function Lime_WorldRender()
