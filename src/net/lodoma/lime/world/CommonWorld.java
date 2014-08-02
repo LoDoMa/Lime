@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.lodoma.lime.common.PropertyPool;
 import net.lodoma.lime.physics.PhysicsWorld;
 import net.lodoma.lime.physics.entity.Entity;
 import net.lodoma.lime.physics.entity.EntityWorld;
@@ -32,9 +33,11 @@ public abstract class CommonWorld implements EntityWorld
         entities = new HashMap<Integer, Entity>();
     }
     
+    public abstract PropertyPool getPropertyPool();
+    
     public PhysicsWorld getPhysicsWorld()
     {
-        return physicsWorld;
+        return physicsWorld; 
     }
     
     public void addPlatform(Platform platform)

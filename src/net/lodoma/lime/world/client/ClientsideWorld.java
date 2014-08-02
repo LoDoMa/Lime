@@ -11,6 +11,7 @@ import net.lodoma.lime.chat.ChatReceiver;
 import net.lodoma.lime.chat.ChatSender;
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.common.NetworkSide;
+import net.lodoma.lime.common.PropertyPool;
 import net.lodoma.lime.gui.ActiveTextField;
 import net.lodoma.lime.gui.Color;
 import net.lodoma.lime.gui.GUIContainer;
@@ -58,6 +59,12 @@ public class ClientsideWorld extends CommonWorld implements ChatSender, ChatRece
     public NetworkSide getNetworkSide()
     {
         return NetworkSide.CLIENT;
+    }
+    
+    @Override
+    public PropertyPool getPropertyPool()
+    {
+        return client;
     }
     
     public Client getClient()

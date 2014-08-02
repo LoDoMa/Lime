@@ -39,7 +39,9 @@ public class WorldLoader
             world.version = version;
             
             world.script = new LuaScript();
-            world.script.require("script/sandbox");
+            world.script.setGlobal("WORLD", world);
+            world.script.require("script/strict/world");
+            world.script.require("script/strict/sandbox");
             world.script.load(new File(XMLHelper.getDeepValue(docElement, "script")));
         }
         catch(IOException | SAXException | ParserConfigurationException e)

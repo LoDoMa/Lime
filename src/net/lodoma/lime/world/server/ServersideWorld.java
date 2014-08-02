@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import net.lodoma.lime.common.NetworkSide;
+import net.lodoma.lime.common.PropertyPool;
 import net.lodoma.lime.event.EventBundle;
 import net.lodoma.lime.event.EventListener;
 import net.lodoma.lime.event.EventManager;
@@ -91,6 +92,12 @@ public class ServersideWorld extends CommonWorld
     public NetworkSide getNetworkSide()
     {
         return NetworkSide.SERVER;
+    }
+    
+    @Override
+    public PropertyPool getPropertyPool()
+    {
+        return server;
     }
     
     public Server getServer()
