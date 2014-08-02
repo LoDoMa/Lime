@@ -40,24 +40,24 @@ public abstract class CommonWorld implements EntityWorld
         return physicsWorld; 
     }
     
-    public void addPlatform(Platform platform)
+    public synchronized void addPlatform(Platform platform)
     {
         platform.create(physicsWorld);
         platforms.add(platform);
     }
     
-    public List<Platform> getPlatformList()
+    public synchronized List<Platform> getPlatformList()
     {
-        return platforms;
+        return new ArrayList<Platform>(platforms);
     }
     
-    public void removePlatform(Platform platform)
+    public synchronized void removePlatform(Platform platform)
     {
         platforms.remove(platform);
     }
     
     @Override
-    public void addEntity(Entity entity)
+    public synchronized void addEntity(Entity entity)
     {
         entity.generateID();
         entity.create(physicsWorld);
@@ -65,32 +65,42 @@ public abstract class CommonWorld implements EntityWorld
     }
 
     @Override
-    public Entity getEntity(int id)
+    public synchronized Entity getEntity(int id)
     {
         return entities.get(id);
     }
     
-    public Set<Integer> getEntityIDSet()
+    public synchronized Set<Integer> getEntityIDSet()
     {
         return new HashSet<Integer>(entities.keySet());
     }
+    
+    public synchronized List<Entity> getEntityList()
+    {
+        return new ArrayList<Entity>(entities.values());
+    }
 
     @Override
-    public void removeEntity(int id)
+    public synchronized void removeEntity(int id)
     {
         entities.remove(id);
     }
     
     public void clean()
     {
-        for(Platform platform : platforms)
+        List<Platform> platformList = getPlatformList();
+        for(Platform platform : platformList)
+        {
             platform.destroy(physicsWorld);
-        platforms.clear();
+            removePlatform(platform);
+        }
         
-        List<Entity> entityList = new ArrayList<Entity>(entities.values());
+        List<Entity> entityList = getEntityList();
         for(Entity entity : entityList)
+        {
             entity.destroy(physicsWorld);
-        entities.clear();
+            removeEntity(entity.getID());
+        }
     }
     
     public void update(double timeDelta)
@@ -98,7 +108,7 @@ public abstract class CommonWorld implements EntityWorld
         if(script != null)
             script.call("Lime_WorldUpdate");
         
-        List<Entity> entityList = new ArrayList<Entity>(entities.values());
+        List<Entity> entityList = getEntityList();
         for(Entity entity : entityList)
             entity.update(timeDelta);
         

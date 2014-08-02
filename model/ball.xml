@@ -1,0 +1,40 @@
+<model>
+	<model_name> Lime::Ball </model_name>
+	<model_visual> Ball </model_visual>
+	<model_version> 1 </model_version>
+
+	<body>
+		<name> body </name>
+		<circle_shape>
+			<radius> 0.5 </radius>
+		</circle_shape>
+		<dynamic_behavior>
+			<density> 2.0 </density>
+			<friction> 0.3 </friction>
+		    <restitution> 0.2 </restitution>
+		</dynamic_behavior>
+	</body>
+
+	<mask>
+		<name> m_body </name>
+		<colored_layer>
+			<layer_height> 0 </layer_height>
+			<circle_shape>
+				<radius> 0.5 </radius>
+				<color> 0xFF0099FF </color>
+			</circle_shape>
+		</colored_layer>
+	</mask>
+
+	<property>
+		<name> translation </name>
+		<type> float2 </type>
+	</property>
+
+	<property>
+		<name> rotation </name>
+		<type> float1 </type>
+	</property>
+
+	<script> script/entity/ball.lua </script>
+</model>

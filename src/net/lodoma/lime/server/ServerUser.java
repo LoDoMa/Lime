@@ -10,7 +10,6 @@ import java.net.Socket;
 
 import net.lodoma.lime.common.NetStage;
 import net.lodoma.lime.util.HashPool32;
-import net.lodoma.lime.util.SystemHelper;
 
 public final class ServerUser implements Runnable
 {
@@ -29,7 +28,7 @@ public final class ServerUser implements Runnable
     private Thread thread;
     private boolean running;
     
-    private long lastResponseTime;
+    private boolean isClosed;
     
     private String username;
     private int ID;
@@ -49,8 +48,6 @@ public final class ServerUser implements Runnable
             
             privateOutputStream = new PipedOutputStream();
             inputStream = new DataInputStream(new PipedInputStream(privateOutputStream));
-            
-            lastResponseTime = SystemHelper.getTimeNanos();
 
             DataInputStream usernameStream = new DataInputStream(privateInputStream);
             char usernameChar;
@@ -87,11 +84,6 @@ public final class ServerUser implements Runnable
         }
     }
     
-    public long getLastResponseTime()
-    {
-        return lastResponseTime;
-    }
-    
     public String getUsername()
     {
         return username;
@@ -107,9 +99,14 @@ public final class ServerUser implements Runnable
         ID = id;
     }
     
-    public void closed()
+    public void close()
     {
-        lastResponseTime = 0;
+        isClosed = true;
+    }
+    
+    public boolean isClosed()
+    {
+        return isClosed;
     }
     
     public void handleInput() throws IOException
@@ -132,7 +129,6 @@ public final class ServerUser implements Runnable
             {
                 int readByte = privateInputStream.read();
                 if(readByte == -1) break;
-                lastResponseTime = System.nanoTime();
                 privateOutputStream.write(readByte);
                 privateOutputStream.flush();
             }
@@ -152,6 +148,6 @@ public final class ServerUser implements Runnable
                 e.printStackTrace();
             }
         
-        closed();
+        close();
     }
 }

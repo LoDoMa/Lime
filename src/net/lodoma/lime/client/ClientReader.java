@@ -48,14 +48,17 @@ public class ClientReader implements Runnable
         {
             try
             {
-                int readByte = inputStream.read();
-                if(readByte == -1)
-                    throw new IOException();
-                outputStream.write(readByte);
+                if(inputStream.available() > 0)
+                {
+                    byte[] bytes = new byte[Math.min(1024, inputStream.available())];
+                    inputStream.read(bytes);
+                    outputStream.write(bytes);
+                }
             }
             catch(IOException e)
             {
                 if(!running) break;
+                e.printStackTrace();
                 client.setCloseMessage("Server closed (reader exception)");
                 client.closeInThread();
                 break;

@@ -1,6 +1,5 @@
 package net.lodoma.lime.world.server;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -58,7 +57,7 @@ public class ServersideWorld extends CommonWorld
             for(Platform platform : platformList)
                 platformCreation.write(user, platform);
 
-            List<Entity> entityList = new ArrayList<Entity>(entities.values());
+            List<Entity> entityList = world.getEntityList();
             for(Entity entity : entityList)
             {
                 entityCreation.write(user, entity);
@@ -159,7 +158,7 @@ public class ServersideWorld extends CommonWorld
             {
                 correctionRemaining = 0;
     
-                List<Entity> entityList = new ArrayList<Entity>(entities.values());
+                List<Entity> entityList = getEntityList();
                 if(currentEntity < 0 || currentEntity >= entityList.size())
                     currentEntity = 0;
                 Entity entity = entityList.get(currentEntity++);

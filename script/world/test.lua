@@ -13,14 +13,16 @@ end
 
 local function loadHashes()
 	addHash("Lime::Zombie")
+	addHash("Lime::Ball")
 	addHash("Lime::OnNewUser")
 end
 
 local function onNewUser(bundle)
 	print("user ID: " .. bundle["userID"])
 
-	for i = 0, 50, 1 do
-		lime.entity.create(hashes["Lime::Zombie"])
+	lime.entity.create(hashes["Lime::Zombie"])
+	for i = 0, 5, 1 do
+		lime.entity.create(hashes["Lime::Ball"])
 	end
 
 	print("created all")
@@ -31,7 +33,7 @@ function Lime_WorldUpdate()
 		if firstUpdate == true then
 			loadHashes()
 
-			lime.platform.create(newVector(6, 0), newVector(-5, -2), newVector(5, -2), newVector(5, 2), newVector(-5, 2))
+			lime.platform.create(newVector(0, 0), newVector(-50, -2), newVector(50, -2), newVector(50, 2), newVector(-50, 2))
 			firstUpdate = false
 
 			lime.listener.set(hashes["Lime::OnNewUser"], onNewUser)

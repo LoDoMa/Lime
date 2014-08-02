@@ -83,12 +83,14 @@ public class CLBase implements ClientLogic
         
         try
         {
-            while(stream.available() >= 4)
+            int amountHandled = 0;
+            while(stream.available() >= 4 && amountHandled < 100)
             {
                 int hash = stream.readInt();
                 ClientPacketHandler cih = cphPool.get(hash);
                 if(cih != null)
                     cih.handle();
+                amountHandled++;
             }
         }
         catch(IOException e)

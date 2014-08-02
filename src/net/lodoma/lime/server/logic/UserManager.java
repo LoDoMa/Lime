@@ -11,7 +11,6 @@ import java.util.Set;
 
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.server.ServerUser;
-import net.lodoma.lime.util.SystemHelper;
 
 public class UserManager implements ServerLogic
 {
@@ -80,8 +79,6 @@ public class UserManager implements ServerLogic
     @Override
     public void logic()
     {
-        long currentTime = SystemHelper.getTimeNanos();
-        
         List<ServerUser> toRemove = new ArrayList<ServerUser>();
         for(ServerUser user : userSet)
         {
@@ -96,17 +93,13 @@ public class UserManager implements ServerLogic
                 continue;
             }
             
-            long userLastTime = user.getLastResponseTime();
-            long timeDiff = currentTime - userLastTime;
-            
-            if(timeDiff > 5000000000L)
+            if(user.isClosed())
             {
                 user.stop();
                 toRemove.add(user);
             }
-            
-            users.remove(toRemove);
         }
+        users.remove(toRemove);
         userSet.removeAll(toRemove);
         
     }

@@ -111,7 +111,7 @@ public class ClientsideWorld extends CommonWorld implements ChatSender, ChatRece
         chatManagers.remove(manager);
     }
     
-    public synchronized void update(double timeDelta)
+    public void update(double timeDelta)
     {
         super.update(timeDelta);
         
@@ -147,17 +147,18 @@ public class ClientsideWorld extends CommonWorld implements ChatSender, ChatRece
             enterTimes.remove(toRemove);
     }
     
-    public synchronized void render()
+    public void render()
     {
         Timer timer = new Timer();
         
         GL11.glPushMatrix();
         GL11.glScalef(1.0f / 32.0f, 1.0f / 24.0f, 1.0f);
         
-        for(Platform platform : platforms)
+        List<Platform> platformList = getPlatformList();
+        for(Platform platform : platformList)
             platform.render();
         
-        List<Entity> entityList = new ArrayList<Entity>(entities.values());
+        List<Entity> entityList = getEntityList();
         for(Entity entity : entityList)
             entity.render();
         

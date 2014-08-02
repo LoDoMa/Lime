@@ -75,8 +75,9 @@ public class SLWorld implements ServerLogic
         spPool.add(SPSetActor.HASH, new SPSetActor(server));
         
         world.generalInit();
-        
+
         entityLoader.addXMLFile("Lime::Zombie", new File("model/zombie.xml"));
+        entityLoader.addXMLFile("Lime::Ball", new File("model/ball.xml"));
         
         try
         {

@@ -4,6 +4,8 @@ import org.lwjgl.opengl.GL11;
 
 public class ColoredMask extends Mask
 {
+    public static final int CIRCLE_VERTEX_COUNT = 16;
+    
     protected int n;
     
     protected float[] x;
@@ -17,6 +19,34 @@ public class ColoredMask extends Mask
     private ColoredMask()
     {
         
+    }
+    
+    public ColoredMask(float radius, float r, float g, float b, float a)
+    {
+        this.n = CIRCLE_VERTEX_COUNT;
+        
+        this.x = new float[CIRCLE_VERTEX_COUNT];
+        this.y = new float[CIRCLE_VERTEX_COUNT];
+        
+        this.r = new float[CIRCLE_VERTEX_COUNT];
+        this.g = new float[CIRCLE_VERTEX_COUNT];
+        this.b = new float[CIRCLE_VERTEX_COUNT];
+        this.a = new float[CIRCLE_VERTEX_COUNT];
+        
+        for(int i = 0; i < CIRCLE_VERTEX_COUNT; i++)
+        {
+            float angle = 2.0f * (float) Math.PI * i / (float) CIRCLE_VERTEX_COUNT;
+            float x = (float) Math.cos(angle);
+            float y = (float) Math.sin(angle);
+            
+            this.x[i] = x * radius;
+            this.y[i] = y * radius;
+            
+            this.r[i] = r;
+            this.g[i] = g;
+            this.b[i] = b;
+            this.a[i] = a;
+        }
     }
     
     public ColoredMask(int n, float[] x, float[] y, float[] r, float[] g, float[] b, float[] a)

@@ -15,20 +15,13 @@ local function addHash(str)
 end
 
 local function loadHashes()
-	addHash("head")
 	addHash("body")
-	addHash("m_head")
 	addHash("m_body")
 end
 
 local function serverUpdate()
 	if firstUpdate then
 		lime.entity.set(this)
-
-		lime.body.set(hashes["head"])
-		lime.body.transform.position.set(newVector(16.0, 7.0))
-		lime.body.transform.rotation.set(0)
-		lime.body.transform.push()
 
 		lime.body.set(hashes["body"])
 		lime.body.transform.position.set(newVector(16.0, 7.0))
@@ -39,8 +32,7 @@ end
 
 local function clientUpdate()
 	lime.entity.set(this)
-
-	limex.follow(this, hashes["head"], this, hashes["m_head"])
+	
 	limex.follow(this, hashes["body"], this, hashes["m_body"])
 end
 

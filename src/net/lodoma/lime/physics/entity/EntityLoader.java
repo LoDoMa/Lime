@@ -50,6 +50,7 @@ public class EntityLoader
     private class CircleShape
     {
         public float radius;
+        public int color;
     }
     
     private class StaticBehavior
@@ -216,6 +217,8 @@ public class EntityLoader
         
         float radius = XMLHelper.getDeepValueFloat(circleShapeElement, "radius");
         circleShape.radius = radius;
+        if(XMLHelper.hasNode(circleShapeElement, "color"))
+            circleShape.color = XMLHelper.getDeepValueInteger(circleShapeElement, "color");
         
         return circleShape;
     }
@@ -395,35 +398,59 @@ public class EntityLoader
         int layerHeight = XMLHelper.getDeepValueInteger(coloredLayerElement, "layer_height");
         
         NodeList polygonShapes = coloredLayerElement.getElementsByTagName("polygon_shape");
-        if(polygonShapes.getLength() < 1)
-            throw new EntityLoaderException("missing \"polygon_shape\" node in \"colored_layer\"");
-        if(polygonShapes.getLength() > 1)
-            throw new EntityLoaderException("multiple \"polygon_shape\" nodes not allowed in \"colored_layer\"");
-        Node polygonShapeNode = polygonShapes.item(0);
-        if(polygonShapeNode.getNodeType() != Node.ELEMENT_NODE)
-            throw new EntityLoaderException("invalid \"polygon_shape\" node");
-        Element polygonShapeElement = (Element) polygonShapeNode;
-        PolygonShape polygonShape = parsePolygonShapeElement(polygonShapeElement);
+        NodeList circleShapes = coloredLayerElement.getElementsByTagName("circle_shape");
+        int shapeTotal = polygonShapes.getLength() + circleShapes.getLength();
         
-        int n = polygonShape.vertexCount;
-        float[] x = new float[n];
-        float[] y = new float[n];
-        float[] r = new float[n];
-        float[] g = new float[n];
-        float[] b = new float[n];
-        float[] a = new float[n];
-        for(int i = 0; i < n; i++)
+        if(shapeTotal < 1)
+            throw new EntityLoaderException("missing shape in \"colored_layer\"");
+        if(shapeTotal > 1)
+            throw new EntityLoaderException("multiple shapes nodes not allowed in \"colored_layer\"");
+        
+        ColoredMask mask = null;
+        
+        if(polygonShapes.getLength() > 0)
         {
-            Vertex vertex = polygonShape.vertices[i];
-            x[i] = vertex.x;
-            y[i] = vertex.y;
-            r[i] = ((vertex.color >> 24) & 0xFF) / (float) (0xFF);
-            g[i] = ((vertex.color >> 16) & 0xFF) / (float) (0xFF);
-            b[i] = ((vertex.color >> 8 ) & 0xFF) / (float) (0xFF);
-            a[i] = ((vertex.color      ) & 0xFF) / (float) (0xFF);
+            Node polygonShapeNode = polygonShapes.item(0);
+            if(polygonShapeNode.getNodeType() != Node.ELEMENT_NODE)
+                throw new EntityLoaderException("invalid \"polygon_shape\" node");
+            Element polygonShapeElement = (Element) polygonShapeNode;
+            PolygonShape polygonShape = parsePolygonShapeElement(polygonShapeElement);
+            
+            int n = polygonShape.vertexCount;
+            float[] x = new float[n];
+            float[] y = new float[n];
+            float[] r = new float[n];
+            float[] g = new float[n];
+            float[] b = new float[n];
+            float[] a = new float[n];
+            for(int i = 0; i < n; i++)
+            {
+                Vertex vertex = polygonShape.vertices[i];
+                x[i] = vertex.x;
+                y[i] = vertex.y;
+                r[i] = ((vertex.color >> 24) & 0xFF) / (float) (0xFF);
+                g[i] = ((vertex.color >> 16) & 0xFF) / (float) (0xFF);
+                b[i] = ((vertex.color >> 8 ) & 0xFF) / (float) (0xFF);
+                a[i] = ((vertex.color      ) & 0xFF) / (float) (0xFF);
+            }
+            
+            mask = new ColoredMask(n, x, y, r, g, b, a);
+        }
+        else if(circleShapes.getLength() > 0)
+        {
+            Node circleShapeNode = circleShapes.item(0);
+            if(circleShapeNode.getNodeType() != Node.ELEMENT_NODE)
+                throw new EntityLoaderException("invalid \"circle_shape\" node");
+            Element circleShapeElement = (Element) circleShapeNode;
+            CircleShape circleShape = parseCircleShapeElement(circleShapeElement);
+
+            float r = ((circleShape.color >> 24) & 0xFF) / (float) 0xFF;
+            float g = ((circleShape.color >> 16) & 0xFF) / (float) 0xFF;
+            float b = ((circleShape.color >> 8 ) & 0xFF) / (float) 0xFF;
+            float a = ((circleShape.color      ) & 0xFF) / (float) 0xFF;
+            mask = new ColoredMask(circleShape.radius, r, g, b, a);
         }
         
-        ColoredMask mask = new ColoredMask(n, x, y, r, g, b, a);
         return new Pair<Integer, Mask>(layerHeight, mask);
     }
     

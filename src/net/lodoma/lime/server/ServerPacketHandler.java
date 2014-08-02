@@ -30,7 +30,7 @@ public abstract class ServerPacketHandler
         }
         catch (IOException e)
         {
-            user.closed();
+            user.close();
         }
     }
 }

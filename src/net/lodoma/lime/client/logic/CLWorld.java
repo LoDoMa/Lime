@@ -66,8 +66,9 @@ public class CLWorld implements ClientLogic
         cphPool.add(CPHEntityForce.HASH, new CPHEntityForce(client));
         
         cphPool.add(CPHSetActor.HASH, new CPHSetActor(client));
-        
+
         entityLoader.addXMLFile("Lime::Zombie", new File("model/zombie.xml"));
+        entityLoader.addXMLFile("Lime::Ball", new File("model/ball.xml"));
         
         world.generalInit();
     }
