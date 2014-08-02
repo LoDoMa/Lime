@@ -7,13 +7,7 @@ local hash32 = lime.util.hash32
 
 function Lime_WorldServerUpdate()
 	if firstUpdate == true then
-		local vertices = {}
-		vertices[1] = newVector(0, 0)
-		vertices[2] = newVector(10, 0)
-		vertices[3] = newVector(10, 2)
-		vertices[4] = newVector(0, 2)
-
-		lime.platform.create(newVector(0, 0), vertices)
+		lime.platform.create(newVector(0, 0), newVector(0, 0), newVector(10, 0), newVector(10, 2), newVector(0, 2))
 		firstUpdate = false
 	end
 end

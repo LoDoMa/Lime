@@ -24,7 +24,7 @@ local function checkType(value, etype, argument, name)
 	local name_type = type(name)
 
 	assert(etype_type == "string", "invalid argument #2 to \"local utility checkType\", expected string, got " .. etype_type)
-	assert(argument_type == "number" or argument_type == "string", "invalid argument #3 to \"local utility checkType\", expected number, got " .. argument_type)
+	assert(argument_type == "number", "invalid argument #3 to \"local utility checkType\", expected number, got " .. argument_type)
 	assert(name_type == "string", "invalid argument #4 to \"local utility checkType\", expected string, got " .. name_type)
 
 	local gtype = type(value)
@@ -42,7 +42,7 @@ end
 local function checkVectorType(value, argument, name)
 	local argument_type = type(argument)
 	local name_type = type(name)
-	assert(argument_type == "number" or argument_type == "string", "invalid argument #2 to \"local utility checkVectorType\", expected number, got " .. argument_type)
+	assert(argument_type == "number", "invalid argument #2 to \"local utility checkVectorType\", expected number, got " .. argument_type)
 	assert(name_type == "string", "invalid argument #3 to \"local utility checkVectorType\", expected string, got " .. name_type)
 	assert(lime.util.vector.check(value), "invalid argument #" .. argument .. " to \"" .. name .. "\", expected vector2")
 end
@@ -106,17 +106,18 @@ end
 
 -- platform
 
-local function addPlatformToWorld(offset, vertices)
+local function addPlatformToWorld(offset, ...)
 	checkVectorType(offset, 1, "lime.platform.create")
-	checkType(vertices, "table", 2, "lime.platform.create")
 
 	local javaOffset = Vector2:newInstance(offset.x, offset.y)
 
-	local i = 1;
+	local i = 1
+	local vertices = {...}
 	local javaVertices = {}
 	while vertices[i] do
-		checkVectorType(vertices[i], "2." .. i, "lime.platform.create")
-		javaVertices[i] = Vector2:newInstance(vertices[i].x, vertices[i].y)
+		local vertex = vertices[i]
+		checkVectorType(vertex, i + 1, "lime.platform.create")
+		javaVertices[i] = Vector2:newInstance(vertex.x, vertex.y)
 		i = i + 1
 	end
 
