@@ -95,6 +95,9 @@ public abstract class CommonWorld implements EntityWorld
     
     public void update(double timeDelta)
     {
+        if(script != null)
+            script.call("Lime_WorldServerUpdate");
+        
         List<Entity> entityList = new ArrayList<Entity>(entities.values());
         for(Entity entity : entityList)
             if(entity.isCreated())

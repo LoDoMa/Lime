@@ -2,6 +2,8 @@
 local Vector2 = java.require("net.lodoma.lime.util.Vector2")
 local HashHelper = java.require("net.lodoma.lime.util.HashHelper")
 local NetworkSide = java.require("net.lodoma.lime.common.NetworkSide")
+local Platform = java.require("net.lodoma.lime.world.platform.Platform")
+local Entity = java.require("net.lodoma.lime.physics.entity.Entity")
 
 local world = LIME_WORLD
 
@@ -22,7 +24,7 @@ local function checkType(value, etype, argument, name)
 	local name_type = type(name)
 
 	assert(etype_type == "string", "invalid argument #2 to \"local utility checkType\", expected string, got " .. etype_type)
-	assert(argument_type == "number", "invalid argument #3 to \"local utility checkType\", expected number, got " .. argument_type)
+	assert(argument_type == "number" or argument_type == "string", "invalid argument #3 to \"local utility checkType\", expected number, got " .. argument_type)
 	assert(name_type == "string", "invalid argument #4 to \"local utility checkType\", expected string, got " .. name_type)
 
 	local gtype = type(value)
@@ -40,7 +42,7 @@ end
 local function checkVectorType(value, argument, name)
 	local argument_type = type(argument)
 	local name_type = type(name)
-	assert(argument_type == "number", "invalid argument #2 to \"local utility checkVectorType\", expected number, got " .. argument_type)
+	assert(argument_type == "number" or argument_type == "string", "invalid argument #2 to \"local utility checkVectorType\", expected number, got " .. argument_type)
 	assert(name_type == "string", "invalid argument #3 to \"local utility checkVectorType\", expected string, got " .. name_type)
 	assert(lime.util.vector.check(value), "invalid argument #" .. argument .. " to \"" .. name .. "\", expected vector2")
 end
@@ -102,12 +104,37 @@ local function addHash64(str)
 	hashes64[str] = hash64(str)
 end
 
+-- platform
+
+local function addPlatformToWorld(offset, vertices)
+	checkVectorType(offset, 1, "lime.platform.create")
+	checkType(vertices, "table", 2, "lime.platform.create")
+
+	local javaOffset = Vector2:newInstance(offset.x, offset.y)
+
+	local i = 1;
+	local javaVertices = {}
+	while vertices[i] do
+		checkVectorType(vertices[i], "2." .. i, "lime.platform.create")
+		javaVertices[i] = Vector2:newInstance(vertices[i].x, vertices[i].y)
+		i = i + 1
+	end
+
+	local platform = Platform:newInstance(javaOffset, javaVertices)
+	world:addPlatform(platform)
+end
+
+-- lime table
+
 lime = {
 	network = {
 		side = {
 			server = serverSide,
 			client = clientSide,
 		},
+	},
+	platform = {
+		create = serverSide and addPlatformToWorld or nil,
 	},
 	util = {
 		round = round,

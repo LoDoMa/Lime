@@ -3,6 +3,7 @@ package net.lodoma.lime.world.platform;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 import net.lodoma.lime.mask.ColoredMask;
 import net.lodoma.lime.mask.Mask;
@@ -18,6 +19,13 @@ public class Platform
     
     private Vector2 offset;
     private Vector2[] vertices;
+    
+    public static Platform newInstance(Vector2 offset, List<Vector2> vertexList)
+    {
+        Vector2[] vertices = new Vector2[vertexList.size()];
+        vertexList.toArray(vertices);
+        return new Platform(offset, vertices);
+    }
     
     public Platform(DataInputStream inputStream) throws IOException
     {
