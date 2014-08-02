@@ -2,6 +2,7 @@ package net.lodoma.lime.physics.entity;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,6 +38,7 @@ public class Entity
     Map<Integer, Mask> masks;
     Map<Integer, String> properties;
     LuaScript script;
+    File scriptFile;
     
     public Entity()
     {
@@ -44,6 +46,43 @@ public class Entity
         joints = new HashMap<Integer, PhysicsJoint>();
         masks = new HashMap<Integer, Mask>();
         properties = new HashMap<Integer, String>();
+    }
+    
+    public Entity newCopy() throws IOException
+    {
+        Entity copy = new Entity();
+        
+        copy.hash = hash;
+        copy.internalName = internalName;
+        copy.visualName = visualName;
+        copy.version = version;
+        
+        copy.world = world;
+        copy.propertyPool = propertyPool;
+
+        Set<Integer> bodyHashes = bodies.keySet();
+        Set<Integer> jointHashes = joints.keySet();
+        Set<Integer> maskHashes = masks.keySet();
+        Set<Integer> propertyHashes = properties.keySet();
+
+        for(Integer hash : bodyHashes)
+            copy.bodies.put(hash, bodies.get(hash).newCopy());
+        for(Integer hash : jointHashes)
+            copy.joints.put(hash, joints.get(hash).newCopy(copy));
+        for(Integer hash : maskHashes)
+            copy.masks.put(hash, masks.get(hash).newCopy());
+        for(Integer hash : propertyHashes)
+            copy.properties.put(hash, new String(properties.get(hash)));
+
+        copy.script = new LuaScript();
+        copy.script.setGlobal("ENTITY", copy);
+        copy.script.setGlobal("SCRIPT", copy.script);
+        copy.script.require("script/strict/entity");
+        copy.script.require("script/strict/sandbox");
+        copy.scriptFile = scriptFile;
+        copy.script.load(copy.scriptFile);
+        
+        return copy;
     }
     
     public void setID(int id)

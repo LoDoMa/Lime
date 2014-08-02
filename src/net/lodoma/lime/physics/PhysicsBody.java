@@ -30,6 +30,15 @@ public class PhysicsBody
         fd = new FixtureDef();
     }
     
+    public PhysicsBody newCopy()
+    {
+        PhysicsBody copy = new PhysicsBody();
+        copy.bd = bd;
+        copy.shape = shape;
+        copy.fd = fd;
+        return copy;
+    }
+    
     public Vector2 getPosition()
     {
         return new Vector2(body.getPosition());

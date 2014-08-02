@@ -14,6 +14,15 @@ public class LayeredMask extends Mask
         layers = new ArrayList<Mask>();
     }
     
+    @Override
+    public Mask newCopy()
+    {
+        LayeredMask copy = new LayeredMask(order);
+        for(Mask layer : layers)
+            copy.addLayer(layer.newCopy());
+        return copy;
+    }
+    
     public void addLayer(Mask layer)
     {
         layers.add(layer);

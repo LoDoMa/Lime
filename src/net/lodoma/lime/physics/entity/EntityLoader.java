@@ -70,10 +70,12 @@ public class EntityLoader
     }
     
     private Map<Integer, File> files;
+    private Map<File, Entity> cache;
     
     public EntityLoader()
     {
         files = new HashMap<Integer, File>();
+        cache = new HashMap<File, Entity>();
     }
     
     public void addXMLFile(String internalName, File file)
@@ -90,6 +92,9 @@ public class EntityLoader
     {
         try
         {
+            if(cache.containsKey(xmlFile))
+                return cache.get(xmlFile).newCopy();
+            
             Entity entity = new Entity();
             
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -157,8 +162,10 @@ public class EntityLoader
             entity.script.setGlobal("SCRIPT", entity.script);
             entity.script.require("script/strict/entity");
             entity.script.require("script/strict/sandbox");
-            entity.script.load(new File(XMLHelper.getDeepValue(docElement, "script")));
+            entity.scriptFile = new File(XMLHelper.getDeepValue(docElement, "script"));
+            entity.script.load(entity.scriptFile);
             
+            cache.put(xmlFile, entity);
             return entity;
         }
         catch(IOException | SAXException | ParserConfigurationException e)
@@ -370,9 +377,11 @@ public class EntityLoader
             throw new EntityLoaderException("invalid \"anchor_b\" node");
         Element anchorBElement = (Element) anchorBNode;
         Vector2 anchorB = parseVectorElement(anchorBElement);
-        
-        joint.setBodyA(entity.bodies.get(HashHelper.hash32(nameBodyA)));
-        joint.setBodyB(entity.bodies.get(HashHelper.hash32(nameBodyB)));
+
+        int hashA = HashHelper.hash32(nameBodyA);
+        int hashB = HashHelper.hash32(nameBodyB);
+        joint.setBodyA(entity.bodies.get(hashA), hashA);
+        joint.setBodyB(entity.bodies.get(hashB), hashB);
         joint.setCollisionEnabled(collision);
         joint.setAngle(rotation);
         joint.setAnchorA(anchorA);

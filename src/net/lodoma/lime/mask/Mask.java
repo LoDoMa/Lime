@@ -17,6 +17,8 @@ public abstract class Mask
         
     }
     
+    public abstract Mask newCopy();
+    
     public Vector2 getTranslation()
     {
         return new Vector2(translateX, translateY);

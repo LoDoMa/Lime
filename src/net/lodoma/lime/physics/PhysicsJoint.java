@@ -1,5 +1,6 @@
 package net.lodoma.lime.physics;
 
+import net.lodoma.lime.physics.entity.Entity;
 import net.lodoma.lime.util.Vector2;
 
 import org.jbox2d.dynamics.World;
@@ -11,9 +12,17 @@ public class PhysicsJoint
 {
     private PhysicsBody bodyA;
     private PhysicsBody bodyB;
+
+    private int hashA;
+    private int hashB;
     
     private JointDef jd;
     private Joint joint;
+    
+    private PhysicsJoint()
+    {
+        
+    }
     
     public PhysicsJoint(PhysicsJointType type)
     {
@@ -21,14 +30,27 @@ public class PhysicsJoint
         jd.type = type.getEngineType();
     }
     
-    public void setBodyA(PhysicsBody bodyA)
+    public PhysicsJoint newCopy(Entity entity)
     {
-        this.bodyA = bodyA;
+        PhysicsJoint copy = new PhysicsJoint();
+        copy.jd = jd;
+        copy.hashA = hashA;
+        copy.hashB = hashB;
+        copy.bodyA = entity.getBody(copy.hashA);
+        copy.bodyB = entity.getBody(copy.hashB);
+        return copy;
     }
     
-    public void setBodyB(PhysicsBody bodyB)
+    public void setBodyA(PhysicsBody bodyA, int hashA)
+    {
+        this.bodyA = bodyA;
+        this.hashA = hashA;
+    }
+    
+    public void setBodyB(PhysicsBody bodyB, int hashB)
     {
         this.bodyB = bodyB;
+        this.hashB = hashB;
     }
     
     public void setCollisionEnabled(boolean collideConnected)
