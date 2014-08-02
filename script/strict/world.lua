@@ -4,11 +4,14 @@ local HashHelper = java.require("net.lodoma.lime.util.HashHelper")
 local NetworkSide = java.require("net.lodoma.lime.common.NetworkSide")
 local Platform = java.require("net.lodoma.lime.world.platform.Platform")
 local Entity = java.require("net.lodoma.lime.physics.entity.Entity")
+local LuaEventListener = java.require("net.lodoma.lime.script.LuaEventListener")
 
 local world = LIME_WORLD
+local script = LIME_SCRIPT
 
 local propertyPool = world:getPropertyPool()
 local entityLoader = propertyPool:getProperty("entityLoader")
+local emanPool = propertyPool:getProperty("emanPool")
 
 local networkSide = world:getNetworkSide():ordinal()
 local serverSide = networkSide == NetworkSide:valueOf("SERVER"):ordinal() and true or nil
@@ -17,7 +20,8 @@ local clientSide = networkSide == NetworkSide:valueOf("CLIENT"):ordinal() and tr
 local inputHandlerHashPool = propertyPool:getProperty(serverSide and "sphPool" or (clientSide and "cphPool" or nil))
 local outputHashPool = propertyPool:getProperty(serverSide and "spPool" or (clientSide and "cpPool" or nil))
 
-local listeners = {}
+local listenerFunctions = {}
+local eventListeners = {}
 
 -- local utilities
 
@@ -155,22 +159,26 @@ end
 local function setListener(hash, listenerFunction)
 	checkType(hash, "number", 1, "lime.listener.set")
 	checkType(listenerFunction, "function", 2, "lime.listener.set")
-	assert(not listeners[hash], "listener not released before calling \"lime.listener.set\"")
-	listeners[hash] = listenerFunction
-	world:addLuaEventListener(hash);
+	assert(not eventListeners[hash], "listener not released before calling \"lime.listener.set\"")
+
+	local eventManager = emanPool:get(hash)
+	local eventListener = LuaEventListener:new(hash, eventManager, script)
+
+	eventListeners[hash] = eventListener
+	listenerFunctions[hash] = listenerFunction
 end
 
 local function releaseListener(hash)
 	checkType(hash, "number", 1, "lime.listener.release")
-	assert(listeners[hash], "listener not set before calling \"lime.listener.release\"")
-	world:removeLuaEventListener(hash)
-	listeners[hash] = nil
+	assert(eventListeners[hash], "listener not set before calling \"lime.listener.release\"")
+
+	eventListeners[hash]:destroy()
+	
+	eventListeners[hash] = nil
+	listenerFunctions[hash] = nil
 end
 
-local function invokeListener(hash, eventBundle)
-	checkType(hash, "number", 1, "lime.listener.invoke")
-	assert(listeners[hash], "listener not set before calling \"lime.listener.invoke\"")
-
+local function extractEventBundle(eventBundle)
 	local luaSafe = eventBundle:isLuaSafe()
 	assert(luaSafe, "event bundle is not safe")
 
@@ -184,7 +192,17 @@ local function invokeListener(hash, eventBundle)
 		bundle[key] = eventBundle:get(key)
 	end
 
-	listeners[hash](bundle)
+	return bundle
+end
+
+local function invokeListener(hash, eventBundle)
+	checkType(hash, "number", 1, "lime.listener.invoke")
+	checkType(eventBundle, "userdata", 2, "lime.listener.invoke")
+	assert(listenerFunctions[hash], "listener not set before calling \"lime.listener.invoke\"")
+	
+	local bundle = extractEventBundle(eventBundle)
+
+	listenerFunctions[hash](bundle)
 end
 
 -- lime table

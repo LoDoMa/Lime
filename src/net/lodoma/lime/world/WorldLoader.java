@@ -40,6 +40,7 @@ public class WorldLoader
             
             world.script = new LuaScript();
             world.script.setGlobal("WORLD", world);
+            world.script.setGlobal("SCRIPT", world.script);
             world.script.require("script/strict/world");
             world.script.require("script/strict/sandbox");
             world.script.load(new File(XMLHelper.getDeepValue(docElement, "script")));

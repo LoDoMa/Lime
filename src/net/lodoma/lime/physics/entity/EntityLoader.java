@@ -11,7 +11,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import net.lodoma.lime.common.PropertyPool;
-import net.lodoma.lime.event.EventManager;
 import net.lodoma.lime.mask.ColoredMask;
 import net.lodoma.lime.mask.LayeredMask;
 import net.lodoma.lime.mask.Mask;
@@ -22,7 +21,6 @@ import net.lodoma.lime.physics.PhysicsJoint;
 import net.lodoma.lime.physics.PhysicsJointType;
 import net.lodoma.lime.script.LuaScript;
 import net.lodoma.lime.util.HashHelper;
-import net.lodoma.lime.util.HashPool32;
 import net.lodoma.lime.util.Pair;
 import net.lodoma.lime.util.Vector2;
 import net.lodoma.lime.util.XMLHelper;
@@ -88,14 +86,11 @@ public class EntityLoader
         return files.get(hash);
     }
     
-    @SuppressWarnings("unchecked")
     public Entity loadFromXML(File xmlFile, EntityWorld world, PropertyPool propertyPool) throws EntityLoaderException
     {
         try
         {
-            HashPool32<EventManager> emanPool = (HashPool32<EventManager>) propertyPool.getProperty("emanPool");
-            
-            Entity entity = new Entity(emanPool);
+            Entity entity = new Entity();
             
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();

@@ -58,8 +58,6 @@ public class SLWorld implements ServerLogic
         world = (ServersideWorld) server.getProperty("world");
         entityLoader = (EntityLoader) server.getProperty("entityLoader");
         worldLoader = (WorldLoader) server.getProperty("worldLoader");
-        
-        world.fetch();
     }
     
     @Override

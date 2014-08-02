@@ -2,6 +2,7 @@
 local Vector2 = java.require("net.lodoma.lime.util.Vector2")
 local HashHelper = java.require("net.lodoma.lime.util.HashHelper")
 local NetworkSide = java.require("net.lodoma.lime.common.NetworkSide")
+local LuaEventListener = java.require("net.lodoma.lime.script.LuaEventListener")
 
 local entity = LIME_ENTITY
 local script = LIME_SCRIPT
@@ -30,7 +31,8 @@ local workingMask = nil
 local workingMaskHash = 0
 
 local properties = {}
-local listeners = {}
+local listenerFunctions = {}
+local eventListeners = {}
 
 -- local utilities
 
@@ -283,22 +285,26 @@ end
 local function setListener(hash, listenerFunction)
 	checkType(hash, "number", 1, "lime.listener.set")
 	checkType(listenerFunction, "function", 2, "lime.listener.set")
-	assert(not listeners[hash], "listener not released before calling \"lime.listener.set\"")
-	listeners[hash] = listenerFunction
-	entity:addEventListener(hash);
+	assert(not eventListeners[hash], "listener not released before calling \"lime.listener.set\"")
+
+	local eventManager = emanPool:get(hash)
+	local eventListener = LuaEventListener:new(hash, eventManager, script)
+
+	eventListeners[hash] = eventListener
+	listenerFunctions[hash] = listenerFunction
 end
 
 local function releaseListener(hash)
 	checkType(hash, "number", 1, "lime.listener.release")
-	assert(listeners[hash], "listener not set before calling \"lime.listener.release\"")
-	entity:removeEventListener(hash)
-	listeners[hash] = nil
+	assert(eventListeners[hash], "listener not set before calling \"lime.listener.release\"")
+
+	eventListeners[hash]:destroy()
+	
+	eventListeners[hash] = nil
+	listenerFunctions[hash] = nil
 end
 
-local function invokeListener(hash, eventBundle)
-	checkType(hash, "number", 1, "lime.listener.invoke")
-	assert(listeners[hash], "listener not set before calling \"lime.listener.invoke\"")
-
+local function extractEventBundle(eventBundle)
 	local luaSafe = eventBundle:isLuaSafe()
 	assert(luaSafe, "event bundle is not safe")
 
@@ -312,7 +318,17 @@ local function invokeListener(hash, eventBundle)
 		bundle[key] = eventBundle:get(key)
 	end
 
-	listeners[hash](bundle)
+	return bundle
+end
+
+local function invokeListener(hash, eventBundle)
+	checkType(hash, "number", 1, "lime.listener.invoke")
+	checkType(eventBundle, "userdata", 2, "lime.listener.invoke")
+	assert(listenerFunctions[hash], "listener not set before calling \"lime.listener.invoke\"")
+	
+	local bundle = extractEventBundle(eventBundle)
+
+	listenerFunctions[hash](bundle)
 end
 
 -- lime table
