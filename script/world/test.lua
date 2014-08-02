@@ -19,7 +19,11 @@ end
 local function onNewUser(bundle)
 	print("user ID: " .. bundle["userID"])
 
-	lime.entity.create(hashes["Lime::Zombie"])
+	for i = 0, 50, 1 do
+		lime.entity.create(hashes["Lime::Zombie"])
+	end
+
+	print("created all")
 end
 
 function Lime_WorldUpdate()
