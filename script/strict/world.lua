@@ -17,6 +17,8 @@ local clientSide = networkSide == NetworkSide:valueOf("CLIENT"):ordinal() and tr
 local inputHandlerHashPool = propertyPool:getProperty(serverSide and "sphPool" or (clientSide and "cphPool" or nil))
 local outputHashPool = propertyPool:getProperty(serverSide and "spPool" or (clientSide and "cpPool" or nil))
 
+local listeners = {}
+
 -- local utilities
 
 local function checkType(value, etype, argument, name)
@@ -148,6 +150,43 @@ local function addEntityToWorld(hash)
 	end
 end
 
+-- listener
+
+local function setListener(hash, listenerFunction)
+	checkType(hash, "number", 1, "lime.listener.set")
+	checkType(listenerFunction, "function", 2, "lime.listener.set")
+	assert(not listeners[hash], "listener not released before calling \"lime.listener.set\"")
+	listeners[hash] = listenerFunction
+	world:addLuaEventListener(hash);
+end
+
+local function releaseListener(hash)
+	checkType(hash, "number", 1, "lime.listener.release")
+	assert(listeners[hash], "listener not set before calling \"lime.listener.release\"")
+	world:removeLuaEventListener(hash)
+	listeners[hash] = nil
+end
+
+local function invokeListener(hash, eventBundle)
+	checkType(hash, "number", 1, "lime.listener.invoke")
+	assert(listeners[hash], "listener not set before calling \"lime.listener.invoke\"")
+
+	local luaSafe = eventBundle:isLuaSafe()
+	assert(luaSafe, "event bundle is not safe")
+
+	local keyList = eventBundle:getKeyList()
+	local keyCount = keyList:size()
+
+	local bundle = {}
+
+	for index = 1, keyCount, 1 do
+		local key = keyList:get(index - 1)
+		bundle[key] = eventBundle:get(key)
+	end
+
+	listeners[hash](bundle)
+end
+
 -- lime table
 
 lime = {
@@ -162,6 +201,11 @@ lime = {
 	},
 	entity = {
 		create = addEntityToWorld,
+	},
+	listener = {
+		set = setListener,
+		release = releaseListener,
+		invoke = invokeListener,
 	},
 	util = {
 		round = round,

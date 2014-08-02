@@ -51,6 +51,8 @@ public class CLWorld implements ClientLogic
         cpPool = (HashPool32<ClientPacket>) client.getProperty("cpPool");
         world = (ClientsideWorld) client.getProperty("world");
         entityLoader = (EntityLoader) client.getProperty("entityLoader");
+        
+        world.fetch();
     }
     
     @Override

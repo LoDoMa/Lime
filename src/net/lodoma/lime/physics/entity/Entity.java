@@ -16,6 +16,7 @@ import net.lodoma.lime.mask.Mask;
 import net.lodoma.lime.physics.PhysicsBody;
 import net.lodoma.lime.physics.PhysicsJoint;
 import net.lodoma.lime.physics.PhysicsWorld;
+import net.lodoma.lime.script.LuaEventListener;
 import net.lodoma.lime.script.LuaScript;
 import net.lodoma.lime.util.HashPool32;
 
@@ -41,7 +42,7 @@ public class Entity
     LuaScript script;
     
     private HashPool32<EventManager> emanPool;
-    private Map<Integer, EntityEventListener> listeners;
+    private Map<Integer, LuaEventListener> listeners;
     
     public Entity(HashPool32<EventManager> emanPool)
     {
@@ -51,7 +52,7 @@ public class Entity
         properties = new HashMap<Integer, String>();
         
         this.emanPool = emanPool;
-        listeners = new HashMap<Integer, EntityEventListener>();
+        listeners = new HashMap<Integer, LuaEventListener>();
     }
     
     public void setID(int id)
@@ -119,11 +120,12 @@ public class Entity
     
     public void addEventListener(int hash)
     {
-        listeners.put(hash, new EntityEventListener(hash, emanPool.get(hash), script));
+        listeners.put(hash, new LuaEventListener(hash, emanPool.get(hash), script));
     }
     
     public void releaseEventListener(int hash)
     {
+        listeners.get(hash).destroy();
         listeners.remove(hash);
     }
     

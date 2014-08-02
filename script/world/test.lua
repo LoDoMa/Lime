@@ -13,6 +13,13 @@ end
 
 local function loadHashes()
 	addHash("Lime::Zombie")
+	addHash("Lime::OnNewUser")
+end
+
+local function onNewUser(bundle)
+	print("user ID: " .. bundle["userID"])
+
+	lime.entity.create(hashes["Lime::Zombie"])
 end
 
 function Lime_WorldUpdate()
@@ -23,7 +30,7 @@ function Lime_WorldUpdate()
 			lime.platform.create(newVector(6, 0), newVector(-5, -2), newVector(5, -2), newVector(5, 2), newVector(-5, 2))
 			firstUpdate = false
 
-			lime.entity.create(hashes["Lime::Zombie"])
+			lime.listener.set(hashes["Lime::OnNewUser"], onNewUser)
 		end
 	elseif lime.network.side.client then
 

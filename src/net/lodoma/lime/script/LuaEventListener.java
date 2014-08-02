@@ -1,17 +1,16 @@
-package net.lodoma.lime.physics.entity;
+package net.lodoma.lime.script;
 
 import net.lodoma.lime.event.EventBundle;
 import net.lodoma.lime.event.EventListener;
 import net.lodoma.lime.event.EventManager;
-import net.lodoma.lime.script.LuaScript;
 
-public class EntityEventListener implements EventListener
+public class LuaEventListener implements EventListener
 {
     private int eventHash;
     private EventManager manager;
     private LuaScript script;
     
-    public EntityEventListener(int eventHash, EventManager manager, LuaScript script)
+    public LuaEventListener(int eventHash, EventManager manager, LuaScript script)
     {
         this.eventHash = eventHash;
         this.manager = manager;
