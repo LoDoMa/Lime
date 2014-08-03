@@ -10,9 +10,15 @@ void main()
 	float deltaY = pos.y - lightPos.y;
 	float distance = sqrt(deltaX * deltaX + deltaY * deltaY);
 
+	vec4 rescolor;
 	if (distance <= lightRadius)
 	{
 		float alpha = (lightRadius - distance) / lightRadius;
-		gl_FragColor = vec4(lightColor.rgb, lightColor.a * alpha);
+		rescolor = vec4(lightColor.rgb, lightColor.a * alpha);
 	}
+	else
+	{
+		rescolor = vec4(0.0, 0.0, 0.0, 0.0);
+	}
+	gl_FragColor = rescolor;
 }
