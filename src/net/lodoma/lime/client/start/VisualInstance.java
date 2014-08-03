@@ -33,6 +33,7 @@ public class VisualInstance
         catch(WindowException e)
         {
             e.printStackTrace();
+            System.exit(1);
         }
         
         FontHelper.registerFont(new File("fonts/mytype.ttf"));

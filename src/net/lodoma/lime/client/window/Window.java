@@ -6,7 +6,6 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.ContextAttribs;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GLContext;
 import org.lwjgl.opengl.PixelFormat;
 
 public class Window
@@ -34,8 +33,6 @@ public class Window
     private static int vpheight;
     
     private static boolean closeRequested = false;
-    
-    private static boolean supportFBO;
     
     public static int getWindowWidth()
     {
@@ -166,6 +163,10 @@ public class Window
             Display.create(pixelFormat, contextAtrributes);
             Keyboard.create();
             Mouse.create();
+            
+            Capabilities.load();
+            if(!Capabilities.checkRequired())
+                throw new WindowException("Required features not supported");
         }
         catch (LWJGLException e)
         {
@@ -175,14 +176,8 @@ public class Window
         setupGL();
     }
     
-    private static void loadLimitations()
-    {
-        supportFBO = GLContext.getCapabilities().GL_EXT_framebuffer_object;
-    }
-    
     public static void setupGL()
     {
-        loadLimitations();
         
         vpwidth = (int) (wh * (resw / (float) resh));
         if(vpwidth < ww)
@@ -209,11 +204,6 @@ public class Window
         
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-    }
-    
-    public static boolean supportsFBO()
-    {
-        return supportFBO;
     }
     
     public static void apply() throws WindowException
