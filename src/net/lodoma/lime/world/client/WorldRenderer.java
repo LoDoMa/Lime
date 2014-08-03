@@ -14,7 +14,7 @@ import net.lodoma.lime.world.platform.Platform;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.*;
-import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.EXTFramebufferObject.*;
 
 public class WorldRenderer
 {
@@ -54,13 +54,13 @@ public class WorldRenderer
     
     private int[] generateFramebuffer(int width, int height)
     {
-        int fbo = glGenFramebuffers();
-        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+        int fbo = glGenFramebuffersEXT();
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo);
         
         int ct = generateTexture(width, height);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ct, 0);
+        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, ct, 0);
         
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
         
         return new int[] {fbo, ct, width, height};
     }
@@ -69,7 +69,7 @@ public class WorldRenderer
     {
         glViewport(0, 0, data[2], data[3]);
         glBindTexture(GL_TEXTURE_2D, 0);
-        glBindFramebuffer(GL_FRAMEBUFFER, data[0]);
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, data[0]);
         
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT);

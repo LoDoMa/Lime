@@ -8,7 +8,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.PixelFormat;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.EXTFramebufferObject.*;
 
 public class Window
 {
@@ -240,7 +240,7 @@ public class Window
     {
         glViewport(vpx, vpy, vpwidth, vpheight);
         glBindTexture(GL_TEXTURE_2D, 0);
-        glBindFramebuffer(GL_FRAMEBUFFER, 0); 
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0); 
     }
     
     public static void update()
