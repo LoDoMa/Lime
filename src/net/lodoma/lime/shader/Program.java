@@ -56,7 +56,7 @@ public class Program
     {
         int location = GL20.glGetUniformLocation(program, uniformName);
         if(location == -1)
-            throw new InvalidUniformNameException(uniformName);
+            return;
         switch(type)
         {
         case INT1:

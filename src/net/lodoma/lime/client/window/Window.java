@@ -5,8 +5,10 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.ContextAttribs;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.PixelFormat;
+
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL30.*;
 
 public class Window
 {
@@ -191,19 +193,19 @@ public class Window
         vpx = (ww - vpwidth) / 2;
         vpy = (wh - vpheight) / 2;
         
-        GL11.glViewport(vpx, vpy, vpwidth, vpheight);
+        glViewport(vpx, vpy, vpwidth, vpheight);
         
-        GL11.glMatrixMode(GL11.GL_PROJECTION);
-        GL11.glLoadIdentity();
-        GL11.glOrtho(0.0f, 1.0f, 0.0f, 1.0f, -1.0f, 1.0f);
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glOrtho(0.0f, 1.0f, 0.0f, 1.0f, -1.0f, 1.0f);
         
-        GL11.glMatrixMode(GL11.GL_MODELVIEW);
-        GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        glMatrixMode(GL_MODELVIEW);
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        glEnable(GL_TEXTURE_2D);
         
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
     
     public static void apply() throws WindowException
@@ -230,8 +232,15 @@ public class Window
         lww = ww;
         lwh = wh;
         
-        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
-        GL11.glLoadIdentity();
+        glClear(GL_COLOR_BUFFER_BIT);
+        glLoadIdentity();
+    }
+    
+    public static void bindFBO()
+    {
+        glViewport(vpx, vpy, vpwidth, vpheight);
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0); 
     }
     
     public static void update()
