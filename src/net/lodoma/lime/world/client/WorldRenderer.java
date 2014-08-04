@@ -1,9 +1,9 @@
 package net.lodoma.lime.world.client;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import net.lodoma.lime.client.window.Window;
 import net.lodoma.lime.physics.entity.Entity;
@@ -13,7 +13,6 @@ import net.lodoma.lime.shader.ShaderType;
 import net.lodoma.lime.shader.UniformType;
 import net.lodoma.lime.shader.light.Light;
 import net.lodoma.lime.world.platform.Platform;
-
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.*;
 import static org.lwjgl.opengl.EXTFramebufferObject.*;
@@ -109,14 +108,12 @@ public class WorldRenderer
         glPushMatrix();
         glScalef(1.0f / 32.0f, 1.0f / 24.0f, 1.0f);
 
-        Map<Integer, List<Light>> lightMap = world.getLightMap();
-        Set<Integer> typeHashes = lightMap.keySet();
-        for(Integer typeHash : typeHashes)
+        Map<Integer, Light> lights = world.getLightMap();
+        List<Light> lightList = new ArrayList<Light>(lights.values());
+        for(Light light : lightList)
         {
-            List<Light> lights = lightMap.get(typeHash);
-            lights.get(0).useProgram();
-            for(Light light : lights)
-                light.render();
+            light.useProgram();
+            light.render();
         }
         
         glPopMatrix();

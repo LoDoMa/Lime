@@ -1,8 +1,6 @@
 package net.lodoma.lime.world.client;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import net.lodoma.lime.chat.ChatManager;
@@ -19,7 +17,7 @@ public class ClientsideWorld extends CommonWorld
     private WorldRenderer renderer;
     private ChatConsole chatConsole;
     
-    private Map<Integer, List<Light>> lights;
+    private Map<Integer, Light> lights;
     
     public ClientsideWorld(Client client)
     {
@@ -27,28 +25,27 @@ public class ClientsideWorld extends CommonWorld
         this.renderer = new WorldRenderer(this);
         this.chatConsole = new ChatConsole(this);
         
-        this.lights = new HashMap<Integer, List<Light>>();
+        this.lights = new HashMap<Integer, Light>();
     }
     
-    public synchronized void addLight(Light light)
+    public synchronized void addLight(int hash, Light light)
     {
-        int typeHash = light.getTypeHash();
-        if(!lights.containsKey(typeHash))
-            lights.put(typeHash, new ArrayList<Light>());
-        lights.get(typeHash).add(light);
+        lights.put(hash, light);
     }
     
-    public synchronized Map<Integer, List<Light>> getLightMap()
+    public synchronized Light getLight(int hash)
     {
-        return new HashMap<Integer, List<Light>>(lights);
+        return lights.get(hash);
     }
     
-    public synchronized void removeLight(Light light)
+    public synchronized Map<Integer, Light> getLightMap()
     {
-        long typeHash = light.getTypeHash();
-        List<Light> lightList = lights.get(typeHash);
-        if(lightList.size() == 1) lights.remove(typeHash);
-        else lightList.remove(light);
+        return new HashMap<Integer, Light>(lights);
+    }
+    
+    public synchronized void removeLight(int hash)
+    {
+        lights.remove(hash);
     }
     
     @Override

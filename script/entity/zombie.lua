@@ -42,6 +42,10 @@ local function clientUpdate()
 
 	limex.follow(this, hashes["head"], this, hashes["m_head"])
 	limex.follow(this, hashes["body"], this, hashes["m_body"])
+
+	if firstUpdate then
+		lime.light.basic.add(0, newVector(16, 15), 20, 0, 0, 1, -1, 361)
+	end
 end
 
 function Lime_FrameUpdate(timeDelta, isActor)

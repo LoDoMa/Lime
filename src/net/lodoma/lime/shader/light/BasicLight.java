@@ -34,13 +34,6 @@ public class BasicLight implements Light
         this.lightColor = lightColor;
         this.angleFrom = (float) (Math.toRadians(angleFrom) - Math.PI);
         this.angleTo = (float) (Math.toRadians(angleTo) - Math.PI);
-        
-        if(shaderProgram == null)
-        {
-            vertexShader = new Shader(new File("shader/light.vs"), ShaderType.VERTEX);
-            fragmentShader = new Shader(new File("shader/light.fs"), ShaderType.FRAGMENT);
-            shaderProgram = new Program(vertexShader, fragmentShader);
-        }
     }
     
     public BasicLight(Vector2 position, float radius, Color lightColor)
@@ -57,6 +50,13 @@ public class BasicLight implements Light
     @Override
     public void useProgram()
     {
+        if(shaderProgram == null)
+        {
+            vertexShader = new Shader(new File("shader/light.vs"), ShaderType.VERTEX);
+            fragmentShader = new Shader(new File("shader/light.fs"), ShaderType.FRAGMENT);
+            shaderProgram = new Program(vertexShader, fragmentShader);
+        }
+        
         shaderProgram.useProgram();
     }
 

@@ -5,6 +5,8 @@ local NetworkSide = java.require("net.lodoma.lime.common.NetworkSide")
 local Platform = java.require("net.lodoma.lime.world.platform.Platform")
 local Entity = java.require("net.lodoma.lime.physics.entity.Entity")
 local LuaEventListener = java.require("net.lodoma.lime.script.LuaEventListener")
+local Color = java.require("net.lodoma.lime.gui.Color")
+local BasicLight = java.require("net.lodoma.lime.shader.light.BasicLight")
 
 local world = LIME_WORLD
 local script = LIME_SCRIPT
@@ -205,6 +207,33 @@ local function invokeListener(hash, eventBundle)
 	listenerFunctions[hash](bundle)
 end
 
+-- light
+
+local function addBasicLightToWorld(hash, position, radius, colorR, colorG, colorB, angleFrom, angleTo)
+	checkType(hash, "number", 1, "lime.light.basic.add")
+	checkVectorType(position, 2, "lime.light.basic.add")
+	checkType(radius, "number", 3, "lime.light.basic.add")
+	checkType(colorR, "number", 4, "lime.light.basic.add")
+	checkType(colorG, "number", 5, "lime.light.basic.add")
+	checkType(colorB, "number", 6, "lime.light.basic.add")
+	checkType(angleFrom, "number", 7, "lime.light.basic.add")
+	checkType(angleTo, "number", 8, "lime.light.basic.add")
+
+	assert(clientSide, "lights not supported on this side")
+
+	local javaPosition = Vector2:new(position.x, position.y)
+	local javaColor = Color:new(colorR, colorG, colorB, 1.0)
+
+	local javaLight = BasicLight:new(javaPosition, radius, javaColor, angleFrom, angleTo)
+
+	world:addLight(hash, javaLight)
+end
+
+local function removeBasicLightFromWorld(hash)
+	assert(clientSide, "lights not supported on this side")
+	world:removeLight(hash)
+end
+
 -- lime table
 
 lime = {
@@ -224,6 +253,12 @@ lime = {
 		set = setListener,
 		release = releaseListener,
 		invoke = invokeListener,
+	},
+	light = {
+		basic = {
+			add = addBasicLightToWorld,
+			remove = removeBasicLightFromWorld,
+		},
 	},
 	util = {
 		round = round,
