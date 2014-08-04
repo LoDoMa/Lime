@@ -56,6 +56,14 @@ local function checkVectorType(value, argument, name)
 	assert(lime.util.vector.check(value), "invalid argument #" .. argument .. " to \"" .. name .. "\", expected vector2")
 end
 
+local function checkColorType(value, argument, name)
+	local argument_type = type(argument)
+	local name_type = type(name)
+	assert(argument_type == "number", "invalid argument #2 to \"local utility checkColorType\", expected number, got " .. argument_type)
+	assert(name_type == "string", "invalid argument #3 to \"local utility checkColorType\", expected string, got " .. name_type)
+	assert(lime.util.color.check(value), "invalid argument #" .. argument .. " to \"" .. name .. "\", expected color")
+end
+
 local function getInputHandler(hash)
 	checkType(hash, "number", 1, "local utility getInputHandler")
 	return inputHandlerHashPool:get(hash)
@@ -95,6 +103,23 @@ local function isVector(vecTable)
 	if(type(vecTable) ~= "table") then return false end
 	if(type(vecTable.x) ~= "number") then return false end
 	if(type(vecTable.y) ~= "number") then return false end
+	return true;
+end
+
+local function buildColor(r, g, b, a)
+	checkType(r, "number", 1, "lime.util.color.new")
+	checkType(g, "number", 2, "lime.util.color.new")
+	checkType(b, "number", 3, "lime.util.color.new")
+	checkType(a, "number", 4, "lime.util.color.new")
+	return {r = r, g = g, b = b, a = a}
+end
+
+local function isColor(colTable)
+	if(type(colTable) ~= "table") then return false end
+	if(type(colTable.r) ~= "number") then return false end
+	if(type(colTable.g) ~= "number") then return false end
+	if(type(colTable.b) ~= "number") then return false end
+	if(type(colTable.a) ~= "number") then return false end
 	return true;
 end
 
@@ -209,20 +234,18 @@ end
 
 -- light
 
-local function addBasicLightToWorld(hash, position, radius, colorR, colorG, colorB, angleFrom, angleTo)
+local function addBasicLightToWorld(hash, position, radius, color, angleFrom, angleTo)
 	checkType(hash, "number", 1, "lime.light.basic.add")
 	checkVectorType(position, 2, "lime.light.basic.add")
 	checkType(radius, "number", 3, "lime.light.basic.add")
-	checkType(colorR, "number", 4, "lime.light.basic.add")
-	checkType(colorG, "number", 5, "lime.light.basic.add")
-	checkType(colorB, "number", 6, "lime.light.basic.add")
-	checkType(angleFrom, "number", 7, "lime.light.basic.add")
-	checkType(angleTo, "number", 8, "lime.light.basic.add")
+	checkColorType(color, 4, "lime.light.basic.add")
+	checkType(angleFrom, "number", 5, "lime.light.basic.add")
+	checkType(angleTo, "number", 6, "lime.light.basic.add")
 
 	assert(clientSide, "lights not supported on this side")
 
 	local javaPosition = Vector2:new(position.x, position.y)
-	local javaColor = Color:new(colorR, colorG, colorB, 1.0)
+	local javaColor = Color:new(color.r, color.g, color.b, color.a)
 
 	local javaLight = BasicLight:new(javaPosition, radius, javaColor, angleFrom, angleTo)
 
@@ -267,6 +290,10 @@ lime = {
 		vector = {
 			new = buildVector,
 			check = isVector,
+		},
+		color = {
+			new = buildColor,
+			check = isColor,
 		},
 	},
 }

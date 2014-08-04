@@ -4,6 +4,7 @@ local firstUpdate = true
 local this = lime.this.ID
 local round = lime.util.round
 local newVector = lime.util.vector.new
+local newColor = lime.util.color.new
 local hash32 = lime.util.hash32
 
 local tdelta = timeDelta;
