@@ -8,11 +8,11 @@ public class Program
 {
     private int program;
     
-    public Program(ShaderPool pool, String... shaderKeys)
+    public Program(Shader... shaders)
     {
         createProgram();
-        for(String shaderKey : shaderKeys)
-            attachShader(pool.getShader(shaderKey));
+        for(Shader shader : shaders)
+            attachShader(shader);
         linkProgram();
         validateProgram();
     }
