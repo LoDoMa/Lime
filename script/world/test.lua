@@ -20,7 +20,8 @@ end
 local function onNewUser(bundle)
 	print("user ID: " .. bundle["userID"])
 
-	lime.entity.create(hashes["Lime::Zombie"])
+	local id = lime.entity.create(hashes["Lime::Zombie"])
+	lime.actor.set(id, bundle["userID"])
 	for i = 0, 5, 1 do
 		lime.entity.create(hashes["Lime::Ball"])
 	end

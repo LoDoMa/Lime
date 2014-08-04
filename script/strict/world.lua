@@ -19,11 +19,19 @@ local networkSide = world:getNetworkSide():ordinal()
 local serverSide = networkSide == NetworkSide:valueOf("SERVER"):ordinal() and true or nil
 local clientSide = networkSide == NetworkSide:valueOf("CLIENT"):ordinal() and true or nil
 
-local inputHandlerHashPool = propertyPool:getProperty(serverSide and "sphPool" or (clientSide and "cphPool" or nil))
-local outputHashPool = propertyPool:getProperty(serverSide and "spPool" or (clientSide and "cpPool" or nil))
+if serverSide then
+	local actors = propertyPool:getProperty("actors")
+	local userManager = propertyPool:getProperty("userManager")
+end
+
+local packetHandlerHashPool = propertyPool:getProperty(serverSide and "sphPool" or (clientSide and "cphPool" or nil))
+local packetHashPool = propertyPool:getProperty(serverSide and "spPool" or (clientSide and "cpPool" or nil))
 
 local listenerFunctions = {}
 local eventListeners = {}
+
+local packetHandlerCache = {}
+local packetCache = {}
 
 -- local utilities
 
@@ -64,14 +72,24 @@ local function checkColorType(value, argument, name)
 	assert(lime.util.color.check(value), "invalid argument #" .. argument .. " to \"" .. name .. "\", expected color")
 end
 
-local function getInputHandler(hash)
-	checkType(hash, "number", 1, "local utility getInputHandler")
-	return inputHandlerHashPool:get(hash)
+local function getPacketHandler(hash)
+	checkType(hash, "number", 1, "local utility getPacketHandler")
+	if packetHandlerCache[hash] then
+		return packetHandlersCache[hash]
+	end
+	local packetHandler = packetHandlerHashPool:get(hash)
+	packetHandlerCache[hash] = packetHandler
+	return packetHandler
 end
 
-local function getOutput(hash)
-	checkType(hash, "number", 1, "local utility getOutput")
-	return outputHashPool:get(hash)
+local function getPacket(hash)
+	checkType(hash, "number", 1, "local utility getPacket")
+	if packetCache[hash] then
+		return packetCache[hash]
+	end
+	local packet = packetHashPool:get(hash)
+	packetCache[hash] = packet
+	return packet
 end
 
 -- utilities
@@ -174,11 +192,19 @@ local function addEntityToWorld(hash)
 		local file = entityLoader:getXMLFileByHash(hash)
 		local entity = entityLoader:loadFromXML(file, world, propertyPool)
 		world:addEntity(entity)
+		return entity:getID()
 	elseif clientSide then
 
 	else
 		assert(false, "internal problem: unknown network side")
 	end
+end
+
+-- actor
+
+local function setActorForUser(entityID, userID)
+	actors:put(userID, entityID)
+
 end
 
 -- listener
@@ -271,6 +297,9 @@ lime = {
 	},
 	entity = {
 		create = addEntityToWorld,
+	},
+	actor = {
+		set = setActorForUser,
 	},
 	listener = {
 		set = setListener,
