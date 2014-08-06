@@ -1,27 +1,19 @@
-package net.lodoma.lime.client.stage.menu;
+package net.lodoma.lime.gui.simple;
 
-import java.awt.Font;
-
-import net.lodoma.lime.gui.Color;
 import net.lodoma.lime.gui.Rectangle;
-import net.lodoma.lime.gui.Text;
 import net.lodoma.lime.gui.TextField;
-import net.lodoma.lime.util.TrueTypeFont;
 import net.lodoma.lime.util.Vector2;
 
-public class MenuTextField extends TextField
+public class SimpleTextField extends TextField
 {
-    private static final String FONT_NAME = "My type of font";
-    private static final Color TEXT_COLOR = new Color(0.0f, 0.5f, 1.0f);
-    
-    private MenuButtonRenderer renderer;
+    private SimpleButtonRenderer renderer;
     private float transparency;
     
-    public MenuTextField(Rectangle bounds, String text)
+    public SimpleTextField(Rectangle bounds, String text)
     {
-        super(bounds, new Text(bounds.w / 2.0f, 0.0f, (bounds.h * 0.60f), (bounds.h * 0.75f), text, TEXT_COLOR, FONT_NAME, Font.PLAIN, TrueTypeFont.ALIGN_CENTER));
+        super(bounds, new SimpleText(0.0f, 0.0f, bounds.w, bounds.h, text));
 
-        renderer = new MenuButtonRenderer();
+        renderer = new SimpleButtonRenderer();
         setRenderer(renderer);
         transparency = 0.0f;
     }

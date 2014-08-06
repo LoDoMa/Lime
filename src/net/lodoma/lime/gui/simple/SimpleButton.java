@@ -1,32 +1,24 @@
-package net.lodoma.lime.client.stage.menu;
-
-import java.awt.Font;
+package net.lodoma.lime.gui.simple;
 
 import net.lodoma.lime.gui.Button;
 import net.lodoma.lime.gui.ButtonListener;
-import net.lodoma.lime.gui.Color;
 import net.lodoma.lime.gui.Rectangle;
-import net.lodoma.lime.gui.Text;
-import net.lodoma.lime.util.TrueTypeFont;
 import net.lodoma.lime.util.Vector2;
 
-public class MenuButton extends Button
+public class SimpleButton extends Button
 {
-    private static final String FONT_NAME = "My type of font";
-    private static final Color TEXT_COLOR = new Color(0.0f, 0.5f, 1.0f);
+    private SimpleText text;
     
-    private Text text;
-    
-    private MenuButtonRenderer renderer;
+    private SimpleButtonRenderer renderer;
     private float transparency;
     
-    public MenuButton(Rectangle bounds, ButtonListener listener, String text)
+    public SimpleButton(Rectangle bounds, ButtonListener listener, String text)
     {
         super(bounds, listener, null);
         
-        this.text = new Text(bounds.w / 2.0f, 0.0f, (bounds.h * 0.60f), (bounds.h * 0.75f), text, TEXT_COLOR, FONT_NAME, Font.PLAIN, TrueTypeFont.ALIGN_CENTER);
+        this.text = new SimpleText(0.0f, 0.0f, bounds.w, bounds.h, text);
         
-        renderer = new MenuButtonRenderer();
+        renderer = new SimpleButtonRenderer();
         setRenderer(renderer);
         transparency = 0.0f;
     }

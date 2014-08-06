@@ -2,12 +2,12 @@ package net.lodoma.lime.client.stage.menu.populator;
 
 import net.lodoma.lime.client.stage.game.Game;
 import net.lodoma.lime.client.stage.menu.Menu;
-import net.lodoma.lime.client.stage.menu.MenuButton;
-import net.lodoma.lime.client.stage.menu.MenuTextField;
 import net.lodoma.lime.gui.Button;
 import net.lodoma.lime.gui.ButtonListener;
 import net.lodoma.lime.gui.GUIContainer;
 import net.lodoma.lime.gui.Rectangle;
+import net.lodoma.lime.gui.simple.SimpleButton;
+import net.lodoma.lime.gui.simple.SimpleTextField;
 import net.lodoma.lime.security.Credentials;
 import net.lodoma.lime.util.Vector2;
 
@@ -40,7 +40,7 @@ public class MultiplayerMenuPopulator implements MenuPopulator
     private Credentials credentials;
     private Menu menu;
     
-    private MenuTextField hostField;
+    private SimpleTextField hostField;
     
     public MultiplayerMenuPopulator(Credentials credentials)
     {
@@ -56,10 +56,10 @@ public class MultiplayerMenuPopulator implements MenuPopulator
         
         container.removeAll();
 
-        hostField = new MenuTextField(new Rectangle(0.05f, 0.5f, 0.4f, 0.05f), "localhost");
+        hostField = new SimpleTextField(new Rectangle(0.05f, 0.5f, 0.4f, 0.05f), "localhost");
         
         container.addElement(hostField);
-        container.addElement(new MenuButton(new Rectangle(0.05f, 0.44f, 0.4f, 0.05f), new JoinListener(), "Join"));
-        container.addElement(new MenuButton(new Rectangle(0.05f, 0.26f, 0.4f, 0.05f), new BackListener(), "Back"));
+        container.addElement(new SimpleButton(new Rectangle(0.05f, 0.44f, 0.4f, 0.05f), new JoinListener(), "Join"));
+        container.addElement(new SimpleButton(new Rectangle(0.05f, 0.26f, 0.4f, 0.05f), new BackListener(), "Back"));
     }
 }

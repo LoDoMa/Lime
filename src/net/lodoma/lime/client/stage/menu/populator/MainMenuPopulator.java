@@ -1,12 +1,12 @@
 package net.lodoma.lime.client.stage.menu.populator;
 
 import net.lodoma.lime.client.stage.menu.Menu;
-import net.lodoma.lime.client.stage.menu.MenuButton;
 import net.lodoma.lime.client.window.Window;
 import net.lodoma.lime.gui.Button;
 import net.lodoma.lime.gui.ButtonListener;
 import net.lodoma.lime.gui.GUIContainer;
 import net.lodoma.lime.gui.Rectangle;
+import net.lodoma.lime.gui.simple.SimpleButton;
 import net.lodoma.lime.security.Credentials;
 import net.lodoma.lime.util.Vector2;
 
@@ -65,10 +65,10 @@ public class MainMenuPopulator implements MenuPopulator
         
         container.removeAll();
         
-        container.addElement(new MenuButton(new Rectangle(0.05f, 0.50f, 0.4f, 0.05f), null, "Campaign"));
-        container.addElement(new MenuButton(new Rectangle(0.05f, 0.44f, 0.4f, 0.05f), new MultiplayerListener(), "Multiplayer"));
-        container.addElement(new MenuButton(new Rectangle(0.05f, 0.38f, 0.4f, 0.05f), null, "Arcade"));
-        container.addElement(new MenuButton(new Rectangle(0.05f, 0.32f, 0.4f, 0.05f), new OptionsListener(), "Options"));
-        container.addElement(new MenuButton(new Rectangle(0.05f, 0.26f, 0.4f, 0.05f), new ExitListener(), "Exit"));
+        container.addElement(new SimpleButton(new Rectangle(0.05f, 0.50f, 0.4f, 0.05f), null, "Campaign"));
+        container.addElement(new SimpleButton(new Rectangle(0.05f, 0.44f, 0.4f, 0.05f), new MultiplayerListener(), "Multiplayer"));
+        container.addElement(new SimpleButton(new Rectangle(0.05f, 0.38f, 0.4f, 0.05f), null, "Arcade"));
+        container.addElement(new SimpleButton(new Rectangle(0.05f, 0.32f, 0.4f, 0.05f), new OptionsListener(), "Options"));
+        container.addElement(new SimpleButton(new Rectangle(0.05f, 0.26f, 0.4f, 0.05f), new ExitListener(), "Exit"));
     }
 }

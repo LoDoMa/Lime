@@ -64,6 +64,11 @@ public class Toggle implements GUIElement
         return listener;
     }
     
+    public void setListener(ToggleListener listener)
+    {
+        this.listener = listener;
+    }
+    
     @Override
     public void create()
     {
@@ -99,6 +104,7 @@ public class Toggle implements GUIElement
     private void onToggle(boolean state)
     {
         current = state;
-        listener.onToggle(this, state);
+        if(listener != null)
+            listener.onToggle(this, state);
     }
 }

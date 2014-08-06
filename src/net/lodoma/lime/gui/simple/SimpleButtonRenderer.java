@@ -1,4 +1,4 @@
-package net.lodoma.lime.client.stage.menu;
+package net.lodoma.lime.gui.simple;
 
 import net.lodoma.lime.gui.Button;
 import net.lodoma.lime.gui.ButtonRenderer;
@@ -7,7 +7,7 @@ import net.lodoma.lime.gui.Rectangle;
 import net.lodoma.lime.gui.Text;
 import static org.lwjgl.opengl.GL11.*;
 
-public class MenuButtonRenderer implements ButtonRenderer
+public class SimpleButtonRenderer implements ButtonRenderer
 {
     private static final Color BODY_COLOR = new Color(0.2f, 0.2f, 0.2f, 0.2f);
     private static final Color OUTLINE_COLOR = new Color(1.0f, 1.0f, 1.0f);
@@ -28,10 +28,10 @@ public class MenuButtonRenderer implements ButtonRenderer
     @Override
     public void render(Button button)
     {
-        Rectangle bounds = button.getBounds();
-        
         if(transparency != 0.0f)
         {
+            Rectangle bounds = button.getBounds();
+            
             glBindTexture(GL_TEXTURE_2D, 0);
             
             glBegin(GL_LINES);

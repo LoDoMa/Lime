@@ -1,21 +1,17 @@
 package net.lodoma.lime.client.stage.menu.populator;
 
-import java.awt.Font;
-
 import net.lodoma.lime.client.stage.menu.Menu;
-import net.lodoma.lime.client.stage.menu.MenuButton;
 import net.lodoma.lime.client.window.Window;
 import net.lodoma.lime.client.window.WindowException;
 import net.lodoma.lime.gui.Button;
 import net.lodoma.lime.gui.ButtonListener;
-import net.lodoma.lime.gui.Color;
 import net.lodoma.lime.gui.GUIContainer;
 import net.lodoma.lime.gui.Rectangle;
-import net.lodoma.lime.gui.Text;
 import net.lodoma.lime.gui.Toggle;
 import net.lodoma.lime.gui.ToggleListener;
+import net.lodoma.lime.gui.simple.SimpleButton;
+import net.lodoma.lime.gui.simple.SimpleToggle;
 import net.lodoma.lime.security.Credentials;
-import net.lodoma.lime.util.TrueTypeFont;
 import net.lodoma.lime.util.Vector2;
 
 public class OptionsMenuPopulator implements MenuPopulator
@@ -26,7 +22,7 @@ public class OptionsMenuPopulator implements MenuPopulator
         public void onClick(Button button, Vector2 mousePosition)
         {
             Window.setFullscreen(!Window.isFullscreen());
-            ((MenuButton) button).setText(Window.isFullscreen() ? "Fullscreen" : "Windowed");
+            ((SimpleButton) button).setText(Window.isFullscreen() ? "Fullscreen" : "Windowed");
             
             try
             {
@@ -40,6 +36,24 @@ public class OptionsMenuPopulator implements MenuPopulator
         
         @Override
         public void onHover(Button button, Vector2 mousePosition) {}
+    }
+    
+    private class VSyncListener implements ToggleListener
+    {
+        @Override
+        public void onToggle(Toggle toggle, boolean newState)
+        {
+            Window.setVSyncEnabled(newState);
+        }
+    }
+    
+    private class DebugListener implements ToggleListener
+    {
+        @Override
+        public void onToggle(Toggle toggle, boolean newState)
+        {
+            Window.setDebugEnabled(newState);
+        }
     }
     
     private class BackListener implements ButtonListener
@@ -71,35 +85,9 @@ public class OptionsMenuPopulator implements MenuPopulator
         
         container.removeAll();
          
-        container.addElement(new MenuButton(new Rectangle(0.05f, 0.50f, 0.4f, 0.05f), new FullscreenListener(), Window.isFullscreen() ? "Fullscreen" : "Windowed"));
-        
-        container.addElement(new Toggle(new Text(0.05f, 0.445f, 0.05f * 0.6f, 0.05f * 0.7f, null, new Color(1.0f, 1.0f, 1.0f), "My type of font", Font.PLAIN, TrueTypeFont.ALIGN_LEFT),
-                Window.isVSyncEnabled(),
-                new MenuButton(new Rectangle(0.25f, 0.44f, 0.1f, 0.05f), null, "on"),
-                new MenuButton(new Rectangle(0.35f, 0.44f, 0.1f, 0.05f), null, "off"),
-                new ToggleListener()
-                {
-                    @Override
-                    public void onToggle(Toggle toggle, boolean newState)
-                    {
-                        toggle.getText().setText(newState ? "vsync on" : "vsync off");
-                        Window.setVSyncEnabled(newState);
-                    }
-                }));
-        
-        container.addElement(new Toggle(new Text(0.05f, 0.385f, 0.05f * 0.6f, 0.05f * 0.7f, null, new Color(1.0f, 1.0f, 1.0f), "My type of font", Font.PLAIN, TrueTypeFont.ALIGN_LEFT),
-                Window.isDebugEnabled(),
-                new MenuButton(new Rectangle(0.25f, 0.38f, 0.1f, 0.05f), null, "on"),
-                new MenuButton(new Rectangle(0.35f, 0.38f, 0.1f, 0.05f), null, "off"),
-                new ToggleListener()
-                {
-                    public void onToggle(Toggle toggle, boolean newState)
-                    {
-                        toggle.getText().setText(newState ? "debug on" : "debug off");
-                        Window.setDebugEnabled(newState);
-                    };
-                }));
-
-        container.addElement(new MenuButton(new Rectangle(0.05f, 0.26f, 0.4f, 0.05f), new BackListener(), "Back"));
+        container.addElement(new SimpleButton(new Rectangle(0.05f, 0.50f, 0.4f, 0.05f), new FullscreenListener(), Window.isFullscreen() ? "Fullscreen" : "Windowed"));
+        container.addElement(new SimpleToggle(new Rectangle(0.05f, 0.44f, 0.4f, 0.05f), Window.isVSyncEnabled(), "vsync on", "vsync off", "on", "off", new VSyncListener()));
+        container.addElement(new SimpleToggle(new Rectangle(0.05f, 0.38f, 0.4f, 0.05f), Window.isDebugEnabled(), "debug on", "debug off", "on", "off", new DebugListener()));
+        container.addElement(new SimpleButton(new Rectangle(0.05f, 0.26f, 0.4f, 0.05f), new BackListener(), "Back"));
     }
 }
