@@ -12,11 +12,11 @@ import net.lodoma.lime.chat.ChatManager;
 import net.lodoma.lime.chat.ChatReceiver;
 import net.lodoma.lime.chat.ChatSender;
 import net.lodoma.lime.client.Client;
-import net.lodoma.lime.gui.ActiveTextField;
 import net.lodoma.lime.gui.Color;
 import net.lodoma.lime.gui.GUIContainer;
 import net.lodoma.lime.gui.Rectangle;
 import net.lodoma.lime.gui.Text;
+import net.lodoma.lime.gui.TextInput;
 import net.lodoma.lime.input.Input;
 import net.lodoma.lime.security.Credentials;
 import net.lodoma.lime.util.SystemHelper;
@@ -24,12 +24,15 @@ import net.lodoma.lime.util.TrueTypeFont;
 
 public class ChatConsole implements ChatSender, ChatReceiver
 {
+    private static final String FONT_NAME = "My type of font";
+    private static final Color TEXT_COLOR = new Color(0.0f, 0.5f, 1.0f);
+    
     private Client client;
     
     private GUIContainer gui;
     
     private boolean inChat;
-    private ActiveTextField chatField;
+    private TextInput chatField;
     private List<ChatManager> chatManagers;
     private List<String> chatToSend;
     
@@ -87,7 +90,7 @@ public class ChatConsole implements ChatSender, ChatReceiver
         {
             if(Input.getKeyDown(Input.KEY_RETURN))
             {
-                String message = chatField.getText();
+                String message = chatField.getText().getText();
                 chatToSend.add(message);
                 gui.removeElement(chatField);
                 inChat = false;
@@ -95,7 +98,9 @@ public class ChatConsole implements ChatSender, ChatReceiver
         }
         if(!inChat && Input.getKeyDown(Input.KEY_T))
         {
-            chatField = new ActiveTextField(new Rectangle(0.0f, 0.1f, 1.0f, 0.033f));
+            Rectangle bounds = new Rectangle(0.0f, 0.1f, 1.0f, 0.033f);
+            Text text = new Text(bounds.w / 2.0f, 0.0f, (bounds.h * 0.60f), (bounds.h * 0.75f), "", TEXT_COLOR, FONT_NAME, Font.PLAIN, TrueTypeFont.ALIGN_CENTER);
+            chatField = new TextInput(text);
             gui.addElement(chatField);
             inChat = true;
         }

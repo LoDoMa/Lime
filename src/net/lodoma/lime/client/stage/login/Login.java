@@ -6,15 +6,43 @@ import net.lodoma.lime.client.stage.menu.Menu;
 import net.lodoma.lime.client.stage.menu.MenuButton;
 import net.lodoma.lime.client.stage.menu.MenuTextField;
 import net.lodoma.lime.client.stage.menu.populator.MainMenuPopulator;
+import net.lodoma.lime.gui.Button;
+import net.lodoma.lime.gui.ButtonListener;
 import net.lodoma.lime.gui.GUIContainer;
 import net.lodoma.lime.gui.Rectangle;
 import net.lodoma.lime.input.Input;
 import net.lodoma.lime.security.Credentials;
 import net.lodoma.lime.util.HashHelper;
+import net.lodoma.lime.util.Vector2;
 
 public class Login extends Stage
 {
+    private class LoginListener implements ButtonListener
+    {
+        @Override
+        public void onClick(Button button, Vector2 mousePosition)
+        {
+            String username = usernameField.getText();
+            
+            String passwordstr = passwordField.getText();
+            @SuppressWarnings("unused")
+            long password = HashHelper.hash64(passwordstr);
+            
+            // TODO: verify
+            
+            Credentials credentials = new Credentials(username);
+            
+            new Menu(manager, new MainMenuPopulator(credentials)).startStage();
+        }
+        
+        @Override
+        public void onHover(Button button, Vector2 mousePosition) {}
+    }
+    
     private GUIContainer container;
+
+    private MenuTextField usernameField;
+    private MenuTextField passwordField;
     
     public Login(StageManager manager)
     {
@@ -27,34 +55,13 @@ public class Login extends Stage
         container = new GUIContainer();
         
         container.removeAll();
-
-        final StageManager stageManager = this.manager;
-        final MenuTextField username = new MenuTextField(new Rectangle(0.25f, 0.50f, 0.5f, 0.05f), "username");
-        final MenuTextField password = new MenuTextField(new Rectangle(0.25f, 0.44f, 0.5f, 0.05f), "password", '+');
         
-        container.addElement(username);
-        container.addElement(password);
-        container.addElement(new MenuButton(new Rectangle(0.25f, 0.38f, 0.5f, 0.05f), "Login", new Runnable()
-        {
-            private MenuTextField usernameTextField = username;
-            private MenuTextField passwordTextField = password;
-            
-            @Override
-            public void run()
-            {
-                String username = usernameTextField.getText();
-                
-                String passwordstr = passwordTextField.getText();
-                @SuppressWarnings("unused")
-                long password = HashHelper.hash64(passwordstr);
-                
-                // TODO: verify
-                
-                Credentials credentials = new Credentials(username);
-                
-                new Menu(stageManager, new MainMenuPopulator(credentials)).startStage();
-            }
-        }));
+        usernameField = new MenuTextField(new Rectangle(0.25f, 0.50f, 0.5f, 0.05f), "username");
+        passwordField = new MenuTextField(new Rectangle(0.25f, 0.44f, 0.5f, 0.05f), "password");
+        
+        container.addElement(usernameField);
+        container.addElement(passwordField);
+        container.addElement(new MenuButton(new Rectangle(0.25f, 0.38f, 0.5f, 0.05f), new LoginListener(), "Login"));
     }
     
     @Override

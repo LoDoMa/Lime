@@ -3,13 +3,53 @@ package net.lodoma.lime.client.stage.menu.populator;
 import net.lodoma.lime.client.stage.menu.Menu;
 import net.lodoma.lime.client.stage.menu.MenuButton;
 import net.lodoma.lime.client.window.Window;
+import net.lodoma.lime.gui.Button;
+import net.lodoma.lime.gui.ButtonListener;
 import net.lodoma.lime.gui.GUIContainer;
 import net.lodoma.lime.gui.Rectangle;
 import net.lodoma.lime.security.Credentials;
+import net.lodoma.lime.util.Vector2;
 
 public class MainMenuPopulator implements MenuPopulator
 {
+    private class MultiplayerListener implements ButtonListener
+    {
+        @Override
+        public void onClick(Button button, Vector2 mousePosition)
+        {
+            menu.setPopulator(new MultiplayerMenuPopulator(credentials));
+        }
+        
+        @Override
+        public void onHover(Button button, Vector2 mousePosition) {}
+    }
+    
+    private class OptionsListener implements ButtonListener
+    {
+        @Override
+        public void onClick(Button button, Vector2 mousePosition)
+        {
+            menu.setPopulator(new OptionsMenuPopulator(credentials));
+        }
+        
+        @Override
+        public void onHover(Button button, Vector2 mousePosition) {}
+    }
+    
+    private class ExitListener implements ButtonListener
+    {
+        @Override
+        public void onClick(Button button, Vector2 mousePosition)
+        {
+            Window.requestClose();
+        }
+        
+        @Override
+        public void onHover(Button button, Vector2 mousePosition) {}
+    }
+    
     private Credentials credentials;
+    private Menu menu;
     
     public MainMenuPopulator(Credentials credentials)
     {
@@ -17,41 +57,18 @@ public class MainMenuPopulator implements MenuPopulator
     }
     
     @Override
-    public void populate(final Menu toPopulate)
+    public void populate(Menu toPopulate)
     {
+        menu = toPopulate;
+        
         GUIContainer container = toPopulate.getContainer();
         
         container.removeAll();
         
-        container.addElement(new MenuButton(new Rectangle(0.05f, 0.50f, 0.4f, 0.05f), "Campaign", null));
-        container.addElement(new MenuButton(new Rectangle(0.05f, 0.44f, 0.4f, 0.05f), "Multiplayer", new Runnable()
-        {
-            private Menu menu = toPopulate;
-            
-            @Override
-            public void run()
-            {
-                menu.setPopulator(new MultiplayerMenuPopulator(credentials));
-            }
-        }));
-        container.addElement(new MenuButton(new Rectangle(0.05f, 0.38f, 0.4f, 0.05f), "Arcade", null));
-        container.addElement(new MenuButton(new Rectangle(0.05f, 0.32f, 0.4f, 0.05f), "Options", new Runnable()
-        {
-            private Menu menu = toPopulate;
-            
-            @Override
-            public void run()
-            {
-                menu.setPopulator(new OptionsMenuPopulator(credentials));
-            }
-        }));
-        container.addElement(new MenuButton(new Rectangle(0.05f, 0.26f, 0.4f, 0.05f), "Exit", new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                Window.requestClose();
-            }
-        }));
+        container.addElement(new MenuButton(new Rectangle(0.05f, 0.50f, 0.4f, 0.05f), null, "Campaign"));
+        container.addElement(new MenuButton(new Rectangle(0.05f, 0.44f, 0.4f, 0.05f), new MultiplayerListener(), "Multiplayer"));
+        container.addElement(new MenuButton(new Rectangle(0.05f, 0.38f, 0.4f, 0.05f), null, "Arcade"));
+        container.addElement(new MenuButton(new Rectangle(0.05f, 0.32f, 0.4f, 0.05f), new OptionsListener(), "Options"));
+        container.addElement(new MenuButton(new Rectangle(0.05f, 0.26f, 0.4f, 0.05f), new ExitListener(), "Exit"));
     }
 }

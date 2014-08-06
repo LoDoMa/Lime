@@ -1,28 +1,29 @@
 package net.lodoma.lime.client.stage.menu;
 
+import java.awt.Font;
+
 import net.lodoma.lime.gui.Color;
 import net.lodoma.lime.gui.Rectangle;
+import net.lodoma.lime.gui.Text;
 import net.lodoma.lime.gui.TextField;
+import net.lodoma.lime.util.TrueTypeFont;
 import net.lodoma.lime.util.Vector2;
-
-import org.lwjgl.opengl.GL11;
 
 public class MenuTextField extends TextField
 {
-    private static final Color BODY_COLOR = new Color(0.2f, 0.2f, 0.2f, 0.2f);
-    private static final Color OUTLINE_COLOR = new Color(1.0f, 1.0f, 1.0f);
+    private static final String FONT_NAME = "My type of font";
+    private static final Color TEXT_COLOR = new Color(0.0f, 0.5f, 1.0f);
     
-    private float hoverTransparency = 0.0f;
-    
-    public MenuTextField(Rectangle bounds, String text, char mask)
-    {
-        super(bounds, mask);
-        content = text;
-    }
+    private MenuButtonRenderer renderer;
+    private float transparency;
     
     public MenuTextField(Rectangle bounds, String text)
     {
-        this(bounds, text, (char) 0);
+        super(bounds, new Text(bounds.w / 2.0f, 0.0f, (bounds.h * 0.60f), (bounds.h * 0.75f), text, TEXT_COLOR, FONT_NAME, Font.PLAIN, TrueTypeFont.ALIGN_CENTER));
+
+        renderer = new MenuButtonRenderer();
+        setRenderer(renderer);
+        transparency = 0.0f;
     }
     
     @Override
@@ -30,57 +31,18 @@ public class MenuTextField extends TextField
     {
         super.update(timeDelta, mousePosition);
         
-        if(mouseHover || clicked)
+        if(isMouseHovering() || isActive())
         {
-            if(hoverTransparency < 1.0f)
+            if(transparency < 1.0f)
             {
-                hoverTransparency += timeDelta * 5.0f;
-                if(hoverTransparency > 1.0f)
-                    hoverTransparency = 1.0f;
+                transparency += timeDelta * 5.0f;
+                if(transparency > 1.0f)
+                    transparency = 1.0f;
             }
         }
         else
-            hoverTransparency = 0.0f;
-    }
-    
-    @Override
-    public void render()
-    {
-        GL11.glPushMatrix();
+            transparency = 0.0f;
         
-        GL11.glTranslatef(bounds.x, bounds.y, 1.0f);
-        
-        if(hoverTransparency != 0.0f)
-        {
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
-            
-            GL11.glBegin(GL11.GL_LINES);
-            {
-                OUTLINE_COLOR.set();
-                GL11.glVertex2f(0.0f, 0.0f);
-                GL11.glVertex2f(bounds.w, 0.0f);
-                GL11.glVertex2f(bounds.w, 0.0f);
-                GL11.glVertex2f(bounds.w, bounds.h);
-                GL11.glVertex2f(bounds.w, bounds.h);
-                GL11.glVertex2f(0.0f, bounds.h);
-                GL11.glVertex2f(0.0f, bounds.h);
-                GL11.glVertex2f(0.0f, 0.0f);
-            }
-            GL11.glEnd();
-            
-            GL11.glBegin(GL11.GL_QUADS);
-            {
-                BODY_COLOR.set(hoverTransparency);
-                GL11.glVertex2f(0.0f, 0.0f);
-                GL11.glVertex2f(bounds.w, 0.0f);
-                GL11.glVertex2f(bounds.w, bounds.h);
-                GL11.glVertex2f(0.0f, bounds.h);
-            }
-            GL11.glEnd();
-        }
-        
-        GL11.glPopMatrix();
-        
-        super.render();
+        renderer.setTransparency(transparency);
     }
 }

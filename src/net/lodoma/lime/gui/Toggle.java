@@ -4,46 +4,64 @@ import net.lodoma.lime.util.Vector2;
 
 public class Toggle implements GUIElement
 {
-    private Text text;
-    private String textTrue;
-    private String textFalse;
-    private Button buttonTrue;
-    private Button buttonFalse;
-    private ToggleListener listener;
-    
-    public Toggle(Text text, String textTrue, String textFalse, boolean initialState, Button buttonTrue, Button buttonFalse, ToggleListener listener)
+    private class BasicListener implements ButtonListener
     {
-        this.text = text; 
-        this.textTrue = textTrue;
-        this.textFalse = textFalse;
-        this.buttonTrue = buttonTrue;
-        this.buttonFalse = buttonFalse;
-        this.listener = listener;
-        this.text.setText(initialState ? textTrue : textFalse);
+        private boolean state;
         
-        setListeners();
+        public BasicListener(boolean state)
+        {
+            this.state = state;
+        }
+        
+        @Override
+        public void onClick(Button button, Vector2 mousePosition)
+        {
+            onToggle(state);
+        }
+        
+        @Override
+        public void onHover(Button button, Vector2 mousePosition) {}
     }
     
-    private void setListeners()
+    private Text text;
+    private boolean current;
+    private Button buttonTrue;
+    private Button buttonFalse;
+    
+    private ToggleListener listener;
+    
+    public Toggle(Text text, boolean current, Button buttonTrue, Button buttonFalse, ToggleListener listener)
     {
-        buttonTrue.setListener(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                text.setText(textTrue);
-                listener.onToggle(true);
-            }
-        });
-        buttonFalse.setListener(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                text.setText(textFalse);
-                listener.onToggle(false);
-            }
-        });
+        this.text = text;
+        this.buttonTrue = buttonTrue;
+        this.buttonFalse = buttonFalse;
+
+        buttonTrue.setListener(new BasicListener(true));
+        buttonFalse.setListener(new BasicListener(false));
+        
+        this.listener = listener;
+        
+        onToggle(current);
+    }
+    
+    public Text getText()
+    {
+        return text;
+    }
+    
+    public boolean getState()
+    {
+        return current;
+    }
+    
+    public Button getButton(boolean state)
+    {
+        return state ? buttonTrue : buttonFalse;
+    }
+    
+    public ToggleListener getListener()
+    {
+        return listener;
     }
     
     @Override
@@ -76,5 +94,11 @@ public class Toggle implements GUIElement
         text.render();
         buttonTrue.render();
         buttonFalse.render();
+    }
+    
+    private void onToggle(boolean state)
+    {
+        current = state;
+        listener.onToggle(this, state);
     }
 }

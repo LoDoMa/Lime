@@ -48,7 +48,7 @@ public class Slider implements GUIElement
     @Override
     public void update(double timeDelta, Vector2 mousePosition)
     {
-        if(bounds.inside(mousePosition.x, mousePosition.y))
+        if(bounds.isInside(mousePosition.x, mousePosition.y))
         {
             hover = true;
             if(Input.getMouse(Input.LEFT_MOUSE_BUTTON))

@@ -428,10 +428,10 @@ public class EntityLoader
                 Vertex vertex = polygonShape.vertices[i];
                 x[i] = vertex.x;
                 y[i] = vertex.y;
-                r[i] = ((vertex.color >> 24) & 0xFF) / (float) (0xFF);
-                g[i] = ((vertex.color >> 16) & 0xFF) / (float) (0xFF);
-                b[i] = ((vertex.color >> 8 ) & 0xFF) / (float) (0xFF);
-                a[i] = ((vertex.color      ) & 0xFF) / (float) (0xFF);
+                r[i] = ((vertex.color >>> 24) & 0xFF) / (float) (0xFF);
+                g[i] = ((vertex.color >>> 16) & 0xFF) / (float) (0xFF);
+                b[i] = ((vertex.color >>> 8 ) & 0xFF) / (float) (0xFF);
+                a[i] = ((vertex.color >>> 0 ) & 0xFF) / (float) (0xFF);
             }
             
             mask = new ColoredMask(n, x, y, r, g, b, a);
@@ -444,10 +444,10 @@ public class EntityLoader
             Element circleShapeElement = (Element) circleShapeNode;
             CircleShape circleShape = parseCircleShapeElement(circleShapeElement);
 
-            float r = ((circleShape.color >> 24) & 0xFF) / (float) 0xFF;
-            float g = ((circleShape.color >> 16) & 0xFF) / (float) 0xFF;
-            float b = ((circleShape.color >> 8 ) & 0xFF) / (float) 0xFF;
-            float a = ((circleShape.color      ) & 0xFF) / (float) 0xFF;
+            float r = ((circleShape.color >>> 24) & 0xFF) / (float) 0xFF;
+            float g = ((circleShape.color >>> 16) & 0xFF) / (float) 0xFF;
+            float b = ((circleShape.color >>> 8 ) & 0xFF) / (float) 0xFF;
+            float a = ((circleShape.color >>> 0 ) & 0xFF) / (float) 0xFF;
             mask = new ColoredMask(circleShape.radius, r, g, b, a);
         }
         

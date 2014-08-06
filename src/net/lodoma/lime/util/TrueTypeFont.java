@@ -232,13 +232,9 @@ public class TrueTypeFont
         {
             currentChar = whatchars.charAt(i);
             if(currentChar < 256)
-            {
                 intObject = charArray[currentChar];
-            }
             else
-            {
                 intObject = (IntObject) customChars.get(new Character((char) currentChar));
-            }
             
             if(intObject != null)
                 totalwidth += intObject.width;
@@ -260,14 +256,12 @@ public class TrueTypeFont
             int charCurrent = whatchars.charAt(l);
             if(charCurrent == '\n')
                 break;
+            
             if(charCurrent < 256)
-            {
                 intObject = charArray[charCurrent];
-            }
             else
-            {
                 intObject = (IntObject) customChars.get(new Character((char) charCurrent));
-            }
+            
             totalwidth += intObject.width - correctL;
         }
         return totalwidth;
@@ -345,13 +339,9 @@ public class TrueTypeFont
             
             charCurrent = whatchars.charAt(i);
             if(charCurrent < 256)
-            {
                 intObject = charArray[charCurrent];
-            }
             else
-            {
                 intObject = (IntObject) customChars.get(new Character((char) charCurrent));
-            }
             
             if(intObject != null)
             {
@@ -368,14 +358,12 @@ public class TrueTypeFont
                             charCurrent = whatchars.charAt(l);
                             if(charCurrent == '\n')
                                 break;
+                            
                             if(charCurrent < 256)
-                            {
                                 intObject = charArray[charCurrent];
-                            }
                             else
-                            {
                                 intObject = (IntObject) customChars.get(new Character((char) charCurrent));
-                            }
+                            
                             totalwidth += intObject.width - correctL;
                         }
                         totalwidth /= -2;
@@ -424,10 +412,8 @@ public class TrueTypeFont
                         .put(newI);
             }
             else
-            {
                 byteBuffer = ByteBuffer.allocateDirect(width * height * (bpp / 8)).order(ByteOrder.nativeOrder())
                         .put(((DataBufferByte) (bufferedImage.getData().getDataBuffer())).getData());
-            }
             byteBuffer.flip();
             
             int internalFormat = GL11.GL_RGBA8, format = GL11.GL_RGBA;
@@ -444,8 +430,7 @@ public class TrueTypeFont
             
             GL11.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_MODULATE);
             
-            GLU.gluBuild2DMipmaps(GL11.GL_TEXTURE_2D, internalFormat, width, height, format, GL11.GL_UNSIGNED_BYTE,
-                    byteBuffer);
+            GLU.gluBuild2DMipmaps(GL11.GL_TEXTURE_2D, internalFormat, width, height, format, GL11.GL_UNSIGNED_BYTE, byteBuffer);
             return textureId.get(0);
             
         }
@@ -462,10 +447,8 @@ public class TrueTypeFont
     {
         Font font[] = getFonts();
         for(int i = font.length - 1; i >= 0; i--)
-        {
             if(font[i].getName().equalsIgnoreCase(fontname))
                 return true;
-        }
         return false;
     }
     
@@ -478,7 +461,10 @@ public class TrueTypeFont
     {
         return new byte[]
         {
-                (byte) (value >>> 24), (byte) (value >>> 16), (byte) (value >>> 8), (byte) value
+                (byte) (value >>> 24),
+                (byte) (value >>> 16),
+                (byte) (value >>> 8 ),
+                (byte) (value >>> 0 ),
         };
     }
     

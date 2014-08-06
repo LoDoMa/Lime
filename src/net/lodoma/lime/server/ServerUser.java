@@ -9,6 +9,7 @@ import java.io.PipedOutputStream;
 import java.net.Socket;
 
 import net.lodoma.lime.common.NetStage;
+import net.lodoma.lime.security.Credentials;
 import net.lodoma.lime.util.HashPool32;
 
 public final class ServerUser implements Runnable
@@ -30,7 +31,7 @@ public final class ServerUser implements Runnable
     
     private boolean isClosed;
     
-    private String username;
+    private Credentials credentials;
     private int ID;
     
     @SuppressWarnings("unchecked")
@@ -48,13 +49,8 @@ public final class ServerUser implements Runnable
             
             privateOutputStream = new PipedOutputStream();
             inputStream = new DataInputStream(new PipedInputStream(privateOutputStream));
-
-            DataInputStream usernameStream = new DataInputStream(privateInputStream);
-            char usernameChar;
             
-            username = "";
-            while((usernameChar = usernameStream.readChar()) != (char) 0)
-                username += usernameChar;
+            credentials = new Credentials(privateInputStream);
         }
         catch(IOException e)
         {
@@ -84,9 +80,9 @@ public final class ServerUser implements Runnable
         }
     }
     
-    public String getUsername()
+    public Credentials getCredentials()
     {
-        return username;
+        return credentials;
     }
     
     public int getID()

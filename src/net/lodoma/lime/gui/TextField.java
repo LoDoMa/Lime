@@ -1,33 +1,67 @@
 package net.lodoma.lime.gui;
 
-import java.awt.Font;
-
+import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.glPushMatrix;
+import static org.lwjgl.opengl.GL11.glTranslatef;
 import net.lodoma.lime.input.Input;
-import net.lodoma.lime.util.TrueTypeFont;
 import net.lodoma.lime.util.Vector2;
 
-import org.lwjgl.opengl.GL11;
-
-public abstract class TextField extends Button
+public class TextField extends Button
 {
-    protected boolean clicked;
-    protected Text text;
-    protected char mask;
-    
-    protected String content;
-    
-    public TextField(Rectangle bounds, char mask)
+    private class TextFieldButtonListener implements ButtonListener
     {
-        super(bounds);
-        text = new Text(bounds.w / 2.0f, 0.0f, (bounds.h * 0.60f), (bounds.h * 0.75f), "", new Color(1.0f, 1.0f, 1.0f), "My type of font", Font.PLAIN, TrueTypeFont.ALIGN_CENTER);
-        this.mask = mask;
-        clicked = false;
-        content = "";
+        @Override
+        public void onClick(Button button, Vector2 mousePosition)
+        {
+            
+        }
+        
+        @Override
+        public void onHover(Button button, Vector2 mousePosition) {}
+    }
+    
+    private class TextFieldButtonRenderer implements ButtonRenderer
+    {
+        @Override
+        public void render(Button button)
+        {
+            
+        }
+    }
+    
+    private TextInput textInput;
+    private boolean active;
+    
+    public TextField(Rectangle bounds, Text text)
+    {
+        super(bounds, null, null);
+        setListener(new TextFieldButtonListener());
+        setRenderer(new TextFieldButtonRenderer());
+        textInput = new TextInput(text);
     }
     
     public String getText()
     {
-        return content;
+        return textInput.getText().getText();
+    }
+    
+    public boolean isActive()
+    {
+        return active;
+    }
+    
+    @Override
+    public void create()
+    {
+        super.create();
+        textInput.create();
+    }
+    
+    @Override
+    public void destroy()
+    {
+        super.destroy();
+        textInput.destroy();
     }
     
     @Override
@@ -35,36 +69,13 @@ public abstract class TextField extends Button
     {
         super.update(timeDelta, mousePosition);
         
-        if(mouseClick)
-        {
-            clicked = true;
-        }
-        else
-            if(mouseUp)
-                clicked = false;
+        if(isMouseClicked())
+            active = true;
+        else if(Input.getMouseUp(Input.LEFT_MOUSE_BUTTON))
+            active = false;
         
-        if(clicked)
-        {
-            for(int i = 0; i < Input.KEYCODE_COUNT; i++)
-                if(Input.getKeyDown(i))
-                    if(Input.CHARS[i] != 0)
-                        if(Input.getKey(Input.KEY_LSHIFT)) content += Character.toUpperCase(Input.CHARS[i]);
-                        else content += Input.CHARS[i];
-            if(content.length() > 0 && Input.getKeyDown(Input.KEY_BACK))
-                content = content.substring(0, content.length() - 1);
-        }
-        
-        if(mask != (char) 0)
-        {
-            String masked = "";
-            for(int i = 0; i < content.length(); i++)
-                masked += mask;
-            text.setText(masked);
-        }
-        else
-        {
-            text.setText(content);
-        }
+        if(active)
+            textInput.update(timeDelta, mousePosition);
     }
     
     @Override
@@ -72,9 +83,10 @@ public abstract class TextField extends Button
     {
         super.render();
         
-        GL11.glPushMatrix();
-        GL11.glTranslatef(bounds.x, bounds.y, 0.0f);
-        text.render();
-        GL11.glPopMatrix();
+        Rectangle bounds = getBounds();
+        glPushMatrix();
+        glTranslatef(bounds.x, bounds.y, 0.0f);
+        textInput.render();
+        glPopMatrix();
     }
 }

@@ -4,13 +4,43 @@ import net.lodoma.lime.client.stage.game.Game;
 import net.lodoma.lime.client.stage.menu.Menu;
 import net.lodoma.lime.client.stage.menu.MenuButton;
 import net.lodoma.lime.client.stage.menu.MenuTextField;
+import net.lodoma.lime.gui.Button;
+import net.lodoma.lime.gui.ButtonListener;
 import net.lodoma.lime.gui.GUIContainer;
 import net.lodoma.lime.gui.Rectangle;
 import net.lodoma.lime.security.Credentials;
+import net.lodoma.lime.util.Vector2;
 
 public class MultiplayerMenuPopulator implements MenuPopulator
 {
+    private class JoinListener implements ButtonListener
+    {
+        @Override
+        public void onClick(Button button, Vector2 mousePosition)
+        {
+            new Game(menu.getManager(), hostField.getText(), credentials).startStage();
+        }
+        
+        @Override
+        public void onHover(Button button, Vector2 mousePosition) {}
+    }
+    
+    private class BackListener implements ButtonListener
+    {
+        @Override
+        public void onClick(Button button, Vector2 mousePosition)
+        {
+            menu.setPopulator(new MainMenuPopulator(credentials));
+        }
+        
+        @Override
+        public void onHover(Button button, Vector2 mousePosition) {}
+    }
+    
     private Credentials credentials;
+    private Menu menu;
+    
+    private MenuTextField hostField;
     
     public MultiplayerMenuPopulator(Credentials credentials)
     {
@@ -20,34 +50,16 @@ public class MultiplayerMenuPopulator implements MenuPopulator
     @Override
     public void populate(final Menu toPopulate)
     {
+        menu = toPopulate;
+        
         GUIContainer container = toPopulate.getContainer();
         
         container.removeAll();
 
-        final MenuTextField host = new MenuTextField(new Rectangle(0.05f, 0.5f, 0.4f, 0.05f), "localhost");
+        hostField = new MenuTextField(new Rectangle(0.05f, 0.5f, 0.4f, 0.05f), "localhost");
         
-        container.addElement(host);
-        container.addElement(new MenuButton(new Rectangle(0.05f, 0.44f, 0.4f, 0.05f), "Join", new Runnable()
-        {
-            private Menu menu = toPopulate;
-            private MenuTextField hostTextField = host;
-            
-            @Override
-            public void run()
-            {
-                new Game(menu.getManager(), hostTextField.getText(), credentials).startStage();
-            }
-        }));
-        
-        container.addElement(new MenuButton(new Rectangle(0.05f, 0.26f, 0.4f, 0.05f), "Back", new Runnable()
-        {
-            private Menu menu = toPopulate;
-            
-            @Override
-            public void run()
-            {
-                menu.setPopulator(new MainMenuPopulator(credentials));
-            }
-        }));
+        container.addElement(hostField);
+        container.addElement(new MenuButton(new Rectangle(0.05f, 0.44f, 0.4f, 0.05f), new JoinListener(), "Join"));
+        container.addElement(new MenuButton(new Rectangle(0.05f, 0.26f, 0.4f, 0.05f), new BackListener(), "Back"));
     }
 }
