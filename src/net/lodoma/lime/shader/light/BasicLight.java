@@ -63,7 +63,7 @@ public class BasicLight implements Light
     @Override
     public void render()
     {
-        shaderProgram.setUniform("lightColor", UniformType.FLOAT4, lightColor.r, lightColor.g, lightColor.b, lightColor.a);
+        shaderProgram.setUniform("lightColor", UniformType.FLOAT4, lightColor.getR(), lightColor.getG(), lightColor.getB(), lightColor.getA());
         shaderProgram.setUniform("lightPos", UniformType.FLOAT2, position.x, position.y);
         shaderProgram.setUniform("lightRadius", UniformType.FLOAT1, radius);
         
