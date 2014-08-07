@@ -1,6 +1,7 @@
 package net.lodoma.lime.gui.exp;
 
 import static org.lwjgl.opengl.GL11.*;
+import net.lodoma.lime.gui.Color;
 import net.lodoma.lime.util.Vector2;
 
 public class GRectangle extends GShape
@@ -26,12 +27,13 @@ public class GRectangle extends GShape
     @Override
     public void render()
     {
-        color.setGL();
+        getColor().setGL();
         
         glPushMatrix();
         {
+            Vector2 translation = getTranslation();
             glTranslatef(translation.x, translation.y, 0.0f);
-            glRotatef(rotation, 0.0f, 0.0f, 1.0f);
+            glRotatef(getRotation(), 0.0f, 0.0f, 1.0f);
 
             float width = dimension.getWidth();
             float height = dimension.getHeight();

@@ -3,6 +3,7 @@ package net.lodoma.lime.gui.exp;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.lodoma.lime.util.Vector2;
 import static org.lwjgl.opengl.GL11.*;
 
 public class GShapeContainer extends GShape
@@ -63,12 +64,13 @@ public class GShapeContainer extends GShape
     @Override
     public void render()
     {
-        color.setGL();
+        getColor().setGL();
         
         glPushMatrix();
         {
+            Vector2 translation = getTranslation();
             glTranslatef(translation.x, translation.y, 0.0f);
-            glRotatef(rotation, 0.0f, 0.0f, 1.0f);
+            glRotatef(getRotation(), 0.0f, 0.0f, 1.0f);
             
             int shapec = getShapeCount();
             for(int i = 0; i < shapec; i++)

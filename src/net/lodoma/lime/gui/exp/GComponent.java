@@ -12,12 +12,12 @@ public class GComponent
     private static final float DEFAULT_ROTATION = 0.0f;
     private static final GActionListener DEFAULT_ACTION_LISTENER = new GActionListener() {};
     
-    protected final Vector2 translation = DEFAULT_TRANSLATION.clone();
-    protected final Color color = DEFAULT_COLOR.clone();
+    private final Vector2 translation = DEFAULT_TRANSLATION.clone();
+    private final Color color = DEFAULT_COLOR.clone();
     
-    protected float rotation = DEFAULT_ROTATION;
-    protected GShape shape = new GNullShape();
-    protected GActionListener actionListener = DEFAULT_ACTION_LISTENER;
+    private float rotation = DEFAULT_ROTATION;
+    private GShape shape = new GNullShape();
+    private GActionListener actionListener = DEFAULT_ACTION_LISTENER;
     
     public Vector2 getTranslation()
     {
@@ -46,7 +46,7 @@ public class GComponent
 
     public void setShape(GShape shape)
     {
-        if(shape == null) this.shape = new GNullShape();
+        if(shape == null) this.shape = GNullShape.INSTANCE;
         else this.shape = shape;
     }
     

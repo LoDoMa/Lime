@@ -60,8 +60,9 @@ public class GLabel extends GComponent
         
         glPushMatrix();
         {
+            Vector2 translation = getTranslation();
             glTranslatef(translation.x, translation.y, 0.0f);
-            glRotatef(rotation, 0.0f, 0.0f, 1.0f);
+            glRotatef(getRotation(), 0.0f, 0.0f, 1.0f);
             
             if(ttfont == null) throw new NullPointerException("font not set");
             ttfont.drawString(0.0f, 0.0f, text, scale.x, scale.y, format);

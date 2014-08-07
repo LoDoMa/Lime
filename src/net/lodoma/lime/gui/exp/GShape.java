@@ -8,10 +8,10 @@ public abstract class GShape
     private static final Vector2 DEFAULT_TRANSLATION = new Vector2(0.0f, 0.0f);
     private static final Color DEFAULT_COLOR = new Color(1.0f, 1.0f, 1.0f, 1.0f);
     
-    protected final Vector2 translation = DEFAULT_TRANSLATION.clone();
-    protected final Color color = DEFAULT_COLOR.clone();
+    private final Vector2 translation = DEFAULT_TRANSLATION.clone();
+    private final Color color = DEFAULT_COLOR.clone();
 
-    protected float rotation = 0.0f;
+    private float rotation = 0.0f;
     
     public Vector2 getTranslation()
     {

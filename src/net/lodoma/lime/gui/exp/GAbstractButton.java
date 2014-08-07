@@ -5,6 +5,8 @@ import net.lodoma.lime.util.Vector2;
 
 public class GAbstractButton extends GComponent
 {
+    private boolean lastHover;
+    
     @Override
     public void update()
     {
@@ -17,27 +19,35 @@ public class GAbstractButton extends GComponent
         
         if(hover)
         {
-            onHovering();
+            if(!lastHover) onMouseEnter();
             
             int buttonc = Input.getMouseButtonCount();
             for(int i = 0; i < buttonc; i++)
                      if(Input.getMouseDown(i)) onPressed(i);
                 else if(Input.getMouseUp(i))   onReleased(i);
         }
+        else if(lastHover) onMouseExit();
+        
+        lastHover = hover;
     }
     
-    protected void onHovering()
+    protected void onMouseEnter()
     {
-        actionListener.onButtonHovering(this);
+        getActionListener().onButtonMouseEnter(this);
+    }
+    
+    protected void onMouseExit()
+    {
+        getActionListener().onButtonMouseExit(this);
     }
     
     protected void onPressed(int button)
     {
-        actionListener.onButtonPressed(this, button);
+        getActionListener().onButtonPressed(this, button);
     }
     
     protected void onReleased(int button)
     {
-        actionListener.onButtonReleased(this, button);
+        getActionListener().onButtonReleased(this, button);
     }
 }
