@@ -82,9 +82,10 @@ public class CLWorld implements ClientLogic
     @Override
     public void logic()
     {
+        Input.update();
+        
         if(timer == null) timer = new Timer();
         timer.update();
         world.update(timer.getDelta());
-        Input.update();
     }
 }

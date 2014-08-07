@@ -1,5 +1,6 @@
 package net.lodoma.lime.gui.simple;
 
+import net.lodoma.lime.gui.Color;
 import net.lodoma.lime.gui.Rectangle;
 import net.lodoma.lime.gui.TextField;
 import net.lodoma.lime.util.Vector2;
@@ -11,7 +12,7 @@ public class SimpleTextField extends TextField
     
     public SimpleTextField(Rectangle bounds, String text)
     {
-        super(bounds, new SimpleText(0.0f, 0.0f, bounds.w, bounds.h, text));
+        super(bounds, new SimpleText(0.0f, 0.0f, bounds.w, bounds.h, text, new Color(1.0f, 1.0f, 1.0f)));
 
         renderer = new SimpleButtonRenderer();
         setRenderer(renderer);

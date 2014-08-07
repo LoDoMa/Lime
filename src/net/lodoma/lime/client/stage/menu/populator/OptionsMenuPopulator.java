@@ -7,9 +7,11 @@ import net.lodoma.lime.gui.Button;
 import net.lodoma.lime.gui.ButtonListener;
 import net.lodoma.lime.gui.GUIContainer;
 import net.lodoma.lime.gui.Rectangle;
+import net.lodoma.lime.gui.SliderListener;
 import net.lodoma.lime.gui.Toggle;
 import net.lodoma.lime.gui.ToggleListener;
 import net.lodoma.lime.gui.simple.SimpleButton;
+import net.lodoma.lime.gui.simple.SimpleSlider;
 import net.lodoma.lime.gui.simple.SimpleToggle;
 import net.lodoma.lime.security.Credentials;
 import net.lodoma.lime.util.Vector2;
@@ -56,6 +58,15 @@ public class OptionsMenuPopulator implements MenuPopulator
         }
     }
     
+    private class SoundListener implements SliderListener
+    {
+        @Override
+        public void onMove(float value)
+        {
+            System.out.println("Sound level: " + (int) (value * 100) + "%");
+        }
+    }
+    
     private class BackListener implements ButtonListener
     {
         @Override
@@ -86,8 +97,9 @@ public class OptionsMenuPopulator implements MenuPopulator
         container.removeAll();
          
         container.addElement(new SimpleButton(new Rectangle(0.05f, 0.50f, 0.4f, 0.05f), new FullscreenListener(), Window.isFullscreen() ? "Fullscreen" : "Windowed"));
-        container.addElement(new SimpleToggle(new Rectangle(0.05f, 0.44f, 0.4f, 0.05f), Window.isVSyncEnabled(), "vsync on", "vsync off", "on", "off", new VSyncListener()));
-        container.addElement(new SimpleToggle(new Rectangle(0.05f, 0.38f, 0.4f, 0.05f), Window.isDebugEnabled(), "debug on", "debug off", "on", "off", new DebugListener()));
-        container.addElement(new SimpleButton(new Rectangle(0.05f, 0.26f, 0.4f, 0.05f), new BackListener(), "Back"));
+        container.addElement(new SimpleToggle(new Rectangle(0.05f, 0.44f, 0.4f, 0.05f), Window.isVSyncEnabled(), "VSync:", "on", "off", new VSyncListener()));
+        container.addElement(new SimpleToggle(new Rectangle(0.05f, 0.38f, 0.4f, 0.05f), Window.isDebugEnabled(), "Debug:", "on", "off", new DebugListener()));
+        container.addElement(new SimpleSlider(new Rectangle(0.55f, 0.44f, 0.4f, 0.05f), 0.5f, "Sound:", new SoundListener()));
+        container.addElement(new SimpleButton(new Rectangle(0.3f, 0.26f, 0.4f, 0.05f), new BackListener(), "Back"));
     }
 }

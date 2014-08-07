@@ -63,9 +63,9 @@ public class Menu extends Stage
             populator.populate(this);
             populator = null;
         }
-        
-        container.update(timeDelta);
+
         Input.update();
+        container.update(timeDelta);
     }
     
     @Override

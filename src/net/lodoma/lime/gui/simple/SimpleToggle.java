@@ -53,9 +53,6 @@ public class SimpleToggle extends Toggle implements ToggleListener
         }
     }
     
-    private String textTrue;
-    private String textFalse;
-    
     private SimpleText buttonTrue;
     private SimpleText buttonFalse;
     
@@ -67,15 +64,12 @@ public class SimpleToggle extends Toggle implements ToggleListener
     private float visualW;
     private float visualH;
     
-    public SimpleToggle(Rectangle bounds, boolean current, String textTrue, String textFalse, String buttonTrueText, String buttonFalseText, ToggleListener listener)
+    public SimpleToggle(Rectangle bounds, boolean current, String text, String buttonTrueText, String buttonFalseText, ToggleListener listener)
     {
-        super(new SimpleText(bounds.x, bounds.y, 0.0f, bounds.h, current ? textTrue : textFalse, TrueTypeFont.ALIGN_LEFT), current,
+        super(new SimpleText(bounds.x, bounds.y, 0.0f, bounds.h, text, new Color(1.0f, 1.0f, 1.0f), TrueTypeFont.ALIGN_LEFT), current,
                 new Button(new Rectangle(bounds.x + bounds.w * 0.6f, bounds.y, bounds.w * 0.2f, bounds.h), null, null),
                 new Button(new Rectangle(bounds.x + bounds.w * 0.8f, bounds.y, bounds.w * 0.2f, bounds.h), null, null), null);
         setListener(this);
-        
-        this.textTrue = textTrue;
-        this.textFalse = textFalse;
         
         this.buttonTrue = new SimpleText(0.0f, 0.0f, bounds.w * 0.2f, bounds.h, buttonTrueText);
         this.buttonFalse = new SimpleText(0.0f, 0.0f, bounds.w * 0.2f, bounds.h, buttonFalseText);
@@ -119,7 +113,6 @@ public class SimpleToggle extends Toggle implements ToggleListener
     @Override
     public void onToggle(Toggle toggle, boolean newState)
     {
-        getText().setText(newState ? textTrue : textFalse);
         targetX = getButton(newState).getBounds().x;
         if(listener != null)
             listener.onToggle(toggle, newState);

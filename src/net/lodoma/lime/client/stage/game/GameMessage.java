@@ -65,8 +65,8 @@ public class GameMessage extends Stage
     @Override
     public void update(double timeDelta)
     {
-        container.update(timeDelta);
         Input.update();
+        container.update(timeDelta);
     }
     
     @Override

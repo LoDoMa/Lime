@@ -1,5 +1,8 @@
 package net.lodoma.lime.input;
 
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+
 import net.lodoma.lime.client.window.Window;
 import net.lodoma.lime.util.Vector2;
 
@@ -8,11 +11,9 @@ import org.lwjgl.input.Mouse;
 
 public class Input
 {
-    public static final int KEYCODE_COUNT = 256;
-    public static final int MOUSEBUTTON_COUNT = 5;
-
     public static final int LEFT_MOUSE_BUTTON = 0;
-    public static final int RIGHT_MOUSE_BUTTON = 0;
+    public static final int RIGHT_MOUSE_BUTTON = 1;
+    public static final int MIDDLE_MOUSE_BUTTON = 2;
     
     public static final int KEY_NONE            = 0x00;
     public static final int KEY_ESCAPE          = 0x01;
@@ -143,67 +144,89 @@ public class Input
     public static final int KEY_POWER           = 0xDE;
     public static final int KEY_SLEEP           = 0xDF;
     
-    public static final char[] CHARS = new char[KEYCODE_COUNT];
-    static {
-        CHARS[KEY_A] = 'a'; CHARS[KEY_B] = 'b'; CHARS[KEY_C] = 'c'; CHARS[KEY_D] = 'd';
-        CHARS[KEY_E] = 'e'; CHARS[KEY_F] = 'f'; CHARS[KEY_G] = 'g'; CHARS[KEY_H] = 'h';
-        CHARS[KEY_I] = 'i'; CHARS[KEY_J] = 'j'; CHARS[KEY_K] = 'k'; CHARS[KEY_L] = 'l';
-        CHARS[KEY_M] = 'm'; CHARS[KEY_N] = 'n'; CHARS[KEY_O] = 'o'; CHARS[KEY_P] = 'p';
-        CHARS[KEY_Q] = 'q'; CHARS[KEY_R] = 'r'; CHARS[KEY_S] = 's'; CHARS[KEY_T] = 't';
-        CHARS[KEY_U] = 'u'; CHARS[KEY_V] = 'v'; CHARS[KEY_W] = 'w'; CHARS[KEY_X] = 'x';
-        CHARS[KEY_Y] = 'y'; CHARS[KEY_Z] = 'z';
+    public static final int KEYBOARD_SIZE       = 256;
 
-        CHARS[KEY_0] = '0'; CHARS[KEY_1] = '1'; CHARS[KEY_2] = '2'; CHARS[KEY_3] = '3';
-        CHARS[KEY_4] = '4'; CHARS[KEY_5] = '5'; CHARS[KEY_6] = '6'; CHARS[KEY_7] = '7';
-        CHARS[KEY_8] = '8'; CHARS[KEY_9] = '9';
-        
-        CHARS[KEY_SPACE] = ' '; CHARS[KEY_PERIOD] = '.'; CHARS[KEY_COMMA] = ',';
+    private static ByteBuffer keyboard;
+    private static ByteBuffer keyboardRepeated;
+    private static ByteBuffer lastKeyboard;
+
+    private static ByteBuffer mouse;
+    private static ByteBuffer lastMouse;
+    
+    private static CharBuffer chars;
+
+    private static float mouseX;
+    private static float mouseY;
+    
+    private static boolean initialized = false;
+    
+    private static void loadChar(char c)
+    {
+        try
+        {
+            chars.put(Input.class.getField("KEY_" + Character.toUpperCase(c)).getInt(null), c);
+        }
+        catch(Exception e)
+        {
+            System.err.println("Error loading chars");
+            e.printStackTrace();
+            System.exit(1);
+        }
     }
-
-    private static boolean[] prevKeys = new boolean[KEYCODE_COUNT];
-    private static boolean[] prevMouse = new boolean[MOUSEBUTTON_COUNT];
-
+    
+    private static void loadChars()
+    {
+        for(char i = 'a'; i < 'z'; i++) loadChar(i);
+        for(char i = '0'; i < '9'; i++) loadChar(i);
+        chars.put(KEY_SPACE, ' ');
+        chars.put(KEY_PERIOD, '.');
+        chars.put(KEY_COMMA, ',');
+    }
+    
+    private static void init()
+    {
+        Keyboard.enableRepeatEvents(true);
+        
+        keyboard = ByteBuffer.allocate(KEYBOARD_SIZE);
+        keyboardRepeated = ByteBuffer.allocate(keyboard.capacity());
+        lastKeyboard = ByteBuffer.allocate(keyboard.capacity());
+        
+        mouse = ByteBuffer.allocate(Mouse.getButtonCount());
+        lastMouse = ByteBuffer.allocate(mouse.capacity());
+        
+        chars = CharBuffer.allocate(keyboard.capacity());
+        loadChars();
+        
+        initialized = true;
+    }
+    
     public static void update()
     {
-        for(int i = 0; i < KEYCODE_COUNT; i++)
-            prevKeys[i] = getKey(i);
-
-        for(int i = 0; i < MOUSEBUTTON_COUNT; i++)
-            prevMouse[i] = getMouse(i);
-    }
-
-    public static boolean getKey(int keyCode)
-    {
-        return Keyboard.isKeyDown(keyCode);
-    }
-
-    public static boolean getKeyDown(int keyCode)
-    {
-        return getKey(keyCode) && !prevKeys[keyCode];
-    }
-
-    public static boolean getKeyUp(int keyCode)
-    {
-        return !getKey(keyCode) && prevKeys[keyCode];
-    }
-
-    public static boolean getMouse(int mouseButton)
-    {
-        return Mouse.isButtonDown(mouseButton);
-    }
-
-    public static boolean getMouseDown(int mouseButton)
-    {
-        return getMouse(mouseButton) && !prevMouse[mouseButton];
-    }
-
-    public static boolean getMouseUp(int mouseButton)
-    {
-        return !getMouse(mouseButton) && prevMouse[mouseButton];
-    }
-
-    public static Vector2 getMousePosition()
-    {
+        if(!initialized)
+            init();
+        
+        lastKeyboard.position(0);
+        lastKeyboard.put(keyboard.array());
+        
+        Keyboard.poll();
+        while(Keyboard.next())
+        {
+            if(Keyboard.isRepeatEvent())
+                keyboardRepeated.put(Keyboard.getEventKey(), (byte) 1);
+            else
+            {
+                keyboard.put(Keyboard.getEventKey(), (byte) (Keyboard.getEventKeyState() ? 1 : 0));
+                if(!Keyboard.getEventKeyState())
+                    keyboardRepeated.put(Keyboard.getEventKey(), (byte) 0);
+            }
+        }
+        
+        lastMouse.position(0);
+        lastMouse.put(mouse.array());
+        
+        for(int button = 0; button < Mouse.getButtonCount(); button++)
+            mouse.put(button, (byte) (Mouse.isButtonDown(button) ? 1 : 0));
+        
         int mx = Mouse.getX();
         int my = Mouse.getY();
 
@@ -211,23 +234,56 @@ public class Input
         int vpy = Window.getViewportY();
         int vpw = Window.getViewportWidth();
         int vph = Window.getViewportHeight();
-
+        
         int tx = mx - vpx;
         int ty = my - vpy;
         
-        float ux = tx / (float) vpw;
-        float uy = ty / (float) vph;
-        
-        return new Vector2(ux, uy);
+        mouseX = tx / (float) vpw;
+        mouseY = ty / (float) vph;
     }
-
-    public static void setMousePosition(Vector2 pos)
+    
+    public static boolean getKey(int key)
     {
-        Mouse.setCursorPosition((int)pos.getX(), (int)pos.getY());
+        return keyboard.get(key) == 1;
     }
-
-    public static void setCursor(boolean enabled)
+    
+    public static boolean getKeyDown(int key)
     {
-        Mouse.setGrabbed(!enabled);
+        return keyboard.get(key) == 1 && lastKeyboard.get(key) == 0;
+    }
+    
+    public static boolean getKeyUp(int key)
+    {
+        return keyboard.get(key) == 0 && lastKeyboard.get(key) == 1;
+    }
+    
+    public static boolean getKeyRepeated(int key)
+    {
+        return getKeyDown(key) || keyboardRepeated.get(key) == 1;
+    }
+    
+    public static boolean getMouse(int key)
+    {
+        return mouse.get(key) == 1;
+    }
+    
+    public static boolean getMouseDown(int key)
+    {
+        return mouse.get(key) == 1 && lastMouse.get(key) == 0;
+    }
+    
+    public static boolean getMouseUp(int key)
+    {
+        return mouse.get(key) == 0 && lastMouse.get(key) == 1;
+    }
+    
+    public static Vector2 getMousePosition()
+    {
+        return new Vector2(mouseX, mouseY);
+    }
+    
+    public static char getChar(int key)
+    {
+        return chars.get(key);
     }
 }
