@@ -73,7 +73,7 @@ public class Text implements GUIElement
     {
         if(font == null)
             font = new TrueTypeFont(new Font(fontName, style, SIZE), true);
-        textColor.set();
+        textColor.setGL();
         font.drawString(x, y, text, sx, sy, alignment);
     }
 }

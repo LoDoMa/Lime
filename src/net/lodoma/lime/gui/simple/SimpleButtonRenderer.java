@@ -36,7 +36,7 @@ public class SimpleButtonRenderer implements ButtonRenderer
             
             glBegin(GL_LINES);
             {
-                OUTLINE_COLOR.set();
+                OUTLINE_COLOR.setGL();
                 glVertex2f(0.0f, 0.0f);
                 glVertex2f(bounds.w, 0.0f);
                 glVertex2f(bounds.w, 0.0f);
@@ -50,7 +50,7 @@ public class SimpleButtonRenderer implements ButtonRenderer
             
             glBegin(GL_QUADS);
             {
-                BODY_COLOR.set(transparency);
+                BODY_COLOR.setGL(transparency);
                 glVertex2f(0.0f, 0.0f);
                 glVertex2f(bounds.w, 0.0f);
                 glVertex2f(bounds.w, bounds.h);

@@ -37,7 +37,7 @@ public class SimpleToggle extends Toggle implements ToggleListener
                 
                 glBegin(GL_LINES);
                 {
-                    OUTLINE_COLOR.set();
+                    OUTLINE_COLOR.setGL();
                     glVertex2f(0.0f, 0.0f);
                     glVertex2f(bounds.w, 0.0f);
                     glVertex2f(bounds.w, 0.0f);
@@ -126,7 +126,7 @@ public class SimpleToggle extends Toggle implements ToggleListener
 
         glBindTexture(GL_TEXTURE_2D, 0);
         
-        HIGHLIGHT_COLOR.set();
+        HIGHLIGHT_COLOR.setGL();
         glBegin(GL_QUADS);
         {
             glVertex2f(0.0f, 0.0f);
@@ -136,7 +136,7 @@ public class SimpleToggle extends Toggle implements ToggleListener
         }
         glEnd();
 
-        HIGHLIGHT_OUTLINE_COLOR.set();
+        HIGHLIGHT_OUTLINE_COLOR.setGL();
         glBegin(GL_LINES);
         {
             glVertex2f(0.0f, 0.0f);

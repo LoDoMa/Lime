@@ -282,6 +282,11 @@ public class Input
         return new Vector2(mouseX, mouseY);
     }
     
+    public static int getMouseButtonCount()
+    {
+        return Mouse.getButtonCount();
+    }
+    
     public static char getChar(int key)
     {
         return chars.get(key);

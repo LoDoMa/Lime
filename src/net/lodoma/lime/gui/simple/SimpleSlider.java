@@ -61,7 +61,7 @@ public class SimpleSlider extends Slider
         
         if(isMouseHovering())
         {
-            OUTLINE_COLOR.set();
+            OUTLINE_COLOR.setGL();
             GL11.glBegin(GL11.GL_LINES);
             {
                 GL11.glVertex2f(0.0f, 0.0f);
@@ -76,7 +76,7 @@ public class SimpleSlider extends Slider
             GL11.glEnd();
         }
         
-        LINE_COLOR.set();
+        LINE_COLOR.setGL();
         GL11.glBegin(GL11.GL_LINES);
         {
             GL11.glVertex2f(0.0f, bounds.h / 2);
@@ -84,7 +84,7 @@ public class SimpleSlider extends Slider
         }
         GL11.glEnd();
 
-        SLIDER_COLOR.set();
+        SLIDER_COLOR.setGL();
         GL11.glBegin(GL11.GL_QUADS);
         {
             GL11.glVertex2f(visualPosition * bounds.w - SLIDER_WIDTH / 2, 0.0f);
