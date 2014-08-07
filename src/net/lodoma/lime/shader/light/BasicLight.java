@@ -52,9 +52,9 @@ public class BasicLight implements Light
     {
         if(shaderProgram == null)
         {
-            vertexShader = new Shader(new File("shader/light.vs"), ShaderType.VERTEX);
-            fragmentShader = new Shader(new File("shader/light.fs"), ShaderType.FRAGMENT);
-            shaderProgram = new Program(vertexShader, fragmentShader);
+            vertexShader = Shader.getShader("lightVS", new File("shader/light.vs"), ShaderType.VERTEX);
+            fragmentShader = Shader.getShader("lightFS", new File("shader/light.fs"), ShaderType.FRAGMENT);
+            shaderProgram = Program.getProgram("light", vertexShader, fragmentShader);
         }
         
         shaderProgram.useProgram();

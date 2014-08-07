@@ -1,14 +1,27 @@
 package net.lodoma.lime.shader;
 
 import java.nio.FloatBuffer;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.lwjgl.opengl.GL20;
 
 public class Program
 {
+    private static final Map<String, Program> programs = new HashMap<String, Program>();
+    
+    public static Program getProgram(String name, Shader... shaders)
+    {
+        if(programs.containsKey(name))
+            return programs.get(name);
+        Program program = new Program(shaders);
+        programs.put(name, program);
+        return program;
+    }
+    
     private int program;
     
-    public Program(Shader... shaders)
+    private Program(Shader[] shaders)
     {
         createProgram();
         for(Shader shader : shaders)

@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.awt.GraphicsEnvironment;
 
+import net.lodoma.lime.texture.Texture;
+
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
@@ -472,7 +474,7 @@ public class TrueTypeFont
     {
         IntBuffer scratch = BufferUtils.createIntBuffer(1);
         scratch.put(0, fontTextureID);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, Texture.NO_TEXTURE);
         GL11.glDeleteTextures(scratch);
     }
 }

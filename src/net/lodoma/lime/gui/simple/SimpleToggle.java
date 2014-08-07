@@ -7,6 +7,7 @@ import net.lodoma.lime.gui.Rectangle;
 import net.lodoma.lime.gui.Text;
 import net.lodoma.lime.gui.Toggle;
 import net.lodoma.lime.gui.ToggleListener;
+import net.lodoma.lime.texture.Texture;
 import net.lodoma.lime.util.TrueTypeFont;
 import net.lodoma.lime.util.Vector2;
 import static org.lwjgl.opengl.GL11.*;
@@ -33,7 +34,7 @@ public class SimpleToggle extends Toggle implements ToggleListener
             {
                 Rectangle bounds = button.getBounds();
                 
-                glBindTexture(GL_TEXTURE_2D, 0);
+                glBindTexture(GL_TEXTURE_2D, Texture.NO_TEXTURE);
                 
                 glBegin(GL_LINES);
                 {
@@ -124,7 +125,7 @@ public class SimpleToggle extends Toggle implements ToggleListener
         glPushMatrix();
         glTranslatef(visualX, visualY, 0.0f);
 
-        glBindTexture(GL_TEXTURE_2D, 0);
+        glBindTexture(GL_TEXTURE_2D, Texture.NO_TEXTURE);
         
         HIGHLIGHT_COLOR.setGL();
         glBegin(GL_QUADS);

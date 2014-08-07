@@ -1,5 +1,7 @@
 package net.lodoma.lime.mask;
 
+import net.lodoma.lime.texture.Texture;
+
 import org.lwjgl.opengl.GL11;
 
 public class ColoredMask extends Mask
@@ -90,7 +92,7 @@ public class ColoredMask extends Mask
     @Override
     public void render()
     {
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, Texture.NO_TEXTURE);
         GL11.glBegin(GL11.GL_POLYGON);
         for(int i = 0; i < n; i++)
         {

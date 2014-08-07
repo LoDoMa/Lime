@@ -4,16 +4,29 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
 public class Shader
 {
+    private static final Map<String, Shader> shaders = new HashMap<String, Shader>();
+    
+    public static Shader getShader(String name, File sourceFile, ShaderType type)
+    {
+        if(shaders.containsKey(name))
+            return shaders.get(name);
+        Shader shader = new Shader(sourceFile, type);
+        shaders.put(name, shader);
+        return shader;
+    }
+    
     int shader;
     private ShaderType type;
     
-    public Shader(File sourceFile, ShaderType type)
+    private Shader(File sourceFile, ShaderType type)
     {
         this.type = type;
         

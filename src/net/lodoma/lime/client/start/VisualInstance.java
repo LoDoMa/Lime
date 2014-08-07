@@ -9,6 +9,7 @@ import net.lodoma.lime.client.window.Window;
 import net.lodoma.lime.client.window.WindowException;
 import net.lodoma.lime.gui.Color;
 import net.lodoma.lime.gui.Text;
+import net.lodoma.lime.texture.Texture;
 import net.lodoma.lime.util.FontHelper;
 import net.lodoma.lime.util.Timer;
 import net.lodoma.lime.util.TrueTypeFont;
@@ -36,6 +37,7 @@ public class VisualInstance
             System.exit(1);
         }
         
+        Texture.init();
         FontHelper.registerFont(new File("fonts/mytype.ttf"));
         
         stageManager = new StageManager();

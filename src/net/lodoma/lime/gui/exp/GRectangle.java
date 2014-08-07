@@ -1,7 +1,6 @@
 package net.lodoma.lime.gui.exp;
 
 import static org.lwjgl.opengl.GL11.*;
-import net.lodoma.lime.gui.Color;
 import net.lodoma.lime.util.Vector2;
 
 public class GRectangle extends GShape

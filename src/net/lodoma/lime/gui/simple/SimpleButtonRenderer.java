@@ -5,6 +5,7 @@ import net.lodoma.lime.gui.ButtonRenderer;
 import net.lodoma.lime.gui.Color;
 import net.lodoma.lime.gui.Rectangle;
 import net.lodoma.lime.gui.Text;
+import net.lodoma.lime.texture.Texture;
 import static org.lwjgl.opengl.GL11.*;
 
 public class SimpleButtonRenderer implements ButtonRenderer
@@ -32,7 +33,7 @@ public class SimpleButtonRenderer implements ButtonRenderer
         {
             Rectangle bounds = button.getBounds();
             
-            glBindTexture(GL_TEXTURE_2D, 0);
+            glBindTexture(GL_TEXTURE_2D, Texture.NO_TEXTURE);
             
             glBegin(GL_LINES);
             {

@@ -20,7 +20,7 @@ import static org.lwjgl.opengl.EXTFramebufferObject.*;
 public class WorldRenderer
 {
     private ClientsideWorld world;
-    
+
     private boolean initialized;
     
     private Program worldProgram;
@@ -86,13 +86,13 @@ public class WorldRenderer
         lightFBO = generateFramebuffer(fbow, fboh);
         worldFBO = generateFramebuffer(fbow, fboh);
         
-        Shader worldVS = new Shader(new File("shader/world.vs"), ShaderType.VERTEX);
-        Shader worldFS = new Shader(new File("shader/world.fs"), ShaderType.FRAGMENT);
-        Shader copyVS = new Shader(new File("shader/copy.vs"), ShaderType.VERTEX);
-        Shader copyFS = new Shader(new File("shader/copy.fs"), ShaderType.FRAGMENT);
+        Shader worldVS = Shader.getShader("worldVS", new File("shader/world.vs"), ShaderType.VERTEX);
+        Shader worldFS = Shader.getShader("worldFS", new File("shader/world.fs"), ShaderType.FRAGMENT);
+        Shader copyVS = Shader.getShader("copyVS", new File("shader/copy.vs"), ShaderType.VERTEX);
+        Shader copyFS = Shader.getShader("copyFS", new File("shader/copy.fs"), ShaderType.FRAGMENT);
         
-        worldProgram = new Program(worldVS, worldFS);
-        copyProgram = new Program(copyVS, copyFS);
+        worldProgram = Program.getProgram("world", worldVS, worldFS);
+        copyProgram = Program.getProgram("copy", copyVS, copyFS);
         
         initialized = true;
     }

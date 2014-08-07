@@ -88,3 +88,4 @@ public class GSlider extends GAbstractButton
         else array.setShape(null, index);
     }
 }
+

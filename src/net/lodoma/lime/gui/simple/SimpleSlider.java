@@ -6,6 +6,7 @@ import net.lodoma.lime.gui.Color;
 import net.lodoma.lime.gui.Rectangle;
 import net.lodoma.lime.gui.Slider;
 import net.lodoma.lime.gui.SliderListener;
+import net.lodoma.lime.texture.Texture;
 import net.lodoma.lime.util.TrueTypeFont;
 import net.lodoma.lime.util.Vector2;
 
@@ -57,7 +58,7 @@ public class SimpleSlider extends Slider
         Rectangle bounds = getBounds();
         GL11.glTranslatef(bounds.x, bounds.y, 1.0f);
 
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, Texture.NO_TEXTURE);
         
         if(isMouseHovering())
         {
