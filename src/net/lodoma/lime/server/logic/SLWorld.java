@@ -1,7 +1,9 @@
 package net.lodoma.lime.server.logic;
 
 import java.io.File;
+
 import net.lodoma.lime.physics.entity.EntityLoader;
+import net.lodoma.lime.physics.entity.EntityLoaderException;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.server.ServerPacket;
 import net.lodoma.lime.server.ServerPacketHandler;
@@ -73,8 +75,15 @@ public class SLWorld implements ServerLogic
         
         world.generalInit();
 
-        entityLoader.addXMLFile("Lime::Zombie", new File("model/zombie.xml"));
-        entityLoader.addXMLFile("Lime::Ball", new File("model/ball.xml"));
+        try
+        {
+            entityLoader.addAllFiles(world, world.getServer());
+        }
+        catch(EntityLoaderException e)
+        {
+            // TODO: handle later
+            e.printStackTrace();
+        }
         
         try
         {
@@ -82,6 +91,7 @@ public class SLWorld implements ServerLogic
         }
         catch(WorldLoaderException e)
         {
+            // TODO: handle later
             e.printStackTrace();
         }
     }

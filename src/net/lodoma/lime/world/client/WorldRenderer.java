@@ -80,9 +80,11 @@ public class WorldRenderer
     
     private void init()
     {
+        // TODO: fix - framebuffers are always the same size size as the default viewport
         fbow = Window.getViewportWidth();
         fboh = Window.getViewportHeight();
 
+        // TODO: fix - framebuffers are never deleted
         lightFBO = generateFramebuffer(fbow, fboh);
         worldFBO = generateFramebuffer(fbow, fboh);
         

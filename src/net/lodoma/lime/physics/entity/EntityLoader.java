@@ -2,7 +2,9 @@ package net.lodoma.lime.physics.entity;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,6 +35,8 @@ import org.xml.sax.SAXException;
 
 public class EntityLoader
 {
+    public static final String ENTITY_DESCRIPTION_FILE_EXTENSION = ".xml";
+    
     private class Vertex
     {
         public int index;
@@ -79,13 +83,42 @@ public class EntityLoader
         cache = new HashMap<File, Entity>();
     }
     
+    public void addAllFiles(EntityWorld world, PropertyPool propertyPool) throws EntityLoaderException
+    {
+        List<File> entityFiles = getEntityFileList(new File("model"));
+        for(File entityFile : entityFiles)
+        {
+            Entity entity = loadFromXML(entityFile, world, propertyPool);
+            addXMLFile(entity.internalName, entityFile);
+        }
+    }
+    
+    private List<File> getEntityFileList(File directory)
+    {
+        List<File> fileList = new ArrayList<File>();
+        File[] files = directory.listFiles();
+        for(File file : files)
+        {
+            if(file.isDirectory())
+                fileList.addAll(getEntityFileList(file));
+            else
+                if(file.getName().toLowerCase().endsWith(ENTITY_DESCRIPTION_FILE_EXTENSION))
+                    fileList.add(file);
+                
+        }
+        return fileList;
+    }
+    
     public void addXMLFile(String internalName, File file)
     {
-        files.put(HashHelper.hash32(internalName), file);
+        int hash = HashHelper.hash32(internalName);
+        System.out.println("added entity " + internalName + "[" + hash + "]: " + file);
+        files.put(hash, file);
     }
     
     public File getXMLFileByHash(int hash)
     {
+        System.out.println("getting entity " + hash);
         return files.get(hash);
     }
     

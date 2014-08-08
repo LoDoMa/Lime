@@ -1,7 +1,5 @@
 package net.lodoma.lime.client.logic;
 
-import java.io.File;
-
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.client.ClientPacketHandler;
 import net.lodoma.lime.client.ClientPacket;
@@ -15,6 +13,7 @@ import net.lodoma.lime.client.io.entity.CPHSetActor;
 import net.lodoma.lime.client.io.world.CPHPlatformCreation;
 import net.lodoma.lime.input.Input;
 import net.lodoma.lime.physics.entity.EntityLoader;
+import net.lodoma.lime.physics.entity.EntityLoaderException;
 import net.lodoma.lime.util.HashPool32;
 import net.lodoma.lime.util.Timer;
 import net.lodoma.lime.world.client.ClientsideWorld;
@@ -66,11 +65,18 @@ public class CLWorld implements ClientLogic
         cphPool.add(CPHEntityForce.HASH, new CPHEntityForce(client));
         
         cphPool.add(CPHSetActor.HASH, new CPHSetActor(client));
-
-        entityLoader.addXMLFile("Lime::Zombie", new File("model/zombie.xml"));
-        entityLoader.addXMLFile("Lime::Ball", new File("model/ball.xml"));
         
         world.generalInit();
+
+        try
+        {
+            entityLoader.addAllFiles(world, world.getClient());
+        }
+        catch(EntityLoaderException e)
+        {
+            // TODO: handle later
+            e.printStackTrace();
+        }
     }
     
     @Override
