@@ -22,22 +22,22 @@ public class Entity
 {
     private static int counterID = 0;
     
-    boolean generatedID = false;
-    int ID;
+    private boolean generatedID = false;
+    private int ID;
     
-    int hash;
-    String name;
-    String version;
+    private int hash;
+    private String name;
+    private String version;
     
-    EntityWorld world;
-    PropertyPool propertyPool;
+    private EntityWorld world;
+    private PropertyPool propertyPool;
 
-    Map<Integer, PhysicsBody> bodies;
-    Map<Integer, PhysicsJoint> joints;
-    Map<Integer, Mask> masks;
-    Map<Integer, String> properties;
-    LuaScript script;
-    File scriptFile;
+    private Map<Integer, PhysicsBody> bodies;
+    private Map<Integer, PhysicsJoint> joints;
+    private Map<Integer, Mask> masks;
+    private Map<Integer, String> properties;
+    private LuaScript script;
+    private File scriptFile;
     
     public Entity(EntityWorld entityWorld, PhysicsWorld physicsWorld, PropertyPool propertyPool, EntityData data) throws IOException
     {

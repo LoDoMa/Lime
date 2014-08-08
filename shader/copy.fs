@@ -7,5 +7,5 @@ void main()
 {
 	vec4 lightColor = texture2D(light, texCoord).rgba;
 	vec4 worldColor = texture2D(world, texCoord).rgba;
-	gl_FragColor = lightColor + (worldColor * lightColor);
+	gl_FragColor = lightColor * worldColor;
 }
