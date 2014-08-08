@@ -42,7 +42,6 @@ public abstract class CommonWorld implements EntityWorld
     
     public synchronized void addPlatform(Platform platform)
     {
-        platform.create(physicsWorld);
         platforms.add(platform);
     }
     
@@ -60,7 +59,6 @@ public abstract class CommonWorld implements EntityWorld
     public synchronized void addEntity(Entity entity)
     {
         entity.generateID();
-        entity.create(physicsWorld);
         entities.put(entity.getID(), entity);
     }
 

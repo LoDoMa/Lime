@@ -40,49 +40,69 @@ public class Entity
     LuaScript script;
     File scriptFile;
     
-    public Entity()
+    public Entity(EntityWorld entityWorld, PhysicsWorld physicsWorld, PropertyPool propertyPool, EntityData data) throws IOException
     {
+        hash = data.nameHash;
+        internalName = data.internalName;
+        visualName = data.visualName;
+        version = data.version;
+        
+        world = entityWorld;
+        this.propertyPool = propertyPool;
+
         bodies = new HashMap<Integer, PhysicsBody>();
         joints = new HashMap<Integer, PhysicsJoint>();
         masks = new HashMap<Integer, Mask>();
         properties = new HashMap<Integer, String>();
+        
+        Set<Integer> bodyHashes = data.bodies.keySet();
+        Set<Integer> jointHashes = data.joints.keySet();
+        Set<Integer> maskHashes = data.masks.keySet();
+
+        for(int bodyHash : bodyHashes)
+        {
+            PhysicsBody body = new PhysicsBody(physicsWorld, data.bodies.get(bodyHash));
+            bodies.put(bodyHash, body);
+        }
+        
+        for(int jointHash : jointHashes)
+        {
+            PhysicsJoint joint = new PhysicsJoint(this, physicsWorld, data.joints.get(jointHash));
+            joints.put(jointHash, joint);
+        }
+        
+        for(int maskHash : maskHashes)
+        {
+            Mask mask = data.masks.get(maskHash).newCopy();
+            masks.put(maskHash, mask);
+        }
+
+        script = new LuaScript();
+        script.setGlobal("ENTITY", this);
+        script.setGlobal("SCRIPT", script);
+        script.require("script/strict/entity");
+        script.require("script/strict/sandbox");
+        scriptFile = new File(data.script);
+        script.load(scriptFile);
     }
     
-    public Entity newCopy() throws IOException
+    public void destroy(PhysicsWorld world)
     {
-        Entity copy = new Entity();
+        List<PhysicsBody> bodyList = new ArrayList<PhysicsBody>(bodies.values());
+        List<PhysicsJoint> jointList = new ArrayList<PhysicsJoint>(joints.values());
         
-        copy.hash = hash;
-        copy.internalName = internalName;
-        copy.visualName = visualName;
-        copy.version = version;
+        for(PhysicsBody body : bodyList)
+            body.destroy(world);
         
-        copy.world = world;
-        copy.propertyPool = propertyPool;
-
-        Set<Integer> bodyHashes = bodies.keySet();
-        Set<Integer> jointHashes = joints.keySet();
-        Set<Integer> maskHashes = masks.keySet();
-        Set<Integer> propertyHashes = properties.keySet();
-
-        for(Integer hash : bodyHashes)
-            copy.bodies.put(hash, bodies.get(hash).newCopy());
-        for(Integer hash : jointHashes)
-            copy.joints.put(hash, joints.get(hash).newCopy(copy));
-        for(Integer hash : maskHashes)
-            copy.masks.put(hash, masks.get(hash).newCopy());
-        for(Integer hash : propertyHashes)
-            copy.properties.put(hash, new String(properties.get(hash)));
-
-        copy.script = new LuaScript();
-        copy.script.setGlobal("ENTITY", copy);
-        copy.script.setGlobal("SCRIPT", copy.script);
-        copy.script.require("script/strict/entity");
-        copy.script.require("script/strict/sandbox");
-        copy.scriptFile = scriptFile;
-        copy.script.load(copy.scriptFile);
+        for(PhysicsJoint joint : jointList)
+            joint.destroy(world);
         
-        return copy;
+        script.close();
+        
+        bodies.clear();
+        joints.clear();
+        masks.clear();
+        properties.clear();
     }
     
     public void setID(int id)
@@ -146,35 +166,6 @@ public class Entity
     public Mask getMask(int name)
     {
         return masks.get(name);
-    }
-    
-    public void create(PhysicsWorld world)
-    {
-        List<PhysicsBody> bodyList = new ArrayList<PhysicsBody>(bodies.values());
-        List<PhysicsJoint> jointList = new ArrayList<PhysicsJoint>(joints.values());
-        
-        for(PhysicsBody body : bodyList)
-            body.create(world);
-        for(PhysicsJoint joint : jointList)
-            joint.create(world);
-    }
-    
-    public void destroy(PhysicsWorld world)
-    {
-        List<PhysicsBody> bodyList = new ArrayList<PhysicsBody>(bodies.values());
-        List<PhysicsJoint> jointList = new ArrayList<PhysicsJoint>(joints.values());
-        
-        for(PhysicsBody body : bodyList)
-            body.destroy(world);
-        for(PhysicsJoint joint : jointList)
-            joint.destroy(world);
-        
-        script.close();
-        
-        bodies.clear();
-        joints.clear();
-        masks.clear();
-        properties.clear();
     }
     
     public void update(double timeDelta)

@@ -12,8 +12,11 @@ local world = LIME_WORLD
 local script = LIME_SCRIPT
 
 local propertyPool = world:getPropertyPool()
+local physicsWorld = world:getPhysicsWorld()
+
 local entityLoader = propertyPool:getProperty("entityLoader")
 local emanPool = propertyPool:getProperty("emanPool")
+
 
 local networkSide = world:getNetworkSide():ordinal()
 local serverSide = networkSide == NetworkSide:valueOf("SERVER"):ordinal() and true or nil
@@ -171,7 +174,7 @@ local function addPlatformToWorld(offset, ...)
 			i = i + 1
 		end
 
-		local platform = Platform:newInstance(javaOffset, javaVertices)
+		local platform = Platform:newInstance(physicsWorld, javaOffset, javaVertices)
 		world:addPlatform(platform)
 	elseif clientSide then
 
@@ -186,8 +189,7 @@ local function addEntityToWorld(hash)
 	checkType(hash, "number", 1, "lime.entity.create")
 
 	if serverSide then
-		local file = entityLoader:getXMLFileByHash(hash)
-		local entity = entityLoader:loadFromXML(file, world, propertyPool)
+		local entity = entityLoader:newEntity(world, physicsWorld, propertyPool, hash)
 		world:addEntity(entity)
 		return entity:getID()
 	elseif clientSide then

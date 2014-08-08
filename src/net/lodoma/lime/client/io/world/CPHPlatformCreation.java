@@ -21,6 +21,7 @@ public class CPHPlatformCreation extends ClientPacketHandler
     @Override
     protected void localHandle() throws IOException
     {
-        ((ClientsideWorld) client.getProperty("world")).addPlatform(new Platform(inputStream));
+        ClientsideWorld world = ((ClientsideWorld) client.getProperty("world"));
+        world.addPlatform(new Platform(world.getPhysicsWorld(), inputStream));
     }
 }

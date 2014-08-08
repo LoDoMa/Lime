@@ -17,11 +17,14 @@ import net.lodoma.lime.mask.ColoredMask;
 import net.lodoma.lime.mask.LayeredMask;
 import net.lodoma.lime.mask.Mask;
 import net.lodoma.lime.mask.RenderingOrder;
-import net.lodoma.lime.physics.PhysicsBody;
+import net.lodoma.lime.physics.PhysicsBodyData;
+import net.lodoma.lime.physics.PhysicsBodyDescription;
 import net.lodoma.lime.physics.PhysicsBodyType;
-import net.lodoma.lime.physics.PhysicsJoint;
+import net.lodoma.lime.physics.PhysicsJointData;
+import net.lodoma.lime.physics.PhysicsJointDescription;
 import net.lodoma.lime.physics.PhysicsJointType;
-import net.lodoma.lime.script.LuaScript;
+import net.lodoma.lime.physics.PhysicsWorld;
+import net.lodoma.lime.physics.ShapeType;
 import net.lodoma.lime.util.HashHelper;
 import net.lodoma.lime.util.Pair;
 import net.lodoma.lime.util.Vector2;
@@ -57,11 +60,6 @@ public class EntityLoader
         public int color;
     }
     
-    private class StaticBehavior
-    {
-        
-    }
-    
     private class DynamicBehavior
     {
         public float density;
@@ -69,18 +67,11 @@ public class EntityLoader
         public float restitution;
     }
     
-    private class KinematicBehavior
-    {
-        
-    }
-    
-    private Map<Integer, File> files;
-    private Map<File, Entity> cache;
+    private Map<Integer, EntityData> entityData;
     
     public EntityLoader()
     {
-        files = new HashMap<Integer, File>();
-        cache = new HashMap<File, Entity>();
+        entityData = new HashMap<Integer, EntityData>();
     }
     
     public void addAllFiles(EntityWorld world, PropertyPool propertyPool) throws EntityLoaderException
@@ -88,8 +79,21 @@ public class EntityLoader
         List<File> entityFiles = getEntityFileList(new File("model"));
         for(File entityFile : entityFiles)
         {
-            Entity entity = loadFromXML(entityFile, world, propertyPool);
-            addXMLFile(entity.internalName, entityFile);
+            EntityData entity = loadDataFromXML(entityFile);
+            entityData.put(entity.nameHash, entity);
+        }
+    }
+    
+    public Entity newEntity(EntityWorld entityWorld, PhysicsWorld physicsWorld, PropertyPool propertyPool, int hash) throws EntityLoaderException
+    {
+        try
+        {
+            EntityData data = entityData.get(hash);
+            return new Entity(entityWorld, physicsWorld, propertyPool, data);
+        }
+        catch(IOException e)
+        {
+            throw new EntityLoaderException(e);
         }
     }
     
@@ -109,98 +113,64 @@ public class EntityLoader
         return fileList;
     }
     
-    public void addXMLFile(String internalName, File file)
-    {
-        int hash = HashHelper.hash32(internalName);
-        System.out.println("added entity " + internalName + "[" + hash + "]: " + file);
-        files.put(hash, file);
-    }
-    
-    public File getXMLFileByHash(int hash)
-    {
-        System.out.println("getting entity " + hash);
-        return files.get(hash);
-    }
-    
-    public Entity loadFromXML(File xmlFile, EntityWorld world, PropertyPool propertyPool) throws EntityLoaderException
+    private EntityData loadDataFromXML(File xmlFile) throws EntityLoaderException
     {
         try
         {
-            if(cache.containsKey(xmlFile))
-                return cache.get(xmlFile).newCopy();
-            
-            Entity entity = new Entity();
+            EntityData data = new EntityData();
             
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(xmlFile);
             Element docElement = doc.getDocumentElement();
             docElement.normalize();
+    
             
             String rootName = docElement.getNodeName();
             if(rootName != "model")
                 throw new EntityLoaderException("root of an entity XML file must be named \"model\"");
             
-            String name       = XMLHelper.getDeepValue(docElement, "model_name");
-            String visualName = XMLHelper.getDeepValue(docElement, "model_visual");
-            String version    = XMLHelper.getDeepValue(docElement, "model_version");
-            
-            entity.internalName = name;
-            entity.visualName = visualName;
-            entity.version = version;
-            
-            entity.hash = HashHelper.hash32(entity.internalName);
-            entity.world = world;
-            entity.propertyPool = propertyPool;
+            data.internalName = XMLHelper.getDeepValue(docElement, "model_name");
+            data.visualName   = XMLHelper.getDeepValue(docElement, "model_visual");
+            data.version      = XMLHelper.getDeepValue(docElement, "model_version");
+            data.nameHash     = HashHelper.hash32(data.internalName);
             
             NodeList bodies         = docElement.getElementsByTagName("body");
             NodeList revoluteJoints = docElement.getElementsByTagName("revolute_joint");
             NodeList masks          = docElement.getElementsByTagName("mask");
-            NodeList properties     = docElement.getElementsByTagName("property");
-    
+            data.script             = XMLHelper.getDeepValue(docElement, "script");
+            
             for(int i = 0; i < bodies.getLength(); i++)
             {
                 Node bodyNode = bodies.item(i);
                 if(bodyNode.getNodeType() != Node.ELEMENT_NODE)
                     throw new EntityLoaderException("invalid \"body\" node");
-                Pair<String, PhysicsBody> bodyData = parseBodyElement((Element) bodyNode);
-                entity.bodies.put(HashHelper.hash32(bodyData.first), bodyData.second);
+                
+                Pair<Integer, PhysicsBodyData> bodyData = parseBodyElement((Element) bodyNode);
+                data.bodies.put(bodyData.first, new PhysicsBodyDescription(bodyData.second));
             }
+            
             for(int i = 0; i < revoluteJoints.getLength(); i++)
             {
                 Node jointNode = revoluteJoints.item(i);
                 if(jointNode.getNodeType() != Node.ELEMENT_NODE)
                     throw new EntityLoaderException("invalid \"revolute_joint\" node");
-                Pair<String, PhysicsJoint> jointData = parseRevoluteJointElement((Element) jointNode, entity);
-                entity.joints.put(HashHelper.hash32(jointData.first), jointData.second);
+                
+                Pair<Integer, PhysicsJointData> jointData = parseRevoluteJointElement((Element) jointNode);
+                data.joints.put(jointData.first, new PhysicsJointDescription(jointData.second));
             }
+            
             for(int i = 0; i < masks.getLength(); i++)
             {
                 Node maskNode = masks.item(i);
                 if(maskNode.getNodeType() != Node.ELEMENT_NODE)
                     throw new EntityLoaderException("invalid \"mask\" node");
-                Pair<String, Mask> maskData = parseMaskElement((Element) maskNode, entity);
-                entity.masks.put(HashHelper.hash32(maskData.first), maskData.second);
-            }
-            for(int i = 0; i < properties.getLength(); i++)
-            {
-                Node propertyNode = properties.item(i);
-                if(propertyNode.getNodeType() != Node.ELEMENT_NODE)
-                    throw new EntityLoaderException("invalid \"property\" node");
-                Pair<String, String> propertyData = parsePropertyElement((Element) propertyNode);
-                entity.properties.put(HashHelper.hash32(propertyData.first), propertyData.second);
+                
+                Pair<Integer, Mask> maskData = parseMaskElement((Element) maskNode);
+                data.masks.put(maskData.first, maskData.second);
             }
             
-            entity.script = new LuaScript();
-            entity.script.setGlobal("ENTITY", entity);
-            entity.script.setGlobal("SCRIPT", entity.script);
-            entity.script.require("script/strict/entity");
-            entity.script.require("script/strict/sandbox");
-            entity.scriptFile = new File(XMLHelper.getDeepValue(docElement, "script"));
-            entity.script.load(entity.scriptFile);
-            
-            cache.put(xmlFile, entity);
-            return entity;
+            return data;
         }
         catch(IOException | SAXException | ParserConfigurationException e)
         {
@@ -208,95 +178,13 @@ public class EntityLoader
         }
     }
     
-    private Vertex parseVertexElement(Element vertexElement)
+    private Pair<Integer, PhysicsBodyData> parseBodyElement(Element bodyElement) throws EntityLoaderException
     {
-        Vertex vertex = new Vertex();
+        PhysicsBodyData data = new PhysicsBodyData();
+        data.position = new Vector2(0.0f, 0.0f);
+        data.angle = 0.0f;
         
-        if(XMLHelper.hasNode(vertexElement, "index"))
-            vertex.index = XMLHelper.getDeepValueInteger(vertexElement, "index");
-        vertex.x = XMLHelper.getDeepValueFloat(vertexElement, "x");
-        vertex.y = XMLHelper.getDeepValueFloat(vertexElement, "y");
-        if(XMLHelper.hasNode(vertexElement, "color"))
-            vertex.color = XMLHelper.getDeepValueInteger(vertexElement, "color");
-        
-        return vertex;
-    }
-    
-    private PolygonShape parsePolygonShapeElement(Element polygonShapeElement) throws EntityLoaderException
-    {
-        PolygonShape polygonShape = new PolygonShape();
-        
-        int vertexCount = XMLHelper.getDeepValueInteger(polygonShapeElement, "vertex_count");
-        polygonShape.vertexCount = vertexCount;
-        polygonShape.vertices = new Vertex[vertexCount];
-        
-        NodeList vertices = polygonShapeElement.getElementsByTagName("vertex");
-        for(int i = 0; i < vertices.getLength(); i++)
-        {
-            Node vertexNode = vertices.item(i);
-            if(vertexNode.getNodeType() != Node.ELEMENT_NODE)
-                throw new EntityLoaderException("invalid \"vertex\" node");
-            Element vertexElement = (Element) vertexNode;
-            Vertex vertex = parseVertexElement(vertexElement);
-            polygonShape.vertices[vertex.index - 1] = vertex;
-        }
-        
-        return polygonShape;
-    }
-    
-    private CircleShape parseCircleShapeElement(Element circleShapeElement)
-    {
-        CircleShape circleShape = new CircleShape();
-        
-        float radius = XMLHelper.getDeepValueFloat(circleShapeElement, "radius");
-        circleShape.radius = radius;
-        if(XMLHelper.hasNode(circleShapeElement, "color"))
-            circleShape.color = XMLHelper.getDeepValueInteger(circleShapeElement, "color");
-        
-        return circleShape;
-    }
-    
-    @SuppressWarnings("unused")
-    private StaticBehavior parseStaticBehaviorElement(Element staticBehaviorElement)
-    {
-        StaticBehavior staticBehavior = new StaticBehavior();
-        
-        return staticBehavior;
-    }
-    
-    private DynamicBehavior parseDynamicBehaviorElement(Element dynamicBehaviorElement)
-    {
-        DynamicBehavior dynamicBehavior = new DynamicBehavior();
-
-        float density     = XMLHelper.getDeepValueFloat(dynamicBehaviorElement, "density");
-        float friction    = XMLHelper.getDeepValueFloat(dynamicBehaviorElement, "friction");
-        float restitution = XMLHelper.getDeepValueFloat(dynamicBehaviorElement, "restitution");
-        dynamicBehavior.density     = density;
-        dynamicBehavior.friction    = friction;
-        dynamicBehavior.restitution = restitution;
-        
-        return dynamicBehavior;
-    }
-    
-    @SuppressWarnings("unused")
-    private KinematicBehavior parseKinematicBehaviorElement(Element kinematicBehaviorElement)
-    {
-        KinematicBehavior kinematicBehavior = new KinematicBehavior();
-        
-        return kinematicBehavior;
-    }
-    
-    private Vector2 parseVectorElement(Element vectorElement)
-    {
-        float x = XMLHelper.getDeepValueFloat(vectorElement, "x");
-        float y = XMLHelper.getDeepValueFloat(vectorElement, "y");
-        return new Vector2(x, y);
-    }
-    
-    private Pair<String, PhysicsBody> parseBodyElement(Element bodyElement) throws EntityLoaderException
-    {
-        PhysicsBody body = new PhysicsBody();
-        String name = XMLHelper.getDeepValue(bodyElement, "name");
+        int hash = HashHelper.hash32(XMLHelper.getDeepValue(bodyElement, "name"));
         
         NodeList polygonShapes = bodyElement.getElementsByTagName("polygon_shape");
         NodeList circleShapes  = bodyElement.getElementsByTagName("circle_shape");
@@ -317,7 +205,8 @@ public class EntityLoader
             for(int i = 0; i < polygonShape.vertexCount; i++)
                 vertices[i] = new Vector2(polygonShape.vertices[i].x, polygonShape.vertices[i].y);
             
-            body.setPolygonShape(vertices);
+            data.shapeType = ShapeType.POLYGON;
+            data.shapeVertices = vertices;
         }
         else if(circleShapes.getLength() == 1)
         {
@@ -327,7 +216,8 @@ public class EntityLoader
             Element circleShapeElement = (Element) circleShapeNode;
             CircleShape circleShape = parseCircleShapeElement(circleShapeElement);
             
-            body.setCircleShape(circleShape.radius);
+            data.shapeType = ShapeType.CIRCLE;
+            data.shapeRadius = circleShape.radius;
         }
 
         NodeList staticBehaviors  = bodyElement.getElementsByTagName("static_behavior");
@@ -339,17 +229,7 @@ public class EntityLoader
         if(behaviorTotal > 1) throw new EntityLoaderException("multiple behaviors not allowed in \"body\"");
         
         if(staticBehaviors.getLength() == 1)
-        {
-            /*
-            Node staticBehaviorNode = staticBehaviors.item(0);
-            if(staticBehaviorNode.getNodeType() != Node.ELEMENT_NODE)
-                throw new EntityLoaderException("invalid \"static_behavior\" node");
-            Element staticBehaviorElement = (Element) staticBehaviorNode;
-            StaticBehavior staticBehavior = parseStaticBehaviorElement(staticBehaviorElement);
-            */
-            
-            body.setBodyType(PhysicsBodyType.STATIC);
-        }
+            data.bodyType = PhysicsBodyType.STATIC;
         else if(dynamicBehaviors.getLength() == 1)
         {
             Node dynamicBehaviorNode = dynamicBehaviors.item(0);
@@ -358,72 +238,44 @@ public class EntityLoader
             Element dynamicBehaviorElement = (Element) dynamicBehaviorNode;
             DynamicBehavior dynamicBehavior = parseDynamicBehaviorElement(dynamicBehaviorElement);
             
-            body.setBodyType(PhysicsBodyType.DYNAMIC);
-            body.setDensity(dynamicBehavior.density);
-            body.setFriction(dynamicBehavior.friction);
-            body.setRestitution(dynamicBehavior.restitution);
+            data.bodyType = PhysicsBodyType.DYNAMIC;
+            data.density = dynamicBehavior.density;
+            data.friction = dynamicBehavior.friction;
+            data.restitution = dynamicBehavior.restitution;
         }
         else if(kinematicBehaviors.getLength() == 1)
-        {
-            /*
-            Node kinematicBehaviorNode = kinematicBehaviors.item(0);
-            if(kinematicBehaviorNode.getNodeType() != Node.ELEMENT_NODE)
-                throw new EntityLoaderException("invalid \"kinematic_behavior\" node");
-            Element kinematicBehaviorElement = (Element) kinematicBehaviorNode;
-            KinematicBehavior kinematicBehavior = parseKinematicBehaviorElement(kinematicBehaviorElement);
-            */
-            
-            body.setBodyType(PhysicsBodyType.KINEMATIC);
-        }
+            data.bodyType = PhysicsBodyType.KINEMATIC;
         
-        return new Pair<String, PhysicsBody>(name, body);
+        return new Pair<Integer, PhysicsBodyData>(hash, data);
     }
     
-    private Pair<String, PhysicsJoint> parseRevoluteJointElement(Element revoluteJointElement, Entity entity) throws EntityLoaderException
+    private Pair<Integer, PhysicsJointData> parseRevoluteJointElement(Element revoluteJointElement) throws EntityLoaderException
     {
-        PhysicsJoint joint = new PhysicsJoint(PhysicsJointType.REVOLUTE);
-        String name = XMLHelper.getDeepValue(revoluteJointElement, "name");
-
-        String nameBodyA = XMLHelper.getDeepValue(revoluteJointElement, "body_a");
-        String nameBodyB = XMLHelper.getDeepValue(revoluteJointElement, "body_b");
-        boolean collision = XMLHelper.getDeepValueBoolean(revoluteJointElement, "collision");
-        float rotation = XMLHelper.getDeepValueFloat(revoluteJointElement, "rotation");
+        PhysicsJointData joint = new PhysicsJointData();
+        joint.jointType = PhysicsJointType.REVOLUTE;
         
-        NodeList anchorAs = revoluteJointElement.getElementsByTagName("anchor_a");
-        NodeList anchorBs = revoluteJointElement.getElementsByTagName("anchor_b");
+        int hash = HashHelper.hash32(XMLHelper.getDeepValue(revoluteJointElement, "name"));
 
-        if(anchorAs.getLength() < 1)
-            throw new EntityLoaderException("missing \"anchor_a\" node in \"revolute_joint\"");
-        if(anchorAs.getLength() > 1)
-            throw new EntityLoaderException("multiple \"anchor_a\" nodes not allowed in \"revolute_joint\"");
+        joint.bodyA = HashHelper.hash32(XMLHelper.getDeepValue(revoluteJointElement, "body_a"));
+        joint.bodyB = HashHelper.hash32(XMLHelper.getDeepValue(revoluteJointElement, "body_b"));
+        joint.collide = XMLHelper.getDeepValueBoolean(revoluteJointElement, "collision");
         
-        if(anchorBs.getLength() < 1)
-            throw new EntityLoaderException("missing \"anchor_b\" node in \"revolute_joint\"");
-        if(anchorBs.getLength() > 1)
-            throw new EntityLoaderException("multiple \"anchor_b\" nodes not allowed in \"revolute_joint\"");
+        joint.angle = XMLHelper.getDeepValueFloat(revoluteJointElement, "rotation");
 
-        Node anchorANode = anchorAs.item(0);
+        Node anchorANode = XMLHelper.getUniqueNode(revoluteJointElement, "anchor_a");
+        Node anchorBNode = XMLHelper.getUniqueNode(revoluteJointElement, "anchor_b");
+        
         if(anchorANode.getNodeType() != Node.ELEMENT_NODE)
             throw new EntityLoaderException("invalid \"anchor_a\" node");
         Element anchorAElement = (Element) anchorANode;
-        Vector2 anchorA = parseVectorElement(anchorAElement);
+        joint.anchorA = parseVectorElement(anchorAElement);
         
-        Node anchorBNode = anchorBs.item(0);
         if(anchorBNode.getNodeType() != Node.ELEMENT_NODE)
             throw new EntityLoaderException("invalid \"anchor_b\" node");
         Element anchorBElement = (Element) anchorBNode;
-        Vector2 anchorB = parseVectorElement(anchorBElement);
-
-        int hashA = HashHelper.hash32(nameBodyA);
-        int hashB = HashHelper.hash32(nameBodyB);
-        joint.setBodyA(entity.bodies.get(hashA), hashA);
-        joint.setBodyB(entity.bodies.get(hashB), hashB);
-        joint.setCollisionEnabled(collision);
-        joint.setAngle(rotation);
-        joint.setAnchorA(anchorA);
-        joint.setAnchorB(anchorB);
+        joint.anchorB = parseVectorElement(anchorBElement);
         
-        return new Pair<String, PhysicsJoint>(name, joint);
+        return new Pair<Integer, PhysicsJointData>(hash, joint);
     }
     
     private Pair<Integer, Mask> parseColoredLayerElement(Element coloredLayerElement) throws EntityLoaderException
@@ -487,11 +339,11 @@ public class EntityLoader
         return new Pair<Integer, Mask>(layerHeight, mask);
     }
     
-    private Pair<String, Mask> parseMaskElement(Element maskElement, Entity entity) throws EntityLoaderException
+    private Pair<Integer, Mask> parseMaskElement(Element maskElement) throws EntityLoaderException
     {
         LayeredMask mask = new LayeredMask(RenderingOrder.BOTTOM_TO_TOP);
         
-        String name   = XMLHelper.getDeepValue(maskElement, "name");
+        int hash = HashHelper.hash32(XMLHelper.getDeepValue(maskElement, "name"));
         
         Map<Integer, Mask> layers = new HashMap<Integer, Mask>();
         
@@ -513,13 +365,75 @@ public class EntityLoader
         for(Integer height : heights)
             mask.addLayer(layers.get(height));
         
-        return new Pair<String, Mask>(name, mask);
+        return new Pair<Integer, Mask>(hash, mask);
     }
     
-    private Pair<String, String> parsePropertyElement(Element propertyElement)
+    private Vertex parseVertexElement(Element vertexElement)
     {
-        String name = XMLHelper.getDeepValue(propertyElement, "name");
-        String type = XMLHelper.getDeepValue(propertyElement, "type");
-        return new Pair<String, String>(name, type);
+        Vertex vertex = new Vertex();
+        
+        if(XMLHelper.hasNode(vertexElement, "index"))
+            vertex.index = XMLHelper.getDeepValueInteger(vertexElement, "index");
+        vertex.x = XMLHelper.getDeepValueFloat(vertexElement, "x");
+        vertex.y = XMLHelper.getDeepValueFloat(vertexElement, "y");
+        if(XMLHelper.hasNode(vertexElement, "color"))
+            vertex.color = XMLHelper.getDeepValueInteger(vertexElement, "color");
+        
+        return vertex;
+    }
+    
+    private PolygonShape parsePolygonShapeElement(Element polygonShapeElement) throws EntityLoaderException
+    {
+        PolygonShape polygonShape = new PolygonShape();
+        
+        int vertexCount = XMLHelper.getDeepValueInteger(polygonShapeElement, "vertex_count");
+        polygonShape.vertexCount = vertexCount;
+        polygonShape.vertices = new Vertex[vertexCount];
+        
+        NodeList vertices = polygonShapeElement.getElementsByTagName("vertex");
+        for(int i = 0; i < vertices.getLength(); i++)
+        {
+            Node vertexNode = vertices.item(i);
+            if(vertexNode.getNodeType() != Node.ELEMENT_NODE)
+                throw new EntityLoaderException("invalid \"vertex\" node");
+            Element vertexElement = (Element) vertexNode;
+            Vertex vertex = parseVertexElement(vertexElement);
+            polygonShape.vertices[vertex.index - 1] = vertex;
+        }
+        
+        return polygonShape;
+    }
+    
+    private CircleShape parseCircleShapeElement(Element circleShapeElement)
+    {
+        CircleShape circleShape = new CircleShape();
+        
+        float radius = XMLHelper.getDeepValueFloat(circleShapeElement, "radius");
+        circleShape.radius = radius;
+        if(XMLHelper.hasNode(circleShapeElement, "color"))
+            circleShape.color = XMLHelper.getDeepValueInteger(circleShapeElement, "color");
+        
+        return circleShape;
+    }
+    
+    private DynamicBehavior parseDynamicBehaviorElement(Element dynamicBehaviorElement)
+    {
+        DynamicBehavior dynamicBehavior = new DynamicBehavior();
+
+        float density     = XMLHelper.getDeepValueFloat(dynamicBehaviorElement, "density");
+        float friction    = XMLHelper.getDeepValueFloat(dynamicBehaviorElement, "friction");
+        float restitution = XMLHelper.getDeepValueFloat(dynamicBehaviorElement, "restitution");
+        dynamicBehavior.density     = density;
+        dynamicBehavior.friction    = friction;
+        dynamicBehavior.restitution = restitution;
+        
+        return dynamicBehavior;
+    }
+    
+    private Vector2 parseVectorElement(Element vectorElement)
+    {
+        float x = XMLHelper.getDeepValueFloat(vectorElement, "x");
+        float y = XMLHelper.getDeepValueFloat(vectorElement, "y");
+        return new Vector2(x, y);
     }
 }

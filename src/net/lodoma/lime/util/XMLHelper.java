@@ -1,6 +1,7 @@
 package net.lodoma.lime.util;
 
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class XMLHelper
@@ -61,5 +62,15 @@ public class XMLHelper
         {
             throw new RuntimeException("\"" + tag + "\" in \"" + element.getNodeName() + "\" is expected to be a boolean");
         }
+    }
+    
+    public static Node getUniqueNode(Element element, String tag)
+    {
+        NodeList nodeList = element.getElementsByTagName(tag);
+        if(nodeList.getLength() < 1)
+            throw new RuntimeException("missing \"" + tag + "\" in \"" + element.getNodeName() + "\"");
+        if(nodeList.getLength() > 1)
+            throw new RuntimeException("multiple \"" + tag + "\" nodes not allowed in \"" + element.getNodeName() + "\"");
+        return nodeList.item(0);
     }
 }
