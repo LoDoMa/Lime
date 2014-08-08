@@ -1,6 +1,5 @@
 <model>
 	<model_name> Lime::Ball </model_name>
-	<model_visual> Ball </model_visual>
 	<model_version> 1 </model_version>
 
 	<body>
@@ -25,16 +24,6 @@
 			</circle_shape>
 		</colored_layer>
 	</mask>
-
-	<property>
-		<name> translation </name>
-		<type> float2 </type>
-	</property>
-
-	<property>
-		<name> rotation </name>
-		<type> float1 </type>
-	</property>
 
 	<script> script/entity/ball.lua </script>
 </model>

@@ -1,6 +1,5 @@
 <model>
 	<model_name> Lime::Zombie </model_name>
-	<model_visual> Zombie </model_visual>
 	<model_version> 1 </model_version>
 
 	<body>
@@ -88,16 +87,6 @@
 			</polygon_shape>
 		</colored_layer>
 	</mask>
-
-	<property>
-		<name> translation </name>
-		<type> float2 </type>
-	</property>
-
-	<property>
-		<name> rotation </name>
-		<type> float1 </type>
-	</property>
 
 	<script> script/entity/zombie.lua </script>
 </model>

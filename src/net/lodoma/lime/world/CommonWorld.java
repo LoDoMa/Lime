@@ -16,8 +16,7 @@ import net.lodoma.lime.world.platform.Platform;
 
 public abstract class CommonWorld implements EntityWorld
 {
-    protected String internalName;
-    protected String visualName;
+    protected String name;
     protected String version;
     
     protected LuaScript script;

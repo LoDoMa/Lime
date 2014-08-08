@@ -10,8 +10,7 @@ import net.lodoma.lime.physics.PhysicsJointDescription;
 public class EntityData
 {
     public int nameHash;
-    public String internalName;
-    public String visualName;
+    public String name;
     public String version;
     
     public Map<Integer, PhysicsBodyDescription> bodies;

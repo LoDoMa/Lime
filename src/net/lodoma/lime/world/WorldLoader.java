@@ -31,11 +31,9 @@ public class WorldLoader
                 throw new WorldLoaderException("root of a world XML file must be named \"world\"");
             
             String name = XMLHelper.getDeepValue(docElement, "name");
-            String visual = XMLHelper.getDeepValue(docElement, "visual");
             String version = XMLHelper.getDeepValue(docElement, "version");
             
-            world.internalName = name;
-            world.visualName = visual;
+            world.name = name;
             world.version = version;
             
             world.script = new LuaScript();

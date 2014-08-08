@@ -130,10 +130,9 @@ public class EntityLoader
             if(rootName != "model")
                 throw new EntityLoaderException("root of an entity XML file must be named \"model\"");
             
-            data.internalName = XMLHelper.getDeepValue(docElement, "model_name");
-            data.visualName   = XMLHelper.getDeepValue(docElement, "model_visual");
+            data.name         = XMLHelper.getDeepValue(docElement, "model_name");
             data.version      = XMLHelper.getDeepValue(docElement, "model_version");
-            data.nameHash     = HashHelper.hash32(data.internalName);
+            data.nameHash     = HashHelper.hash32(data.name);
             
             NodeList bodies         = docElement.getElementsByTagName("body");
             NodeList revoluteJoints = docElement.getElementsByTagName("revolute_joint");

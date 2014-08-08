@@ -26,8 +26,7 @@ public class Entity
     int ID;
     
     int hash;
-    String internalName;
-    String visualName;
+    String name;
     String version;
     
     EntityWorld world;
@@ -43,8 +42,7 @@ public class Entity
     public Entity(EntityWorld entityWorld, PhysicsWorld physicsWorld, PropertyPool propertyPool, EntityData data) throws IOException
     {
         hash = data.nameHash;
-        internalName = data.internalName;
-        visualName = data.visualName;
+        name = data.name;
         version = data.version;
         
         world = entityWorld;
@@ -128,14 +126,9 @@ public class Entity
         return hash;
     }
     
-    public String getInternalName()
+    public String getName()
     {
-        return internalName;
-    }
-    
-    public String getVisualName()
-    {
-        return visualName;
+        return name;
     }
     
     public String getVersion()

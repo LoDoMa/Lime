@@ -10,8 +10,7 @@ local entity = LIME_ENTITY
 local script = LIME_SCRIPT
 
 local entityID = entity:getID()
-local entityInternalName = entity:getInternalName()
-local entityVisualName = entity:getVisualName()
+local entityName = entity:getName()
 local entityVersion = entity:getVersion()
 
 local entityWorld = entity:getEntityWorld()
@@ -32,7 +31,6 @@ local workingJointHash = 0
 local workingMask = nil
 local workingMaskHash = 0
 
-local properties = {}
 local listenerFunctions = {}
 local eventListeners = {}
 
@@ -304,18 +302,6 @@ local function setMaskRotation(angle)
 	workingMask:setRotation(angle)
 end
 
--- property
-
-local function getProperty(hash)
-	checkType(hash, "number", 1, "lime.property.get")
-	return properties[hash]
-end
-
-local function setProperty(hash, value)
-	checkType(hash, "number", 1, "lime.property.set")
-	properties[hash] = value
-end
-
 -- listener
 
 local function setListener(hash, listenerFunction)
@@ -403,10 +389,7 @@ lime = {
 	},
 	this = {
 		ID = entityID,
-		name = {
-			internal = entityInternalName,
-			visual = entityVisualName,
-		},
+		name = entityName,
 		version = entityVersion,
 	},
 	entity = {
@@ -446,10 +429,6 @@ lime = {
 				set = setMaskRotation,
 			},
 		},
-	},
-	property = {
-		get = getProperty,
-		set = setProperty,
 	},
 	listener = {
 		set = setListener,
