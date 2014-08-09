@@ -11,17 +11,6 @@ public class XMLHelper
         return element.getElementsByTagName(tag).getLength() > 0;
     }
     
-    public static String getDeepValue(Element element, String tag)
-    {
-        NodeList list = element.getElementsByTagName(tag);
-        if(list.getLength() < 1)
-            throw new RuntimeException("missing \"" + tag + "\" node in \"" + element.getNodeName() + "\"");
-        if(list.getLength() > 1)
-            throw new RuntimeException("multiple \"" + tag + "\" nodes not allowed in \"" + element.getNodeName() + "\"");
-        NodeList list2 = list.item(0).getChildNodes();
-        return list2.item(0).getNodeValue().trim();
-    }
-    
     public static float getDeepValueFloat(Element element, String tag)
     {
         String value = getDeepValue(element, tag);
@@ -64,13 +53,52 @@ public class XMLHelper
         }
     }
     
+    public static String getDeepValue(Element element, String tag)
+    {
+        Node uniqueNode = getUniqueNode(element, tag);
+        NodeList childNodes = uniqueNode.getChildNodes();
+        return childNodes.item(0).getNodeValue().trim();
+    }
+    
+    public static Element getUniqueElement(Element element, String tag)
+    {
+        return nodeToElement(getUniqueNode(element, tag));
+    }
+    
+    public static Element getUniqueElement(Element element, String name, String[] tags)
+    {
+        return nodeToElement(getUniqueNode(element, name, tags));
+    }
+    
+    public static Element nodeToElement(Node node)
+    {
+        if(node.getNodeType() != Node.ELEMENT_NODE)
+            throw new RuntimeException("\"" + node.getNodeName() + "\" is expected to be an element node");
+        return (Element) node;
+    }
+    
     public static Node getUniqueNode(Element element, String tag)
     {
-        NodeList nodeList = element.getElementsByTagName(tag);
-        if(nodeList.getLength() < 1)
-            throw new RuntimeException("missing \"" + tag + "\" in \"" + element.getNodeName() + "\"");
-        if(nodeList.getLength() > 1)
-            throw new RuntimeException("multiple \"" + tag + "\" nodes not allowed in \"" + element.getNodeName() + "\"");
-        return nodeList.item(0);
+        return getUniqueNode(element, "\"" + tag + "\"", new String[] { tag });
+    }
+    
+    public static Node getUniqueNode(Element element, String name, String[] tags)
+    {
+        Node node = null;
+        
+        for(int i = 0; i < tags.length; i++)
+        {
+            NodeList list = element.getElementsByTagName(tags[i]);
+            int length = list.getLength();
+
+            if((length + (node == null ? 0 : 1)) > 1)
+                throw new RuntimeException("multiple " + name + " nodes not allowed in \"" + element.getNodeName() + "\"");
+            if(length == 1)
+                node = list.item(0);
+        }
+        
+        if(node == null)
+            throw new RuntimeException("missing " + name + " in \"" + element.getNodeName() + "\"");
+        return node;
     }
 }

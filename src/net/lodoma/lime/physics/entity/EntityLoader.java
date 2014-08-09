@@ -32,7 +32,6 @@ import net.lodoma.lime.util.XMLHelper;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -141,37 +140,28 @@ public class EntityLoader
             
             for(int i = 0; i < bodies.getLength(); i++)
             {
-                Node bodyNode = bodies.item(i);
-                if(bodyNode.getNodeType() != Node.ELEMENT_NODE)
-                    throw new EntityLoaderException("invalid \"body\" node");
-                
-                Pair<Integer, PhysicsBodyData> bodyData = parseBodyElement((Element) bodyNode);
+                Element body = XMLHelper.nodeToElement(bodies.item(i));
+                Pair<Integer, PhysicsBodyData> bodyData = parseBodyElement(body);
                 data.bodies.put(bodyData.first, new PhysicsBodyDescription(bodyData.second));
             }
             
             for(int i = 0; i < revoluteJoints.getLength(); i++)
             {
-                Node jointNode = revoluteJoints.item(i);
-                if(jointNode.getNodeType() != Node.ELEMENT_NODE)
-                    throw new EntityLoaderException("invalid \"revolute_joint\" node");
-                
-                Pair<Integer, PhysicsJointData> jointData = parseRevoluteJointElement((Element) jointNode);
+                Element joint = XMLHelper.nodeToElement(revoluteJoints.item(i));
+                Pair<Integer, PhysicsJointData> jointData = parseRevoluteJointElement(joint);
                 data.joints.put(jointData.first, new PhysicsJointDescription(jointData.second));
             }
             
             for(int i = 0; i < masks.getLength(); i++)
             {
-                Node maskNode = masks.item(i);
-                if(maskNode.getNodeType() != Node.ELEMENT_NODE)
-                    throw new EntityLoaderException("invalid \"mask\" node");
-                
-                Pair<Integer, Mask> maskData = parseMaskElement((Element) maskNode);
+                Element mask = XMLHelper.nodeToElement(masks.item(i));
+                Pair<Integer, Mask> maskData = parseMaskElement(mask);
                 data.masks.put(maskData.first, maskData.second);
             }
             
             return data;
         }
-        catch(IOException | SAXException | ParserConfigurationException e)
+        catch(IOException | SAXException | ParserConfigurationException | RuntimeException e)
         {
             throw new EntityLoaderException(e);
         }
@@ -185,20 +175,12 @@ public class EntityLoader
         
         int hash = HashHelper.hash32(XMLHelper.getDeepValue(bodyElement, "name"));
         
-        NodeList polygonShapes = bodyElement.getElementsByTagName("polygon_shape");
-        NodeList circleShapes  = bodyElement.getElementsByTagName("circle_shape");
-        int shapeTotal = polygonShapes.getLength() + circleShapes.getLength();
+        Element shape = XMLHelper.getUniqueElement(bodyElement, "shape", new String[] { "polygon_shape", "circle_shape" });
         
-        if(shapeTotal == 0) throw new EntityLoaderException("missing shape in \"body\"");
-        if(shapeTotal > 1) throw new EntityLoaderException("multiple shapes not allowed in \"body\"");
-        
-        if(polygonShapes.getLength() == 1)
+        switch(shape.getNodeName())
         {
-            Node polygonShapeNode = polygonShapes.item(0);
-            if(polygonShapeNode.getNodeType() != Node.ELEMENT_NODE)
-                throw new EntityLoaderException("invalid \"polygon_shape\" node");
-            Element polygonShapeElement = (Element) polygonShapeNode;
-            PolygonShape polygonShape = parsePolygonShapeElement(polygonShapeElement);
+        case "polygon_shape":
+            PolygonShape polygonShape = parsePolygonShapeElement(shape);
             
             Vector2[] vertices = new Vector2[polygonShape.vertexCount];
             for(int i = 0; i < polygonShape.vertexCount; i++)
@@ -206,44 +188,36 @@ public class EntityLoader
             
             data.shapeType = ShapeType.POLYGON;
             data.shapeVertices = vertices;
-        }
-        else if(circleShapes.getLength() == 1)
-        {
-            Node circleShapeNode = circleShapes.item(0);
-            if(circleShapeNode.getNodeType() != Node.ELEMENT_NODE)
-                throw new EntityLoaderException("invalid \"circle_shape\" node");
-            Element circleShapeElement = (Element) circleShapeNode;
-            CircleShape circleShape = parseCircleShapeElement(circleShapeElement);
+            
+            break;
+        case "circle_shape":
+            CircleShape circleShape = parseCircleShapeElement(shape);
             
             data.shapeType = ShapeType.CIRCLE;
             data.shapeRadius = circleShape.radius;
+            break;
         }
 
-        NodeList staticBehaviors  = bodyElement.getElementsByTagName("static_behavior");
-        NodeList dynamicBehaviors = bodyElement.getElementsByTagName("dynamic_behavior");
-        NodeList kinematicBehaviors = bodyElement.getElementsByTagName("kinematic_behavior");
-        int behaviorTotal = staticBehaviors.getLength() + dynamicBehaviors.getLength() + kinematicBehaviors.getLength();
-
-        if(behaviorTotal == 0) throw new EntityLoaderException("missing behavior in \"body\"");
-        if(behaviorTotal > 1) throw new EntityLoaderException("multiple behaviors not allowed in \"body\"");
+        Element behavior = XMLHelper.getUniqueElement(bodyElement, "behavior",
+                new String[] { "static_behavior", "dynamic_behavior", "kinematic_behavior" });
         
-        if(staticBehaviors.getLength() == 1)
-            data.bodyType = PhysicsBodyType.STATIC;
-        else if(dynamicBehaviors.getLength() == 1)
+        switch(behavior.getNodeName())
         {
-            Node dynamicBehaviorNode = dynamicBehaviors.item(0);
-            if(dynamicBehaviorNode.getNodeType() != Node.ELEMENT_NODE)
-                throw new EntityLoaderException("invalid \"dynamic_behavior\" node");
-            Element dynamicBehaviorElement = (Element) dynamicBehaviorNode;
-            DynamicBehavior dynamicBehavior = parseDynamicBehaviorElement(dynamicBehaviorElement);
+        case "static_behavior":
+            data.bodyType = PhysicsBodyType.STATIC;
+            break;
+        case "dynamic_behavior":
+            DynamicBehavior dynamicBehavior = parseDynamicBehaviorElement(behavior);
             
             data.bodyType = PhysicsBodyType.DYNAMIC;
             data.density = dynamicBehavior.density;
             data.friction = dynamicBehavior.friction;
             data.restitution = dynamicBehavior.restitution;
-        }
-        else if(kinematicBehaviors.getLength() == 1)
+            break;
+        case "kinematic_behavior":
             data.bodyType = PhysicsBodyType.KINEMATIC;
+            break;
+        }
         
         return new Pair<Integer, PhysicsBodyData>(hash, data);
     }
@@ -261,18 +235,11 @@ public class EntityLoader
         
         joint.angle = XMLHelper.getDeepValueFloat(revoluteJointElement, "rotation");
 
-        Node anchorANode = XMLHelper.getUniqueNode(revoluteJointElement, "anchor_a");
-        Node anchorBNode = XMLHelper.getUniqueNode(revoluteJointElement, "anchor_b");
+        Element anchorA = XMLHelper.getUniqueElement(revoluteJointElement, "anchor_a");
+        Element anchorB = XMLHelper.getUniqueElement(revoluteJointElement, "anchor_b");
         
-        if(anchorANode.getNodeType() != Node.ELEMENT_NODE)
-            throw new EntityLoaderException("invalid \"anchor_a\" node");
-        Element anchorAElement = (Element) anchorANode;
-        joint.anchorA = parseVectorElement(anchorAElement);
-        
-        if(anchorBNode.getNodeType() != Node.ELEMENT_NODE)
-            throw new EntityLoaderException("invalid \"anchor_b\" node");
-        Element anchorBElement = (Element) anchorBNode;
-        joint.anchorB = parseVectorElement(anchorBElement);
+        joint.anchorA = parseVectorElement(anchorA);
+        joint.anchorB = parseVectorElement(anchorB);
         
         return new Pair<Integer, PhysicsJointData>(hash, joint);
     }
@@ -280,25 +247,16 @@ public class EntityLoader
     private Pair<Integer, Mask> parseColoredLayerElement(Element coloredLayerElement) throws EntityLoaderException
     {
         int layerHeight = XMLHelper.getDeepValueInteger(coloredLayerElement, "layer_height");
-        
-        NodeList polygonShapes = coloredLayerElement.getElementsByTagName("polygon_shape");
-        NodeList circleShapes = coloredLayerElement.getElementsByTagName("circle_shape");
-        int shapeTotal = polygonShapes.getLength() + circleShapes.getLength();
-        
-        if(shapeTotal < 1)
-            throw new EntityLoaderException("missing shape in \"colored_layer\"");
-        if(shapeTotal > 1)
-            throw new EntityLoaderException("multiple shapes nodes not allowed in \"colored_layer\"");
+
+        Element shape = XMLHelper.getUniqueElement(coloredLayerElement, "shape", new String[] { "polygon_shape", "circle_shape" });
         
         ColoredMask mask = null;
         
-        if(polygonShapes.getLength() > 0)
+        switch(shape.getNodeName())
         {
-            Node polygonShapeNode = polygonShapes.item(0);
-            if(polygonShapeNode.getNodeType() != Node.ELEMENT_NODE)
-                throw new EntityLoaderException("invalid \"polygon_shape\" node");
-            Element polygonShapeElement = (Element) polygonShapeNode;
-            PolygonShape polygonShape = parsePolygonShapeElement(polygonShapeElement);
+        case "polygon_shape":
+        {
+            PolygonShape polygonShape = parsePolygonShapeElement(shape);
             
             int n = polygonShape.vertexCount;
             float[] x = new float[n];
@@ -319,20 +277,20 @@ public class EntityLoader
             }
             
             mask = new ColoredMask(n, x, y, r, g, b, a);
+            
+            break;
         }
-        else if(circleShapes.getLength() > 0)
+        case "circle_shape":
         {
-            Node circleShapeNode = circleShapes.item(0);
-            if(circleShapeNode.getNodeType() != Node.ELEMENT_NODE)
-                throw new EntityLoaderException("invalid \"circle_shape\" node");
-            Element circleShapeElement = (Element) circleShapeNode;
-            CircleShape circleShape = parseCircleShapeElement(circleShapeElement);
+            CircleShape circleShape = parseCircleShapeElement(shape);
 
             float r = ((circleShape.color >>> 24) & 0xFF) / (float) 0xFF;
             float g = ((circleShape.color >>> 16) & 0xFF) / (float) 0xFF;
             float b = ((circleShape.color >>> 8 ) & 0xFF) / (float) 0xFF;
             float a = ((circleShape.color >>> 0 ) & 0xFF) / (float) 0xFF;
             mask = new ColoredMask(circleShape.radius, r, g, b, a);
+            break;
+        }
         }
         
         return new Pair<Integer, Mask>(layerHeight, mask);
@@ -350,11 +308,8 @@ public class EntityLoader
         
         for(int i = 0; i < coloredLayers.getLength(); i++)
         {
-            Node coloredLayerNode = coloredLayers.item(i);
-            if(coloredLayerNode.getNodeType() != Node.ELEMENT_NODE)
-                throw new EntityLoaderException("invalid \"colored_layer\" node");
-            Element coloredLayerElement = (Element) coloredLayerNode;
-            Pair<Integer, Mask> layerData = parseColoredLayerElement(coloredLayerElement);
+            Element coloredLayer = XMLHelper.nodeToElement(coloredLayers.item(i));
+            Pair<Integer, Mask> layerData = parseColoredLayerElement(coloredLayer);
             if(layers.containsKey(layerData.first))
                 throw new EntityLoaderException("duplicate layer height");
             layers.put(layerData.first, layerData.second);
@@ -392,10 +347,7 @@ public class EntityLoader
         NodeList vertices = polygonShapeElement.getElementsByTagName("vertex");
         for(int i = 0; i < vertices.getLength(); i++)
         {
-            Node vertexNode = vertices.item(i);
-            if(vertexNode.getNodeType() != Node.ELEMENT_NODE)
-                throw new EntityLoaderException("invalid \"vertex\" node");
-            Element vertexElement = (Element) vertexNode;
+            Element vertexElement = XMLHelper.nodeToElement(vertices.item(i));
             Vertex vertex = parseVertexElement(vertexElement);
             polygonShape.vertices[vertex.index - 1] = vertex;
         }
