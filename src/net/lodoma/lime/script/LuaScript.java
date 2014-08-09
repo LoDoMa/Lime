@@ -7,7 +7,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import com.naef.jnlua.LuaException;
+import com.naef.jnlua.LuaRuntimeException;
 import com.naef.jnlua.LuaState;
+import com.naef.jnlua.LuaType;
 
 public class LuaScript
 {
@@ -47,6 +49,55 @@ public class LuaScript
        else if(object instanceof Double)    luaState.pushNumber((Double) object);
        else if(object instanceof String)    luaState.pushString((String) object);
        else                                 luaState.pushJavaObject(object);
+    }
+    
+    public Object pop()
+    {
+        Object returned = popBoolean();
+        if(returned != null) return returned;
+        returned = popNumber();
+        if(returned != null) return returned;
+        returned = popString();
+        return returned;
+    }
+    
+    private Boolean popBoolean()
+    {
+        try
+        {
+            luaState.checkType(-1, LuaType.BOOLEAN);
+            return luaState.toBoolean(-1);
+        }
+        catch(LuaRuntimeException e)
+        {
+            return null;
+        }
+    }
+    
+    private Double popNumber()
+    {
+        try
+        {
+            luaState.checkType(-1, LuaType.NUMBER);
+            return luaState.toNumber(-1);
+        }
+        catch(LuaRuntimeException e)
+        {
+            return null;
+        }
+    }
+    
+    private String popString()
+    {
+        try
+        {
+            luaState.checkType(-1, LuaType.STRING);
+            return luaState.toString(-1);
+        }
+        catch(LuaRuntimeException e)
+        {
+            return null;
+        }
     }
     
     public void setGlobal(String name, Object value)
@@ -91,8 +142,16 @@ public class LuaScript
         }
     }
     
-    public void call(String functionPath, Object... arguments)
+    public void call(String functionPath, Object[] arguments)
     {
+        call(functionPath, 0, arguments);
+    }
+    
+    public Object[] call(String functionPath, int returnc, Object[] arguments)
+    {
+        if(arguments == null)
+            arguments = new Object[0];
+        
         String[] segm = functionPath.split("\\.");
         if(segm.length >= 1) luaState.getGlobal(segm[0]);
         for(int i = 1; i < segm.length; i++)
@@ -101,8 +160,15 @@ public class LuaScript
         for(Object argument : arguments)
             push(argument);
 
-        protectedCall(arguments.length, 0);
+        protectedCall(arguments.length, returnc);
+        
+        Object[] returned = new Object[returnc];
+        for(int i = 0; i < returnc; i++)
+            returned[i] = pop();
+        
         luaState.pop(segm.length - 1);
+        
+        return returned;
     }
     
     public void close()

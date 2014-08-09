@@ -1,5 +1,5 @@
 <model>
-	<model_name> Lime::Zombie </model_name>
+	<model_name> entity.zombie </model_name>
 	<model_version> 1 </model_version>
 
 	<body>

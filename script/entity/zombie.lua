@@ -45,7 +45,7 @@ local function clientUpdate()
 	limex.follow(this, hashes["body"], this, hashes["m_body"])
 
 	if firstUpdate then
-		lime.light.basic.add(0, newVector(16, 15), 40, newColor(0, 0, 1, 1), -1, 361)
+		lime.light.basic.add(0, newVector(16, 15), 40, newColor(1, 1, 1, 1), -1, 361)
 	end
 end
 
@@ -60,4 +60,8 @@ function Lime_FrameUpdate(timeDelta, isActor)
 	elseif lime.network.side.client then clientUpdate() end
 
 	firstUpdate = false
+end
+
+function Lime_GetUnlocalizedName()
+	return "entity.zombie.name"
 end

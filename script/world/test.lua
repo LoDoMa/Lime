@@ -12,18 +12,18 @@ local function addHash(str)
 end
 
 local function loadHashes()
-	addHash("Lime::Zombie")
-	addHash("Lime::Ball")
+	addHash("entity.zombie")
+	addHash("entity.ball")
 	addHash("Lime::OnNewUser")
 end
 
 local function onNewUser(bundle)
 	print("user ID: " .. bundle["userID"])
 
-	local id = lime.entity.create(hashes["Lime::Zombie"])
+	local id = lime.entity.create(hashes["entity.zombie"])
 	lime.actor.set(id, bundle["userID"])
 	for i = 0, 5, 1 do
-		lime.entity.create(hashes["Lime::Ball"])
+		lime.entity.create(hashes["entity.ball"])
 	end
 
 	print("created all")

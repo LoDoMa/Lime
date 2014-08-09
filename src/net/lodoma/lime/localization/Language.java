@@ -9,10 +9,12 @@ import java.util.Map;
 
 public class Language
 {
-    public Map<String, String> names;
+    private Language parentLanguage;
+    private Map<String, String> names;
     
-    public Language(File langFile) throws IOException
+    public Language(Language parentLanguage, File langFile) throws IOException
     {
+        this.parentLanguage = parentLanguage;
         names = new HashMap<String, String>();
         
         FileReader fileReader = new FileReader(langFile);
@@ -36,7 +38,10 @@ public class Language
     {
         String localizedName = names.get(unlocalizedName);
         if(localizedName == null)
-            return unlocalizedName;
+            if(parentLanguage == null)
+                return unlocalizedName;
+            else
+                return parentLanguage.getLocalizedName(unlocalizedName);
         return localizedName;
     }
 }

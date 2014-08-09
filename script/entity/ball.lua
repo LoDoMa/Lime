@@ -48,3 +48,7 @@ function Lime_FrameUpdate(timeDelta, isActor)
 
 	firstUpdate = false
 end
+
+function Lime_GetUnlocalizedName()
+	return "entity.ball.name"
+end

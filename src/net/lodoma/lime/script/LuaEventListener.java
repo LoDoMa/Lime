@@ -22,7 +22,7 @@ public class LuaEventListener implements EventListener
     @Override
     public void onEvent(EventBundle bundle)
     {
-        script.call("lime.listener.invoke", eventHash, bundle);
+        script.call("lime.listener.invoke", new Object[] { eventHash, bundle });
     }
     
     public void destroy()

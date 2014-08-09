@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 import net.lodoma.lime.common.PropertyPool;
+import net.lodoma.lime.localization.Language;
 import net.lodoma.lime.mask.Mask;
 import net.lodoma.lime.physics.PhysicsBody;
 import net.lodoma.lime.physics.PhysicsJoint;
@@ -131,6 +132,11 @@ public class Entity
         return name;
     }
     
+    public String getLocalizedName(Language language)
+    {
+        return language.getLocalizedName((String) (script.call("Lime_GetUnlocalizedName", 1, null)[0]));
+    }
+    
     public String getVersion()
     {
         return version;
@@ -164,7 +170,7 @@ public class Entity
     public void update(double timeDelta)
     {
         boolean actor = propertyPool.hasProperty("actor") && ((Integer) propertyPool.getProperty("actor")) == ID;
-        script.call("Lime_FrameUpdate", timeDelta, actor);
+        script.call("Lime_FrameUpdate", new Object[] { timeDelta, actor });
     }
     
     public void render()
