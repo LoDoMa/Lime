@@ -39,33 +39,6 @@ public class EntityLoader
 {
     public static final String ENTITY_DESCRIPTION_FILE_EXTENSION = ".xml";
     
-    private class Vertex
-    {
-        public int index;
-        public float x;
-        public float y;
-        public int color;
-    }
-    
-    private class PolygonShape
-    {
-        public int vertexCount;
-        public Vertex[] vertices;
-    }
-    
-    private class CircleShape
-    {
-        public float radius;
-        public int color;
-    }
-    
-    private class DynamicBehavior
-    {
-        public float density;
-        public float friction;
-        public float restitution;
-    }
-    
     private Map<Integer, EntityData> entityData;
     
     public EntityLoader()
@@ -255,42 +228,30 @@ public class EntityLoader
         switch(shape.getNodeName())
         {
         case "polygon_shape":
-        {
             PolygonShape polygonShape = parsePolygonShapeElement(shape);
             
             int n = polygonShape.vertexCount;
-            float[] x = new float[n];
-            float[] y = new float[n];
-            float[] r = new float[n];
-            float[] g = new float[n];
-            float[] b = new float[n];
-            float[] a = new float[n];
+            float[][] arrays = new float[6][n];
             for(int i = 0; i < n; i++)
             {
                 Vertex vertex = polygonShape.vertices[i];
-                x[i] = vertex.x;
-                y[i] = vertex.y;
-                r[i] = ((vertex.color >>> 24) & 0xFF) / (float) (0xFF);
-                g[i] = ((vertex.color >>> 16) & 0xFF) / (float) (0xFF);
-                b[i] = ((vertex.color >>> 8 ) & 0xFF) / (float) (0xFF);
-                a[i] = ((vertex.color >>> 0 ) & 0xFF) / (float) (0xFF);
+                arrays[0][i] = vertex.x;
+                arrays[1][i] = vertex.y;
+                for(int j = 0; j < 4; j++)
+                    arrays[j + 2][i] = ((vertex.color >>> (24 - i * 8)) & 0xFF) / (float) (0xFF);
             }
             
-            mask = new ColoredMask(n, x, y, r, g, b, a);
+            mask = new ColoredMask(n, arrays[0], arrays[1], arrays[2], arrays[3], arrays[4], arrays[5]);
             
             break;
-        }
         case "circle_shape":
-        {
             CircleShape circleShape = parseCircleShapeElement(shape);
-
-            float r = ((circleShape.color >>> 24) & 0xFF) / (float) 0xFF;
-            float g = ((circleShape.color >>> 16) & 0xFF) / (float) 0xFF;
-            float b = ((circleShape.color >>> 8 ) & 0xFF) / (float) 0xFF;
-            float a = ((circleShape.color >>> 0 ) & 0xFF) / (float) 0xFF;
-            mask = new ColoredMask(circleShape.radius, r, g, b, a);
+            
+            float[] color = new float[4];
+            for(int i = 0; i < 4; i++)
+                color[i] = ((circleShape.color >>> (24 - i * 8)) & 0xFF) / (float) 0xFF;
+            mask = new ColoredMask(circleShape.radius, color[0], color[1], color[2], color[3]);
             break;
-        }
         }
         
         return new Pair<Integer, Mask>(layerHeight, mask);
@@ -322,18 +283,18 @@ public class EntityLoader
         return new Pair<Integer, Mask>(hash, mask);
     }
     
-    private Vertex parseVertexElement(Element vertexElement)
+    private DynamicBehavior parseDynamicBehaviorElement(Element dynamicBehaviorElement)
     {
-        Vertex vertex = new Vertex();
+        DynamicBehavior dynamicBehavior = new DynamicBehavior();
+
+        float density     = XMLHelper.getDeepValueFloat(dynamicBehaviorElement, "density");
+        float friction    = XMLHelper.getDeepValueFloat(dynamicBehaviorElement, "friction");
+        float restitution = XMLHelper.getDeepValueFloat(dynamicBehaviorElement, "restitution");
+        dynamicBehavior.density     = density;
+        dynamicBehavior.friction    = friction;
+        dynamicBehavior.restitution = restitution;
         
-        if(XMLHelper.hasNode(vertexElement, "index"))
-            vertex.index = XMLHelper.getDeepValueInteger(vertexElement, "index");
-        vertex.x = XMLHelper.getDeepValueFloat(vertexElement, "x");
-        vertex.y = XMLHelper.getDeepValueFloat(vertexElement, "y");
-        if(XMLHelper.hasNode(vertexElement, "color"))
-            vertex.color = XMLHelper.getDeepValueInteger(vertexElement, "color");
-        
-        return vertex;
+        return dynamicBehavior;
     }
     
     private PolygonShape parsePolygonShapeElement(Element polygonShapeElement) throws EntityLoaderException
@@ -367,18 +328,18 @@ public class EntityLoader
         return circleShape;
     }
     
-    private DynamicBehavior parseDynamicBehaviorElement(Element dynamicBehaviorElement)
+    private Vertex parseVertexElement(Element vertexElement)
     {
-        DynamicBehavior dynamicBehavior = new DynamicBehavior();
-
-        float density     = XMLHelper.getDeepValueFloat(dynamicBehaviorElement, "density");
-        float friction    = XMLHelper.getDeepValueFloat(dynamicBehaviorElement, "friction");
-        float restitution = XMLHelper.getDeepValueFloat(dynamicBehaviorElement, "restitution");
-        dynamicBehavior.density     = density;
-        dynamicBehavior.friction    = friction;
-        dynamicBehavior.restitution = restitution;
+        Vertex vertex = new Vertex();
         
-        return dynamicBehavior;
+        if(XMLHelper.hasNode(vertexElement, "index"))
+            vertex.index = XMLHelper.getDeepValueInteger(vertexElement, "index");
+        vertex.x = XMLHelper.getDeepValueFloat(vertexElement, "x");
+        vertex.y = XMLHelper.getDeepValueFloat(vertexElement, "y");
+        if(XMLHelper.hasNode(vertexElement, "color"))
+            vertex.color = XMLHelper.getDeepValueInteger(vertexElement, "color");
+        
+        return vertex;
     }
     
     private Vector2 parseVectorElement(Element vectorElement)
@@ -386,5 +347,32 @@ public class EntityLoader
         float x = XMLHelper.getDeepValueFloat(vectorElement, "x");
         float y = XMLHelper.getDeepValueFloat(vectorElement, "y");
         return new Vector2(x, y);
+    }
+    
+    private class Vertex
+    {
+        public int index;
+        public float x;
+        public float y;
+        public int color;
+    }
+    
+    private class PolygonShape
+    {
+        public int vertexCount;
+        public Vertex[] vertices;
+    }
+    
+    private class CircleShape
+    {
+        public float radius;
+        public int color;
+    }
+    
+    private class DynamicBehavior
+    {
+        public float density;
+        public float friction;
+        public float restitution;
     }
 }
