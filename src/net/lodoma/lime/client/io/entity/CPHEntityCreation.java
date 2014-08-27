@@ -31,8 +31,7 @@ public class CPHEntityCreation extends ClientPacketHandler
         
         try
         {
-            Entity entity = entityLoader.newEntity(world, world.getPhysicsWorld(), client, hash);
-            entity.setID(id);
+            Entity entity = entityLoader.newEntity(world, world.getPhysicsWorld(), client, hash, id);
             world.addEntity(entity);
         }
         catch (EntityLoaderException e)

@@ -1,6 +1,5 @@
 
-local whitelist =
-{
+local whitelist = {
 	_G = true,
 	lime = true,
 	limex = true,

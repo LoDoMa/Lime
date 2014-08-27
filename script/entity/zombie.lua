@@ -63,5 +63,5 @@ function Lime_FrameUpdate(timeDelta, isActor)
 end
 
 function Lime_GetUnlocalizedName()
-	return "entity.zombie.name"
+	return "lime.entity.zombie.name"
 end

@@ -1,5 +1,5 @@
 <model>
-	<model_name> entity.ball </model_name>
+	<model_name> lime.entity.ball </model_name>
 	<model_version> 1 </model_version>
 
 	<body>

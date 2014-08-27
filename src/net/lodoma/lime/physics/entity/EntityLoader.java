@@ -38,6 +38,7 @@ import org.xml.sax.SAXException;
 public class EntityLoader
 {
     public static final String ENTITY_DESCRIPTION_FILE_EXTENSION = ".xml";
+    private static int idCounter = 0;
     
     private Map<Integer, EntityData> entityData;
     
@@ -55,13 +56,17 @@ public class EntityLoader
             entityData.put(entity.nameHash, entity);
         }
     }
-    
     public Entity newEntity(EntityWorld entityWorld, PhysicsWorld physicsWorld, PropertyPool propertyPool, int hash) throws EntityLoaderException
+    {
+        return newEntity(entityWorld, physicsWorld, propertyPool, hash, idCounter++);
+    }
+    
+    public Entity newEntity(EntityWorld entityWorld, PhysicsWorld physicsWorld, PropertyPool propertyPool, int hash, int id) throws EntityLoaderException
     {
         try
         {
             EntityData data = entityData.get(hash);
-            return new Entity(entityWorld, physicsWorld, propertyPool, data);
+            return new Entity(entityWorld, physicsWorld, propertyPool, data, id);
         }
         catch(IOException e)
         {

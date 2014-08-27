@@ -1,5 +1,5 @@
 <model>
-	<model_name> entity.zombie </model_name>
+	<model_name> lime.entity.zombie </model_name>
 	<model_version> 1 </model_version>
 
 	<body>
@@ -11,11 +11,11 @@
 			<vertex> <index> 3 </index> <x> 0.5 </x> <y> 0.5 </y> </vertex>
 			<vertex> <index> 4 </index> <x> 0.0 </x> <y> 0.5 </y> </vertex>
 		</polygon_shape>
-		<static_behavior>
+		<dynamic_behavior>
 			<density> 2.0 </density>
 			<friction> 0.3 </friction>
 		    <restitution> 0.2 </restitution>
-		</static_behavior>
+		</dynamic_behavior>
 	</body>
 
 	<body>

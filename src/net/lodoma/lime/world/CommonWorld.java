@@ -57,7 +57,6 @@ public abstract class CommonWorld implements EntityWorld
     @Override
     public synchronized void addEntity(Entity entity)
     {
-        entity.generateID();
         entities.put(entity.getID(), entity);
     }
 

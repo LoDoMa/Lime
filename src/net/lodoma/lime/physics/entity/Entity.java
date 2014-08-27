@@ -21,9 +21,6 @@ import net.lodoma.lime.script.LuaScript;
 
 public class Entity
 {
-    private static int counterID = 0;
-    
-    private boolean generatedID = false;
     private int ID;
     
     private int hash;
@@ -40,7 +37,7 @@ public class Entity
     private LuaScript script;
     private File scriptFile;
     
-    public Entity(EntityWorld entityWorld, PhysicsWorld physicsWorld, PropertyPool propertyPool, EntityData data) throws IOException
+    public Entity(EntityWorld entityWorld, PhysicsWorld physicsWorld, PropertyPool propertyPool, EntityData data, int id) throws IOException
     {
         hash = data.nameHash;
         name = data.name;
@@ -75,10 +72,13 @@ public class Entity
             Mask mask = data.masks.get(maskHash).newCopy();
             masks.put(maskHash, mask);
         }
+        
+        ID = id;
 
         script = new LuaScript();
         script.setGlobal("ENTITY", this);
         script.setGlobal("SCRIPT", script);
+        script.require("script/strict/lime");
         script.require("script/strict/entity");
         script.require("script/strict/sandbox");
         scriptFile = new File(data.script);
@@ -102,19 +102,6 @@ public class Entity
         joints.clear();
         masks.clear();
         properties.clear();
-    }
-    
-    public void setID(int id)
-    {
-        this.ID = id;
-        generatedID = true;
-    }
-    
-    public void generateID()
-    {
-        if(generatedID) return;
-        generatedID = true;
-        ID = counterID++;
     }
     
     public int getID()
