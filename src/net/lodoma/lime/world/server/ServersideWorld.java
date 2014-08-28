@@ -15,6 +15,7 @@ import net.lodoma.lime.server.ServerPacket;
 import net.lodoma.lime.server.ServerUser;
 import net.lodoma.lime.server.io.entity.SPEntityCorrection;
 import net.lodoma.lime.server.io.entity.SPEntityCreation;
+import net.lodoma.lime.server.io.entity.SPSetActor;
 import net.lodoma.lime.server.io.world.SPPlatformCreation;
 import net.lodoma.lime.server.logic.UserManager;
 import net.lodoma.lime.util.HashPool32;
@@ -78,6 +79,7 @@ public class ServersideWorld extends CommonWorld
     private ServerPacket platformCreation;
     private ServerPacket entityCreation;
     private ServerPacket entityCorrection;
+    private ServerPacket setActor;
     
     private static final double CORRECTION_TIME = 5.0;
     private double correctionRemaining;
@@ -116,6 +118,7 @@ public class ServersideWorld extends CommonWorld
         platformCreation = spPool.get(SPPlatformCreation.HASH);
         entityCreation = spPool.get(SPEntityCreation.HASH);
         entityCorrection = spPool.get(SPEntityCorrection.HASH);
+        setActor = spPool.get(SPSetActor.HASH);
         
         initialWorldDataSender = new SendOnEvent(this, manager);
     }
@@ -145,6 +148,12 @@ public class ServersideWorld extends CommonWorld
         Set<ServerUser> userSet = userManager.getUserSet();
         for(ServerUser user : userSet)
             entityCreation.write(user, entity);
+    }
+    
+    public void setActor(int entityID, int userID)
+    {
+        ServerUser user = userManager.getUser(userID);
+        setActor.write(user, entityID);
     }
     
     public void update(double timeDelta)

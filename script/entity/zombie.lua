@@ -38,7 +38,24 @@ local function serverUpdate()
 	end
 end
 
-local function clientUpdate()
+local function clientUpdate(timeDelta, isActor)
+	if isActor then -- buggy movement
+		lime.entity.set(this)
+		lime.body.set(hashes["body"])
+		if lime.input.keyboard.get(lime.input.keyboard.key.a) then
+			lime.body.force(newVector(-100.0 * timeDelta, 0.0), newVector(0.2, 0.5)) -- buggy left
+		end
+		if lime.input.keyboard.get(lime.input.keyboard.key.d) then
+			lime.body.force(newVector(100.0 * timeDelta, 0.0), newVector(0.2, 0.5)) -- buggy right
+		end
+		if lime.input.keyboard.get(lime.input.keyboard.key.w) then
+			lime.body.force(newVector(0.0, 20.0 * timeDelta), newVector(0.2, 0.5)) -- buggy up
+		end
+		if lime.input.keyboard.get(lime.input.keyboard.key.s) then
+			lime.body.force(newVector(0.0, -20.0 * timeDelta), newVector(0.2, 0.5)) -- buggy down
+		end
+	end
+
 	lime.entity.set(this)
 
 	limex.follow(this, hashes["head"], this, hashes["m_head"])
@@ -57,7 +74,7 @@ function Lime_FrameUpdate(timeDelta, isActor)
 	end
 
 	if lime.network.side.server then serverUpdate()
-	elseif lime.network.side.client then clientUpdate() end
+	elseif lime.network.side.client then clientUpdate(timeDelta, isActor) end
 
 	firstUpdate = false
 end

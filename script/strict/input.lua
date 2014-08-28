@@ -1,5 +1,8 @@
 
-local Input = java.require("net.lodoma.lime.input.Input")
+local strict = getStrict()
+strictRequireJava("net.lodoma.lime.input.Input")
+
+local Input = strict.java["net.lodoma.lime.input.Input"]
 
 local function getMouseButton(button)
     return Input:getMouse(button)
@@ -14,24 +17,24 @@ local function getMouseButtonUp(button)
 end
 
 local function getMousePosition()
-    local javaPosition = Input.getMousePosition()
-    return lime.util.vector.new(javaPosition:getX(), javaPosition:getY())
+    local javaPosition = Input:getMousePosition()
+    return strict.vector.toLua(javaPosition)
 end
 
 local function getKeyboard(key)
-    return Input.getKey(key)
+    return Input:getKey(key)
 end
 
 local function getKeyboardDown(key)
-    return Input.getKeyDown(key)
+    return Input:getKeyDown(key)
 end
 
 local function getKeyboardUp(key)
-    return Input.getKeyUp(key)
+    return Input:getKeyUp(key)
 end
 
 local function getKeyboardRepeated(key)
-    return Input.getKeyRepeated(key)
+    return Input:getKeyRepeated(key)
 end
 
 addToLime({
@@ -51,16 +54,16 @@ addToLime({
             key = {
                 none         = 0x00,
                 escape       = 0x01,
-                1            = 0x02,
-                2            = 0x03,
-                3            = 0x04,
-                4            = 0x05,
-                5            = 0x06,
-                6            = 0x07,
-                7            = 0x08,
-                8            = 0x09,
-                9            = 0x0A,
-                0            = 0x0B,
+                ["1"]        = 0x02,
+                ["2"]        = 0x03,
+                ["3"]        = 0x04,
+                ["4"]        = 0x05,
+                ["5"]        = 0x06,
+                ["6"]        = 0x07,
+                ["7"]        = 0x08,
+                ["8"]        = 0x09,
+                ["9"]        = 0x0A,
+                ["0"]        = 0x0B,
                 minus        = 0x0C,
                 equals       = 0x0D,
                 back         = 0x0E,

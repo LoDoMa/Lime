@@ -44,13 +44,15 @@ local hashes64 = {}
 
 local function addHash32(str)
 	strict.typecheck.lua(str, "string", 1, "local utility addHash32")
-	hashes32[str] = hash32(str)
+	hashes32[str] = lime.util.hash32(str)
 end
 
 local function addHash64(str)
 	strict.typecheck.lua(str, "string", 1, "local utility addHash64")
-	hashes64[str] = hash64(str)
+	hashes64[str] = lime.util.hash64(str)
 end
+
+addHash32("Lime::SetActor")
 
 -- platform
 
@@ -98,7 +100,7 @@ end
 -- actor
 
 local function setActorForUser(entityID, userID)
-	
+	world:setActor(entityID, userID)
 end
 
 -- light

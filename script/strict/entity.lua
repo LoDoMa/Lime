@@ -16,6 +16,7 @@ addToStrict({
 
 require "/script/strict/network"
 require "/script/strict/listener"
+require "/script/strict/input"
 
 local workingEntity = nil
 local workingBody = nil

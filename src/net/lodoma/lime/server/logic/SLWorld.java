@@ -1,6 +1,7 @@
 package net.lodoma.lime.server.logic;
 
 import java.io.File;
+import java.util.HashMap;
 
 import net.lodoma.lime.physics.entity.EntityLoader;
 import net.lodoma.lime.physics.entity.EntityLoaderException;
@@ -46,6 +47,7 @@ public class SLWorld implements ServerLogic
         server.setProperty("world", new ServersideWorld(server));
         server.setProperty("entityLoader", new EntityLoader());
         server.setProperty("worldLoader", new WorldLoader());
+        server.setProperty("actors", new HashMap<Integer, Integer>());
     }
     
     @SuppressWarnings("unchecked")
