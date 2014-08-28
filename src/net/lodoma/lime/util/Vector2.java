@@ -745,6 +745,32 @@ public class Vector2
     {
         v.y = v.y < rangeMin ? rangeMin : (v.y > rangeMax ? rangeMax : v.y);
     }
+    
+    public static Vector2 max(Vector2 v1, Vector2 v2)
+    {
+        return new Vector2(Math.max(v1.x, v2.x), Math.max(v1.y, v2.y));
+    }
+    
+    public Vector2 max(Vector2 v)
+    {
+        return new Vector2(Math.max(x, v.x), Math.max(y, v.y));
+    }
+    
+    public void maxLocal(Vector2 v)
+    {
+        x = Math.max(x, v.x);
+        y = Math.max(y, v.y);
+    }
+    
+    public static float maxComponent(Vector2 v)
+    {
+        return Math.max(v.x, v.y);
+    }
+    
+    public float maxComponent()
+    {
+        return Math.max(x, y);
+    }
 
     public static float getX(Vector2 v)
     {
