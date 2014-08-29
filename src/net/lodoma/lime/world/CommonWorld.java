@@ -1,20 +1,18 @@
 package net.lodoma.lime.world;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
+import net.lodoma.lime.common.NetworkSide;
 import net.lodoma.lime.common.PropertyPool;
 import net.lodoma.lime.physics.PhysicsWorld;
 import net.lodoma.lime.physics.entity.Entity;
-import net.lodoma.lime.physics.entity.EntityWorld;
+import net.lodoma.lime.physics.entity.EntityPool;
 import net.lodoma.lime.script.LuaScript;
 import net.lodoma.lime.world.platform.Platform;
 
-public abstract class CommonWorld implements EntityWorld
+public abstract class CommonWorld
 {
     protected String name;
     protected String version;
@@ -23,14 +21,18 @@ public abstract class CommonWorld implements EntityWorld
     
     protected PhysicsWorld physicsWorld;
     protected List<Platform> platforms;
-    protected Map<Integer, Entity> entities;
+    
+    protected EntityPool entityPool;
     
     public CommonWorld()
     {
         physicsWorld = new PhysicsWorld();
         platforms = new ArrayList<Platform>();
-        entities = new HashMap<Integer, Entity>();
+        
+        entityPool = new EntityPool();
     }
+    
+    public abstract NetworkSide getNetworkSide();
     
     public abstract PropertyPool getPropertyPool();
     
@@ -54,32 +56,29 @@ public abstract class CommonWorld implements EntityWorld
         platforms.remove(platform);
     }
     
-    @Override
-    public synchronized void addEntity(Entity entity)
+    public void addEntity(Entity entity)
     {
-        entities.put(entity.getID(), entity);
-    }
-
-    @Override
-    public synchronized Entity getEntity(int id)
-    {
-        return entities.get(id);
+        entityPool.add(entity);
     }
     
-    public synchronized Set<Integer> getEntityIDSet()
+    public Entity getEntity(int id)
     {
-        return new HashSet<Integer>(entities.keySet());
+        return entityPool.get(id);
     }
     
-    public synchronized List<Entity> getEntityList()
+    public void removeEntity(int id)
     {
-        return new ArrayList<Entity>(entities.values());
+        entityPool.remove(id);
     }
-
-    @Override
-    public synchronized void removeEntity(int id)
+    
+    public Set<Integer> getEntityIDSet()
     {
-        entities.remove(id);
+        return entityPool.getIdentifierSet();
+    }
+    
+    public List<Entity> getEntityList()
+    {
+        return entityPool.getObjectList();
     }
     
     public void clean()
@@ -94,8 +93,8 @@ public abstract class CommonWorld implements EntityWorld
         List<Entity> entityList = getEntityList();
         for(Entity entity : entityList)
         {
-            entity.destroy(physicsWorld);
-            removeEntity(entity.getID());
+            entity.destroy();
+            entityPool.remove(entity.getIdentifier());
         }
     }
     

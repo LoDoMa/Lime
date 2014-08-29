@@ -7,6 +7,7 @@ import java.util.Map;
 
 import net.lodoma.lime.physics.AABB;
 import net.lodoma.lime.physics.Collider;
+import net.lodoma.lime.util.HashHelper;
 import net.lodoma.lime.util.Vector2;
 
 import org.w3c.dom.Element;
@@ -17,14 +18,14 @@ public class HitboxLoader
     {
         try
         {
-            Map<String, Collider> colliders = new HashMap<String, Collider>();
+            Map<Integer, Collider> colliders = new HashMap<Integer, Collider>();
             
             Element[] colliderElements = getChildElementsByName(hitboxElement, "collider");
             for(Element colliderElement : colliderElements)
             {
                 String name = getChildValue(colliderElement, "name");
                 Collider collider = loadCollider(colliderElement);
-                colliders.put(name, collider);
+                colliders.put(HashHelper.hash32(name), collider);
             }
             
             Hitbox hitbox = new Hitbox(colliders);
@@ -42,7 +43,7 @@ public class HitboxLoader
         
         Collider collider = null;
         
-        if(type.equals("aabb"))
+        if(type.equals("AABB"))
         {
             float width = getChildFloatValue(colliderElement, "width");
             float height = getChildFloatValue(colliderElement, "height");

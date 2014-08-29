@@ -7,24 +7,24 @@ import net.lodoma.lime.physics.Collider;
 
 public class Hitbox
 {
-    private Map<String, Collider> colliders;
+    private Map<Integer, Collider> colliders;
     
-    public Hitbox(Map<String, Collider> colliders)
+    public Hitbox(Map<Integer, Collider> colliders)
     {
         this.colliders = colliders;
     }
     
-    public Map<String, Collider> getColliders()
+    public Map<Integer, Collider> getColliders()
     {
         return colliders;
     }
     
-    public Collider getCollider(String name)
+    public Collider getCollider(int hash)
     {
-        return colliders.get(name);
+        return colliders.get(hash);
     }
     
-    public Set<String> getColliderNames()
+    public Set<Integer> getColliderHashes()
     {
         return colliders.keySet();
     }

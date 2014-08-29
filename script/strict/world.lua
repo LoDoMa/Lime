@@ -8,15 +8,11 @@ require "/script/strict/color"
 
 local world = LIME_WORLD
 local propertyPool = world:getPropertyPool()
-local physicsWorld = world:getPhysicsWorld()
-local entityLoader = propertyPool:getProperty("entityLoader")
 
 addToStrict({
 	world = world,
 	entityWorld = world,
 	propertyPool = propertyPool,
-	physicsWorld = physicsWorld,
-	entityLoader = entityLoader,
 	emanPool = emanPool,
 })
 

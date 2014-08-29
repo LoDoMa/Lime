@@ -2,12 +2,8 @@ package net.lodoma.lime.client.logic;
 
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.client.ClientPacketHandler;
-import net.lodoma.lime.client.io.entity.CPHEntityAngularImpulse;
 import net.lodoma.lime.client.io.entity.CPHEntityCorrection;
 import net.lodoma.lime.client.io.entity.CPHEntityCreation;
-import net.lodoma.lime.client.io.entity.CPHEntityForce;
-import net.lodoma.lime.client.io.entity.CPHEntityLinearImpulse;
-import net.lodoma.lime.client.io.entity.CPHEntityTransformModification;
 import net.lodoma.lime.client.io.entity.CPHSetActor;
 import net.lodoma.lime.client.io.world.CPHPlatformCreation;
 import net.lodoma.lime.input.Input;
@@ -50,10 +46,6 @@ public class CLWorld implements ClientLogic
         
         cphPool.add(CPHEntityCreation.HASH, new CPHEntityCreation(client));
         cphPool.add(CPHEntityCorrection.HASH, new CPHEntityCorrection(client));
-        cphPool.add(CPHEntityTransformModification.HASH, new CPHEntityTransformModification(client));
-        cphPool.add(CPHEntityLinearImpulse.HASH, new CPHEntityLinearImpulse(client));
-        cphPool.add(CPHEntityAngularImpulse.HASH, new CPHEntityAngularImpulse(client));
-        cphPool.add(CPHEntityForce.HASH, new CPHEntityForce(client));
         
         cphPool.add(CPHSetActor.HASH, new CPHSetActor(client));
         

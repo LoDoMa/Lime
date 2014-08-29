@@ -1,5 +1,6 @@
 package net.lodoma.lime.physics.entity;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -7,25 +8,32 @@ import net.lodoma.lime.mask.Mask;
 
 public class Model
 {
-    private Map<String, Mask> masks;
+    private Map<Integer, Mask> masks;
     
-    public Model(Map<String, Mask> masks)
+    public Model(Map<Integer, Mask> masks)
     {
         this.masks = masks;
     }
     
-    public Map<String, Mask> getMasks()
+    public Map<Integer, Mask> getMasks()
     {
         return masks;
     }
     
-    public Mask getMask(String name)
+    public Mask getMask(int hash)
     {
-        return masks.get(name);
+        return masks.get(hash);
     }
     
-    public Set<String> getMaskNames()
+    public Set<Integer> getMaskHashes()
     {
-        return masks.keySet();
+        return new HashSet<Integer>(masks.keySet());
+    }
+    
+    public void render(ModelData data)
+    {
+        Set<Integer> hashes = getMaskHashes();
+        for(Integer hash : hashes)
+            masks.get(hash).call(data.getTransform(hash));
     }
 }

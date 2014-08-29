@@ -21,8 +21,6 @@ public class SPEntityCreation extends ServerPacket
     @Override
     protected void localWrite(ServerUser user, Object... args) throws IOException
     {
-        Entity entity = (Entity) args[0];
-        user.outputStream.writeInt(entity.getID());
-        user.outputStream.writeInt(entity.getHash());
+        
     }
 }

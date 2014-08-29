@@ -19,23 +19,6 @@ public class CPHEntityCreation extends ClientPacketHandler
     @Override
     protected void localHandle() throws IOException
     {
-        /*
-        ClientsideWorld world = (ClientsideWorld) client.getProperty("world");
         
-        int id = inputStream.readInt();
-        int hash = inputStream.readInt();
-        
-        try
-        {
-            Entity entity = entityLoader.newEntity(world, world.getPhysicsWorld(), client, hash, id);
-            world.addEntity(entity);
-        }
-        catch (EntityLoaderException e)
-        {
-            if(e.getCause() == null) client.setCloseMessage("Failed to load entity: " + e.getMessage());
-            else client.setCloseMessage("Failed to load entity: " + e.getCause().getClass().getCanonicalName());
-            client.closeInThread();
-        }
-        */
     }
 }

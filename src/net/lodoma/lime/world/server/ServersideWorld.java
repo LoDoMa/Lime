@@ -158,10 +158,10 @@ public class ServersideWorld extends CommonWorld
     
     public void update(double timeDelta)
     {
-        if(entities.size() > 0)
+        if(entityPool.size() > 0)
         {
             correctionRemaining += timeDelta;
-            double time = CORRECTION_TIME / (double) entities.size();
+            double time = CORRECTION_TIME / (double) entityPool.size();
             if(time < 0.1) time = 0.1;
             if(correctionRemaining >= time)
             {

@@ -9,6 +9,7 @@ import net.lodoma.lime.mask.Mask;
 import net.lodoma.lime.mask.MaskShape;
 import net.lodoma.lime.mask.MaskShapeLoaderException;
 import net.lodoma.lime.mask.RenderingOrder;
+import net.lodoma.lime.util.HashHelper;
 import static net.lodoma.lime.util.XMLHelper.*;
 
 import org.w3c.dom.Element;
@@ -17,14 +18,14 @@ public class ModelLoader
 {
     public static Model loadModel(Element modelElement) throws ModelLoaderException
     {
-        Map<String, Mask> masks = new HashMap<String, Mask>();
+        Map<Integer, Mask> masks = new HashMap<Integer, Mask>();
         
         Element[] maskElements = getChildElementsByName(modelElement, "mask");
         for(Element maskElement : maskElements)
         {
             String name = getChildValue(maskElement, "name");
             Mask mask = loadMask(maskElement);
-            masks.put(name, mask);
+            masks.put(HashHelper.hash32(name), mask);
         }
         
         Model model = new Model(masks);
