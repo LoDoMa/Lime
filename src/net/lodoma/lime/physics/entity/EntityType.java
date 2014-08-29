@@ -29,6 +29,11 @@ public class EntityType
         initLuaState(scriptFile);
     }
     
+    public Entity newEntity()
+    {
+        return null;
+    }
+    
     private void initLuaState(String scriptFile) throws IOException
     {
         script.setGlobal("SCRIPT", script);

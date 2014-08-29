@@ -8,7 +8,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import net.lodoma.lime.script.LuaScript;
-import net.lodoma.lime.util.XMLHelper;
+import static net.lodoma.lime.util.XMLHelper.*;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -30,8 +30,8 @@ public class WorldLoader
             if(rootName != "world")
                 throw new WorldLoaderException("root of a world XML file must be named \"world\"");
             
-            String name = XMLHelper.getDeepValue(docElement, "name");
-            String version = XMLHelper.getDeepValue(docElement, "version");
+            String name = getChildValue(docElement, "name");
+            String version = getChildValue(docElement, "version");
             
             world.name = name;
             world.version = version;
@@ -42,7 +42,7 @@ public class WorldLoader
             world.script.require("script/strict/lime");
             world.script.require("script/strict/world");
             world.script.require("script/strict/sandbox");
-            world.script.load(new File(XMLHelper.getDeepValue(docElement, "script")));
+            world.script.load(new File(getChildValue(docElement, "script")));
         }
         catch(IOException | SAXException | ParserConfigurationException e)
         {

@@ -55,8 +55,12 @@ public class XMLHelper
     public static String getNodeValue(Node node)
     {
         NodeList childNodes = node.getChildNodes();
-        System.out.println(childNodes.item(0).getNodeType());
-        return childNodes.item(0).getNodeValue().trim();
+        if(childNodes.getLength() > 1)
+            throw new RuntimeException("can't read value - multiple child nodes");
+        Node textNode = childNodes.item(0);
+        if(textNode.getNodeType() != Node.TEXT_NODE)
+            throw new RuntimeException("can't read value - child node must be a text node");
+        return textNode.getNodeValue().trim();
     }
     
     public static Element getUniqueElement(Element parent, String nodeName)

@@ -1,13 +1,31 @@
 package net.lodoma.lime.physics.entity;
 
+import java.util.Map;
+import java.util.Set;
+
 import net.lodoma.lime.physics.Collider;
 
 public class Hitbox
 {
-    private Collider collider;
+    private Map<String, Collider> colliders;
     
-    public Hitbox(Collider collider)
+    public Hitbox(Map<String, Collider> colliders)
     {
-        this.collider = collider;
+        this.colliders = colliders;
+    }
+    
+    public Map<String, Collider> getColliders()
+    {
+        return colliders;
+    }
+    
+    public Collider getCollider(String name)
+    {
+        return colliders.get(name);
+    }
+    
+    public Set<String> getColliderNames()
+    {
+        return colliders.keySet();
     }
 }

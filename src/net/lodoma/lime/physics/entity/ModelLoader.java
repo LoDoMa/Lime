@@ -1,5 +1,8 @@
 package net.lodoma.lime.physics.entity;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import net.lodoma.lime.mask.ColoredMask;
 import net.lodoma.lime.mask.LayeredMask;
 import net.lodoma.lime.mask.Mask;
@@ -14,8 +17,17 @@ public class ModelLoader
 {
     public static Model loadModel(Element modelElement) throws ModelLoaderException
     {
-        Mask mask = loadMask(modelElement);
-        Model model = new Model(mask);
+        Map<String, Mask> masks = new HashMap<String, Mask>();
+        
+        Element[] maskElements = getChildElementsByName(modelElement, "mask");
+        for(Element maskElement : maskElements)
+        {
+            String name = getChildValue(maskElement, "name");
+            Mask mask = loadMask(maskElement);
+            masks.put(name, mask);
+        }
+        
+        Model model = new Model(masks);
         return model;
     }
     

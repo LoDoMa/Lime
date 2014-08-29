@@ -1,18 +1,31 @@
 package net.lodoma.lime.physics.entity;
 
+import java.util.Map;
+import java.util.Set;
+
 import net.lodoma.lime.mask.Mask;
 
 public class Model
 {
-    private Mask mask;
+    private Map<String, Mask> masks;
     
-    public Model(Mask mask)
+    public Model(Map<String, Mask> masks)
     {
-        this.mask = mask;
+        this.masks = masks;
     }
     
-    public Mask getMask()
+    public Map<String, Mask> getMasks()
     {
-        return mask;
+        return masks;
+    }
+    
+    public Mask getMask(String name)
+    {
+        return masks.get(name);
+    }
+    
+    public Set<String> getMaskNames()
+    {
+        return masks.keySet();
     }
 }
