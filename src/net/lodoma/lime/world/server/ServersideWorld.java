@@ -123,11 +123,11 @@ public class ServersideWorld extends CommonWorld
     @Override
     public int newEntity(int hash)
     {
-        int id = super.newEntity(hash);
         Set<ServerUser> userSet = userManager.getUserSet();
         for(ServerUser user : userSet)
-            entityCreation.write(user, getEntity(id));
-        return id;
+            entityCreation.write(user, hash);
+        
+        return super.newEntity(hash);
     }
     
     public void setActor(int entityID, int userID)

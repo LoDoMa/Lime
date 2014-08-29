@@ -2,7 +2,6 @@ package net.lodoma.lime.server.io.entity;
 
 import java.io.IOException;
 
-import net.lodoma.lime.physics.entity.Entity;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.server.ServerPacket;
 import net.lodoma.lime.server.ServerUser;
@@ -15,12 +14,13 @@ public class SPEntityCreation extends ServerPacket
     
     public SPEntityCreation(Server server)
     {
-        super(server, HASH, Entity.class);
+        super(server, HASH, Integer.class);
     }
     
     @Override
     protected void localWrite(ServerUser user, Object... args) throws IOException
     {
-        
+        int typeHash = (Integer) args[0];
+        user.outputStream.writeInt(typeHash);
     }
 }

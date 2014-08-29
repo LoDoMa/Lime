@@ -70,6 +70,7 @@ public abstract class CommonWorld
     public int newEntity(int hash)
     {
         EntityType type = entityTypes.get(hash);
+        System.out.printf("Created %s entity\n", type.getName());
         Entity entity = type.newEntity();
         entityPool.add(entity);
         return entity.getIdentifier();

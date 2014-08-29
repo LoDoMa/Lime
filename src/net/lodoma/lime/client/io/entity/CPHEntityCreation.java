@@ -5,6 +5,7 @@ import java.io.IOException;
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.client.ClientPacketHandler;
 import net.lodoma.lime.util.HashHelper;
+import net.lodoma.lime.world.client.ClientsideWorld;
 
 public class CPHEntityCreation extends ClientPacketHandler
 {
@@ -19,6 +20,7 @@ public class CPHEntityCreation extends ClientPacketHandler
     @Override
     protected void localHandle() throws IOException
     {
-        
+        int typeHash = inputStream.readInt();
+        ((ClientsideWorld) client.getProperty("world")).newEntity(typeHash);
     }
 }

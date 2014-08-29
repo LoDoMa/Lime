@@ -122,7 +122,7 @@ public class WorldRenderer
     
     private void renderWorld()
     {
-        useFramebuffer(worldFBO);
+        //useFramebuffer(worldFBO);
         
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -131,7 +131,7 @@ public class WorldRenderer
         glPushMatrix();
         glScalef(1.0f / 32.0f, 1.0f / 24.0f, 1.0f);
         
-        worldProgram.useProgram();
+        //worldProgram.useProgram();
         
         List<Entity> entityList = world.getEntityList();
         for(Entity entity : entityList)
@@ -145,10 +145,10 @@ public class WorldRenderer
         if(!initialized)
             init();
         
-        renderLights();
+        //renderLights();
         renderWorld();
         
-        
+        /*
         Window.bindFBO();
         
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -176,5 +176,6 @@ public class WorldRenderer
             glTexCoord2f(0.0f, 1.0f); glVertex2f(0.0f, 1.0f);
         }
         glEnd();
+        */
     }
 }

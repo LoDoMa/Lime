@@ -98,12 +98,12 @@ local function addBasicLightToWorld(hash, position, radius, color, angleFrom, an
 
 	local javaLight = strict.java["net.lodoma.lime.shader.light.BasicLight"]:new(javaPosition, radius, javaColor, angleFrom, angleTo)
 
-	strict.entityWorld:addLight(hash, javaLight)
+	strict.world:addLight(hash, javaLight)
 end
 
 local function removeBasicLightFromWorld(hash)
 	assert(lime.network.side.client, "lights not supported on this side")
-	strict.entityWorld:removeLight(hash)
+	strict.world:removeLight(hash)
 end
 
 -- lime table
