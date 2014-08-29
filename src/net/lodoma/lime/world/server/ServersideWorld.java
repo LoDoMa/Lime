@@ -16,11 +16,9 @@ import net.lodoma.lime.server.ServerUser;
 import net.lodoma.lime.server.io.entity.SPEntityCorrection;
 import net.lodoma.lime.server.io.entity.SPEntityCreation;
 import net.lodoma.lime.server.io.entity.SPSetActor;
-import net.lodoma.lime.server.io.world.SPPlatformCreation;
 import net.lodoma.lime.server.logic.UserManager;
 import net.lodoma.lime.util.HashPool32;
 import net.lodoma.lime.world.CommonWorld;
-import net.lodoma.lime.world.platform.Platform;
 
 public class ServersideWorld extends CommonWorld
 {
@@ -28,7 +26,6 @@ public class ServersideWorld extends CommonWorld
     {
         private ServersideWorld world;
         private EventManager manager;
-        private ServerPacket platformCreation;
         private ServerPacket entityCreation;
         private ServerPacket entityCorrection;
         
@@ -36,7 +33,6 @@ public class ServersideWorld extends CommonWorld
         {
             this.world = world;
             this.manager = manager;
-            this.platformCreation = world.platformCreation;
             this.entityCreation = world.entityCreation;
             this.entityCorrection = world.entityCorrection;
             
@@ -53,10 +49,6 @@ public class ServersideWorld extends CommonWorld
             if(!(userID instanceof Integer))
                 throw new InvalidEventBundleException();
             ServerUser user = userManager.getUser((Integer) userID);
-            
-            List<Platform> platformList = world.getPlatformList();
-            for(Platform platform : platformList)
-                platformCreation.write(user, platform);
 
             List<Entity> entityList = world.getEntityList();
             for(Entity entity : entityList)
@@ -76,7 +68,6 @@ public class ServersideWorld extends CommonWorld
     private UserManager userManager;
     
     private SendOnEvent initialWorldDataSender;
-    private ServerPacket platformCreation;
     private ServerPacket entityCreation;
     private ServerPacket entityCorrection;
     private ServerPacket setActor;
@@ -114,8 +105,7 @@ public class ServersideWorld extends CommonWorld
         
         HashPool32<ServerPacket> spPool = (HashPool32<ServerPacket>) server.getProperty("spPool");
         EventManager manager = ((HashPool32<EventManager>) server.getProperty("emanPool")).get(EventManager.ON_NEW_USER_HASH);
-
-        platformCreation = spPool.get(SPPlatformCreation.HASH);
+        
         entityCreation = spPool.get(SPEntityCreation.HASH);
         entityCorrection = spPool.get(SPEntityCorrection.HASH);
         setActor = spPool.get(SPSetActor.HASH);
@@ -131,23 +121,13 @@ public class ServersideWorld extends CommonWorld
     }
     
     @Override
-    public void addPlatform(Platform platform)
+    public int newEntity(int hash)
     {
-        super.addPlatform(platform);
-        
+        int id = super.newEntity(hash);
         Set<ServerUser> userSet = userManager.getUserSet();
         for(ServerUser user : userSet)
-            platformCreation.write(user, platform);
-    }
-    
-    @Override
-    public void addEntity(Entity entity)
-    {
-        super.addEntity(entity);
-        
-        Set<ServerUser> userSet = userManager.getUserSet();
-        for(ServerUser user : userSet)
-            entityCreation.write(user, entity);
+            entityCreation.write(user, getEntity(id));
+        return id;
     }
     
     public void setActor(int entityID, int userID)

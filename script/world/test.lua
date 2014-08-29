@@ -39,8 +39,6 @@ function Lime_WorldUpdate()
 	if lime.network.side.server then
 		if firstUpdate == true then
 			loadHashes()
-
-			lime.platform.create(newVector(0, 0), newVector(-50, -2), newVector(50, -2), newVector(50, 2), newVector(-50, 2))
 		end
 	elseif lime.network.side.client then
 

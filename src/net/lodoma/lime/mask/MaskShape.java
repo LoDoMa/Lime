@@ -26,10 +26,10 @@ public class MaskShape
                 shape.vertices = new Vector2[4];
                 shape.colors = new Color[4];
     
-                Vector2 offset = new Vector2(getChildIntegerValue(shapeElement, "offsetx"),
-                                             getChildIntegerValue(shapeElement, "offsety"));
-                Vector2 dimensions = new Vector2(getChildIntegerValue(shapeElement, "width"),
-                                                 getChildIntegerValue(shapeElement, "height"));
+                Vector2 offset = new Vector2(getChildFloatValue(shapeElement, "offsetx"),
+                                             getChildFloatValue(shapeElement, "offsety"));
+                Vector2 dimensions = new Vector2(getChildFloatValue(shapeElement, "width"),
+                                                 getChildFloatValue(shapeElement, "height"));
     
                 shape.vertices[0] = offset.clone();
                 shape.vertices[1] = offset.addX(dimensions);

@@ -78,7 +78,7 @@ public class EntityType
     {
         int id = entity.getIdentifier();
         Object[] arguments = new Object[] { id, isActor, timeDelta };
-        script.call("Lime_EntityUpdate", arguments);
+        script.call("Lime_FrameUpdate", arguments);
     }
     
     public void render(Entity entity)

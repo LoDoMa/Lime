@@ -12,7 +12,6 @@ import net.lodoma.lime.shader.Shader;
 import net.lodoma.lime.shader.ShaderType;
 import net.lodoma.lime.shader.UniformType;
 import net.lodoma.lime.shader.light.Light;
-import net.lodoma.lime.world.platform.Platform;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.*;
 import static org.lwjgl.opengl.EXTFramebufferObject.*;
@@ -133,10 +132,6 @@ public class WorldRenderer
         glScalef(1.0f / 32.0f, 1.0f / 24.0f, 1.0f);
         
         worldProgram.useProgram();
-        
-        List<Platform> platformList = world.getPlatformList();
-        for(Platform platform : platformList)
-            platform.render();
         
         List<Entity> entityList = world.getEntityList();
         for(Entity entity : entityList)

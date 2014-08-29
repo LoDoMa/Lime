@@ -1,29 +1,49 @@
-<model>
-	<model_name> lime.entity.ball </model_name>
-	<model_version> 1 </model_version>
+<entity>
+	<name> lime.entity.ball </name>
+	<version> 1 </version>
 
-	<body>
-		<name> body </name>
-		<circle_shape>
-			<radius> 0.5 </radius>
-		</circle_shape>
-		<dynamic_behavior>
-			<density> 2.0 </density>
-			<friction> 0.3 </friction>
-		    <restitution> 0.2 </restitution>
-		</dynamic_behavior>
-	</body>
+	<hitbox>
+		<collider>
+			<name> body </name>
+			<type> AABB </type>
+			<width> 0.5 </width>
+			<height> 0.5 </height>
+		</collider>
+	</hitbox>
 
-	<mask>
-		<name> m_body </name>
-		<colored_layer>
-			<layer_height> 0 </layer_height>
-			<circle_shape>
-				<radius> 0.5 </radius>
-				<color> 0xFF0099FF </color>
-			</circle_shape>
-		</colored_layer>
-	</mask>
+	<model>
+		<mask>
+			<name> m_body </name>
+			<type> layered </type>
+			<layer>
+				<type> colored </type>
+				<height> 0 </height>
+				<shape>
+					<type> rectangle </type>
+					<offsetx> 0.0 </offsetx>
+					<offsety> 0.0 </offsety>
+					<width> 0.5 </width>
+					<height> 0.5 </height>
+					<color>
+						<red> </red>
+						<green> </green>
+						<blue> </blue>
+					</color>
+				</shape>
+			</layer>
+			<layer>
+				<type> colored </type>
+				<height> 1 </height>
+				<shape>
+					<type> rectangle </type>
+					<offsetx> 0.1 </offsetx>
+					<offsety> 0.1 </offsety>
+					<width> 0.3 </width>
+					<height> 0.3 </height>
+				</shape>
+			</layer>
+		</mask>
+	</model>
 
 	<script> script/entity/ball.lua </script>
-</model>
+</entity>

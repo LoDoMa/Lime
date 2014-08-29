@@ -19,32 +19,34 @@ local function loadHashes()
 	addHash("m_body")
 end
 
-local function serverUpdate()
+local function serverUpdate(entityID)
 	if firstUpdate then
-		lime.entity.set(this)
+		lime.entity.set(entityID)
 
+		--[[
 		lime.body.set(hashes["body"])
 		lime.body.transform.position.set(newVector(16.0, 7.0))
 		lime.body.transform.rotation.set(0)
 		lime.body.transform.push()
+		]]
 	end
 end
 
-local function clientUpdate()
-	lime.entity.set(this)
+local function clientUpdate(entityID)
+	lime.entity.set(entityID)
 	
-	limex.follow(this, hashes["body"], this, hashes["m_body"])
+	--limex.follow(this, hashes["body"], this, hashes["m_body"])
 end
 
-function Lime_FrameUpdate(timeDelta, isActor)
+function Lime_FrameUpdate(entityID, timeDelta, isActor)
 	tdelta = timeDelta
 
 	if firstUpdate then
 		loadHashes()
 	end
 
-	if lime.network.side.server then serverUpdate()
-	elseif lime.network.side.client then clientUpdate() end
+	if lime.network.side.server then serverUpdate(entityID)
+	elseif lime.network.side.client then clientUpdate(entityID) end
 
 	firstUpdate = false
 end

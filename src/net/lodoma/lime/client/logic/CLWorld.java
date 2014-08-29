@@ -5,7 +5,6 @@ import net.lodoma.lime.client.ClientPacketHandler;
 import net.lodoma.lime.client.io.entity.CPHEntityCorrection;
 import net.lodoma.lime.client.io.entity.CPHEntityCreation;
 import net.lodoma.lime.client.io.entity.CPHSetActor;
-import net.lodoma.lime.client.io.world.CPHPlatformCreation;
 import net.lodoma.lime.input.Input;
 import net.lodoma.lime.util.HashPool32;
 import net.lodoma.lime.util.Timer;
@@ -42,13 +41,12 @@ public class CLWorld implements ClientLogic
     @Override
     public void generalInit()
     {
-        cphPool.add(CPHPlatformCreation.HASH, new CPHPlatformCreation(client));
-        
         cphPool.add(CPHEntityCreation.HASH, new CPHEntityCreation(client));
         cphPool.add(CPHEntityCorrection.HASH, new CPHEntityCorrection(client));
         
         cphPool.add(CPHSetActor.HASH, new CPHSetActor(client));
-        
+
+        world.load();
         world.generalInit();
     }
     

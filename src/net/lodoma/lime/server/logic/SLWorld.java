@@ -8,7 +8,6 @@ import net.lodoma.lime.server.ServerPacket;
 import net.lodoma.lime.server.io.entity.SPEntityCorrection;
 import net.lodoma.lime.server.io.entity.SPEntityCreation;
 import net.lodoma.lime.server.io.entity.SPSetActor;
-import net.lodoma.lime.server.io.world.SPPlatformCreation;
 import net.lodoma.lime.util.HashPool32;
 import net.lodoma.lime.util.Timer;
 import net.lodoma.lime.world.WorldLoader;
@@ -51,13 +50,12 @@ public class SLWorld implements ServerLogic
     @Override
     public void generalInit()
     {
-        spPool.add(SPPlatformCreation.HASH, new SPPlatformCreation(server));
-        
         spPool.add(SPEntityCreation.HASH, new SPEntityCreation(server));
         spPool.add(SPEntityCorrection.HASH, new SPEntityCorrection(server));
         
         spPool.add(SPSetActor.HASH, new SPSetActor(server));
         
+        world.load();
         world.generalInit();
         
         try

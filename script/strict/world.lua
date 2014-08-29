@@ -1,6 +1,5 @@
 
 local strict = getStrict()
-strictRequireJava("net.lodoma.lime.world.platform.Platform")
 strictRequireJava("net.lodoma.lime.shader.light.BasicLight")
 
 require "/script/strict/vector"
@@ -11,7 +10,6 @@ local propertyPool = world:getPropertyPool()
 
 addToStrict({
 	world = world,
-	entityWorld = world,
 	propertyPool = propertyPool,
 	emanPool = emanPool,
 })
@@ -50,42 +48,13 @@ end
 
 addHash32("Lime::SetActor")
 
--- platform
-
-local function addPlatformToWorld(offset, ...)
-	strict.typecheck.vector(offset, 1, "lime.platform.create")
-
-	if lime.network.side.server then
-		local javaOffset = strict.vector.toJava(offset)
-
-		local i = 1
-		local vertices = {...}
-		local javaVertices = {}
-		while vertices[i] do
-			local vertex = vertices[i]
-			strict.typecheck.vector(vertex, i + 1, "lime.platform.create")
-			javaVertices[i] = strict.vector.toJava(vertex)
-			i = i + 1
-		end
-
-		local platform = strict.java["net.lodoma.lime.world.platform.Platform"]:newInstance(physicsWorld, javaOffset, javaVertices)
-		world:addPlatform(platform)
-	elseif lime.network.side.client then
-
-	else
-		assert(false, "internal problem: unknown network side")
-	end
-end
-
 -- entity
 
 local function addEntityToWorld(hash)
 	strict.typecheck.lua(hash, "number", 1, "lime.entity.create")
 
 	if lime.network.side.server then
-		local entity = entityLoader:newEntity(world, physicsWorld, propertyPool, hash)
-		world:addEntity(entity)
-		return entity:getID()
+		return world:newEntity(hash)
 	elseif lime.network.side.client then
 
 	else
@@ -127,9 +96,6 @@ end
 -- lime table
 
 addToLime({
-	platform = {
-		create = addPlatformToWorld,
-	},
 	entity = {
 		create = addEntityToWorld,
 	},

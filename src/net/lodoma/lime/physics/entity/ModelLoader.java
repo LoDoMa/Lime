@@ -58,7 +58,7 @@ public class ModelLoader
                 }
                 
                 LayeredMask mask = new LayeredMask(RenderingOrder.LAST_IN_FRONT);
-                for(int i = -128; i <= 127; i++)
+                for(int i = 0; i < 256; i++)
                     if(masks[i] != null)
                         mask.addLayer(masks[i]);
                 return mask;

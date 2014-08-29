@@ -1,6 +1,8 @@
 package net.lodoma.lime.world;
 
-import java.util.ArrayList;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
@@ -8,9 +10,12 @@ import net.lodoma.lime.common.NetworkSide;
 import net.lodoma.lime.common.PropertyPool;
 import net.lodoma.lime.physics.PhysicsWorld;
 import net.lodoma.lime.physics.entity.Entity;
+import net.lodoma.lime.physics.entity.EntityLoader;
+import net.lodoma.lime.physics.entity.EntityLoaderException;
 import net.lodoma.lime.physics.entity.EntityPool;
+import net.lodoma.lime.physics.entity.EntityType;
+import net.lodoma.lime.physics.entity.EntityTypePool;
 import net.lodoma.lime.script.LuaScript;
-import net.lodoma.lime.world.platform.Platform;
 
 public abstract class CommonWorld
 {
@@ -20,16 +25,37 @@ public abstract class CommonWorld
     protected LuaScript script;
     
     protected PhysicsWorld physicsWorld;
-    protected List<Platform> platforms;
     
     protected EntityPool entityPool;
+    protected EntityTypePool entityTypes;
     
     public CommonWorld()
     {
         physicsWorld = new PhysicsWorld();
-        platforms = new ArrayList<Platform>();
         
         entityPool = new EntityPool();
+        entityTypes = new EntityTypePool();
+    }
+    
+    public void load()
+    {
+        try
+        {
+            File[] files = new File("./model").listFiles();
+            for(File file : files)
+                if(file.isFile() && file.getName().toLowerCase().endsWith(".xml"))
+                {
+                    EntityType type = EntityLoader.loadEntity(new FileInputStream(file), this);
+                    entityTypes.add(type.getNameHash(), type);
+                    
+                    System.out.printf("Loaded EntityType %s\n", type.getName());
+                }
+        }
+        catch(EntityLoaderException | IOException e)
+        {
+            e.printStackTrace();
+            // TODO: handle this later
+        }
     }
     
     public abstract NetworkSide getNetworkSide();
@@ -41,24 +67,12 @@ public abstract class CommonWorld
         return physicsWorld; 
     }
     
-    public synchronized void addPlatform(Platform platform)
+    public int newEntity(int hash)
     {
-        platforms.add(platform);
-    }
-    
-    public synchronized List<Platform> getPlatformList()
-    {
-        return new ArrayList<Platform>(platforms);
-    }
-    
-    public synchronized void removePlatform(Platform platform)
-    {
-        platforms.remove(platform);
-    }
-    
-    public void addEntity(Entity entity)
-    {
+        EntityType type = entityTypes.get(hash);
+        Entity entity = type.newEntity();
         entityPool.add(entity);
+        return entity.getIdentifier();
     }
     
     public Entity getEntity(int id)
@@ -83,13 +97,6 @@ public abstract class CommonWorld
     
     public void clean()
     {
-        List<Platform> platformList = getPlatformList();
-        for(Platform platform : platformList)
-        {
-            platform.destroy(physicsWorld);
-            removePlatform(platform);
-        }
-        
         List<Entity> entityList = getEntityList();
         for(Entity entity : entityList)
         {

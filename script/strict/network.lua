@@ -2,7 +2,7 @@
 local strict = getStrict()
 strictRequireJava("net.lodoma.lime.common.NetworkSide")
 
-local networkSide = strict.entityWorld:getNetworkSide():ordinal()
+local networkSide = strict.world:getNetworkSide():ordinal()
 local serverSide = networkSide == strict.java["net.lodoma.lime.common.NetworkSide"]:valueOf("SERVER"):ordinal() and true or nil
 local clientSide = networkSide == strict.java["net.lodoma.lime.common.NetworkSide"]:valueOf("CLIENT"):ordinal() and true or nil
 
