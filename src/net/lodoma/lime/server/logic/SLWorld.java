@@ -3,11 +3,8 @@ package net.lodoma.lime.server.logic;
 import java.io.File;
 import java.util.HashMap;
 
-import net.lodoma.lime.physics.entity.EntityLoader;
-import net.lodoma.lime.physics.entity.EntityLoaderException;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.server.ServerPacket;
-import net.lodoma.lime.server.ServerPacketHandler;
 import net.lodoma.lime.server.io.entity.SPEntityAngularImpulse;
 import net.lodoma.lime.server.io.entity.SPEntityCorrection;
 import net.lodoma.lime.server.io.entity.SPEntityCreation;
@@ -25,12 +22,9 @@ import net.lodoma.lime.world.server.ServersideWorld;
 public class SLWorld implements ServerLogic
 {
     private Server server;
-    @SuppressWarnings("unused")
-    private HashPool32<ServerPacketHandler> sphPool;
     private HashPool32<ServerPacket> spPool;
     
     private ServersideWorld world;
-    private EntityLoader entityLoader;
     private WorldLoader worldLoader;
     
     private Timer timer;
@@ -45,7 +39,6 @@ public class SLWorld implements ServerLogic
     public void propertyInit()
     {
         server.setProperty("world", new ServersideWorld(server));
-        server.setProperty("entityLoader", new EntityLoader());
         server.setProperty("worldLoader", new WorldLoader());
         server.setProperty("actors", new HashMap<Integer, Integer>());
     }
@@ -54,10 +47,8 @@ public class SLWorld implements ServerLogic
     @Override
     public void fetchInit()
     {
-        sphPool = (HashPool32<ServerPacketHandler>) server.getProperty("sphPool");
         spPool = (HashPool32<ServerPacket>) server.getProperty("spPool");
         world = (ServersideWorld) server.getProperty("world");
-        entityLoader = (EntityLoader) server.getProperty("entityLoader");
         worldLoader = (WorldLoader) server.getProperty("worldLoader");
     }
     
@@ -76,16 +67,6 @@ public class SLWorld implements ServerLogic
         spPool.add(SPSetActor.HASH, new SPSetActor(server));
         
         world.generalInit();
-
-        try
-        {
-            entityLoader.addAllFiles(world, world.getServer());
-        }
-        catch(EntityLoaderException e)
-        {
-            // TODO: handle later
-            e.printStackTrace();
-        }
         
         try
         {

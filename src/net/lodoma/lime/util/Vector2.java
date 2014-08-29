@@ -1,7 +1,5 @@
 package net.lodoma.lime.util;
 
-import org.jbox2d.common.Vec2;
-
 public class Vector2
 {
     public float x;
@@ -434,6 +432,16 @@ public class Vector2
         y = -y;
     }
 
+    public float dot(Vector2 v)
+    {
+        return x * v.x + y * v.y;
+    }
+    
+    public static float dot(Vector2 v1, Vector2 v2)
+    {
+        return v1.x * v2.x + v1.y * v2.y;
+    }
+    
     public static float magnitude(Vector2 v)
     {
         return (float) Math.sqrt(v.x * v.x + v.y * v.y);
@@ -746,9 +754,20 @@ public class Vector2
         v.y = v.y < rangeMin ? rangeMin : (v.y > rangeMax ? rangeMax : v.y);
     }
     
-    public static Vector2 max(Vector2 v1, Vector2 v2)
+    public Vector2 min(Vector2 v)
     {
-        return new Vector2(Math.max(v1.x, v2.x), Math.max(v1.y, v2.y));
+        return new Vector2(Math.min(x, v.x), Math.min(y, v.y));
+    }
+    
+    public void minLocal(Vector2 v)
+    {
+        x = Math.min(x, v.x);
+        y = Math.min(y, v.y);
+    }
+    
+    public static Vector2 min(Vector2 v1, Vector2 v2)
+    {
+        return new Vector2(Math.min(v1.x, v2.x), Math.min(v1.y, v2.y));
     }
     
     public Vector2 max(Vector2 v)
@@ -762,14 +781,48 @@ public class Vector2
         y = Math.max(y, v.y);
     }
     
-    public static float maxComponent(Vector2 v)
+    public static Vector2 max(Vector2 v1, Vector2 v2)
     {
-        return Math.max(v.x, v.y);
+        return new Vector2(Math.max(v1.x, v2.x), Math.max(v1.y, v2.y));
+    }
+    
+    public float minComponent()
+    {
+        return Math.min(x, y);
+    }
+    
+    public static float minComponent(Vector2 v)
+    {
+        return Math.min(v.x, v.y);
     }
     
     public float maxComponent()
     {
         return Math.max(x, y);
+    }
+    
+    public static float maxComponent(Vector2 v)
+    {
+        return Math.max(v.x, v.y);
+    }
+    
+    public Vector2 reflect(Vector2 normal)
+    {
+        float dot = dot(normal);
+        return new Vector2(x - (2.0f * dot * normal.x), y - (2.0f * dot * normal.y));
+    }
+    
+    public void reflectLocal(Vector2 normal)
+    {
+        float dot = dot(normal);
+        x = x - (2.0f * dot * normal.x);
+        y = y - (2.0f * dot * normal.y);
+    }
+    
+    public static Vector2 reflect(Vector2 vector, Vector2 normal)
+    {
+        float dot = dot(vector, normal);
+        return new Vector2(vector.x - (2.0f * dot * normal.x), vector.y - (2.0f * dot * normal.y));
     }
 
     public static float getX(Vector2 v)
@@ -854,51 +907,5 @@ public class Vector2
     public String toString()
     {
         return "(" + x + " " + y + ")";
-    }
-    
-    // JBox2D related
-    
-    public Vector2(Vec2 v)
-    {
-        x = v.x;
-        y = v.y;
-    }
-    
-    public Vec2 toVec2()
-    {
-        return new Vec2(x, y);
-    }
-    
-    public static Vec2 toVec2(Vector2 v)
-    {
-        return new Vec2(v.x, v.y);
-    }
-    
-    public static Vec2[] toVec2Array(Vector2[] varr)
-    {
-        Vec2[] result = new Vec2[varr.length];
-        for(int i = 0; i < varr.length; i++)
-            result[i] = new Vec2(varr[i].x, varr[i].y);
-        return result;
-    }
-    
-    public static Vector2[] toVector2Array(Vec2[] varr)
-    {
-        Vector2[] result = new Vector2[varr.length];
-        for(int i = 0; i < varr.length; i++)
-            result[i] = new Vector2(varr[i].x, varr[i].y);
-        return result;
-    }
-    
-    public void set(Vec2 v)
-    {
-        x = v.x;
-        y = v.y;
-    }
-    
-    public static void set(Vector2 v1, Vec2 v2)
-    {
-        v1.x = v2.x;
-        v1.y = v2.y;
     }
 }

@@ -18,7 +18,8 @@ public class CPHEntityLinearImpulse extends ClientPacketHandler
     {
         super(client);
     }
-    
+
+    @SuppressWarnings("unused")
     @Override
     protected void localHandle() throws IOException
     {
@@ -30,6 +31,5 @@ public class CPHEntityLinearImpulse extends ClientPacketHandler
         Entity entity = ((ClientsideWorld) client.getProperty("world")).getEntity(entityID);
         if(entity == null) return;
         
-        entity.getBody(bodyID).applyLinearImpulse(impulse, point);
     }
 }

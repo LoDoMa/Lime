@@ -1,104 +1,132 @@
 package net.lodoma.lime.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class XMLHelper
 {
-    public static boolean hasNode(Element element, String tag)
+    public static int getChildIntegerValue(Element parent, String nodeName)
     {
-        return element.getElementsByTagName(tag).getLength() > 0;
+        return getNodeIntegerValue(getUniqueNode(parent, nodeName));
     }
     
-    public static float getDeepValueFloat(Element element, String tag)
+    public static float getChildFloatValue(Element parent, String nodeName)
     {
-        String value = getDeepValue(element, tag);
-        try
-        {
-            return Float.parseFloat(value);
-        }
+        return getNodeFloatValue(getUniqueNode(parent, nodeName));
+    }
+    
+    public static double getChildDoubleValue(Element parent, String nodeName)
+    {
+        return getNodeDoubleValue(getUniqueNode(parent, nodeName));
+    }
+    
+    public static String getChildValue(Element parent, String nodeName)
+    {
+        return getNodeValue(getUniqueNode(parent, nodeName));
+    }
+    
+    public static int getNodeIntegerValue(Node node)
+    {
+        try { return Integer.parseInt(getNodeValue(node)); }
         catch(NumberFormatException e)
         {
-            throw new RuntimeException("\"" + tag + "\" in \"" + element.getNodeName() + "\" is expected to be a floating-point");
+            throw new RuntimeException("value of \"" + node.getNodeName() + "\" must be an integer");
         }
     }
     
-    public static int getDeepValueInteger(Element element, String tag)
+    public static float getNodeFloatValue(Node node)
     {
-        String value = getDeepValue(element, tag);
-        try
-        {
-            if(value.startsWith("0x"))
-                return (int) Long.parseLong(value.substring(2), 16);
-            else
-                return Integer.parseInt(value);
-        }
+        return (float) getNodeDoubleValue(node);
+    }
+    
+    public static double getNodeDoubleValue(Node node)
+    {
+        try { return Double.parseDouble(getNodeValue(node)); }
         catch(NumberFormatException e)
         {
-            throw new RuntimeException("\"" + tag + "\" in \"" + element.getNodeName() + "\" is expected to be an integer");
+            throw new RuntimeException("value of \"" + node.getNodeName() + "\" must be a floating point");
         }
     }
     
-    public static boolean getDeepValueBoolean(Element element, String tag)
+    public static String getNodeValue(Node node)
     {
-        String value = getDeepValue(element, tag);
-        try
-        {
-            return Boolean.parseBoolean(value);
-        }
-        catch(NumberFormatException e)
-        {
-            throw new RuntimeException("\"" + tag + "\" in \"" + element.getNodeName() + "\" is expected to be a boolean");
-        }
-    }
-    
-    public static String getDeepValue(Element element, String tag)
-    {
-        Node uniqueNode = getUniqueNode(element, tag);
-        NodeList childNodes = uniqueNode.getChildNodes();
+        NodeList childNodes = node.getChildNodes();
+        System.out.println(childNodes.item(0).getNodeType());
         return childNodes.item(0).getNodeValue().trim();
     }
     
-    public static Element getUniqueElement(Element element, String tag)
+    public static Element getUniqueElement(Element parent, String nodeName)
     {
-        return nodeToElement(getUniqueNode(element, tag));
+        return toElement(getUniqueNode(parent, nodeName));
     }
     
-    public static Element getUniqueElement(Element element, String name, String[] tags)
+    public static Node getUniqueNode(Element parent, String nodeName)
     {
-        return nodeToElement(getUniqueNode(element, name, tags));
-    }
-    
-    public static Element nodeToElement(Node node)
-    {
-        if(node.getNodeType() != Node.ELEMENT_NODE)
-            throw new RuntimeException("\"" + node.getNodeName() + "\" is expected to be an element node");
-        return (Element) node;
-    }
-    
-    public static Node getUniqueNode(Element element, String tag)
-    {
-        return getUniqueNode(element, "\"" + tag + "\"", new String[] { tag });
-    }
-    
-    public static Node getUniqueNode(Element element, String name, String[] tags)
-    {
-        Node node = null;
+        NodeList childNodes = parent.getChildNodes();
+        int length = childNodes.getLength();
         
-        for(int i = 0; i < tags.length; i++)
+        Node node = null;
+        for(int i = 0; i < length; i++)
         {
-            NodeList list = element.getElementsByTagName(tags[i]);
-            int length = list.getLength();
-
-            if((length + (node == null ? 0 : 1)) > 1)
-                throw new RuntimeException("multiple " + name + " nodes not allowed in \"" + element.getNodeName() + "\"");
-            if(length == 1)
-                node = list.item(0);
+            Node current = childNodes.item(i);
+            if(current.getNodeName().equals(nodeName))
+            {
+                if(node != null)
+                    throw new RuntimeException("\"" + nodeName + "\" in \"" + parent.getNodeName() + "\" must be unique");
+                node = current;
+            }
         }
         
         if(node == null)
-            throw new RuntimeException("missing " + name + " in \"" + element.getNodeName() + "\"");
+            throw new RuntimeException("\"" + nodeName + "\" not found in \"" + parent.getNodeName() + "\"");
         return node;
+    }
+    
+    public static boolean hasChild(Element parent, String nodeName)
+    {
+        NodeList childNodes = parent.getChildNodes();
+        int length = childNodes.getLength();
+        for(int i = 0; i < length; i++)
+            if(childNodes.item(i).getNodeName().equals(nodeName))
+                return true;
+        return false;
+    }
+    
+    public static Element[] getChildElementsByName(Element parent, String name)
+    {
+        Node[] nodes = getChildNodesByName(parent, name);
+        Element[] elements = new Element[nodes.length];
+        for(int i = 0; i < nodes.length; i++)
+            elements[i] = toElement(nodes[i]);
+        return elements;
+    }
+    
+    public static Node[] getChildNodesByName(Element parent, String name)
+    {
+        List<Node> nodeList = new ArrayList<Node>();
+        
+        NodeList childNodes = parent.getChildNodes();
+        int length = childNodes.getLength();
+        for(int i = 0; i < length; i++)
+        {
+            Node current = childNodes.item(i);
+            if(current.getNodeName().equals(name))
+                nodeList.add(current);
+        }
+        
+        Node[] nodes = new Node[nodeList.size()];
+        nodeList.toArray(nodes);
+        return nodes;
+    }
+    
+    public static Element toElement(Node node)
+    {
+        if(node.getNodeType() != Node.ELEMENT_NODE)
+            throw new RuntimeException("\"" + node.getNodeName() + "\" must be an element node");
+        return (Element) node;
     }
 }

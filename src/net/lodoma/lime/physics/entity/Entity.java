@@ -6,16 +6,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import net.lodoma.lime.common.PropertyPool;
 import net.lodoma.lime.localization.Language;
 import net.lodoma.lime.mask.Mask;
-import net.lodoma.lime.physics.PhysicsBody;
-import net.lodoma.lime.physics.PhysicsJoint;
 import net.lodoma.lime.physics.PhysicsWorld;
 import net.lodoma.lime.script.LuaScript;
 
@@ -30,8 +26,6 @@ public class Entity
     private EntityWorld world;
     private PropertyPool propertyPool;
 
-    private Map<Integer, PhysicsBody> bodies;
-    private Map<Integer, PhysicsJoint> joints;
     private Map<Integer, Mask> masks;
     private Map<Integer, String> properties;
     private LuaScript script;
@@ -46,32 +40,18 @@ public class Entity
         world = entityWorld;
         this.propertyPool = propertyPool;
 
-        bodies = new HashMap<Integer, PhysicsBody>();
-        joints = new HashMap<Integer, PhysicsJoint>();
         masks = new HashMap<Integer, Mask>();
         properties = new HashMap<Integer, String>();
-        
-        Set<Integer> bodyHashes = data.bodies.keySet();
-        Set<Integer> jointHashes = data.joints.keySet();
-        Set<Integer> maskHashes = data.masks.keySet();
 
-        for(int bodyHash : bodyHashes)
-        {
-            PhysicsBody body = new PhysicsBody(physicsWorld, data.bodies.get(bodyHash));
-            bodies.put(bodyHash, body);
-        }
-        
-        for(int jointHash : jointHashes)
-        {
-            PhysicsJoint joint = new PhysicsJoint(this, physicsWorld, data.joints.get(jointHash));
-            joints.put(jointHash, joint);
-        }
+        /*
+        Set<Integer> maskHashes = data.masks.keySet();
         
         for(int maskHash : maskHashes)
         {
             Mask mask = data.masks.get(maskHash).newCopy();
             masks.put(maskHash, mask);
         }
+        */
         
         ID = id;
 
@@ -87,19 +67,8 @@ public class Entity
     
     public void destroy(PhysicsWorld world)
     {
-        List<PhysicsBody> bodyList = new ArrayList<PhysicsBody>(bodies.values());
-        List<PhysicsJoint> jointList = new ArrayList<PhysicsJoint>(joints.values());
-        
-        for(PhysicsBody body : bodyList)
-            body.destroy(world);
-        
-        for(PhysicsJoint joint : jointList)
-            joint.destroy(world);
-        
         script.close();
         
-        bodies.clear();
-        joints.clear();
         masks.clear();
         properties.clear();
     }
@@ -139,16 +108,6 @@ public class Entity
         return propertyPool;
     }
     
-    public PhysicsBody getBody(int name)
-    {
-        return bodies.get(name);
-    }
-    
-    public PhysicsJoint getJoint(int name)
-    {
-        return joints.get(name);
-    }
-    
     public Mask getMask(int name)
     {
         return masks.get(name);
@@ -170,21 +129,11 @@ public class Entity
     
     public void receiveCorrection(DataInputStream inputStream) throws IOException
     {
-        int count = bodies.size();
-        for(int i = 0; i < count; i++)
-        {
-            int hash = inputStream.readInt();
-            bodies.get(hash).receiveCorrection(inputStream);
-        }
+        
     }
     
     public void sendCorrection(DataOutputStream outputStream) throws IOException
     {
-        Set<Integer> hashes = new HashSet<Integer>(bodies.keySet());
-        for(Integer hash : hashes)
-        {
-            outputStream.writeInt(hash);
-            bodies.get(hash).sendCorrection(outputStream);
-        }
+        
     }
 }

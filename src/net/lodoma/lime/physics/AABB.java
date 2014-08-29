@@ -2,7 +2,7 @@ package net.lodoma.lime.physics;
 
 import net.lodoma.lime.util.Vector2;
 
-public class AABB
+public class AABB implements Collider
 {
     private final Vector2 minExtents;
     private final Vector2 maxExtents;
@@ -23,7 +23,14 @@ public class AABB
         return maxExtents;
     }
     
-    public float intersect(AABB other)
+    public IntersectData collide(Collider other)
+    {
+        if(other instanceof AABB) return collideAABB((AABB) other);
+        
+        throw new IllegalArgumentException();
+    }
+    
+    private IntersectData collideAABB(AABB other)
     {
         Vector2 distance1 = other.getMinExtents().sub(maxExtents);
         Vector2 distance2 = minExtents.sub(other.getMaxExtents());
@@ -31,6 +38,6 @@ public class AABB
         Vector2 distance = Vector2.max(distance1, distance2);
         float maximumDistance = distance.maxComponent();
         
-        return maximumDistance;
+        return new IntersectData(maximumDistance < 0.0f, distance);
     }
 }

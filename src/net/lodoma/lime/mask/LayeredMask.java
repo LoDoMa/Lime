@@ -14,15 +14,6 @@ public class LayeredMask extends Mask
         layers = new ArrayList<Mask>();
     }
     
-    @Override
-    public Mask newCopy()
-    {
-        LayeredMask copy = new LayeredMask(order);
-        for(Mask layer : layers)
-            copy.addLayer(layer.newCopy());
-        return copy;
-    }
-    
     public void addLayer(Mask layer)
     {
         layers.add(layer);
@@ -33,10 +24,10 @@ public class LayeredMask extends Mask
     {
         int size = layers.size();
         
-             if(order == RenderingOrder.TOP_TO_BOTTOM)
+             if(order == RenderingOrder.FIRST_IN_FRONT)
             for(int i = size - 1; i >= 0; i--)
                 layers.get(i).render();
-        else if(order == RenderingOrder.BOTTOM_TO_TOP)
+        else if(order == RenderingOrder.LAST_IN_FRONT)
             for(int i = 0; i < size; i++)
                 layers.get(i).render();
     }

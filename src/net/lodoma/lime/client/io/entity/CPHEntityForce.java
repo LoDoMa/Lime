@@ -19,6 +19,7 @@ public class CPHEntityForce extends ClientPacketHandler
         super(client);
     }
     
+    @SuppressWarnings("unused")
     @Override
     protected void localHandle() throws IOException
     {
@@ -30,6 +31,5 @@ public class CPHEntityForce extends ClientPacketHandler
         Entity entity = ((ClientsideWorld) client.getProperty("world")).getEntity(entityID);
         if(entity == null) return;
         
-        entity.getBody(bodyID).applyForce(force, point);
     }
 }

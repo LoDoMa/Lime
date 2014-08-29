@@ -1,30 +1,41 @@
 package net.lodoma.lime.physics;
 
-import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.World;
+import java.util.ArrayList;
+import java.util.List;
+
+import net.lodoma.lime.util.Vector2;
 
 public class PhysicsWorld
 {
-    private static final Vec2 ENGINE_GRAVITY = new Vec2(0.0f, -3f);
-    private static final boolean ENGINE_SLEEP = false;
-    
-    private static final int ENGINE_VELOCITY_ITERATIONS = 6;
-    private static final int ENGINE_POSITION_ITERATIONS = 2;
-    
-    private World world;
+    private List<PhysicsObject> objects;
     
     public PhysicsWorld()
     {
-        world = new World(ENGINE_GRAVITY, ENGINE_SLEEP);
+        objects = new ArrayList<PhysicsObject>();
     }
     
-    public World getEngineWorld()
+    public void addPhysicsObject(PhysicsObject object)
     {
-        return world;
+        objects.add(object);
     }
     
     public void update(double timeDelta)
     {
-        world.step((float) timeDelta, ENGINE_VELOCITY_ITERATIONS, ENGINE_POSITION_ITERATIONS);
+        int objectCount = objects.size();
+        for(int i = 0; i < objectCount; i++)
+            for(int j = i + 1; j < objectCount; j++)
+            {
+                PhysicsObject object1 = objects.get(i);
+                PhysicsObject object2 = objects.get(j);
+                IntersectData intersectData = object1.getCollider().collide(object2.getCollider());
+                
+                if(intersectData.intersects())
+                {
+                    Vector2 direction1 = intersectData.getDirection().normalize();
+                    Vector2 direction2 = direction1.reflect(object1.getVelocity().normalize());
+                    object1.getVelocity().reflectLocal(direction2);
+                    object2.getVelocity().reflectLocal(direction1);
+                }
+            }
     }
 }

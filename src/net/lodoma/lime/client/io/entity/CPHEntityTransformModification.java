@@ -4,10 +4,7 @@ import java.io.IOException;
 
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.client.ClientPacketHandler;
-import net.lodoma.lime.physics.PhysicsBody;
 import net.lodoma.lime.util.HashHelper;
-import net.lodoma.lime.util.Vector2;
-import net.lodoma.lime.world.client.ClientsideWorld;
 
 public class CPHEntityTransformModification extends ClientPacketHandler
 {
@@ -19,19 +16,13 @@ public class CPHEntityTransformModification extends ClientPacketHandler
         super(client);
     }
     
+    @SuppressWarnings("unused")
     @Override
     protected void localHandle() throws IOException
     {
         int entityID = inputStream.readInt();
         int bodyID = inputStream.readInt();
         
-        float posx = inputStream.readFloat();
-        float posy = inputStream.readFloat();
-        Vector2 pos = new Vector2(posx, posy);
-        float angle = inputStream.readFloat();
         
-        PhysicsBody body = ((ClientsideWorld) client.getProperty("world")).getEntity(entityID).getBody(bodyID);
-        body.setPosition(pos);
-        body.setAngle(angle);
     }
 }
