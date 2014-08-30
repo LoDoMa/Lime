@@ -9,6 +9,11 @@ import org.w3c.dom.NodeList;
 
 public class XMLHelper
 {
+    public static boolean getChildBooleanValue(Element parent, String nodeName)
+    {
+        return getNodeBooleanValue(getUniqueNode(parent, nodeName));
+    }
+    
     public static int getChildIntegerValue(Element parent, String nodeName)
     {
         return getNodeIntegerValue(getUniqueNode(parent, nodeName));
@@ -27,6 +32,15 @@ public class XMLHelper
     public static String getChildValue(Element parent, String nodeName)
     {
         return getNodeValue(getUniqueNode(parent, nodeName));
+    }
+    
+    public static boolean getNodeBooleanValue(Node node)
+    {
+        try { return Boolean.parseBoolean(getNodeValue(node)); }
+        catch(NumberFormatException e)
+        {
+            throw new RuntimeException("value of \"" + node.getNodeName() + "\" must be a boolean");
+        }
     }
     
     public static int getNodeIntegerValue(Node node)

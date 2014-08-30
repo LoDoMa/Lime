@@ -39,6 +39,8 @@ public class MaskShape
                 for(int i = 0; i < 4; i++)
                     shape.colors[i] = new Color(1.0f, 0.0f, 0.0f, 1.0f);
             }
+            else
+                throw new MaskShapeLoaderException("unknown shape type");
             
             return shape;
         }

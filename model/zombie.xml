@@ -1,6 +1,6 @@
 <entity>
 	<name> lime.entity.zombie </name>
-	<version> 1 </version>
+	<version> 1.0 </version>
 
 	<hitbox>
 		<collider>
@@ -25,9 +25,9 @@
 					<width> 0.5 </width>
 					<height> 0.5 </height>
 					<color>
-						<red> </red>
-						<green> </green>
-						<blue> </blue>
+						<red> 1 </red>
+						<green> 0 </green>
+						<blue> 0 </blue>
 					</color>
 				</shape>
 			</layer>
@@ -40,10 +40,16 @@
 					<offsety> 0.1 </offsety>
 					<width> 0.3 </width>
 					<height> 0.3 </height>
+					<color>
+						<red> 1 </red>
+						<green> 0 </green>
+						<blue> 1 </blue>
+					</color>
 				</shape>
 			</layer>
 		</mask>
 	</model>
 
+	<actor> true </actor>
 	<script> script/entity/zombie.lua </script>
 </entity>
