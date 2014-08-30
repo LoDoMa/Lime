@@ -15,7 +15,7 @@ public class HashPool64<T>
     public void add(long hash, T object)
     {
         if(elements.containsKey(hash))
-            throw new DuplicateHashException();
+            throw new DuplicateHashException("duplicate hash in 64-bit hash pool");
         elements.put(hash, object);
     }
     

@@ -9,6 +9,7 @@ import net.lodoma.lime.physics.AABB;
 import net.lodoma.lime.physics.Collider;
 import net.lodoma.lime.util.HashHelper;
 import net.lodoma.lime.util.Vector2;
+import net.lodoma.lime.util.XMLHelperException;
 
 import org.w3c.dom.Element;
 
@@ -31,7 +32,7 @@ public class HitboxLoader
             Hitbox hitbox = new Hitbox(colliders);
             return hitbox;
         }
-        catch(RuntimeException e)
+        catch(XMLHelperException e)
         {
             throw new HitboxLoaderException(e);
         }
@@ -39,19 +40,26 @@ public class HitboxLoader
     
     private static Collider loadCollider(Element colliderElement) throws HitboxLoaderException
     {
-        String type = getChildValue(colliderElement, "type");
-        
-        Collider collider = null;
-        
-        if(type.equals("AABB"))
+        try
         {
-            float width = getChildFloatValue(colliderElement, "width");
-            float height = getChildFloatValue(colliderElement, "height");
-            collider = new AABB(new Vector2(0.0f), new Vector2(width, height));
+            String type = getChildValue(colliderElement, "type");
+            
+            Collider collider = null;
+            
+            if(type.equals("AABB"))
+            {
+                float width = getChildFloatValue(colliderElement, "width");
+                float height = getChildFloatValue(colliderElement, "height");
+                collider = new AABB(new Vector2(0.0f), new Vector2(width, height));
+            }
+            
+            if(collider == null)
+                throw new HitboxLoaderException("unknown collider type");
+            return collider;
         }
-        
-        if(collider == null)
-            throw new HitboxLoaderException("unknown collider type");
-        return collider;
+        catch(XMLHelperException e)
+        {
+            throw new HitboxLoaderException(e);
+        }
     }
 }

@@ -10,6 +10,7 @@ import net.lodoma.lime.mask.MaskShape;
 import net.lodoma.lime.mask.MaskShapeLoaderException;
 import net.lodoma.lime.mask.RenderingOrder;
 import net.lodoma.lime.util.HashHelper;
+import net.lodoma.lime.util.XMLHelperException;
 import static net.lodoma.lime.util.XMLHelper.*;
 
 import org.w3c.dom.Element;
@@ -18,18 +19,25 @@ public class ModelLoader
 {
     public static Model loadModel(Element modelElement) throws ModelLoaderException
     {
-        Map<Integer, Mask> masks = new HashMap<Integer, Mask>();
-        
-        Element[] maskElements = getChildElementsByName(modelElement, "mask");
-        for(Element maskElement : maskElements)
+        try
         {
-            String name = getChildValue(maskElement, "name");
-            Mask mask = loadMask(maskElement);
-            masks.put(HashHelper.hash32(name), mask);
+            Map<Integer, Mask> masks = new HashMap<Integer, Mask>();
+            
+            Element[] maskElements = getChildElementsByName(modelElement, "mask");
+            for(Element maskElement : maskElements)
+            {
+                String name = getChildValue(maskElement, "name");
+                Mask mask = loadMask(maskElement);
+                masks.put(HashHelper.hash32(name), mask);
+            }
+            
+            Model model = new Model(masks);
+            return model;
         }
-        
-        Model model = new Model(masks);
-        return model;
+        catch(XMLHelperException e)
+        {
+            throw new ModelLoaderException(e);
+        }
     }
     
     private static Mask loadMask(Element maskElement) throws ModelLoaderException
@@ -72,7 +80,7 @@ public class ModelLoader
             
             throw new ModelLoaderException("unknown mask type");
         }
-        catch(MaskShapeLoaderException | RuntimeException e)
+        catch(MaskShapeLoaderException | XMLHelperException e)
         {
             throw new ModelLoaderException(e);
         }

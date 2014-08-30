@@ -8,6 +8,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import static net.lodoma.lime.util.XMLHelper.*;
+import net.lodoma.lime.util.XMLHelperException;
 import net.lodoma.lime.world.CommonWorld;
 
 import org.w3c.dom.Document;
@@ -53,7 +54,7 @@ public class EntityLoader
             EntityType entityType = new EntityType(name, version, model, hitbox, scriptFile, world);
             return entityType;
         }
-        catch(HitboxLoaderException | ModelLoaderException | IOException | RuntimeException e)
+        catch(HitboxLoaderException | ModelLoaderException | IOException | XMLHelperException e)
         {
             throw new EntityLoaderException(e);
         }

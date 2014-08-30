@@ -4,6 +4,7 @@ import org.w3c.dom.Element;
 
 import net.lodoma.lime.gui.Color;
 import net.lodoma.lime.util.Vector2;
+import net.lodoma.lime.util.XMLHelperException;
 import static net.lodoma.lime.util.XMLHelper.*;
 
 public class MaskShape
@@ -44,7 +45,7 @@ public class MaskShape
             
             return shape;
         }
-        catch(RuntimeException e)
+        catch(XMLHelperException e)
         {
             throw new MaskShapeLoaderException(e);
         }

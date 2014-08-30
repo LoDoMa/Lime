@@ -8,6 +8,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import net.lodoma.lime.script.LuaScript;
+import net.lodoma.lime.util.XMLHelperException;
 import static net.lodoma.lime.util.XMLHelper.*;
 
 import org.w3c.dom.Document;
@@ -44,7 +45,7 @@ public class WorldLoader
             world.script.require("script/strict/sandbox");
             world.script.load(new File(getChildValue(docElement, "script")));
         }
-        catch(IOException | SAXException | ParserConfigurationException e)
+        catch(IOException | SAXException | ParserConfigurationException | XMLHelperException e)
         {
             throw new WorldLoaderException(e);
         }

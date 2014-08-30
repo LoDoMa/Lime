@@ -15,7 +15,7 @@ public class HashPool32<T>
     public void add(int hash, T object)
     {
         if(elements.containsKey(hash))
-            throw new DuplicateHashException();
+            throw new DuplicateHashException("duplicate hash in 32-bit hash pool");
         elements.put(hash, object);
     }
     
