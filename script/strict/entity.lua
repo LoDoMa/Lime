@@ -32,6 +32,7 @@ local workingModelData = nil
 
 local workingCollider = nil
 local workingColliderTransform = nil
+local workingColliderVelocity = nil
 local workingColliderHash = 0
 
 local workingMask = nil
@@ -67,7 +68,31 @@ local function setWorkingCollider(hash)
 
 	workingCollider = hitbox:getCollider(hash)
 	workingColliderTransform = workingHitboxData:getTransform(hash)
+	workingColliderVelocity = workingHitboxData:getVelocity(hash)
 	workingColliderHash = hash
+end
+
+local function getColliderPosition()
+	checkWorkingElementSet(workingCollider, "collider", "lime.collider.transform.position.get")
+	local javaPosition = workingColliderTransform:getPosition()
+	return strict.vector.toLua(javaPosition)
+end
+
+local function setColliderPosition(newPosition)
+	checkWorkingElementSet(workingCollider, "collider", "lime.collider.transform.position.set")
+	strict.typecheck.vector(newPosition, 1, "lime.collider.transform.position.set")
+	workingColliderTransform:getPosition():set(newPosition.x, newPosition.y)
+end
+
+local function getColliderVelocity()
+	checkWorkingElementSet(workingCollider, "collider", "lime.collider.velocity.get")
+	return strict.vector.toLua(workingColliderVelocity)
+end
+
+local function setColliderVelocity(newPosition)
+	checkWorkingElementSet(workingCollider, "collider", "lime.collider.velocity.set")
+	strict.typecheck.vector(newPosition, 1, "lime.collider.velocity.set")
+	workingColliderVelocity:set(newPosition.x, newPosition.y)
 end
 
 -- mask
@@ -79,6 +104,18 @@ local function setWorkingMask(hash)
 	workingMask = model:getMask(hash)
 	workingMaskTransform = workingModelData:getTransform(hash)
 	workingMaskHash = hash
+end
+
+local function getMaskPosition()
+	checkWorkingElementSet(workingMask, "mask", "lime.mask.transform.position.get")
+	local javaPosition = workingMaskTransform:getPosition()
+	return strict.vector.toLua(javaPosition)
+end
+
+local function setMaskPosition(newPosition)
+	checkWorkingElementSet(workingMask, "mask", "lime.mask.transform.position.set")
+	strict.typecheck.vector(newPosition, 1, "lime.mask.transform.position.set")
+	workingMaskTransform:getPosition():set(newPosition.x, newPosition.y)
 end
 
 -- light
@@ -116,11 +153,31 @@ addToLime({
 	entity = {
 		set = setWorkingEntity,
 	},
-	collider = {
-		set = setWorkingCollider,
+	hitbox = {
+		collider = {
+			set = setWorkingCollider,
+			transform = {
+				position = {
+					get = getColliderPosition,
+					set = setColliderPosition,
+				},
+			},
+			velocity = {
+				get = getColliderVelocity,
+				set = setColliderVelocity,
+			},
+		},
 	},
-	mask = {
-		set = setWorkingMask,
+	model = {
+		mask = {
+			set = setWorkingMask,
+			transform = {
+				position = {
+					get = getMaskPosition,
+					set = setMaskPosition,
+				},
+			},
+		},
 	},
 	light = {
 		basic = {
@@ -132,21 +189,19 @@ addToLime({
 
 -- extra utility functions
 
-local function follow(bodyEntityID, bodyHash, maskEntityID, maskHash)
+local function follow(bodyEntityID, colliderHash, maskEntityID, maskHash)
 	strict.typecheck.lua(bodyEntityID, "number", 1, "limex.follow")
-	strict.typecheck.lua(bodyHash, "number", 2, "limex.follow")
+	strict.typecheck.lua(colliderHash, "number", 2, "limex.follow")
 	strict.typecheck.lua(maskEntityID, "number", 3, "limex.follow")
 	strict.typecheck.lua(maskHash, "number", 4, "limex.follow")
 
 	setWorkingEntity(bodyEntityID)
-	setWorkingBody(bodyHash)
-	local t = getBodyTranslation()
-	local r = getBodyRotation()
+	setWorkingCollider(colliderHash)
+	local position = getColliderPosition()
 
 	setWorkingEntity(maskEntityID)
 	setWorkingMask(maskHash)
-	setMaskTranslation(t)
-	setMaskRotation(r)
+	setMaskPosition(position)
 end
 
 -- limex table

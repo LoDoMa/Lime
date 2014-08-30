@@ -74,6 +74,13 @@ public class EntityType
         return new Entity(this, idCounter++);
     }
     
+    public void initialize(Entity entity)
+    {
+        int id = entity.getIdentifier();
+        Object[] arguments = new Object[] { id };
+        script.call("Lime_Initialize", arguments);
+    }
+    
     public void update(Entity entity, boolean isActor, double timeDelta)
     {
         int id = entity.getIdentifier();

@@ -1,5 +1,5 @@
 
-local firstUpdate = true
+local firstInit = true
 
 local this = lime.this.ID
 local round = lime.util.round
@@ -20,37 +20,36 @@ local function loadHashes()
 end
 
 local function serverUpdate(entityID)
-	if firstUpdate then
-		lime.entity.set(entityID)
 
-		--[[
-		lime.body.set(hashes["body"])
-		lime.body.transform.position.set(newVector(16.0, 7.0))
-		lime.body.transform.rotation.set(0)
-		lime.body.transform.push()
-		]]
-	end
 end
 
 local function clientUpdate(entityID)
+	limex.follow(entityID, hashes["body"], entityID, hashes["m_body"])
+end
+
+function Lime_Initialize(entityID)
+	if firstInit then
+		loadHashes()
+
+		firstInit = false
+	end
+
 	lime.entity.set(entityID)
 	
-	--limex.follow(this, hashes["body"], this, hashes["m_body"])
+	lime.hitbox.collider.set(hashes["body"])
+	local px, py = math.random() * 10 + 10, math.random() * 10 + 10
+	local vx, vy = math.random() * 2 - 1, math.random() * 2 - 1
+	lime.hitbox.collider.transform.position.set(newVector(px, py))
+	lime.hitbox.collider.velocity.set(newVector(vx, vy))
 end
 
 function Lime_FrameUpdate(entityID, timeDelta, isActor)
 	tdelta = timeDelta
 
-	if firstUpdate then
-		loadHashes()
-	end
-
 	if lime.network.side.server then serverUpdate(entityID)
 	elseif lime.network.side.client then clientUpdate(entityID) end
-
-	firstUpdate = false
 end
 
-function Lime_GetUnlocalizedName()
+function Lime_GetUnlocalizedName(entityID)
 	return "lime.entity.ball.name"
 end

@@ -891,10 +891,22 @@ public class Vector2
         y = v.y;
     }
     
+    public void set(float x, float y)
+    {
+        this.x = x;
+        this.y = y;
+    }
+    
     public static void set(Vector2 v1, Vector2 v2)
     {
         v1.x = v2.x;
         v1.y = v2.y;
+    }
+    
+    public static void set(Vector2 v, float x, float y)
+    {
+        v.x = x;
+        v.y = y;
     }
 
     @Override

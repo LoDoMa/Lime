@@ -25,9 +25,9 @@ local function onNewUser(bundle)
 	elseif lime.network.side.server then
 		print("user ID: " .. bundle["userID"])
 
-		local id = lime.entity.create(hashes["lime.entity.zombie"])
-		lime.actor.set(id, bundle["userID"])
-		for i = 0, 5, 1 do
+		--local id = lime.entity.create(hashes["lime.entity.zombie"])
+		--lime.actor.set(id, bundle["userID"])
+		for i = 0, 10, 1 do
 			lime.entity.create(hashes["lime.entity.ball"])
 		end
 

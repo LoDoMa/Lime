@@ -1,28 +1,24 @@
 package net.lodoma.lime.physics;
 
+import net.lodoma.lime.util.Transform;
 import net.lodoma.lime.util.Vector2;
 
 public class PhysicsObject
 {
-    private Vector2 position;
+    private Transform transform;
     private Vector2 velocity;
     private Collider collider;
     
-    public PhysicsObject(Vector2 position, Collider collider)
+    public PhysicsObject(Transform transform, Vector2 velocity, Collider collider)
     {
-        this(position, new Vector2(0.0f, 0.0f), collider);
-    }
-    
-    public PhysicsObject(Vector2 position, Vector2 velocity, Collider collider)
-    {
-        this.position = position;
+        this.transform = transform;
         this.velocity = velocity;
         this.collider = collider;
     }
     
-    public Vector2 getPosition()
+    public Transform getTransform()
     {
-        return position;
+        return transform;
     }
     
     public Vector2 getVelocity()
@@ -35,8 +31,8 @@ public class PhysicsObject
         return collider;
     }
     
-    public void setVelocity(Vector2 velocity)
+    public IntersectData collide(PhysicsObject other)
     {
-        this.velocity = velocity;
+        return collider.collide(transform, other.collider, other.transform);
     }
 }

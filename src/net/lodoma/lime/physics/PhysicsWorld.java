@@ -22,12 +22,19 @@ public class PhysicsWorld
     public void update(double timeDelta)
     {
         int objectCount = objects.size();
+
+        for(int i = 0; i < objectCount; i++)
+        {
+            PhysicsObject object = objects.get(i);
+            object.getTransform().getPosition().addLocal(object.getVelocity().mul((float) timeDelta));
+        }
+        
         for(int i = 0; i < objectCount; i++)
             for(int j = i + 1; j < objectCount; j++)
             {
                 PhysicsObject object1 = objects.get(i);
                 PhysicsObject object2 = objects.get(j);
-                IntersectData intersectData = object1.getCollider().collide(object2.getCollider());
+                IntersectData intersectData = object1.collide(object2);
                 
                 if(intersectData.intersects())
                 {
