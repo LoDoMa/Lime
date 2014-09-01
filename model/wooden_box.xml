@@ -1,0 +1,34 @@
+<entity> 
+	<name> lime.entity.obstacle.woodbox </name>
+	<version> 1.0 </version>
+	<hitbox> 
+		<collider>
+			<name> body </name>
+			<type> AABB </type>
+			<width> 0.6 </width>
+			<height> 0.6 </height>
+		</collider>
+	</hitbox>
+	<model>
+		<mask>
+			<name> m_body </name>
+			<type> colored </type>
+			<shape>
+				<type> rectangle </type>
+				<offsetx> 0 </offsetx>
+				<offsety> 0 </offsety>
+				<width> 0.6 </width>
+				<height> 0.6 </height>
+				<color>
+					<red> 184 </red>
+					<green> 137 </green>
+					<blue> 50 </blue>
+				</color>
+			</shape>
+		</mask>
+	</model>
+	<actor> false </actor>
+	<script> -NONE </script>
+</entity>
+
+
