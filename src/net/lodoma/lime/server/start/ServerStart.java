@@ -13,11 +13,9 @@ public class ServerStart
         Server server = new Server();
         server.open(19424);
         
-        try
+        try(BufferedReader bR = new BufferedReader(new InputStreamReader(System.in)))
         {
-            BufferedReader bR = new BufferedReader(new InputStreamReader(System.in));
             bR.readLine();
-            bR.close();
         }
         catch(IOException e)
         {

@@ -17,21 +17,19 @@ public class Language
         this.parentLanguage = parentLanguage;
         names = new HashMap<String, String>();
         
-        FileReader fileReader = new FileReader(langFile);
-        BufferedReader bufferedReader = new BufferedReader(fileReader);
-        
-        String line;
-        while((line = bufferedReader.readLine()) != null)
+        try(FileReader fileReader = new FileReader(langFile);
+            BufferedReader bufferedReader = new BufferedReader(fileReader))
         {
-            String[] split = line.split("->");
-            String unlocalizedName = split[0].trim();
-            String localizedName = split[1].trim();
-            
-            names.put(unlocalizedName, localizedName);
+            String line;
+            while((line = bufferedReader.readLine()) != null)
+            {
+                String[] split = line.split("->");
+                String unlocalizedName = split[0].trim();
+                String localizedName = split[1].trim();
+                
+                names.put(unlocalizedName, localizedName);
+            }
         }
-        
-        bufferedReader.close();
-        fileReader.close();
     }
     
     public String getLocalizedName(String unlocalizedName)

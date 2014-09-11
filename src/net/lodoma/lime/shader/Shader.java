@@ -39,16 +39,14 @@ public class Shader
     private String loadSource(File sourceFile)
     {
         StringBuilder builder = new StringBuilder();
-        try
+        try(BufferedReader reader = new BufferedReader(new FileReader(sourceFile)))
         {
-            BufferedReader reader = new BufferedReader(new FileReader(sourceFile));
             String line;
             while((line = reader.readLine()) != null)
             {
                 builder.append(line);
                 builder.append("\n");
             }
-            reader.close();
         }
         catch(IOException e)
         {
