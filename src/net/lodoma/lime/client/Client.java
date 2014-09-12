@@ -19,6 +19,20 @@ import net.lodoma.lime.security.Credentials;
 import net.lodoma.lime.util.HashPool32;
 import net.lodoma.lime.util.Pipe;
 
+/**
+ * Client holds all data for communication with the server.
+ * The cilent tries to establish a connection with the server
+ * when it is opened, and has to be closed for this connection
+ * to properly end.
+ * 
+ * When opened, ClientReader and ClientLogicPool threads are
+ * started.
+ * 
+ * The client is also a PropertyPool for sharing objects
+ * between client logic components.
+ * 
+ * @author Lovro Kalinovčić
+ */
 public class Client implements PropertyPool
 {
     private boolean isRunning = false;
@@ -37,6 +51,24 @@ public class Client implements PropertyPool
     
     private Map<String, Object> properties;
     
+    /**
+     * Opens the client if not running.
+     * First tries to establish a connection with the server,
+     * then initializes the client before starting its logic.
+     * 
+     * A ClientLogicPool is created, with UPS set to 60.
+     * The property pool is created.
+     * The following properties are set:
+     *     logicPool, reader, credentials,
+     *     cphPool, cpPool, emanPool
+     * 
+     * ClientLogicPool and ClientReader threads are started.
+     * 
+     * @param port - server port
+     * @param host - server host
+     * @param credentials - user credentials
+     * @throws ClientConnectionException is establishing connection fails.
+     */
     public final void open(int port, String host, Credentials credentials) throws ClientConnectionException
     {
         if(isRunning) return;
@@ -84,6 +116,14 @@ public class Client implements PropertyPool
         isRunning = true;
     }
     
+    /**
+     * Closes the client is running.
+     * First stops ClientLogicPool and ClientReader threads,
+     * then tries to close the client socket.
+     * 
+     * This method will wait until both ClientLogicPool
+     * and ClientReader threads have stopped.
+     */
     public final void close()
     {
         if(!isRunning) return;
@@ -113,6 +153,11 @@ public class Client implements PropertyPool
         }
     }
     
+    /**
+     * Creates a new thread and starts it.
+     * That thread then closes the server.
+     * The created thread is named "ClientCloseThread".
+     */
     public void closeInThread()
     {
         if(!isRunning) return;
@@ -127,26 +172,49 @@ public class Client implements PropertyPool
         }, "ClientCloseThread").start();
     }
     
+    /**
+     * @return the close message.
+     */
     public String getCloseMessage()
     {
         return closeMessage;
     }
     
+    /**
+     * Sets the close message.
+     * @param closeMessage - new close message
+     */
     public void setCloseMessage(String closeMessage)
     {
         this.closeMessage = closeMessage;
     }
     
+    /**
+     * Returns the input stream.
+     * This stream is not the socket input stream,
+     * but piped output from ClientReader.
+     * 
+     * @return input stream
+     */
     public DataInputStream getInputStream()
     {
         return publicInputStream;
     }
     
+    /**
+     * Returns the output stream.
+     * This stream is the socket output stream.
+     * 
+     * @return output stream.
+     */
     public DataOutputStream getOutputStream()
     {
         return publicOutputStream;
     }
     
+    /**
+     * @return is the client running
+     */
     public boolean isRunning()
     {
         return isRunning;
