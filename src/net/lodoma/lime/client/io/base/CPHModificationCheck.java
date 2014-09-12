@@ -10,11 +10,34 @@ import net.lodoma.lime.security.ModificationCheck;
 import net.lodoma.lime.util.HashHelper;
 import net.lodoma.lime.util.HashPool32;
 
+/**
+ * CPHModificationCheck is a ClientPacketHandler
+ * that handles the SPModificationCheck packet.
+ * 
+ * This handler calculates CRC sums for game files and then
+ * compares them with CRC sums from the server.
+ * If those numbers do not match, the client is closed
+ * with "Illegal file content" as the close message.
+ * Otherwise, a CPDependencyRequest packet is written.
+ * 
+ * @author Lovro Kalinovčić
+ */
 public class CPHModificationCheck extends ClientPacketHandler
 {
+    /**
+     * Unique name of this handler
+     */
     public static final String NAME = "Lime::ModificationCheck";
+    
+    /**
+     * 32-bit hash of this handlers name;
+     */
     public static final int HASH = HashHelper.hash32(NAME);
     
+    /**
+     * 
+     * @param client - the client that uses this handler
+     */
     public CPHModificationCheck(Client client)
     {
         super(client);
