@@ -249,6 +249,7 @@ public class LuaScript
      * @param functionPath - path of the function
      * @param returnc - count of returned elements
      * @param arguments - arguments to the function
+     * @return an object array with "returnc" elements - everything returned by the function
      */
     public Object[] call(String functionPath, int returnc, Object[] arguments)
     {
