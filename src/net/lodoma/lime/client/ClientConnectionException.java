@@ -2,8 +2,8 @@ package net.lodoma.lime.client;
 
 /**
  * ClientConnectionException is thrown by Client on failed opening.
- * @author kalinovcic
- *
+ * 
+ * @author Lovro Kalinovčić
  */
 public class ClientConnectionException extends Exception
 {
