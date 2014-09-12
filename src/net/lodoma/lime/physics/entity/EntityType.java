@@ -33,10 +33,10 @@ public class EntityType
         this.model = model;
         this.hitbox = hitbox;
         
-        this.script = new LuaScript();
         this.world = world;
         
-        initLuaState(scriptFile);
+        if(!scriptFile.equals("-NONE"))
+            initLuaState(scriptFile);
     }
     
     public String getName()
@@ -76,16 +76,22 @@ public class EntityType
     
     public void initialize(Entity entity)
     {
-        int id = entity.getIdentifier();
-        Object[] arguments = new Object[] { id };
-        script.call("Lime_Initialize", arguments);
+        if(script != null)
+        {
+            int id = entity.getIdentifier();
+            Object[] arguments = new Object[] { id };
+            script.call("Lime_Initialize", arguments);
+        }
     }
     
     public void update(Entity entity, boolean isActor, double timeDelta)
     {
-        int id = entity.getIdentifier();
-        Object[] arguments = new Object[] { id, isActor, timeDelta };
-        script.call("Lime_FrameUpdate", arguments);
+        if(script != null)
+        {
+            int id = entity.getIdentifier();
+            Object[] arguments = new Object[] { id, isActor, timeDelta };
+            script.call("Lime_FrameUpdate", arguments);
+        }
     }
     
     public void render(Entity entity)
@@ -95,6 +101,8 @@ public class EntityType
     
     private void initLuaState(String scriptFile) throws IOException
     {
+        script = new LuaScript();
+        
         script.setGlobal("SCRIPT", script);
         script.setGlobal("ENTITY_TYPE", this);
         script.require("script/strict/lime");

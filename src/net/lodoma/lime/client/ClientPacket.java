@@ -23,7 +23,7 @@ public abstract class ClientPacket
     
     /**
      * 
-     * @param client - the client that uses this output
+     * @param client - the client that uses this packet
      * @param hash - 32-bit hash at the start of the packet
      * @param expected - expected arguments to the handle function
      */

@@ -24,6 +24,10 @@ public class ChatManager
     private List<ChatSender> senders;       // list of senders this manager is managing
     private List<ChatReceiver> receivers;   // list of receivers this manager is managing
     
+    /**
+     * 
+     * @param client - the client this manager belongs to
+     */
     public ChatManager(Client client)
     {
         this.client = client;

@@ -19,6 +19,10 @@ public abstract class ClientPacketHandler
     protected Client client;                    // the client that uses this handler
     protected DataInputStream inputStream;      // input stream from the server
     
+    /**
+     * 
+     * @param client - the client that uses this packet handler
+     */
     public ClientPacketHandler(Client client)
     {
         this.client = client;
