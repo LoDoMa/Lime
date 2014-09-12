@@ -11,8 +11,23 @@ import com.naef.jnlua.LuaRuntimeException;
 import com.naef.jnlua.LuaState;
 import com.naef.jnlua.LuaType;
 
+/**
+ * LuaScript is a class for managing a Lua state.
+ * 
+ * @author Lovro Kalinovčić
+ */
 public class LuaScript
 {
+    /**
+     * Returns if an object is of a safe type.
+     * A safe type is a type that has its Lua alternative.
+     * In other words, non-safe types are userdata in Lua.
+     * Safe types are: boolean, byte, chat, short, int,
+     *                 float, long, double and String.
+     * 
+     * @param object - the object whose type is tested
+     * @return if the object is of a safe type
+     */
     public static boolean safeType(Object object)
     {
             if(object == null)              return true;
@@ -30,12 +45,25 @@ public class LuaScript
     
     private LuaState luaState;
     
+    /**
+     * Creates a new Lua state and opens libraries.
+     */
     public LuaScript()
     {
         luaState = new LuaState();
         luaState.openLibs();
     }
     
+    /**
+     * Pushes an object onto the Lua stack.
+     * Null is pushed as nil.
+     * Boolean is pushed as boolean.
+     * Byte, char, short, int, float, long and double are pushed as numbers.
+     * String is pushed as string.
+     * All other types are pushed as Java objects.
+     * 
+     * @param object - the object to push
+     */
     public void push(Object object)
     {
             if(object == null)              luaState.pushNil();
@@ -51,6 +79,12 @@ public class LuaScript
        else                                 luaState.pushJavaObject(object);
     }
     
+    /**
+     * Pops a value from the stack.
+     * This value is either a boolean, a number, a string or null.
+     * 
+     * @return the value from the top of the stack.
+     */
     public Object pop()
     {
         Object returned = popBoolean();
@@ -100,17 +134,38 @@ public class LuaScript
         }
     }
     
+    /**
+     * Sets a global in Lua state.
+     * The global name is prefixed by "LIME_".
+     * Globals value is pushed onto the stack using the "push" method.
+     * 
+     * @param name - name of the global (note that it is prefixed by "LIME_")
+     * @param value - initial value of the global
+     */
     public void setGlobal(String name, Object value)
     {
         push(value);
         luaState.setGlobal("LIME_" + name);
     }
     
+    /**
+     * Requires a file in Lua state.
+     * The requirement chunk is called "require".
+     * 
+     * @param file - path to the required file
+     */
     public void require(String file)
     {
         load("require \"" + file + "\"", "require");
     }
     
+    /**
+     * Loads the source from a file.
+     * The loading is done using the "load(String)" method.
+     * 
+     * @param file - file to read from
+     * @throws IOException
+     */
     public void load(File file) throws IOException
     {
         Path path = Paths.get(file.toURI());
@@ -118,6 +173,12 @@ public class LuaScript
         load(source);
     }
     
+    /**
+     * Loads some source in Lua state.
+     * The source chunk is called "source".
+     * 
+     * @param source - the source to be loaded.
+     */
     public void load(String source)
     {
         load(source, "script");
@@ -145,17 +206,50 @@ public class LuaScript
             }
             catch(InterruptedException e1)
             {
-                // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
         }
     }
     
+    /**
+     * Calls a function specified by its path, taking given parameters.
+     * The function is expected to not return anything.
+     * 
+     * This method simply calls the "call(String, int, Object[])"
+     * method, with 0 provided as the return count.
+     * 
+     * @param functionPath - path of the function
+     * @param arguments - arguments to the function
+     */
     public void call(String functionPath, Object[] arguments)
     {
         call(functionPath, 0, arguments);
     }
     
+    /**
+     * Calls a function specified by its path.
+     * A function path is built of names separated by ".".
+     * 
+     * The first name is a name of a global.
+     * The second name (if it exists) is a name of a table entry inside the global.
+     * The third name (if it exists) is a name of a table entry inside the previous table.
+     * This repeats to the last name.
+     * 
+     * Value of the last name must be a function.
+     * Values of all other names must be tables.
+     * 
+     * This function takes arguments from the object array.
+     * Objects in the object array are pushed to the stack
+     * (and so converted to Lua types) using the "push" method.
+     * 
+     * Everything returned by this function is returned in an
+     * object array. Lua types are popped from the stack
+     * (and so converted to Java types) using the "pop" method.
+     * 
+     * @param functionPath - path of the function
+     * @param returnc - count of returned elements
+     * @param arguments - arguments to the function
+     */
     public Object[] call(String functionPath, int returnc, Object[] arguments)
     {
         if(arguments == null)
@@ -180,6 +274,9 @@ public class LuaScript
         return returned;
     }
     
+    /**
+     * Closes the Lua state.
+     */
     public void close()
     {
         luaState.close();
