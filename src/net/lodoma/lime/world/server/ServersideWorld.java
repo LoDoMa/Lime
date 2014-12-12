@@ -1,5 +1,6 @@
 package net.lodoma.lime.world.server;
 
+import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -75,11 +76,8 @@ public class ServersideWorld extends CommonWorld
     private ServerPacket entityCorrection;
     private ServerPacket setActor;
     
-    /*
     private static final double CORRECTION_TIME = 5.0;
     private double correctionRemaining;
-    private int currentEntity;
-    */
     
     public ServersideWorld(Server server)
     {
@@ -143,29 +141,21 @@ public class ServersideWorld extends CommonWorld
     
     public void update(double timeDelta)
     {
-        // TODO: re-enable entity corrections
-        
-        /*
-        if(entityPool.size() > 0)
+        if (entityPool.size() > 0)
         {
             correctionRemaining += timeDelta;
-            double time = CORRECTION_TIME / (double) entityPool.size();
-            if(time < 0.1) time = 0.1;
-            if(correctionRemaining >= time)
+            while (correctionRemaining >= CORRECTION_TIME)
             {
-                correctionRemaining = 0;
-    
-                List<Entity> entityList = getEntityList();
-                if(currentEntity < 0 || currentEntity >= entityList.size())
-                    currentEntity = 0;
-                Entity entity = entityList.get(currentEntity++);
+                correctionRemaining -= CORRECTION_TIME;
+
+                // NOTE: The Consumer here should probably be in a final field
                 
+                List<Entity> entityList = entityPool.getObjectList();
                 Set<ServerUser> userSet = userManager.getUserSet();
                 for(ServerUser user : userSet)
-                    entityCorrection.write(user, entity);
+                    entityCorrection.write(user, entityList);
             }
         }
-        */
         
         super.update(timeDelta);
     }

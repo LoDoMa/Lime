@@ -4,7 +4,10 @@ import java.io.IOException;
 
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.client.ClientPacketHandler;
+import net.lodoma.lime.physics.Entity;
+import net.lodoma.lime.physics.EntityCorrector;
 import net.lodoma.lime.util.HashHelper;
+import net.lodoma.lime.world.CommonWorld;
 
 /**
  * CPHEntityCorrection is a ClientPacketHandler
@@ -39,12 +42,13 @@ public class CPHEntityCorrection extends ClientPacketHandler
     @Override
     protected void localHandle() throws IOException
     {
-        int id = inputStream.readInt();
+        int entityCount = inputStream.readInt();
         
-        // TODO: re-enable entity correction
-        /*
-        Entity entity = null;
-        EntityCorrector.receiveCorrection(entity, inputStream);
-        */
+        while (entityCount-- > 0)
+        {
+            int identifier = inputStream.readInt();
+            Entity entity = ((CommonWorld) client.getProperty("world")).entityPool.get(identifier);
+            EntityCorrector.applyCorrection(entity, inputStream);
+        }
     }
 }
