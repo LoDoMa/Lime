@@ -815,8 +815,8 @@ public class Vector2
     public void reflectLocal(Vector2 normal)
     {
         float dot = dot(normal);
-        x = x - (2.0f * dot * normal.x);
-        y = y - (2.0f * dot * normal.y);
+        x -= 2.0f * dot * normal.x;
+        y -= 2.0f * dot * normal.y;
     }
     
     public static Vector2 reflect(Vector2 vector, Vector2 normal)

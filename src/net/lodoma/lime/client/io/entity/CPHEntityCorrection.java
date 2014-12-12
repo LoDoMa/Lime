@@ -4,8 +4,6 @@ import java.io.IOException;
 
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.client.ClientPacketHandler;
-import net.lodoma.lime.physics.entity.Entity;
-import net.lodoma.lime.physics.entity.EntityCorrector;
 import net.lodoma.lime.util.HashHelper;
 
 /**
@@ -42,7 +40,11 @@ public class CPHEntityCorrection extends ClientPacketHandler
     protected void localHandle() throws IOException
     {
         int id = inputStream.readInt();
+        
+        // TODO: re-enable entity correction
+        /*
         Entity entity = null;
         EntityCorrector.receiveCorrection(entity, inputStream);
+        */
     }
 }

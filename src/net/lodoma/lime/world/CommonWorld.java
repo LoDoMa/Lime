@@ -3,38 +3,36 @@ package net.lodoma.lime.world;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.List;
-import java.util.Set;
+import java.util.function.Consumer;
 
 import net.lodoma.lime.common.NetworkSide;
 import net.lodoma.lime.common.PropertyPool;
+import net.lodoma.lime.physics.Entity;
+import net.lodoma.lime.physics.EntityFactory;
+import net.lodoma.lime.physics.EntityFactoryException;
+import net.lodoma.lime.physics.EntityLoader;
+import net.lodoma.lime.physics.EntityLoaderException;
 import net.lodoma.lime.physics.PhysicsWorld;
-import net.lodoma.lime.physics.entity.Entity;
-import net.lodoma.lime.physics.entity.EntityLoader;
-import net.lodoma.lime.physics.entity.EntityLoaderException;
-import net.lodoma.lime.physics.entity.EntityPool;
-import net.lodoma.lime.physics.entity.EntityType;
-import net.lodoma.lime.physics.entity.EntityTypePool;
 import net.lodoma.lime.script.LuaScript;
+import net.lodoma.lime.util.GeneratedIdentityPool;
+import net.lodoma.lime.util.HashPool32;
 
 public abstract class CommonWorld
 {
-    protected String name;
-    protected String version;
+    public String name;
+    public String version;
     
-    protected LuaScript script;
+    public LuaScript script;
     
-    protected PhysicsWorld physicsWorld;
-    
-    protected EntityPool entityPool;
-    protected EntityTypePool entityTypes;
+    public PhysicsWorld physicsWorld;
+    public HashPool32<EntityFactory> entityFactoryPool;
+    public GeneratedIdentityPool<Entity> entityPool;
     
     public CommonWorld()
     {
         physicsWorld = new PhysicsWorld();
-        
-        entityPool = new EntityPool();
-        entityTypes = new EntityTypePool();
+        entityFactoryPool = new HashPool32<EntityFactory>();
+        entityPool = new GeneratedIdentityPool<>();
     }
     
     public void load()
@@ -45,16 +43,16 @@ public abstract class CommonWorld
             for(File file : files)
                 if(file.isFile() && file.getName().toLowerCase().endsWith(".xml"))
                 {
-                    EntityType type = EntityLoader.loadEntity(new FileInputStream(file), this);
-                    entityTypes.add(type.getNameHash(), type);
+                    EntityFactory factory = EntityLoader.loadEntityType(new FileInputStream(file), this);
+                    entityFactoryPool.add(factory.nameHash, factory);
                     
-                    System.out.printf("Loaded EntityType %s\n", type.getName());
+                    System.out.printf("Created EntityFactory for %s\n", factory.name);
                 }
         }
         catch(EntityLoaderException | IOException e)
         {
-            e.printStackTrace();
             // TODO: handle this later
+            e.printStackTrace();
         }
     }
     
@@ -62,48 +60,49 @@ public abstract class CommonWorld
     
     public abstract PropertyPool getPropertyPool();
     
-    public PhysicsWorld getPhysicsWorld()
-    {
-        return physicsWorld; 
-    }
-    
     public int newEntity(int hash)
     {
-        EntityType type = entityTypes.get(hash);
-        System.out.printf("Created %s entity\n", type.getName());
-        Entity entity = type.newEntity();
-        entityPool.add(entity);
-        return entity.getIdentifier();
-    }
-    
-    public Entity getEntity(int id)
-    {
-        return entityPool.get(id);
-    }
-    
-    public void removeEntity(int id)
-    {
-        entityPool.remove(id);
-    }
-    
-    public Set<Integer> getEntityIDSet()
-    {
-        return entityPool.getIdentifierSet();
-    }
-    
-    public List<Entity> getEntityList()
-    {
-        return entityPool.getObjectList();
+        try
+        {
+            EntityFactory factory = entityFactoryPool.get(hash);
+            Entity entity = factory.newEntity();
+            entityPool.add(entity);
+            entity.initialize();
+            
+            int entityID = entity.getIdentifier();
+            System.out.printf("Created entity %s[%d]\n", factory.name, entityID);
+            return entityID;
+        }
+        catch (EntityFactoryException e)
+        {
+            // TODO: handle this later
+            e.printStackTrace();
+            return -1;
+        }
     }
     
     public void clean()
     {
-        List<Entity> entityList = getEntityList();
-        for(Entity entity : entityList)
+        // NOTE: The Consumer here should probably be in a final field
+        entityPool.foreach(new Consumer<Entity>()
         {
-            entity.destroy();
-            entityPool.remove(entity.getIdentifier());
-        }
+            @Override
+            public void accept(Entity entity)
+            {
+                entity.destroy();
+                entityPool.remove(entity);
+            }
+        });
+        
+        entityFactoryPool.foreach(new Consumer<EntityFactory>()
+        {
+            @Override
+            public void accept(EntityFactory factory)
+            {
+                factory.destroy();
+                entityFactoryPool.remove(factory.nameHash);
+            }
+        });
     }
     
     public void update(double timeDelta)
@@ -111,10 +110,15 @@ public abstract class CommonWorld
         if(script != null)
             script.call("Lime_WorldUpdate", null);
         
-        List<Entity> entityList = getEntityList();
-        for(Entity entity : entityList)
-            entity.update(timeDelta);
+        entityPool.foreach(new Consumer<Entity>()
+        {
+            @Override
+            public void accept(Entity entity)
+            {
+                entity.update((float) timeDelta);
+            }
+        });
         
-        physicsWorld.update(timeDelta);
+        physicsWorld.update((float) timeDelta);
     }
 }

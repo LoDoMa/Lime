@@ -2,8 +2,7 @@ package net.lodoma.lime.server.io.entity;
 
 import java.io.IOException;
 
-import net.lodoma.lime.physics.entity.Entity;
-import net.lodoma.lime.physics.entity.EntityCorrector;
+import net.lodoma.lime.physics.Entity;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.server.ServerPacket;
 import net.lodoma.lime.server.ServerUser;
@@ -24,6 +23,8 @@ public class SPEntityCorrection extends ServerPacket
     {
         Entity entity = (Entity) args[0];
         user.outputStream.writeInt(entity.getIdentifier());
-        EntityCorrector.sendCorrection(entity, user.outputStream);
+        
+        // TODO: re-enable entity correction
+        // EntityCorrector.sendCorrection(entity, user.outputStream);
     }
 }

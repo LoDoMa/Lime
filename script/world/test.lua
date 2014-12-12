@@ -27,7 +27,7 @@ local function onNewUser(bundle)
 
 		--local id = lime.entity.create(hashes["lime.entity.zombie"])
 		--lime.actor.set(id, bundle["userID"])
-		for i = 0, 10, 1 do
+		for i = 0, 1, 1 do
 			lime.entity.create(hashes["lime.entity.ball"])
 		end
 

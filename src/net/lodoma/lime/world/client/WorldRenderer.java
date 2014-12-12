@@ -4,9 +4,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import net.lodoma.lime.client.window.Window;
-import net.lodoma.lime.physics.entity.Entity;
+import net.lodoma.lime.physics.Entity;
 import net.lodoma.lime.shader.Program;
 import net.lodoma.lime.shader.Shader;
 import net.lodoma.lime.shader.ShaderType;
@@ -79,11 +80,11 @@ public class WorldRenderer
     
     private void init()
     {
-        // TODO: fix - framebuffers are always the same size size as the default viewport
+        // FIXME: framebuffers are always the same size size as the default viewport
         fbow = Window.getViewportWidth();
         fboh = Window.getViewportHeight();
 
-        // TODO: fix - framebuffers are never deleted
+        // FIXME: framebuffers are never deleted
         lightFBO = generateFramebuffer(fbow, fboh);
         worldFBO = generateFramebuffer(fbow, fboh);
         
@@ -133,9 +134,13 @@ public class WorldRenderer
         
         //worldProgram.useProgram();
         
-        List<Entity> entityList = world.getEntityList();
-        for(Entity entity : entityList)
-            entity.render();
+        world.entityPool.foreach(new Consumer<Entity>()
+        {
+            public void accept(Entity entity)
+            {
+                entity.render();
+            };
+        });
         
         glPopMatrix();
     }

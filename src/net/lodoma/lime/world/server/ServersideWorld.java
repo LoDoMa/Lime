@@ -1,7 +1,7 @@
 package net.lodoma.lime.world.server;
 
-import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import net.lodoma.lime.common.NetworkSide;
 import net.lodoma.lime.common.PropertyPool;
@@ -9,7 +9,7 @@ import net.lodoma.lime.event.EventBundle;
 import net.lodoma.lime.event.EventListener;
 import net.lodoma.lime.event.EventManager;
 import net.lodoma.lime.event.InvalidEventBundleException;
-import net.lodoma.lime.physics.entity.Entity;
+import net.lodoma.lime.physics.Entity;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.server.ServerPacket;
 import net.lodoma.lime.server.ServerUser;
@@ -50,12 +50,15 @@ public class ServersideWorld extends CommonWorld
                 throw new InvalidEventBundleException();
             ServerUser user = userManager.getUser((Integer) userID);
 
-            List<Entity> entityList = world.getEntityList();
-            for(Entity entity : entityList)
+            world.entityPool.foreach(new Consumer<Entity>()
             {
-                entityCreation.write(user, entity);
-                entityCorrection.write(user, entity);
-            }
+                @Override
+                public void accept(Entity entity)
+                {
+                    entityCreation.write(user, entity.getIdentifier());
+                    entityCorrection.write(user, entity);
+                }
+            });
         }
         
         public void remove()
@@ -72,9 +75,11 @@ public class ServersideWorld extends CommonWorld
     private ServerPacket entityCorrection;
     private ServerPacket setActor;
     
+    /*
     private static final double CORRECTION_TIME = 5.0;
     private double correctionRemaining;
     private int currentEntity;
+    */
     
     public ServersideWorld(Server server)
     {
@@ -138,6 +143,9 @@ public class ServersideWorld extends CommonWorld
     
     public void update(double timeDelta)
     {
+        // TODO: re-enable entity corrections
+        
+        /*
         if(entityPool.size() > 0)
         {
             correctionRemaining += timeDelta;
@@ -157,6 +165,7 @@ public class ServersideWorld extends CommonWorld
                     entityCorrection.write(user, entity);
             }
         }
+        */
         
         super.update(timeDelta);
     }

@@ -10,37 +10,29 @@ local tdelta = timeDelta;
 
 local hashes = {}
 
-local function addHash(str)
-	hashes[str] = hash32(str)
-end
-
-local function loadHashes()
-	addHash("body")
-	addHash("m_body")
-end
-
 local function serverUpdate(entityID)
 
 end
 
 local function clientUpdate(entityID)
-	limex.follow(entityID, hashes["body"], entityID, hashes["m_body"])
+
 end
+
+local cnt = 1;
 
 function Lime_Initialize(entityID)
 	if firstInit then
-		loadHashes()
-
 		firstInit = false
 	end
 
 	lime.entity.set(entityID)
-	
-	lime.hitbox.collider.set(hashes["body"])
-	local px, py = math.random() * 10 + 10, math.random() * 10 + 10
-	local vx, vy = math.random() * 2 - 1, math.random() * 2 - 1
-	lime.hitbox.collider.transform.position.set(newVector(px, py))
-	lime.hitbox.collider.velocity.set(newVector(vx, vy))
+
+	local px, py = cnt * 4 + 5, 5
+	local vx, vy = cnt * -2, 0
+	lime.body.position.set(newVector(px, py))
+	lime.body.velocity.set(newVector(vx, vy))
+
+	cnt = -cnt
 end
 
 function Lime_FrameUpdate(entityID, timeDelta, isActor)

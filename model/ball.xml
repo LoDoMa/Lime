@@ -2,53 +2,14 @@
 	<name> lime.entity.ball </name>
 	<version> 1.0 </version>
 
-	<hitbox>
-		<collider>
-			<name> body </name>
-			<type> AABB </type>
-			<width> 0.5 </width>
-			<height> 0.5 </height>
-		</collider>
-	</hitbox>
-
-	<model>
-		<mask>
-			<name> m_body </name>
-			<type> layered </type>
-			<layer>
-				<type> colored </type>
-				<height> 0 </height>
-				<shape>
-					<type> rectangle </type>
-					<offsetx> 0.0 </offsetx>
-					<offsety> 0.0 </offsety>
-					<width> 0.5 </width>
-					<height> 0.5 </height>
-					<color>
-						<red> 0 </red>
-						<green> 0 </green>
-						<blue> 1 </blue>
-					</color>
-				</shape>
-			</layer>
-			<layer>
-				<type> colored </type>
-				<height> 1 </height>
-				<shape>
-					<type> rectangle </type>
-					<offsetx> 0.1 </offsetx>
-					<offsety> 0.1 </offsety>
-					<width> 0.3 </width>
-					<height> 0.3 </height>
-					<color>
-						<red> 0 </red>
-						<green> 1 </green>
-						<blue> 0 </blue>
-					</color>
-				</shape>
-			</layer>
-		</mask>
-	</model>
+	<physics>
+		<restitution> 0.25 </restitution>
+		<density> 5.25 </density>
+		<body>
+			<type> circle </type>
+			<radius> 0.5 </radius>
+		</body>
+	</physics>
 
 	<actor> false </actor>
 	<script> script/entity/ball.lua </script>

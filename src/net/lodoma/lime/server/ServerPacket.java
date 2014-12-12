@@ -29,7 +29,7 @@ public abstract class ServerPacket
             if(expected.length != args.length)
                 throw new IllegalArgumentException();
             for(int i = 0; i < expected.length; i++)
-                if(args[i].getClass().isInstance(expected[i]))
+                if(!expected[i].isInstance(args[i]))
                     throw new IllegalArgumentException();
             
             localWrite(user, args);

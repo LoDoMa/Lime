@@ -1,15 +1,15 @@
 package net.lodoma.lime.util;
 
-public class DuplicateHashException extends RuntimeException
+public class HashPoolException extends RuntimeException
 {
     private static final long serialVersionUID = -625430202138206465L;
     
-    public DuplicateHashException(String msg)
+    public HashPoolException(String msg)
     {
         super(msg);
     }
     
-    public DuplicateHashException(Throwable cause)
+    public HashPoolException(Throwable cause)
     {
         super(cause);
     }

@@ -1,48 +1,41 @@
 package net.lodoma.lime.physics;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.function.Consumer;
 
-import net.lodoma.lime.util.Vector2;
+import net.lodoma.lime.util.GeneratedIdentityPool;
 
 public class PhysicsWorld
 {
-    private List<PhysicsObject> objects;
+    public GeneratedIdentityPool<Body> bodyPool;
+    public GeneratedIdentityPool<Platform> platformPool;
     
     public PhysicsWorld()
     {
-        objects = new ArrayList<PhysicsObject>();
+        bodyPool = new GeneratedIdentityPool<Body>();
+        platformPool = new GeneratedIdentityPool<Platform>();
     }
     
-    public void addPhysicsObject(PhysicsObject object)
+    public void update(float timeDelta)
     {
-        objects.add(object);
-    }
-    
-    public void update(double timeDelta)
-    {
-        int objectCount = objects.size();
-
-        for(int i = 0; i < objectCount; i++)
+        // NOTE: The Consumer here should probably be in a final field
+        bodyPool.foreach(new Consumer<Body>()
         {
-            PhysicsObject object = objects.get(i);
-            object.getTransform().getPosition().addLocal(object.getVelocity().mul((float) timeDelta));
-        }
-        
-        for(int i = 0; i < objectCount; i++)
-            for(int j = i + 1; j < objectCount; j++)
+            public void accept(Body body)
             {
-                PhysicsObject object1 = objects.get(i);
-                PhysicsObject object2 = objects.get(j);
-                IntersectData intersectData = object1.collide(object2);
-                
-                if(intersectData.intersects())
-                {
-                    Vector2 direction1 = intersectData.getDirection().normalize();
-                    Vector2 direction2 = direction1.reflect(object1.getVelocity().normalize());
-                    object1.getVelocity().reflectLocal(direction2);
-                    object2.getVelocity().reflectLocal(direction1);
-                }
+                body.simulate(timeDelta);
             }
+        });
+    }
+    
+    public void debugRender()
+    {
+        // NOTE: The Consumer here should probably be in a final field
+        bodyPool.foreach(new Consumer<Body>()
+        {
+            public void accept(Body body)
+            {
+                body.debugRender();
+            }
+        });
     }
 }
