@@ -2,17 +2,17 @@ package net.lodoma.lime.physics;
 
 import java.util.function.Consumer;
 
-import net.lodoma.lime.util.GeneratedIdentityPool;
+import net.lodoma.lime.util.IdentityPool;
 
 public class PhysicsWorld
 {
-    public GeneratedIdentityPool<Body> bodyPool;
-    public GeneratedIdentityPool<Platform> platformPool;
+    public IdentityPool<Body> bodyPool;
+    public IdentityPool<Platform> platformPool;
     
     public PhysicsWorld()
     {
-        bodyPool = new GeneratedIdentityPool<Body>();
-        platformPool = new GeneratedIdentityPool<Platform>();
+        bodyPool = new IdentityPool<Body>();
+        platformPool = new IdentityPool<Platform>();
     }
     
     public void update(float timeDelta)

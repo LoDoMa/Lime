@@ -14,7 +14,7 @@ import net.lodoma.lime.physics.EntityLoader;
 import net.lodoma.lime.physics.EntityLoaderException;
 import net.lodoma.lime.physics.PhysicsWorld;
 import net.lodoma.lime.script.LuaScript;
-import net.lodoma.lime.util.GeneratedIdentityPool;
+import net.lodoma.lime.util.IdentityPool;
 import net.lodoma.lime.util.HashPool32;
 
 public abstract class CommonWorld
@@ -26,13 +26,13 @@ public abstract class CommonWorld
     
     public PhysicsWorld physicsWorld;
     public HashPool32<EntityFactory> entityFactoryPool;
-    public GeneratedIdentityPool<Entity> entityPool;
+    public IdentityPool<Entity> entityPool;
     
     public CommonWorld()
     {
         physicsWorld = new PhysicsWorld();
         entityFactoryPool = new HashPool32<EntityFactory>();
-        entityPool = new GeneratedIdentityPool<>();
+        entityPool = new IdentityPool<>();
     }
     
     public void load()
