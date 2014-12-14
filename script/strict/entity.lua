@@ -12,6 +12,8 @@ local propertyPool = world:getPropertyPool()
 addToStrict({
 	entityFactory = entityFactory,
 	world = world,
+	physicsWorld = world.physicsWorld,
+	visualWorld = world.visualWorld,
 	propertyPool = propertyPool,
 
 	entityName = entityFactory.name,
@@ -23,7 +25,7 @@ require "/script/strict/listener"
 require "/script/strict/input"
 
 local workingEntity = nil
-
+local workingShapeComponent = nil
 
 -- local utilities
 
@@ -69,6 +71,28 @@ local function setBodyVelocity(velocity)
 	strict.typecheck.vector(velocity, 1, "lime.body.velocity.set")
 
 	workingEntity.body.velocity:set(velocity.x, velocity.y);
+end
+
+-- shape
+
+local function setWorkingShapeComponent(componentID)
+	checkWorkingElementSet(workingEntity, "entity", "lime.shape.component.set")
+	strict.typecheck.lua(componentID, "number", 1, "lime.shape.component.set")
+
+	workingShapeComponent = workingEntity.shape.componentPool:get(componentID)
+end
+
+local function getShapeComponentPosition()
+	checkWorkingElementSet(workingShapeComponent, "shape component", "lime.shape.component.position.get")
+	
+	return strict.vector.toLua(workingShapeComponent.position)
+end
+
+local function setShapeComponentPosition(position)
+	checkWorkingElementSet(workingShapeComponent, "shape component", "lime.shape.component.position.set")
+	strict.typecheck.vector(position, 1, "lime.shape.component.position.set")
+
+	workingShapeComponent.position:set(position.x, position.y);
 end
 
 -- light
@@ -119,6 +143,19 @@ addToLime({
 		velocity = {
 			get = getBodyVelocity,
 			set = setBodyVelocity,
+		},
+	},
+	shape = {
+		component = {
+			set = setWorkingShapeComponent,
+			position = {
+				get = getShapeComponentPosition,
+				set = setShapeComponentPosition,
+			},
+			rotation = {
+				get = getShapeComponentRotation,
+				set = setShapeComponentRotation,
+			},
 		},
 	},
 	light = {

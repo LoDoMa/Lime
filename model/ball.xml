@@ -11,6 +11,14 @@
 		</body>
 	</physics>
 
+	<shape>
+		<component>
+			<id> 0 </id>
+			<type> circle </type>
+			<radius> 0.5 </radius>
+		</component>
+	</shape>
+
 	<actor> false </actor>
 	<script> script/entity/ball.lua </script>
 </entity>

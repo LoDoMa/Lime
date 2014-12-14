@@ -7,6 +7,7 @@ import net.lodoma.lime.chat.ChatManager;
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.common.NetworkSide;
 import net.lodoma.lime.common.PropertyPool;
+import net.lodoma.lime.physics.VisualWorld;
 import net.lodoma.lime.shader.light.Light;
 import net.lodoma.lime.world.CommonWorld;
 
@@ -21,6 +22,8 @@ public class ClientsideWorld extends CommonWorld
     
     public ClientsideWorld(Client client)
     {
+        visualWorld = new VisualWorld();
+        
         this.client = client;
         this.renderer = new WorldRenderer(this);
         this.chatConsole = new ChatConsole(this);

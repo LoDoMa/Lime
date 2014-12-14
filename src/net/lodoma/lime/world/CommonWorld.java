@@ -13,6 +13,7 @@ import net.lodoma.lime.physics.EntityFactoryException;
 import net.lodoma.lime.physics.EntityLoader;
 import net.lodoma.lime.physics.EntityLoaderException;
 import net.lodoma.lime.physics.PhysicsWorld;
+import net.lodoma.lime.physics.VisualWorld;
 import net.lodoma.lime.script.LuaScript;
 import net.lodoma.lime.util.IdentityPool;
 import net.lodoma.lime.util.HashPool32;
@@ -23,14 +24,18 @@ public abstract class CommonWorld
     public String version;
     
     public LuaScript script;
-    
+
     public PhysicsWorld physicsWorld;
+    public VisualWorld visualWorld;
+    
     public HashPool32<EntityFactory> entityFactoryPool;
     public IdentityPool<Entity> entityPool;
     
     public CommonWorld()
     {
         physicsWorld = new PhysicsWorld();
+        visualWorld = null;
+        
         entityFactoryPool = new HashPool32<EntityFactory>();
         entityPool = new IdentityPool<>();
     }
@@ -120,5 +125,14 @@ public abstract class CommonWorld
         });
         
         physicsWorld.update((float) timeDelta);
+        
+        entityPool.foreach(new Consumer<Entity>()
+        {
+            @Override
+            public void accept(Entity entity)
+            {
+                entity.postUpdate((float) timeDelta);
+            }
+        });
     }
 }

@@ -4,10 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import net.lodoma.lime.client.window.Window;
-import net.lodoma.lime.physics.Entity;
 import net.lodoma.lime.shader.Program;
 import net.lodoma.lime.shader.Shader;
 import net.lodoma.lime.shader.ShaderType;
@@ -134,13 +132,8 @@ public class WorldRenderer
         
         //worldProgram.useProgram();
         
-        world.entityPool.foreach(new Consumer<Entity>()
-        {
-            public void accept(Entity entity)
-            {
-                entity.render();
-            };
-        });
+        world.visualWorld.render();
+        world.physicsWorld.debugRender();
         
         glPopMatrix();
     }

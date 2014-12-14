@@ -34,6 +34,10 @@ end
 
 addToStrict({
 	network = {
+		side = {
+			server = serverSide,
+			client = clientSide,
+		},
 		getPacket = getPacket,
 		getPacketHandler = getPacketHandler,
 	},

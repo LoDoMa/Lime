@@ -2,6 +2,7 @@ package net.lodoma.lime.physics;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -39,6 +40,8 @@ public class EntityLoader
             factory.nameHash = HashHelper.hash32(factory.name);
             factory.version = getChildValue(entity, "version");
             factory.physicsConfig = loadPhysicsConfiguration(getUniqueElement(entity, "physics"));
+            if (world.visualWorld != null)
+                factory.shapeConfig = loadShapeConfiguration(getUniqueElement(entity, "shape"));
             factory.actorCapability = getChildBooleanValue(entity, "actor");
             factory.script = getChildValue(entity, "script");
             factory.world = world;
@@ -47,13 +50,14 @@ public class EntityLoader
             
             return factory;
         }
-        catch (ParserConfigurationException | SAXException | XMLHelperException | EntityFactoryException | IOException e)
+        catch (ParserConfigurationException | SAXException | XMLHelperException
+             | EntityFactoryException | IllegalArgumentException | IOException e)
         {
             throw new EntityLoaderException(e);
         }
     }
     
-    private static EntityFactory.PhysicsConfiguration loadPhysicsConfiguration(Element physics) throws XMLHelperException
+    private static EntityFactory.PhysicsConfiguration loadPhysicsConfiguration(Element physics) throws XMLHelperException, IllegalArgumentException
     {
         EntityFactory.PhysicsConfiguration physicsConfig = new EntityFactory.PhysicsConfiguration();
         physicsConfig.restitution = getChildFloatValue(physics, "restitution");
@@ -62,7 +66,7 @@ public class EntityLoader
         return physicsConfig;
     }
     
-    private static EntityFactory.BodyConfiguration loadBodyConfiguration(Element body) throws XMLHelperException
+    private static EntityFactory.BodyConfiguration loadBodyConfiguration(Element body) throws XMLHelperException, IllegalArgumentException
     {
         EntityFactory.BodyConfiguration bodyConfig = new EntityFactory.BodyConfiguration();
         bodyConfig.type = Body.BodyType.valueOf(getChildValue(body, "type").toUpperCase());
@@ -73,5 +77,29 @@ public class EntityLoader
             break;
         }
         return bodyConfig;
+    }
+    
+    private static EntityFactory.ShapeConfiguration loadShapeConfiguration(Element shape) throws XMLHelperException, IllegalArgumentException
+    {
+        EntityFactory.ShapeConfiguration shapeConfig = new EntityFactory.ShapeConfiguration();
+        shapeConfig.shapeComponentConfigList = new ArrayList<EntityFactory.ShapeComponentConfiguration>();
+        Element[] componentArray = getChildElementsByName(shape, "component");
+        for (Element component : componentArray)
+            shapeConfig.shapeComponentConfigList.add(loadShapeComponentConfiguration(component));
+        return shapeConfig;
+    }
+    
+    private static EntityFactory.ShapeComponentConfiguration loadShapeComponentConfiguration(Element component) throws XMLHelperException, IllegalArgumentException
+    {
+        EntityFactory.ShapeComponentConfiguration shapeComponentConfig = new EntityFactory.ShapeComponentConfiguration();
+        shapeComponentConfig.identifier = getChildIntegerValue(component, "id");
+        shapeComponentConfig.type = ShapeComponent.ComponentType.valueOf(getChildValue(component, "type").toUpperCase());
+        switch (shapeComponentConfig.type)
+        {
+        case CIRCLE:
+            shapeComponentConfig.radius = getChildFloatValue(component, "radius");
+            break;
+        }
+        return shapeComponentConfig;
     }
 }

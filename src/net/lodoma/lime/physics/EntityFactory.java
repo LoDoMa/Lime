@@ -2,8 +2,10 @@ package net.lodoma.lime.physics;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import net.lodoma.lime.script.LuaScript;
+import net.lodoma.lime.util.IdentityPool;
 import net.lodoma.lime.util.Vector2;
 import net.lodoma.lime.world.CommonWorld;
 
@@ -46,11 +48,53 @@ public class EntityFactory
             }
         }
     }
+    
+    public static class ShapeConfiguration
+    {
+        public List<ShapeComponentConfiguration> shapeComponentConfigList;
+        
+        public Shape newShape()
+        {
+            Shape shape = new Shape();
+            shape.componentPool = new IdentityPool<ShapeComponent>(true);
+            for (int i = 0; i < shapeComponentConfigList.size(); i++)
+            {
+                ShapeComponentConfiguration shapeComponentConfig = shapeComponentConfigList.get(i);
+                ShapeComponent shapeComponent = shapeComponentConfig.newShapeComponent();
+                shapeComponent.shape = shape;
+                shape.componentPool.add(shapeComponent);
+            }
+            return shape;
+        }
+    }
+    
+    public static class ShapeComponentConfiguration
+    {
+        public int identifier;
+        public ShapeComponent.ComponentType type;
+        public float radius;
+        
+        public ShapeComponent newShapeComponent()
+        {
+            ShapeComponent shapeComponent = new ShapeComponent();
+            shapeComponent.identifier = identifier;
+            shapeComponent.position = new Vector2(0.0f, 0.0f);
+            shapeComponent.rotation = 0.0f;
+            switch (type)
+            {
+            case CIRCLE:
+                shapeComponent.radius = radius;
+                break;
+            }
+            return shapeComponent;
+        }
+    }
 
     public String name;
     public int nameHash;
     public String version;
     public PhysicsConfiguration physicsConfig;
+    public ShapeConfiguration shapeConfig;
     public boolean actorCapability;
     public String script;
 
@@ -97,10 +141,21 @@ public class EntityFactory
         
         Entity entity = new Entity();
         entity.type = type;
-        entity.body = physicsConfig.newBody();
-        
         entity.world = world;
-        entity.body.world = world.physicsWorld;
+        
+        if (world.physicsWorld != null)
+        {
+            entity.body = physicsConfig.newBody();
+            entity.body.world = world.physicsWorld;
+        }
+        else
+            throw new EntityFactoryException("attempt to create Entity in a world without PhysicsWorld");
+        
+        if (world.visualWorld != null && shapeConfig != null)
+        {
+            entity.shape = shapeConfig.newShape();
+            entity.shape.world = world.visualWorld;
+        }
         
         return entity;
     }

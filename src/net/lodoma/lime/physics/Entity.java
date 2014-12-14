@@ -11,6 +11,7 @@ public class Entity implements Identifiable<Integer>
     public CommonWorld world;
     
     public Body body;
+    public Shape shape;
     
     @Override
     public Integer getIdentifier()
@@ -27,6 +28,8 @@ public class Entity implements Identifiable<Integer>
     public void initialize()
     {
         world.physicsWorld.bodyPool.add(body);
+        if (shape != null)
+            world.visualWorld.shapePool.add(shape);
         
         if(type.script != null)
         {
@@ -45,12 +48,16 @@ public class Entity implements Identifiable<Integer>
         if(type.script != null)
         {
             Object[] arguments = new Object[] { identifier, false, timeDelta };
-            type.script.call("Lime_FrameUpdate", arguments);
+            type.script.call("Lime_Update", arguments);
         }
     }
     
-    public void render()
+    public void postUpdate(float timeDelta)
     {
-        body.debugRender();
+        if(type.script != null)
+        {
+            Object[] arguments = new Object[] { identifier, false, timeDelta };
+            type.script.call("Lime_PostUpdate", arguments);
+        }
     }
 }
