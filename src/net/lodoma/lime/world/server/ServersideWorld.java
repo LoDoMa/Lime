@@ -17,7 +17,9 @@ import net.lodoma.lime.server.ServerUser;
 import net.lodoma.lime.server.io.entity.SPEntityCorrection;
 import net.lodoma.lime.server.io.entity.SPEntityCreation;
 import net.lodoma.lime.server.io.entity.SPSetActor;
+import net.lodoma.lime.server.io.light.SPLightCreation;
 import net.lodoma.lime.server.logic.UserManager;
+import net.lodoma.lime.shader.light.Light;
 import net.lodoma.lime.util.HashPool32;
 import net.lodoma.lime.world.CommonWorld;
 
@@ -50,14 +52,25 @@ public class ServersideWorld extends CommonWorld
             if(!(userID instanceof Integer))
                 throw new InvalidEventBundleException();
             ServerUser user = userManager.getUser((Integer) userID);
-
+            
+            // NOTE: The Consumer here should probably be in a final field
+            
             world.entityPool.foreach(new Consumer<Entity>()
             {
                 @Override
                 public void accept(Entity entity)
                 {
-                    entityCreation.write(user, entity.getIdentifier());
-                    entityCorrection.write(user, entity);
+                    entityCreation.write(user, entity.type.nameHash);
+                }
+            });
+            entityCorrection.write(user, world.entityPool.getObjectList());
+            
+            world.lightPool.foreach(new Consumer<Light>()
+            {
+                @Override
+                public void accept(Light light)
+                {
+                    lightCreation.write(user, light);
                 }
             });
         }
@@ -75,6 +88,7 @@ public class ServersideWorld extends CommonWorld
     private ServerPacket entityCreation;
     private ServerPacket entityCorrection;
     private ServerPacket setActor;
+    private ServerPacket lightCreation;
     
     private static final double CORRECTION_TIME = 5.0;
     private double correctionRemaining;
@@ -113,6 +127,8 @@ public class ServersideWorld extends CommonWorld
         entityCorrection = spPool.get(SPEntityCorrection.HASH);
         setActor = spPool.get(SPSetActor.HASH);
         
+        lightCreation = spPool.get(SPLightCreation.HASH);
+        
         initialWorldDataSender = new SendOnEvent(this, manager);
     }
     
@@ -133,6 +149,16 @@ public class ServersideWorld extends CommonWorld
         return super.newEntity(hash);
     }
     
+    @Override
+    public int newLight(Light light)
+    {
+        Set<ServerUser> userSet = userManager.getUserSet();
+        for(ServerUser user : userSet)
+            lightCreation.write(user, light);
+        
+        return super.newLight(light);
+    }
+    
     public void setActor(int entityID, int userID)
     {
         ServerUser user = userManager.getUser(userID);
@@ -148,8 +174,6 @@ public class ServersideWorld extends CommonWorld
             {
                 correctionRemaining -= CORRECTION_TIME;
 
-                // NOTE: The Consumer here should probably be in a final field
-                
                 List<Entity> entityList = entityPool.getObjectList();
                 Set<ServerUser> userSet = userManager.getUserSet();
                 for(ServerUser user : userSet)

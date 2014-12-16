@@ -110,6 +110,7 @@ public class EntityFactory
             type = new EntityType();
             
             type.name = name;
+            type.nameHash = nameHash;
             type.version = version;
             type.actorCapability = actorCapability;
             if (!script.equals("-NONE"))

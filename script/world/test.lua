@@ -8,6 +8,8 @@ local hash32 = lime.util.hash32
 
 local hashes = {}
 
+local timer = 0
+
 local function addHash(str)
 	hashes[str] = hash32(str)
 end
@@ -19,10 +21,11 @@ local function loadHashes()
 end
 
 local function onNewUser(bundle)
-	if lime.network.side.client then
-		print("adding light")
-		lime.light.basic.add(0, newVector(16, 15), 40, newColor(1, 1, 1, 1), -1, 361)
-	elseif lime.network.side.server then
+	print("adding light")
+	lime.light.createBasic(newVector(16, 15), 40, newColor(1, 1, 1, 1), -1, 361)
+	local lightID = lime.light.add()
+
+	if lime.network.side.server then
 		print("user ID: " .. bundle["userID"])
 
 		--local id = lime.entity.create(hashes["lime.entity.zombie"])
@@ -33,19 +36,30 @@ local function onNewUser(bundle)
 
 		print("created all")
 	end
+
+	timer = 1
 end
 
-function Lime_WorldUpdate()
+function Lime_Update(timeDelta)
 	if lime.network.side.server then
 		if firstUpdate == true then
 			loadHashes()
 		end
+
+		if timer > 0 then
+			timer = timer - timeDelta
+			if timer <= 0 then
+				timer = 0
+				lime.entity.create(hashes["lime.entity.ball"])
+				print("created more")
+			end
+		end
+
+		if firstUpdate == true then
+			lime.listener.set(hashes["Lime::OnNewUser"], onNewUser)
+		end
 	elseif lime.network.side.client then
 
-	end
-
-	if firstUpdate == true then
-		lime.listener.set(hashes["Lime::OnNewUser"], onNewUser)
 	end
 
 	firstUpdate = false

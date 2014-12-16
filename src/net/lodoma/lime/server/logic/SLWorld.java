@@ -8,6 +8,7 @@ import net.lodoma.lime.server.ServerPacket;
 import net.lodoma.lime.server.io.entity.SPEntityCorrection;
 import net.lodoma.lime.server.io.entity.SPEntityCreation;
 import net.lodoma.lime.server.io.entity.SPSetActor;
+import net.lodoma.lime.server.io.light.SPLightCreation;
 import net.lodoma.lime.util.HashPool32;
 import net.lodoma.lime.util.Timer;
 import net.lodoma.lime.world.WorldLoader;
@@ -54,6 +55,8 @@ public class SLWorld implements ServerLogic
         spPool.add(SPEntityCorrection.HASH, new SPEntityCorrection(server));
         
         spPool.add(SPSetActor.HASH, new SPSetActor(server));
+        
+        spPool.add(SPLightCreation.HASH, new SPLightCreation(server));
         
         world.load();
         world.generalInit();

@@ -1,9 +1,7 @@
 package net.lodoma.lime.world.client;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.function.Consumer;
 
 import net.lodoma.lime.client.window.Window;
 import net.lodoma.lime.shader.Program;
@@ -108,20 +106,21 @@ public class WorldRenderer
         glPushMatrix();
         glScalef(1.0f / 32.0f, 1.0f / 24.0f, 1.0f);
 
-        Map<Integer, Light> lights = world.getLightMap();
-        List<Light> lightList = new ArrayList<Light>(lights.values());
-        for(Light light : lightList)
-        {
-            light.useProgram();
-            light.render();
-        }
+        world.lightPool.foreach(new Consumer<Light>() {
+            @Override
+            public void accept(Light light)
+            {
+                light.useProgram();
+                light.render();
+            }
+        });
         
         glPopMatrix();
     }
     
     private void renderWorld()
     {
-        //useFramebuffer(worldFBO);
+        useFramebuffer(worldFBO);
         
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -130,9 +129,20 @@ public class WorldRenderer
         glPushMatrix();
         glScalef(1.0f / 32.0f, 1.0f / 24.0f, 1.0f);
         
-        //worldProgram.useProgram();
+        worldProgram.useProgram();
         
         world.visualWorld.render();
+        world.physicsWorld.debugRender();
+        
+        glPopMatrix();
+    }
+    
+    private void renderDebug()
+    {
+        glPushMatrix();
+        glScalef(1.0f / 32.0f, 1.0f / 24.0f, 1.0f);
+        
+        worldProgram.useProgram();
         world.physicsWorld.debugRender();
         
         glPopMatrix();
@@ -143,10 +153,9 @@ public class WorldRenderer
         if(!initialized)
             init();
         
-        //renderLights();
+        renderLights();
         renderWorld();
         
-        /*
         Window.bindFBO();
         
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -174,6 +183,7 @@ public class WorldRenderer
             glTexCoord2f(0.0f, 1.0f); glVertex2f(0.0f, 1.0f);
         }
         glEnd();
-        */
+        
+        renderDebug();
     }
 }

@@ -2,9 +2,6 @@
 local strict = getStrict()
 strictRequireJava("net.lodoma.lime.shader.light.BasicLight")
 
-require "/script/strict/vector"
-require "/script/strict/color"
-
 local entityFactory = LIME_ENTITY_FACTORY
 local world = entityFactory.world
 local propertyPool = world:getPropertyPool()
@@ -20,9 +17,12 @@ addToStrict({
 	entityVersion = entityFactory.version,
 })
 
+require "/script/strict/vector"
+require "/script/strict/color"
 require "/script/strict/network"
 require "/script/strict/listener"
 require "/script/strict/input"
+require "/script/strict/lighting"
 
 local workingEntity = nil
 local workingShapeComponent = nil
@@ -95,31 +95,6 @@ local function setShapeComponentPosition(position)
 	workingShapeComponent.position:set(position.x, position.y);
 end
 
--- light
-
-local function addBasicLightToWorld(hash, position, radius, color, angleFrom, angleTo)
-	strict.typecheck.lua(hash, "number", 1, "lime.light.basic.add")
-	strict.typecheck.vector(position, 2, "lime.light.basic.add")
-	strict.typecheck.lua(radius, "number", 3, "lime.light.basic.add")
-	strict.typecheck.color(color, 4, "lime.light.basic.add")
-	strict.typecheck.lua(angleFrom, "number", 5, "lime.light.basic.add")
-	strict.typecheck.lua(angleTo, "number", 6, "lime.light.basic.add")
-
-	assert(lime.network.side.client, "lights not supported on this side")
-
-	local javaPosition = strict.vector.toJava(position)
-	local javaColor = strict.color.toJava(color)
-
-	local javaLight = strict.java["net.lodoma.lime.shader.light.BasicLight"]:new(javaPosition, radius, javaColor, angleFrom, angleTo)
-
-	strict.world:addLight(hash, javaLight)
-end
-
-local function removeBasicLightFromWorld(hash)
-	assert(lime.network.side.client, "lights not supported on this side")
-	strict.world:removeLight(hash)
-end
-
 -- lime table
 
 addToLime({
@@ -156,12 +131,6 @@ addToLime({
 				get = getShapeComponentRotation,
 				set = setShapeComponentRotation,
 			},
-		},
-	},
-	light = {
-		basic = {
-			add = addBasicLightToWorld,
-			remove = removeBasicLightFromWorld,
 		},
 	},
 })

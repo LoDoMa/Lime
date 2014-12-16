@@ -1,6 +1,9 @@
 package net.lodoma.lime.shader.light;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.IOException;
 
 import net.lodoma.lime.gui.Color;
 import net.lodoma.lime.shader.Program;
@@ -13,13 +16,15 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class BasicLight implements Light
 {
-    private static final String TYPE_NAME = "Lime::BasicLight";
-    private static final int TYPE_HASH = HashHelper.hash32(TYPE_NAME);
+    public static final String NAME = "Lime::BasicLight";
+    public static final int HASH = HashHelper.hash32(NAME);
     
     private static Shader vertexShader;
     private static Shader fragmentShader;
     
     private static Program shaderProgram;
+    
+    private int identifier;
     
     private Vector2 position;
     private float radius;
@@ -41,10 +46,27 @@ public class BasicLight implements Light
         this(position, radius, lightColor, -1.0f, 361.0f);
     }
     
+    public BasicLight(DataInputStream inputStream) throws IOException
+    {
+        read(inputStream);
+    }
+    
+    @Override
+    public Integer getIdentifier()
+    {
+        return identifier;
+    }
+    
+    @Override
+    public void setIdentifier(Integer identifier)
+    {
+        this.identifier = identifier;
+    }
+    
     @Override
     public int getTypeHash()
     {
-        return TYPE_HASH;
+        return HASH;
     }
     
     @Override
@@ -78,5 +100,36 @@ public class BasicLight implements Light
             glVertex2f(position.x - radius, position.y + radius);
         }
         glEnd();
+    }
+    
+    @Override
+    public void write(DataOutputStream outputStream) throws IOException
+    {
+        outputStream.writeFloat(position.x);
+        outputStream.writeFloat(position.y);
+        outputStream.writeFloat(radius);
+        outputStream.writeFloat(lightColor.getR());
+        outputStream.writeFloat(lightColor.getG());
+        outputStream.writeFloat(lightColor.getB());
+        outputStream.writeFloat(lightColor.getA());
+        outputStream.writeFloat(angleFrom);
+        outputStream.writeFloat(angleTo);
+    }
+    
+    @Override
+    public void read(DataInputStream inputStream) throws IOException
+    {
+        position = new Vector2();
+        position.x = inputStream.readFloat();
+        position.y = inputStream.readFloat();
+        radius = inputStream.readFloat();
+        
+        lightColor = new Color(inputStream.readFloat(),
+                               inputStream.readFloat(),
+                               inputStream.readFloat(),
+                               inputStream.readFloat());
+        
+        angleFrom = inputStream.readFloat();
+        angleTo = inputStream.readFloat();
     }
 }

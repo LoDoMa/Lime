@@ -15,6 +15,7 @@ import net.lodoma.lime.physics.EntityLoaderException;
 import net.lodoma.lime.physics.PhysicsWorld;
 import net.lodoma.lime.physics.VisualWorld;
 import net.lodoma.lime.script.LuaScript;
+import net.lodoma.lime.shader.light.Light;
 import net.lodoma.lime.util.IdentityPool;
 import net.lodoma.lime.util.HashPool32;
 
@@ -31,6 +32,8 @@ public abstract class CommonWorld
     public HashPool32<EntityFactory> entityFactoryPool;
     public IdentityPool<Entity> entityPool;
     
+    public IdentityPool<Light> lightPool;
+    
     public CommonWorld()
     {
         physicsWorld = new PhysicsWorld();
@@ -38,6 +41,8 @@ public abstract class CommonWorld
         
         entityFactoryPool = new HashPool32<EntityFactory>();
         entityPool = new IdentityPool<>();
+        
+        lightPool = new IdentityPool<Light>();
     }
     
     public void load()
@@ -86,6 +91,12 @@ public abstract class CommonWorld
         }
     }
     
+    // This function exists so ClientsideWorld and ServersideWorld can override it
+    public int newLight(Light light)
+    {
+        return lightPool.add(light);
+    }
+    
     public void clean()
     {
         // NOTE: The Consumer here should probably be in a final field
@@ -113,7 +124,10 @@ public abstract class CommonWorld
     public void update(double timeDelta)
     {
         if(script != null)
-            script.call("Lime_WorldUpdate", null);
+        {
+            Object[] arguments = new Object[] { timeDelta };
+            script.call("Lime_Update", arguments);
+        }
         
         entityPool.foreach(new Consumer<Entity>()
         {
