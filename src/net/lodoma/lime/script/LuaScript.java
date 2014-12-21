@@ -170,7 +170,7 @@ public class LuaScript
     {
         Path path = Paths.get(file.toURI());
         String source = new String(Files.readAllBytes(path));
-        load(source);
+        load(source, file.getPath());
     }
     
     /**

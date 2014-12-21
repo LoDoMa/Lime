@@ -3,8 +3,8 @@ local firstUpdate = true
 
 function Lime_Update(timeDelta)
 	if firstUpdate == true then
-		lime.entity.create(642)
-	end
+		lime.entity.create(lime.util.hash32("lime.entity.ball"))
 
-	firstUpdate = false
+		firstUpdate = false
+	end
 end

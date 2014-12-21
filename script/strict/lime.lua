@@ -45,7 +45,7 @@ local function checkLuaType(value, etype, argument, name)
 	assert(gtype == etype, "invalid argument #" .. argument .. " to \"" .. name .. "\", expected " .. etype .. ", got " .. gtype)
 end
 
-strictRequireJava("net.lodoma.lime.util.HashHelper")
+local HashHelper = strictRequireJava("net.lodoma.lime.util.HashHelper")
 
 local function round(num, idp)
 	strict.typecheck.lua(num, "number", 1, "lime.util.round")
@@ -56,12 +56,12 @@ end
 
 local function hash32(str)
 	strict.typecheck.lua(str, "string", 1, "lime.util.hash32")
-	return strict.java["net.lodoma.lime.util.HashHelper"]:hash32(str)
+	return HashHelper:hash32(str)
 end
 
 local function hash64(str)
 	strict.typecheck.lua(str, "string", 1, "lime.util.hash64")
-	return strict.java["net.lodoma.lime.util.HashHelper"]:hash64(str)
+	return HashHelper:hash64(str)
 end
 
 addToStrict({

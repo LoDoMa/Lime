@@ -7,14 +7,17 @@ import java.util.function.Consumer;
 import net.lodoma.lime.script.LuaScript;
 import net.lodoma.lime.util.IdentityPool;
 import net.lodoma.lime.world.entity.Entity;
+import net.lodoma.lime.world.entity.EntityType;
 
 public class World
 {
     public LuaScript gamemode;
+    public IdentityPool<EntityType> entityTypePool;
     public IdentityPool<Entity> entityPool;
     
     public World()
     {
+        entityTypePool = new IdentityPool<EntityType>(true);
         entityPool = new IdentityPool<Entity>(false);
     }
     
@@ -33,6 +36,14 @@ public class World
     
     public void load(String filepath) throws IOException
     {
+        File[] entityTypeFiles = new File("./types").listFiles();
+        for (File entityTypeFile : entityTypeFiles)
+        {
+            if (!entityTypeFile.isFile()) continue;
+            EntityType entityType = new EntityType(entityTypeFile);
+            entityTypePool.add(entityType);
+        }
+        
         gamemode = new LuaScript();
         gamemode.setGlobal("SCRIPT", gamemode);
         gamemode.load(new File("./script/strict/lime.lua"));      // init strict
@@ -45,6 +56,6 @@ public class World
     
     public void updateGamemode(double timeDelta)
     {
-        gamemode.call("Lime_Update", new Object[] { timeDelta });
+        gamemode.call("Lime_Update", 0, new Object[] { timeDelta });
     }
 }
