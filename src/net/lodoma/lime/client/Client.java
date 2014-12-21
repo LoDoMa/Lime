@@ -9,8 +9,6 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.lodoma.lime.client.logic.CLBase;
-import net.lodoma.lime.client.logic.CLChat;
 import net.lodoma.lime.client.logic.CLWorld;
 import net.lodoma.lime.client.logic.ClientLogicPool;
 import net.lodoma.lime.common.PropertyPool;
@@ -103,8 +101,6 @@ public class Client implements PropertyPool
         setProperty("cpPool", new HashPool32<ClientPacket>());
         setProperty("emanPool", new HashPool32<EventManager>());
         
-        logicPool.addLogic(new CLBase());
-        logicPool.addLogic(new CLChat());
         logicPool.addLogic(new CLWorld());
         
         logicPool.init();

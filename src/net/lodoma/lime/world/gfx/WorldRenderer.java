@@ -1,4 +1,4 @@
-package net.lodoma.lime.world.client;
+package net.lodoma.lime.world.gfx;
 
 import java.io.File;
 import java.util.function.Consumer;
@@ -9,14 +9,17 @@ import net.lodoma.lime.shader.Shader;
 import net.lodoma.lime.shader.ShaderType;
 import net.lodoma.lime.shader.UniformType;
 import net.lodoma.lime.shader.light.Light;
+import net.lodoma.lime.world.World;
+import net.lodoma.lime.world.entity.Entity;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.*;
 import static org.lwjgl.opengl.EXTFramebufferObject.*;
 
 public class WorldRenderer
 {
-    private ClientsideWorld world;
+    private World world;
 
+    /*
     private boolean initialized;
     
     private Program worldProgram;
@@ -27,13 +30,15 @@ public class WorldRenderer
 
     private int[] lightFBO;
     private int[] worldFBO;
+    */
     
-    public WorldRenderer(ClientsideWorld world)
+    public WorldRenderer(World world)
     {
         this.world = world;
-        initialized = false;
+        // initialized = false;
     }
     
+    /*
     private int generateTexture(int width, int height)
     {
         int texID = glGenTextures();
@@ -94,7 +99,9 @@ public class WorldRenderer
         
         initialized = true;
     }
+    */
     
+    /*
     private void renderLights()
     {
         useFramebuffer(lightFBO);
@@ -117,10 +124,11 @@ public class WorldRenderer
         
         glPopMatrix();
     }
+    */
     
     private void renderWorld()
     {
-        useFramebuffer(worldFBO);
+        // useFramebuffer(worldFBO);
         
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -129,14 +137,26 @@ public class WorldRenderer
         glPushMatrix();
         glScalef(1.0f / 32.0f, 1.0f / 24.0f, 1.0f);
         
-        worldProgram.useProgram();
+        // worldProgram.useProgram();
         
+        world.entityPool.foreach(new Consumer<Entity>()
+        {
+            @Override
+            public void accept(Entity entity)
+            {
+                entity.debugRender();
+            }
+        });
+        
+        /*
         world.visualWorld.render();
         world.physicsWorld.debugRender();
+        */
         
         glPopMatrix();
     }
     
+    /*
     private void renderDebug()
     {
         glPushMatrix();
@@ -147,15 +167,20 @@ public class WorldRenderer
         
         glPopMatrix();
     }
+    */
     
     public void render()
     {
+        /*
         if(!initialized)
             init();
         
         renderLights();
+        */
+        
         renderWorld();
         
+        /*
         Window.bindFBO();
         
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -185,5 +210,6 @@ public class WorldRenderer
         glEnd();
         
         renderDebug();
+        */
     }
 }

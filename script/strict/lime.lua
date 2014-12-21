@@ -1,7 +1,6 @@
 
 local strict = {}
 strict.script = LIME_SCRIPT
-strict.java = {}
 
 lime = {}
 
@@ -22,9 +21,7 @@ function addToStrict(table)
 end
 
 function strictRequireJava(name)
-	if not strict.java[name] then
-		strict.java[name] = java.require(name)
-	end
+	return java.require(name)
 end
 
 function addToLime(table)
@@ -48,12 +45,6 @@ local function checkLuaType(value, etype, argument, name)
 	assert(gtype == etype, "invalid argument #" .. argument .. " to \"" .. name .. "\", expected " .. etype .. ", got " .. gtype)
 end
 
-addToStrict({
-	typecheck = {
-		lua = checkLuaType,
-	},
-})
-
 strictRequireJava("net.lodoma.lime.util.HashHelper")
 
 local function round(num, idp)
@@ -72,6 +63,16 @@ local function hash64(str)
 	strict.typecheck.lua(str, "string", 1, "lime.util.hash64")
 	return strict.java["net.lodoma.lime.util.HashHelper"]:hash64(str)
 end
+
+addToStrict({
+	typecheck = {
+		lua = checkLuaType,
+	},
+	util = {
+		hash32 = hash32,
+		hash64 = hash64,
+	}
+})
 
 addToLime({
 	util = {

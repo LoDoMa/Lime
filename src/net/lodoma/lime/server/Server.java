@@ -5,9 +5,6 @@ import java.util.Map;
 
 import net.lodoma.lime.common.PropertyPool;
 import net.lodoma.lime.event.EventManager;
-import net.lodoma.lime.server.dependency.DependencyPool;
-import net.lodoma.lime.server.logic.SLBase;
-import net.lodoma.lime.server.logic.SLChat;
 import net.lodoma.lime.server.logic.SLWorld;
 import net.lodoma.lime.server.logic.ServerLogicPool;
 import net.lodoma.lime.server.logic.UserManager;
@@ -27,7 +24,7 @@ public final class Server implements PropertyPool
     {
         if (isRunning) return;
         
-        logicPool = new ServerLogicPool(this, 60.0f);
+        logicPool = new ServerLogicPool(this);
         properties = new HashMap<String, Object>();
         
         UserManager userManager = new UserManager();
@@ -35,11 +32,8 @@ public final class Server implements PropertyPool
         setProperty("sphPool", new HashPool32<ServerPacketHandler>());
         setProperty("spPool", new HashPool32<ServerPacket>());
         setProperty("emanPool", new HashPool32<EventManager>());
-        setProperty("dependencyPool", new DependencyPool());
         setProperty("userManager", userManager);
         
-        logicPool.addLogic(new SLBase());
-        logicPool.addLogic(new SLChat());
         logicPool.addLogic(new SLWorld());
         logicPool.addLogic(userManager);
         

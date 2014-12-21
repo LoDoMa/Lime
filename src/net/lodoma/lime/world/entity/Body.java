@@ -1,10 +1,11 @@
-package net.lodoma.lime.physics;
+package net.lodoma.lime.world.entity;
 
 import org.lwjgl.opengl.GL11;
 
 import net.lodoma.lime.texture.Texture;
 import net.lodoma.lime.util.Identifiable;
 import net.lodoma.lime.util.Vector2;
+import net.lodoma.lime.world.entity.physics.PhysicsEngine;
 
 public class Body implements Identifiable<Integer>
 {
@@ -14,7 +15,7 @@ public class Body implements Identifiable<Integer>
     }
     
     public int identifier;
-    public PhysicsWorld world;
+    public PhysicsEngine world;
     
     public Vector2 position;
     public Vector2 velocity;

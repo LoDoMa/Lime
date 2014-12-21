@@ -1,27 +1,26 @@
 package net.lodoma.lime.server.logic;
 
-import java.io.File;
-import java.util.HashMap;
+import java.io.IOException;
 
 import net.lodoma.lime.server.Server;
-import net.lodoma.lime.server.ServerPacket;
-import net.lodoma.lime.server.io.entity.SPEntityCorrection;
-import net.lodoma.lime.server.io.entity.SPEntityCreation;
-import net.lodoma.lime.server.io.entity.SPSetActor;
-import net.lodoma.lime.server.io.light.SPLightCreation;
-import net.lodoma.lime.util.HashPool32;
 import net.lodoma.lime.util.Timer;
-import net.lodoma.lime.world.WorldLoader;
-import net.lodoma.lime.world.WorldLoaderException;
-import net.lodoma.lime.world.server.ServersideWorld;
+import net.lodoma.lime.world.World;
+import net.lodoma.lime.world.entity.physics.PhysicsEngine;
 
 public class SLWorld implements ServerLogic
 {
-    private Server server;
-    private HashPool32<ServerPacket> spPool;
+    public static final double UPDATE_PS = 33;
+    public static final double UPDATE_MAXTIME = 1.0 / UPDATE_PS;
+    public double updateTime = UPDATE_MAXTIME;
     
-    private ServersideWorld world;
-    private WorldLoader worldLoader;
+    public static final double SNAPSHOT_PS = 20;
+    public static final double SNAPSHOT_MAXTIME = 1.0 / SNAPSHOT_PS;
+    public double snapshotTime = SNAPSHOT_MAXTIME;
+    
+    private Server server;
+
+    private World world;
+    private PhysicsEngine physics;
     
     private Timer timer;
     
@@ -34,40 +33,28 @@ public class SLWorld implements ServerLogic
     @Override
     public void propertyInit()
     {
-        server.setProperty("world", new ServersideWorld(server));
-        server.setProperty("worldLoader", new WorldLoader());
-        server.setProperty("actors", new HashMap<Integer, Integer>());
+        World world = new World();
+        server.setProperty("world", world);
+        server.setProperty("physicsEngine", new PhysicsEngine(world));
     }
     
-    @SuppressWarnings("unchecked")
     @Override
     public void fetchInit()
     {
-        spPool = (HashPool32<ServerPacket>) server.getProperty("spPool");
-        world = (ServersideWorld) server.getProperty("world");
-        worldLoader = (WorldLoader) server.getProperty("worldLoader");
+        world = (World) server.getProperty("world");
+        physics = (PhysicsEngine) server.getProperty("physicsEngine");
     }
     
     @Override
     public void generalInit()
     {
-        spPool.add(SPEntityCreation.HASH, new SPEntityCreation(server));
-        spPool.add(SPEntityCorrection.HASH, new SPEntityCorrection(server));
-        
-        spPool.add(SPSetActor.HASH, new SPSetActor(server));
-        
-        spPool.add(SPLightCreation.HASH, new SPLightCreation(server));
-        
-        world.load();
-        world.generalInit();
-        
         try
         {
-            worldLoader.loadFromXML(new File("world/test.xml"), world);
+            world.load("test");
         }
-        catch(WorldLoaderException e)
+        catch(IOException e)
         {
-            // TODO: handle later
+            // TODO: handle me!
             e.printStackTrace();
         }
     }
@@ -84,6 +71,22 @@ public class SLWorld implements ServerLogic
         if(timer == null) timer = new Timer();
         timer.update();
         double timeDelta = timer.getDelta();
-        world.update(timeDelta);
+        
+        updateTime -= timeDelta;
+        if (updateTime <= 0.0)
+        {
+            physics.update(timeDelta);
+            world.updateGamemode(timeDelta);
+        }
+        while (updateTime <= 0.0)
+            updateTime += UPDATE_MAXTIME;
+        
+        snapshotTime -= timeDelta;
+        if (snapshotTime <= 0.0)
+        {
+            
+        }
+        while (snapshotTime <= 0.0)
+            snapshotTime += SNAPSHOT_MAXTIME;
     }
 }

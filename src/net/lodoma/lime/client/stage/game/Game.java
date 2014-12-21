@@ -6,7 +6,7 @@ import net.lodoma.lime.client.stage.Stage;
 import net.lodoma.lime.client.stage.StageManager;
 import net.lodoma.lime.input.Input;
 import net.lodoma.lime.security.Credentials;
-import net.lodoma.lime.world.client.ClientsideWorld;
+import net.lodoma.lime.world.gfx.WorldRenderer;
 
 public class Game extends Stage
 {
@@ -75,8 +75,8 @@ public class Game extends Stage
         if(client.isRunning())
             if(client.hasProperty("world"))
             {
-                ClientsideWorld world = (ClientsideWorld) client.getProperty("world");
-                world.render();
+                WorldRenderer renderer = (WorldRenderer) client.getProperty("worldRenderer");
+                renderer.render();
             }
     }
 }

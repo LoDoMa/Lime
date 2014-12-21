@@ -1,7 +1,6 @@
-package net.lodoma.lime.client.stage.menu.populator;
+package net.lodoma.lime.client.stage.menu;
 
 import net.lodoma.lime.client.stage.game.Game;
-import net.lodoma.lime.client.stage.menu.Menu;
 import net.lodoma.lime.gui.Button;
 import net.lodoma.lime.gui.ButtonListener;
 import net.lodoma.lime.gui.GUIContainer;

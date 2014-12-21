@@ -1,21 +1,16 @@
 package net.lodoma.lime.client.logic;
 
 import net.lodoma.lime.client.Client;
-import net.lodoma.lime.client.ClientPacketHandler;
-import net.lodoma.lime.client.io.entity.CPHEntityCorrection;
-import net.lodoma.lime.client.io.entity.CPHEntityCreation;
-import net.lodoma.lime.client.io.entity.CPHSetActor;
-import net.lodoma.lime.client.io.light.CPHLightCreation;
 import net.lodoma.lime.input.Input;
-import net.lodoma.lime.util.HashPool32;
 import net.lodoma.lime.util.Timer;
-import net.lodoma.lime.world.client.ClientsideWorld;
+import net.lodoma.lime.world.World;
+import net.lodoma.lime.world.gfx.WorldRenderer;
 
 public class CLWorld implements ClientLogic
 {
     private Client client;
-    private HashPool32<ClientPacketHandler> cphPool;
-    private ClientsideWorld world;
+    
+    private World world;
     
     private Timer timer;
     
@@ -28,29 +23,20 @@ public class CLWorld implements ClientLogic
     @Override
     public void propertyInit()
     {
-        client.setProperty("world", new ClientsideWorld(client));
+        World world = new World();
+        client.setProperty("world", world);
+        client.setProperty("worldRenderer", new WorldRenderer(world));
     }
     
-    @SuppressWarnings("unchecked")
     @Override
     public void fetchInit()
     {
-        cphPool = (HashPool32<ClientPacketHandler>) client.getProperty("cphPool");
-        world = (ClientsideWorld) client.getProperty("world");
+        world = (World) client.getProperty("world");
     }
     
     @Override
     public void generalInit()
     {
-        cphPool.add(CPHEntityCreation.HASH, new CPHEntityCreation(client));
-        cphPool.add(CPHEntityCorrection.HASH, new CPHEntityCorrection(client));
-
-        cphPool.add(CPHSetActor.HASH, new CPHSetActor(client));
-        
-        cphPool.add(CPHLightCreation.HASH, new CPHLightCreation(client));
-
-        world.load();
-        world.generalInit();
     }
     
     @Override
@@ -66,6 +52,5 @@ public class CLWorld implements ClientLogic
         
         if(timer == null) timer = new Timer();
         timer.update();
-        world.update(timer.getDelta());
     }
 }

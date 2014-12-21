@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import net.lodoma.lime.common.NetStage;
 import net.lodoma.lime.server.logic.UserManager;
 
 public class ServerService implements Runnable
@@ -85,7 +84,7 @@ public class ServerService implements Runnable
             try
             {
                 Socket clientSocket = serviceSocket.accept();
-                ServerUser serverUser = new ServerUser(NetStage.DEPENDENCY, clientSocket, server);
+                ServerUser serverUser = new ServerUser(clientSocket, server);
                 if(userManager.addUser(serverUser))
                     serverUser.start();
             }

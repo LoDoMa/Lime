@@ -1,24 +1,21 @@
 
 local strict = getStrict()
 
+local Entity = strictRequireJava("net.lodoma.lime.world.entity.Entity")
+
 local world = LIME_WORLD
-local propertyPool = world:getPropertyPool()
 
 addToStrict({
 	world = world,
-	propertyPool = propertyPool,
-	emanPool = emanPool,
 })
 
+-- require "/script/strict/listener"
+
+--[[
 require "/script/strict/vector"
 require "/script/strict/color"
-require "/script/strict/network"
-require "/script/strict/listener"
 require "/script/strict/lighting"
-
-if lime.network.side.server then
-	addToStrict({userManager = strict.propertyPool:getProperty("userManager")})
-end
+]]
 
 -- local utilities
 
@@ -35,19 +32,7 @@ end
 local function addEntityToWorld(hash)
 	strict.typecheck.lua(hash, "number", 1, "lime.entity.create")
 
-	if lime.network.side.server then
-		return world:newEntity(hash)
-	elseif lime.network.side.client then
-
-	else
-		assert(false, "internal problem: unknown network side")
-	end
-end
-
--- actor
-
-local function setActorForUser(entityID, userID)
-	world:setActor(entityID, userID)
+	return world.entityPool:add(Entity:new(hash))
 end
 
 -- lime table
@@ -55,8 +40,5 @@ end
 addToLime({
 	entity = {
 		create = addEntityToWorld,
-	},
-	actor = {
-		set = setActorForUser,
 	},
 })

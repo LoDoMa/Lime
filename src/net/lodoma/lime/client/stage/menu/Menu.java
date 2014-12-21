@@ -4,7 +4,6 @@ import java.io.File;
 
 import net.lodoma.lime.client.stage.Stage;
 import net.lodoma.lime.client.stage.StageManager;
-import net.lodoma.lime.client.stage.menu.populator.MenuPopulator;
 import net.lodoma.lime.gui.GUIContainer;
 import net.lodoma.lime.input.Input;
 import net.lodoma.lime.shader.Program;

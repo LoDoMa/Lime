@@ -8,14 +8,11 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.net.Socket;
 
-import net.lodoma.lime.common.NetStage;
 import net.lodoma.lime.security.Credentials;
 import net.lodoma.lime.util.HashPool32;
 
 public final class ServerUser implements Runnable
 {
-    public NetStage stage;
-    
     private HashPool32<ServerPacketHandler> sphPool;
     
     private Socket socket;
@@ -35,10 +32,8 @@ public final class ServerUser implements Runnable
     private int ID;
     
     @SuppressWarnings("unchecked")
-    public ServerUser(NetStage stage, Socket socket, Server server)
+    public ServerUser(Socket socket, Server server)
     {
-        this.stage = stage;
-        
         sphPool = (HashPool32<ServerPacketHandler>) server.getProperty("sphPool");
         
         this.socket = socket;
