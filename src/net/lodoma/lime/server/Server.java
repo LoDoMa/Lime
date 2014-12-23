@@ -16,7 +16,7 @@ public final class Server
     
     private ServerService service;
     
-    private ServerLogicPool logicPool;
+    public ServerLogicPool logicPool;
     
     public UserManager userManager;
     public HashPool32<ServerPacket> spPool;

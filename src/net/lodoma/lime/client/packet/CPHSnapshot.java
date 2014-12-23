@@ -6,7 +6,6 @@ import java.nio.ByteBuffer;
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.client.ClientPacketHandler;
 import net.lodoma.lime.util.HashHelper;
-import net.lodoma.lime.world.World;
 
 public class CPHSnapshot extends ClientPacketHandler
 {
@@ -26,6 +25,6 @@ public class CPHSnapshot extends ClientPacketHandler
         inputStream.read(bytes);
         ByteBuffer snapshot = ByteBuffer.wrap(bytes);
         
-        ((World) client.getProperty("world")).acceptSnapshot(snapshot);
+        client.world.acceptSnapshot(snapshot);
     }
 }

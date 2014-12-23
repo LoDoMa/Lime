@@ -8,7 +8,6 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.net.Socket;
 
-import net.lodoma.lime.security.Credentials;
 import net.lodoma.lime.util.Identifiable;
 
 // NOTE: This class required more neatness!
@@ -29,7 +28,6 @@ public final class ServerUser implements Runnable, Identifiable<Integer>
     
     public boolean closed;
     
-    public Credentials credentials;
     public int identifier;
     
     public boolean fullSnapshot;
@@ -45,8 +43,6 @@ public final class ServerUser implements Runnable, Identifiable<Integer>
             
             privateOutputStream = new PipedOutputStream();
             inputStream = new DataInputStream(new PipedInputStream(privateOutputStream));
-            
-            credentials = new Credentials(privateInputStream);
         }
         catch(IOException e)
         {
@@ -88,11 +84,6 @@ public final class ServerUser implements Runnable, Identifiable<Integer>
         {
             e.printStackTrace();
         }
-    }
-    
-    public Credentials getCredentials()
-    {
-        return credentials;
     }
     
     public void handleInput() throws IOException

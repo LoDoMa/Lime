@@ -6,16 +6,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.Map;
 
 import net.lodoma.lime.client.logic.CLWorld;
 import net.lodoma.lime.client.logic.ClientLogicPool;
-import net.lodoma.lime.common.PropertyPool;
 import net.lodoma.lime.event.EventManager;
-import net.lodoma.lime.security.Credentials;
 import net.lodoma.lime.util.HashPool32;
 import net.lodoma.lime.util.Pipe;
+import net.lodoma.lime.world.World;
+import net.lodoma.lime.world.gfx.WorldRenderer;
 
 /**
  * Client holds all data for communication with the server.
@@ -26,12 +24,9 @@ import net.lodoma.lime.util.Pipe;
  * When opened, ClientReader and ClientLogicPool threads are
  * started.
  * 
- * The client is also a PropertyPool for sharing objects
- * between client logic components.
- * 
  * @author Lovro Kalinovčić
  */
-public class Client implements PropertyPool
+public class Client
 {
     private boolean isRunning = false;
     private String closeMessage;
@@ -43,11 +38,16 @@ public class Client implements PropertyPool
     private OutputStream socketOutputStream;
     private DataInputStream publicInputStream;
     private DataOutputStream publicOutputStream;
-
-    private ClientLogicPool logicPool;
-    private ClientReader reader;
     
-    private Map<String, Object> properties;
+    public ClientLogicPool logicPool;
+    public ClientReader reader;
+    
+    public HashPool32<ClientPacket> cpPool;
+    public HashPool32<ClientPacketHandler> cphPool;
+    public HashPool32<EventManager> emanPool;
+    
+    public World world;
+    public WorldRenderer worldRenderer;
     
     /**
      * Opens the client if not running.
@@ -64,10 +64,9 @@ public class Client implements PropertyPool
      * 
      * @param port - server port
      * @param host - server host
-     * @param credentials - user credentials
      * @throws ClientConnectionException is establishing connection fails.
      */
-    public final void open(int port, String host, Credentials credentials) throws ClientConnectionException
+    public final void open(int port, String host) throws ClientConnectionException
     {
         if(isRunning) return;
         
@@ -80,8 +79,6 @@ public class Client implements PropertyPool
             socketOutputStream = socket.getOutputStream();
             publicInputStream = new DataInputStream(pipe.getInputStream());
             publicOutputStream = new DataOutputStream(socketOutputStream);
-            
-            credentials.write(publicOutputStream);
         }
         catch (IOException e)
         {
@@ -91,15 +88,9 @@ public class Client implements PropertyPool
         logicPool = new ClientLogicPool(this, 60.0);
         reader = new ClientReader(this, socketInputStream, pipe.getOutputStream());
         
-        properties = new HashMap<String, Object>();
-
-        setProperty("logicPool", logicPool);
-        setProperty("reader", reader);
-        setProperty("credentials", credentials);
-        
-        setProperty("cphPool", new HashPool32<ClientPacketHandler>());
-        setProperty("cpPool", new HashPool32<ClientPacket>());
-        setProperty("emanPool", new HashPool32<EventManager>());
+        cphPool = new HashPool32<ClientPacketHandler>();
+        cpPool = new HashPool32<ClientPacket>();
+        emanPool = new HashPool32<EventManager>();
         
         logicPool.addLogic(new CLWorld());
         
@@ -214,29 +205,5 @@ public class Client implements PropertyPool
     public boolean isRunning()
     {
         return isRunning;
-    }
-    
-    @Override
-    public Object getProperty(String name)
-    {
-        return properties.get(name);
-    }
-
-    @Override
-    public void setProperty(String name, Object value)
-    {
-        properties.put(name, value);
-    }
-
-    @Override
-    public boolean hasProperty(String name)
-    {
-        return properties.containsKey(name);
-    }
-
-    @Override
-    public void removeProperty(String name)
-    {
-        properties.remove(name);
     }
 }

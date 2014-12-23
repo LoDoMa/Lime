@@ -6,7 +6,6 @@ import net.lodoma.lime.client.stage.Stage;
 import net.lodoma.lime.client.stage.StageManager;
 import net.lodoma.lime.input.Input;
 import net.lodoma.lime.security.Credentials;
-import net.lodoma.lime.world.gfx.WorldRenderer;
 
 public class Game extends Stage
 {
@@ -14,13 +13,10 @@ public class Game extends Stage
     
     private String host;
     
-    private Credentials credentials;
-    
     public Game(StageManager manager, String host, Credentials credentials)
     {
         super(manager);
         this.host = host;
-        this.credentials = credentials;
     }
     
     @Override
@@ -36,7 +32,7 @@ public class Game extends Stage
         
         try
         {
-            client.open(19424, host, credentials);
+            client.open(19424, host);
         }
         catch(ClientConnectionException e)
         {
@@ -73,10 +69,7 @@ public class Game extends Stage
     public void render()
     {
         if(client.isRunning())
-            if(client.hasProperty("world"))
-            {
-                WorldRenderer renderer = (WorldRenderer) client.getProperty("worldRenderer");
-                renderer.render();
-            }
+            if(client.worldRenderer != null)
+                client.worldRenderer.render();
     }
 }
