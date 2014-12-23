@@ -204,7 +204,7 @@ public class Input
         public void invoke(long window, double xpos, double ypos)
         {
             mouseX = (float) ((xpos - Window.viewportX) / Window.viewportWidth);
-            mouseY = (float) (((Window.size.y - ypos) - Window.viewportY) / Window.viewportHeight);
+            mouseY = (float) (((Window.accsize.y - ypos) - Window.viewportY) / Window.viewportHeight);
         }
     }
     

@@ -20,6 +20,8 @@ import static org.lwjgl.system.MemoryUtil.*;
 public class Window
 {
     public static Vector2 size = new Vector2(0.0f, 0.0f);
+    public static Vector2 accsize = new Vector2(0.0f, 0.0f);
+    public static Vector2 fullsize = new Vector2(0.0f, 0.0f);
     public static Vector2 resolution = new Vector2(0.0f, 0.0f);
     public static boolean resizable = false;
     public static boolean fullscreen = false;
@@ -58,7 +60,9 @@ public class Window
         setCallbacks();
         
         ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-        glfwSetWindowPos(windowHandle, (int) ((GLFWvidmode.width(vidmode) - size.x) / 2.0), (int) ((GLFWvidmode.height(vidmode) - size.y) / 2.0));
+        fullsize.setX(GLFWvidmode.width(vidmode));
+        fullsize.setY(GLFWvidmode.height(vidmode));
+        glfwSetWindowPos(windowHandle, (int) ((fullsize.x - size.x) / 2.0), (int) ((fullsize.y - size.y) / 2.0));
         
         glfwMakeContextCurrent(windowHandle);
         glfwSwapInterval(1);
@@ -94,8 +98,10 @@ public class Window
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, resizable ? GL_TRUE : GL_FALSE);
+
+        accsize.set(fullscreen ? fullsize : size);
         
-        long newWindowHandle = glfwCreateWindow((int) size.x, (int) size.y, title, fullscreen ? glfwGetPrimaryMonitor() : NULL, windowHandle);glfwSetWindowPos(windowHandle, 0, 0);
+        long newWindowHandle = glfwCreateWindow((int) accsize.x, (int) accsize.y, title, fullscreen ? glfwGetPrimaryMonitor() : NULL, windowHandle);glfwSetWindowPos(windowHandle, 0, 0);
         releaseCallbacks();
         glfwDestroyWindow(windowHandle);
         windowHandle = newWindowHandle;
@@ -113,8 +119,10 @@ public class Window
     
     public static void updateViewport()
     {
-        float width = size.x;
-        float height = size.y;
+        accsize.set(fullscreen ? fullsize : size);
+        
+        float width = accsize.x;
+        float height = accsize.y;
         
         viewportWidth = (int) (height * (resolution.x / resolution.y));
         
@@ -179,8 +187,11 @@ public class Window
             @Override
             public void invoke(long window, int width, int height)
             {
-                size.x = width;
-                size.y = height;
+                if (!fullscreen)
+                {
+                    size.x = width;
+                    size.y = height;
+                }
             }
         };
         
