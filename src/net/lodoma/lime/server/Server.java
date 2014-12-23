@@ -1,10 +1,9 @@
 package net.lodoma.lime.server;
 
-import net.lodoma.lime.event.EventManager;
 import net.lodoma.lime.server.logic.SLWorld;
 import net.lodoma.lime.server.logic.ServerLogicPool;
 import net.lodoma.lime.server.logic.UserManager;
-import net.lodoma.lime.util.HashPool32;
+import net.lodoma.lime.util.IdentityPool;
 import net.lodoma.lime.world.SnapshotManager;
 import net.lodoma.lime.world.World;
 import net.lodoma.lime.world.entity.physics.PhysicsEngine;
@@ -19,9 +18,9 @@ public final class Server
     public ServerLogicPool logicPool;
     
     public UserManager userManager;
-    public HashPool32<ServerPacket> spPool;
-    public HashPool32<ServerPacketHandler> sphPool;
-    public HashPool32<EventManager> emanPool;
+    public IdentityPool<ServerPacket> spPool;
+    public IdentityPool<ServerPacketHandler> sphPool;
+    // public HashPool32<EventManager> emanPool;
     
     public World world;
     public PhysicsEngine physicsEngine;
@@ -34,9 +33,9 @@ public final class Server
         logicPool = new ServerLogicPool(this);
         
         userManager = new UserManager();
-        sphPool = new HashPool32<ServerPacketHandler>();
-        spPool = new HashPool32<ServerPacket>();
-        emanPool = new HashPool32<EventManager>();
+        sphPool = new IdentityPool<ServerPacketHandler>(true);
+        spPool = new IdentityPool<ServerPacket>(true);
+        // emanPool = new HashPool32<EventManager>();
         
         logicPool.addLogic(new SLWorld());
         logicPool.addLogic(userManager);

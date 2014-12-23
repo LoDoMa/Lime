@@ -3,6 +3,8 @@ package net.lodoma.lime.client;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import net.lodoma.lime.util.Identifiable;
+
 /**
  * ClientPacket writes output to the server of any format starting with
  * a specified 32-bit hash. The output should always be in the same format.
@@ -11,7 +13,7 @@ import java.io.IOException;
  * 
  * @author Lovro Kalinovčić
  */
-public abstract class ClientPacket
+public abstract class ClientPacket implements Identifiable<Integer>
 {
     private static final String FAILURE_CLOSE_MESSAGE = "Server closed (output exception)";
     
@@ -34,6 +36,18 @@ public abstract class ClientPacket
         
         this.hash = hash;
         this.expected = expected;
+    }
+    
+    @Override
+    public Integer getIdentifier()
+    {
+        return hash;
+    }
+    
+    @Override
+    public void setIdentifier(Integer identifier)
+    {
+        throw new UnsupportedOperationException();
     }
     
     /**

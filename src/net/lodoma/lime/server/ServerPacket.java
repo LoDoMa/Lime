@@ -3,7 +3,9 @@ package net.lodoma.lime.server;
 import java.io.IOException;
 import java.util.Set;
 
-public abstract class ServerPacket
+import net.lodoma.lime.util.Identifiable;
+
+public abstract class ServerPacket implements Identifiable<Integer>
 {
     protected Server server;
     private int hash;
@@ -14,6 +16,18 @@ public abstract class ServerPacket
         this.server = server;
         this.hash = hash;
         this.expected = expected;
+    }
+    
+    @Override
+    public Integer getIdentifier()
+    {
+        return hash;
+    }
+    
+    @Override
+    public void setIdentifier(Integer identifier)
+    {
+        throw new UnsupportedOperationException();
     }
     
     protected abstract void localWrite(ServerUser user, Object... args) throws IOException;

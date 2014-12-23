@@ -2,13 +2,30 @@ package net.lodoma.lime.server;
 
 import java.io.IOException;
 
-public abstract class ServerPacketHandler
+import net.lodoma.lime.util.Identifiable;
+
+public abstract class ServerPacketHandler implements Identifiable<Integer>
 {
     protected Server server;
     
-    public ServerPacketHandler(Server server)
+    private int hash;
+    
+    public ServerPacketHandler(Server server, int hash)
     {
         this.server = server;
+        this.hash = hash;
+    }
+    
+    @Override
+    public Integer getIdentifier()
+    {
+        return hash;
+    }
+    
+    @Override
+    public void setIdentifier(Integer identifier)
+    {
+        throw new UnsupportedOperationException();
     }
     
     protected abstract void localHandle(ServerUser user) throws IOException;

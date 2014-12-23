@@ -31,7 +31,7 @@ public class SLWorld implements ServerLogic
         server.physicsEngine = new PhysicsEngine(server.world);
         server.snapshotManager = new SnapshotManager(server.world, server.userManager);
         
-        server.spPool.add(SPSnapshot.HASH, new SPSnapshot(server));
+        server.spPool.add(new SPSnapshot(server));
         server.snapshotManager.snapshotPacket = server.spPool.get(SPSnapshot.HASH);
         
         try

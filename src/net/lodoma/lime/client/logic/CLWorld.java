@@ -19,7 +19,7 @@ public class CLWorld implements ClientLogic
         this.client = client;
         client.world = new World();
         client.worldRenderer = new WorldRenderer(client.world);
-        client.cphPool.add(CPHSnapshot.HASH, new CPHSnapshot(client));
+        client.cphPool.add(new CPHSnapshot(client));
     }
     
     @Override

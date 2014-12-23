@@ -6,22 +6,6 @@ import java.util.zip.CRC32;
 
 public class HashHelper
 {
-    public static HashFunction<Integer, String> Hash32 = new HashFunction<Integer, String>()
-    {
-        public Integer hash(String data)
-        {
-            return HashHelper.hash32(data);
-        };
-    };
-    
-    public static HashFunction<Long, String> Hash64 = new HashFunction<Long, String>()
-    {
-        public Long hash(String data)
-        {
-            return HashHelper.hash64(data);
-        };
-    };
-    
     public static int hash32(String data)
     {
         return data.hashCode();

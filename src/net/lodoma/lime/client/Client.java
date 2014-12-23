@@ -9,8 +9,7 @@ import java.net.Socket;
 
 import net.lodoma.lime.client.logic.CLWorld;
 import net.lodoma.lime.client.logic.ClientLogicPool;
-import net.lodoma.lime.event.EventManager;
-import net.lodoma.lime.util.HashPool32;
+import net.lodoma.lime.util.IdentityPool;
 import net.lodoma.lime.util.Pipe;
 import net.lodoma.lime.world.World;
 import net.lodoma.lime.world.gfx.WorldRenderer;
@@ -42,9 +41,9 @@ public class Client
     public ClientLogicPool logicPool;
     public ClientReader reader;
     
-    public HashPool32<ClientPacket> cpPool;
-    public HashPool32<ClientPacketHandler> cphPool;
-    public HashPool32<EventManager> emanPool;
+    public IdentityPool<ClientPacket> cpPool;
+    public IdentityPool<ClientPacketHandler> cphPool;
+    // public IdentityPool<EventManager> emanPool;
     
     public World world;
     public WorldRenderer worldRenderer;
@@ -88,9 +87,9 @@ public class Client
         logicPool = new ClientLogicPool(this, 60.0);
         reader = new ClientReader(this, socketInputStream, pipe.getOutputStream());
         
-        cphPool = new HashPool32<ClientPacketHandler>();
-        cpPool = new HashPool32<ClientPacket>();
-        emanPool = new HashPool32<EventManager>();
+        cphPool = new IdentityPool<ClientPacketHandler>(true);
+        cpPool = new IdentityPool<ClientPacket>(true);
+        // emanPool = new HashPool32<EventManager>();
         
         logicPool.addLogic(new CLWorld());
         

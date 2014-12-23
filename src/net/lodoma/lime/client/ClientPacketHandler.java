@@ -3,6 +3,8 @@ package net.lodoma.lime.client;
 import java.io.DataInputStream;
 import java.io.IOException;
 
+import net.lodoma.lime.util.Identifiable;
+
 /**
  * ClientPacketHandler handles input from the server starting with
  * a specified 32-bit hash. The packet handler should always expect
@@ -12,21 +14,37 @@ import java.io.IOException;
  * 
  * @author Lovro Kalinovčić
  */
-public abstract class ClientPacketHandler
+public abstract class ClientPacketHandler implements Identifiable<Integer>
 {
     private static final String FAILURE_CLOSE_MESSAGE = "Server closed (packet handler exception)";
     
     protected Client client;                    // the client that uses this handler
     protected DataInputStream inputStream;      // input stream from the server
     
+    private int hash;
+    
     /**
      * 
      * @param client - the client that uses this packet handler
      */
-    public ClientPacketHandler(Client client)
+    public ClientPacketHandler(Client client, int hash)
     {
         this.client = client;
+        this.hash = hash;
+        
         inputStream = this.client.getInputStream();
+    }
+
+    @Override
+    public Integer getIdentifier()
+    {
+        return hash;
+    }
+    
+    @Override
+    public void setIdentifier(Integer identifier)
+    {
+        throw new UnsupportedOperationException();
     }
     
     /**

@@ -37,6 +37,8 @@ public class IdentityPool<T extends Identifiable<Integer>>
         else
         {
             identifier = object.getIdentifier();
+            if (objects.containsKey(identifier))
+                throw new IdentityException("duplicate identifier in managed IdentityPool");
         }
         objects.put(identifier, object);
         return identifier;

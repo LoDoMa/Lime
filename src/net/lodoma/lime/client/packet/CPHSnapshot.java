@@ -14,7 +14,7 @@ public class CPHSnapshot extends ClientPacketHandler
     
     public CPHSnapshot(Client client)
     {
-        super(client);
+        super(client, HASH);
     }
     
     @Override
