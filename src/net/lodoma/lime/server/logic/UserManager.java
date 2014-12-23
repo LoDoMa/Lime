@@ -27,25 +27,7 @@ public class UserManager implements ServerLogic
     }
     
     @Override
-    public void baseInit(Server server)
-    {
-        
-    }
-    
-    @Override
-    public void propertyInit()
-    {
-        
-    }
-    
-    @Override
-    public void fetchInit()
-    {
-        
-    }
-    
-    @Override
-    public void generalInit()
+    public void init(Server server)
     {
         
     }

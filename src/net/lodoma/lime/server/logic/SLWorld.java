@@ -24,30 +24,14 @@ public class SLWorld implements ServerLogic
     private Timer timer;
     
     @Override
-    public void baseInit(Server server)
+    public void init(Server server)
     {
         this.server = server;
-    }
-    
-    @Override
-    public void propertyInit()
-    {
         server.world = new World();
         server.physicsEngine = new PhysicsEngine(server.world);
         server.snapshotManager = new SnapshotManager(server.world, server.userManager);
-    }
-    
-    @Override
-    public void fetchInit()
-    {
-        server.snapshotManager.snapshotPacket = server.spPool.get(SPSnapshot.HASH);
-    }
-    
-    @Override
-    public void generalInit()
-    {
-        server.spPool.add(SPSnapshot.HASH, new SPSnapshot(server));
         
+        server.spPool.add(SPSnapshot.HASH, new SPSnapshot(server));
         server.snapshotManager.snapshotPacket = server.spPool.get(SPSnapshot.HASH);
         
         try

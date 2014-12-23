@@ -14,27 +14,11 @@ public class CLWorld implements ClientLogic
     private Timer timer;
     
     @Override
-    public void baseInit(Client client)
+    public void init(Client client)
     {
         this.client = client;
-    }
-    
-    @Override
-    public void propertyInit()
-    {
         client.world = new World();
         client.worldRenderer = new WorldRenderer(client.world);
-    }
-    
-    @Override
-    public void fetchInit()
-    {
-        
-    }
-    
-    @Override
-    public void generalInit()
-    {
         client.cphPool.add(CPHSnapshot.HASH, new CPHSnapshot(client));
     }
     

@@ -107,8 +107,7 @@ public class Window
         windowHandle = newWindowHandle;
         setCallbacks();
         
-        ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-        glfwSetWindowPos(windowHandle, (int) ((GLFWvidmode.width(vidmode) - size.x) / 2.0), (int) ((GLFWvidmode.height(vidmode) - size.y) / 2.0));
+        glfwSetWindowPos(windowHandle, (int) ((fullsize.x - size.x) / 2.0), (int) ((fullsize.y - size.y) / 2.0));
         
         glfwMakeContextCurrent(windowHandle);
         glfwSwapInterval(1);
