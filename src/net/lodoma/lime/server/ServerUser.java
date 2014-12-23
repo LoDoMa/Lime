@@ -9,15 +9,13 @@ import java.io.PipedOutputStream;
 import java.net.Socket;
 
 import net.lodoma.lime.security.Credentials;
-import net.lodoma.lime.util.HashPool32;
 import net.lodoma.lime.util.Identifiable;
 
 // NOTE: This class required more neatness!
 
 public final class ServerUser implements Runnable, Identifiable<Integer>
 {
-    public HashPool32<ServerPacketHandler> sphPool;
-    
+    public Server server;
     public Socket socket;
     
     private InputStream privateInputStream;
@@ -36,11 +34,9 @@ public final class ServerUser implements Runnable, Identifiable<Integer>
     
     public boolean fullSnapshot;
     
-    @SuppressWarnings("unchecked")
     public ServerUser(Socket socket, Server server)
     {
-        sphPool = (HashPool32<ServerPacketHandler>) server.getProperty("sphPool");
-        
+        this.server = server;
         this.socket = socket;
         try
         {
@@ -104,7 +100,7 @@ public final class ServerUser implements Runnable, Identifiable<Integer>
         while(inputStream.available() >= 4)
         {
             int hash = inputStream.readInt();
-            ServerPacketHandler handler = sphPool.get(hash);
+            ServerPacketHandler handler = server.sphPool.get(hash);
             if(handler != null)
                 handler.handle(this);
         }

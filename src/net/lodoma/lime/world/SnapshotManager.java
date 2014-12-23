@@ -16,9 +16,10 @@ public class SnapshotManager
     
     public ServerPacket snapshotPacket;
     
-    public SnapshotManager(World world)
+    public SnapshotManager(World world, UserManager userManager)
     {
         this.world = world;
+        this.userManager = userManager;
     }
     
     public void send()

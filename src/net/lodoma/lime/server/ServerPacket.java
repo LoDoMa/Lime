@@ -3,8 +3,6 @@ package net.lodoma.lime.server;
 import java.io.IOException;
 import java.util.Set;
 
-import net.lodoma.lime.server.logic.UserManager;
-
 public abstract class ServerPacket
 {
     protected Server server;
@@ -44,8 +42,7 @@ public abstract class ServerPacket
     
     public final void handleAll(Object... args)
     {
-        UserManager userManager = ((UserManager) server.getProperty("userManager"));
-        Set<ServerUser> users = userManager.getUserSet();
+        Set<ServerUser> users = server.userManager.getUserSet();
         for(ServerUser user : users)
             write(user, args);
     }

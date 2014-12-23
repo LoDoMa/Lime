@@ -3,9 +3,7 @@ package net.lodoma.lime.server.logic;
 import java.io.IOException;
 
 import net.lodoma.lime.server.Server;
-import net.lodoma.lime.server.ServerPacket;
 import net.lodoma.lime.server.packet.SPSnapshot;
-import net.lodoma.lime.util.HashPool32;
 import net.lodoma.lime.util.Timer;
 import net.lodoma.lime.world.SnapshotManager;
 import net.lodoma.lime.world.World;
@@ -22,11 +20,6 @@ public class SLWorld implements ServerLogic
     public double snapshotTime = SNAPSHOT_MAXTIME;
     
     private Server server;
-    private HashPool32<ServerPacket> spPool;
-    
-    private World world;
-    private PhysicsEngine physics;
-    private SnapshotManager snapshotManager;
     
     private Timer timer;
     
@@ -39,34 +32,27 @@ public class SLWorld implements ServerLogic
     @Override
     public void propertyInit()
     {
-        World world = new World();
-        server.setProperty("world", world);
-        server.setProperty("physicsEngine", new PhysicsEngine(world));
-        server.setProperty("snapshotManager", new SnapshotManager(world));
+        server.world = new World();
+        server.physicsEngine = new PhysicsEngine(server.world);
+        server.snapshotManager = new SnapshotManager(server.world, server.userManager);
     }
     
-    @SuppressWarnings("unchecked")
     @Override
     public void fetchInit()
     {
-        spPool = (HashPool32<ServerPacket>) server.getProperty("spPool");
-        
-        world = (World) server.getProperty("world");
-        physics = (PhysicsEngine) server.getProperty("physicsEngine");
-        snapshotManager = (SnapshotManager) server.getProperty("snapshotManager");
+        server.snapshotManager.snapshotPacket = server.spPool.get(SPSnapshot.HASH);
     }
     
     @Override
     public void generalInit()
     {
-        spPool.add(SPSnapshot.HASH, new SPSnapshot(server));
+        server.spPool.add(SPSnapshot.HASH, new SPSnapshot(server));
         
-        snapshotManager.userManager = (UserManager) server.getProperty("userManager");
-        snapshotManager.snapshotPacket = spPool.get(SPSnapshot.HASH);
+        server.snapshotManager.snapshotPacket = server.spPool.get(SPSnapshot.HASH);
         
         try
         {
-            world.load("test");
+            server.world.load("test");
         }
         catch(IOException e)
         {
@@ -78,7 +64,7 @@ public class SLWorld implements ServerLogic
     @Override
     public void clean()
     {
-        world.clean();
+        server.world.clean();
     }
     
     @Override
@@ -91,8 +77,8 @@ public class SLWorld implements ServerLogic
         updateTime -= timeDelta;
         if (updateTime <= 0.0)
         {
-            physics.update(timeDelta);
-            world.updateGamemode(timeDelta);
+            server.physicsEngine.update(timeDelta);
+            server.world.updateGamemode(timeDelta);
         }
         while (updateTime <= 0.0)
             updateTime += UPDATE_MAXTIME;
@@ -100,7 +86,7 @@ public class SLWorld implements ServerLogic
         snapshotTime -= timeDelta;
         if (snapshotTime <= 0.0)
         {
-            snapshotManager.send();
+            server.snapshotManager.send();
         }
         while (snapshotTime <= 0.0)
             snapshotTime += SNAPSHOT_MAXTIME;

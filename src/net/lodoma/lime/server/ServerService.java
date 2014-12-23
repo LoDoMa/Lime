@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import net.lodoma.lime.server.logic.UserManager;
-
 public class ServerService implements Runnable
 {
     private Thread thread;
@@ -15,12 +13,10 @@ public class ServerService implements Runnable
     private ServerSocket serviceSocket;
     
     private Server server;
-    private UserManager userManager;
     
     public ServerService(Server server)
     {
         this.server = server;
-        userManager = (UserManager) server.getProperty("userManager");
     }
     
     public void setPort(int port)
@@ -85,7 +81,7 @@ public class ServerService implements Runnable
             {
                 Socket clientSocket = serviceSocket.accept();
                 ServerUser serverUser = new ServerUser(clientSocket, server);
-                if(userManager.addUser(serverUser))
+                if (server.userManager.addUser(serverUser))
                     serverUser.start();
             }
             catch(IOException e)
