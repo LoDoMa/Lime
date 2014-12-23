@@ -21,7 +21,7 @@ function addToStrict(table)
 end
 
 function strictRequireJava(name)
-	return java.require(name)
+	return luajava.bindClass(name)
 end
 
 function addToLime(table)

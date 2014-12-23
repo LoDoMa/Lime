@@ -3,6 +3,7 @@ package net.lodoma.lime.world.entity;
 import java.io.File;
 import java.io.IOException;
 
+import net.lodoma.lime.script.LimeLibrary;
 import net.lodoma.lime.script.LuaScript;
 import net.lodoma.lime.util.Identifiable;
 import net.lodoma.lime.world.World;
@@ -22,13 +23,7 @@ public class Entity implements Identifiable<Integer>
         {
             EntityType type = world.entityTypePool.get(hash);
             
-            script = new LuaScript();
-            script.setGlobal("SCRIPT", script);
-            script.load(new File("./script/strict/lime.lua"));      // init strict
-            
-            script.setGlobal("ENTITY", this);
-            script.load(new File("./script/strict/entity.lua"));    // load entity data
-            script.load(new File("./script/strict/sandbox.lua"));   // sandboxing
+            script = new LuaScript(new LimeLibrary());
             script.load(new File("./script/entity/" + type.script + ".lua"));       // load entity script
         }
         catch (IOException e)
@@ -62,7 +57,7 @@ public class Entity implements Identifiable<Integer>
     
     public void update(float timeDelta)
     {
-        script.call("Lime_Update", 0, new Object[] { identifier, timeDelta, false });
+        script.call("Lime_Update", new Object[] { identifier, timeDelta, false });
     }
     
     public void debugRender()

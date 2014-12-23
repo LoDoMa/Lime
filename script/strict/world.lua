@@ -31,8 +31,8 @@ end
 
 local function addEntityToWorld(hash)
 	strict.typecheck.lua(hash, "number", 1, "lime.entity.create")
-
-	return world.entityPool:add(Entity:new(strict.world, hash))
+	
+	return world.entityPool:add(Entity.newInstance(strict.world, hash))
 end
 
 -- lime table

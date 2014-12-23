@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.function.Consumer;
 
+import net.lodoma.lime.script.LimeLibrary;
 import net.lodoma.lime.script.LuaScript;
 import net.lodoma.lime.util.IdentityPool;
 import net.lodoma.lime.world.entity.Entity;
@@ -45,19 +46,13 @@ public class World
             entityTypePool.add(entityType);
         }
         
-        gamemode = new LuaScript();
-        gamemode.setGlobal("SCRIPT", gamemode);
-        gamemode.load(new File("./script/strict/lime.lua"));      // init strict
-        
-        gamemode.setGlobal("WORLD", this);
-        gamemode.load(new File("./script/strict/world.lua"));     // load world data
-        gamemode.load(new File("./script/strict/sandbox.lua"));   // sandboxing
-        gamemode.load(new File("./script/world/" + filepath + ".lua"));       // load world script
+        gamemode = new LuaScript(new LimeLibrary());
+        gamemode.load(new File("./script/world/" + filepath + ".lua"));
     }
     
     public void updateGamemode(double timeDelta)
     {
-        gamemode.call("Lime_Update", 0, new Object[] { timeDelta });
+        gamemode.call("Lime_Update", new Object[] { timeDelta });
     }
     
     public void acceptSnapshot(ByteBuffer snapshot)
