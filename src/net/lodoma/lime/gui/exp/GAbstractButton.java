@@ -21,8 +21,7 @@ public class GAbstractButton extends GComponent
         {
             if(!lastHover) onMouseEnter();
             
-            int buttonc = Input.getMouseButtonCount();
-            for(int i = 0; i < buttonc; i++)
+            for(int i = 0; i < Input.MOUSE_SIZE; i++)
                      if(Input.getMouseDown(i)) onPressed(i);
                 else if(Input.getMouseUp(i))   onReleased(i);
         }

@@ -40,7 +40,7 @@ public class MainMenuPopulator implements MenuPopulator
         @Override
         public void onClick(Button button, Vector2 mousePosition)
         {
-            Window.requestClose();
+            Window.closeRequested = true;
         }
         
         @Override

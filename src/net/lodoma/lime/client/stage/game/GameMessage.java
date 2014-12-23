@@ -66,6 +66,7 @@ public class GameMessage extends Stage
     public void update(double timeDelta)
     {
         Input.update();
+        
         container.update(timeDelta);
     }
     

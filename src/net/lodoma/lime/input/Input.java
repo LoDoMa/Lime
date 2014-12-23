@@ -6,159 +6,217 @@ import java.nio.CharBuffer;
 import net.lodoma.lime.client.window.Window;
 import net.lodoma.lime.util.Vector2;
 
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
+import org.lwjgl.glfw.GLFWCursorPosCallback;
+import org.lwjgl.glfw.GLFWKeyCallback;
+import org.lwjgl.glfw.GLFWMouseButtonCallback;
+
+import static org.lwjgl.glfw.GLFW.*;
 
 public class Input
 {
-    public static final int LEFT_MOUSE_BUTTON = 0;
-    public static final int RIGHT_MOUSE_BUTTON = 1;
-    public static final int MIDDLE_MOUSE_BUTTON = 2;
+    public static final int LEFT_MOUSE_BUTTON   = GLFW_MOUSE_BUTTON_LEFT;
+    public static final int RIGHT_MOUSE_BUTTON  = GLFW_MOUSE_BUTTON_RIGHT;
+    public static final int MIDDLE_MOUSE_BUTTON = GLFW_MOUSE_BUTTON_MIDDLE;
     
-    public static final int KEY_NONE            = 0x00;
-    public static final int KEY_ESCAPE          = 0x01;
-    public static final int KEY_1               = 0x02;
-    public static final int KEY_2               = 0x03;
-    public static final int KEY_3               = 0x04;
-    public static final int KEY_4               = 0x05;
-    public static final int KEY_5               = 0x06;
-    public static final int KEY_6               = 0x07;
-    public static final int KEY_7               = 0x08;
-    public static final int KEY_8               = 0x09;
-    public static final int KEY_9               = 0x0A;
-    public static final int KEY_0               = 0x0B;
-    public static final int KEY_MINUS           = 0x0C;
-    public static final int KEY_EQUALS          = 0x0D;
-    public static final int KEY_BACK            = 0x0E;
-    public static final int KEY_TAB             = 0x0F;
-    public static final int KEY_Q               = 0x10;
-    public static final int KEY_W               = 0x11;
-    public static final int KEY_E               = 0x12;
-    public static final int KEY_R               = 0x13;
-    public static final int KEY_T               = 0x14;
-    public static final int KEY_Y               = 0x15;
-    public static final int KEY_U               = 0x16;
-    public static final int KEY_I               = 0x17;
-    public static final int KEY_O               = 0x18;
-    public static final int KEY_P               = 0x19;
-    public static final int KEY_LBRACKET        = 0x1A;
-    public static final int KEY_RBRACKET        = 0x1B;
-    public static final int KEY_RETURN          = 0x1C;
-    public static final int KEY_LCONTROL        = 0x1D;
-    public static final int KEY_A               = 0x1E;
-    public static final int KEY_S               = 0x1F;
-    public static final int KEY_D               = 0x20;
-    public static final int KEY_F               = 0x21;
-    public static final int KEY_G               = 0x22;
-    public static final int KEY_H               = 0x23;
-    public static final int KEY_J               = 0x24;
-    public static final int KEY_K               = 0x25;
-    public static final int KEY_L               = 0x26;
-    public static final int KEY_SEMICOLON       = 0x27;
-    public static final int KEY_APOSTROPHE      = 0x28;
-    public static final int KEY_GRAVE           = 0x29;
-    public static final int KEY_LSHIFT          = 0x2A;
-    public static final int KEY_BACKSLASH       = 0x2B;
-    public static final int KEY_Z               = 0x2C;
-    public static final int KEY_X               = 0x2D;
-    public static final int KEY_C               = 0x2E;
-    public static final int KEY_V               = 0x2F;
-    public static final int KEY_B               = 0x30;
-    public static final int KEY_N               = 0x31;
-    public static final int KEY_M               = 0x32;
-    public static final int KEY_COMMA           = 0x33;
-    public static final int KEY_PERIOD          = 0x34;
-    public static final int KEY_SLASH           = 0x35;
-    public static final int KEY_RSHIFT          = 0x36;
-    public static final int KEY_MULTIPLY        = 0x37;
-    public static final int KEY_LMENU           = 0x38;
-    public static final int KEY_LALT            = KEY_LMENU;
-    public static final int KEY_SPACE           = 0x39;
-    public static final int KEY_CAPITAL         = 0x3A;
-    public static final int KEY_F1              = 0x3B;
-    public static final int KEY_F2              = 0x3C;
-    public static final int KEY_F3              = 0x3D;
-    public static final int KEY_F4              = 0x3E;
-    public static final int KEY_F5              = 0x3F;
-    public static final int KEY_F6              = 0x40;
-    public static final int KEY_F7              = 0x41;
-    public static final int KEY_F8              = 0x42;
-    public static final int KEY_F9              = 0x43;
-    public static final int KEY_F10             = 0x44;
-    public static final int KEY_NUMLOCK         = 0x45;
-    public static final int KEY_SCROLL          = 0x46;
-    public static final int KEY_NUMPAD7         = 0x47;
-    public static final int KEY_NUMPAD8         = 0x48;
-    public static final int KEY_NUMPAD9         = 0x49;
-    public static final int KEY_SUBTRACT        = 0x4A;
-    public static final int KEY_NUMPAD4         = 0x4B;
-    public static final int KEY_NUMPAD5         = 0x4C;
-    public static final int KEY_NUMPAD6         = 0x4D;
-    public static final int KEY_ADD             = 0x4E;
-    public static final int KEY_NUMPAD1         = 0x4F;
-    public static final int KEY_NUMPAD2         = 0x50;
-    public static final int KEY_NUMPAD3         = 0x51;
-    public static final int KEY_NUMPAD0         = 0x52;
-    public static final int KEY_DECIMAL         = 0x53;
-    public static final int KEY_F11             = 0x57;
-    public static final int KEY_F12             = 0x58;
-    public static final int KEY_F13             = 0x64;
-    public static final int KEY_F14             = 0x65;
-    public static final int KEY_F15             = 0x66;
-    public static final int KEY_KANA            = 0x70;
-    public static final int KEY_CONVERT         = 0x79;
-    public static final int KEY_NOCONVERT       = 0x7B;
-    public static final int KEY_YEN             = 0x7D;
-    public static final int KEY_NUMPADEQUALS    = 0x8D;
-    public static final int KEY_CIRCUMFLEX      = 0x90;
-    public static final int KEY_AT              = 0x91;
-    public static final int KEY_COLON           = 0x92;
-    public static final int KEY_UNDERLINE       = 0x93;
-    public static final int KEY_KANJI           = 0x94;
-    public static final int KEY_STOP            = 0x95;
-    public static final int KEY_AX              = 0x96;
-    public static final int KEY_UNLABELED       = 0x97;
-    public static final int KEY_NUMPADENTER     = 0x9C;
-    public static final int KEY_RCONTROL        = 0x9D;
-    public static final int KEY_NUMPADCOMMA     = 0xB3;
-    public static final int KEY_DIVIDE          = 0xB5;
-    public static final int KEY_SYSRQ           = 0xB7;
-    public static final int KEY_RMENU           = 0xB8;
-    public static final int KEY_RALT            = KEY_RMENU;
-    public static final int KEY_PAUSE           = 0xC5;
-    public static final int KEY_HOME            = 0xC7;
-    public static final int KEY_UP              = 0xC8;
-    public static final int KEY_PRIOR           = 0xC9;
-    public static final int KEY_LEFT            = 0xCB;
-    public static final int KEY_RIGHT           = 0xCD;
-    public static final int KEY_END             = 0xCF;
-    public static final int KEY_DOWN            = 0xD0;
-    public static final int KEY_NEXT            = 0xD1;
-    public static final int KEY_INSERT          = 0xD2;
-    public static final int KEY_DELETE          = 0xD3;
-    public static final int KEY_LMETA           = 0xDB;
-    public static final int KEY_LWIN            = KEY_LMETA;
-    public static final int KEY_RMETA           = 0xDC;
-    public static final int KEY_RWIN            = KEY_RMETA;
-    public static final int KEY_APPS            = 0xDD;
-    public static final int KEY_POWER           = 0xDE;
-    public static final int KEY_SLEEP           = 0xDF;
+    public static final int MOUSE_SIZE          = GLFW_MOUSE_BUTTON_LAST;
     
-    public static final int KEYBOARD_SIZE       = 256;
+    public static final int KEY_NONE            = GLFW_KEY_UNKNOWN;
+    public static final int KEY_ESCAPE          = GLFW_KEY_ESCAPE;
+    public static final int KEY_1               = GLFW_KEY_1;
+    public static final int KEY_2               = GLFW_KEY_2;
+    public static final int KEY_3               = GLFW_KEY_3;
+    public static final int KEY_4               = GLFW_KEY_4;
+    public static final int KEY_5               = GLFW_KEY_5;
+    public static final int KEY_6               = GLFW_KEY_6;
+    public static final int KEY_7               = GLFW_KEY_7;
+    public static final int KEY_8               = GLFW_KEY_8;
+    public static final int KEY_9               = GLFW_KEY_9;
+    public static final int KEY_0               = GLFW_KEY_0;
+    public static final int KEY_MINUS           = GLFW_KEY_MINUS;
+    public static final int KEY_EQUALS          = GLFW_KEY_EQUAL;
+    public static final int KEY_BACK            = GLFW_KEY_BACKSPACE;
+    public static final int KEY_TAB             = GLFW_KEY_TAB;
+    public static final int KEY_Q               = GLFW_KEY_Q;
+    public static final int KEY_W               = GLFW_KEY_W;
+    public static final int KEY_E               = GLFW_KEY_E;
+    public static final int KEY_R               = GLFW_KEY_R;
+    public static final int KEY_T               = GLFW_KEY_T;
+    public static final int KEY_Y               = GLFW_KEY_Y;
+    public static final int KEY_U               = GLFW_KEY_U;
+    public static final int KEY_I               = GLFW_KEY_I;
+    public static final int KEY_O               = GLFW_KEY_O;
+    public static final int KEY_P               = GLFW_KEY_P;
+    public static final int KEY_LBRACKET        = GLFW_KEY_LEFT_BRACKET;
+    public static final int KEY_RBRACKET        = GLFW_KEY_RIGHT_BRACKET;
+    public static final int KEY_RETURN          = GLFW_KEY_ENTER;
+    public static final int KEY_LCONTROL        = GLFW_KEY_LEFT_CONTROL;
+    public static final int KEY_A               = GLFW_KEY_A;
+    public static final int KEY_S               = GLFW_KEY_S;
+    public static final int KEY_D               = GLFW_KEY_D;
+    public static final int KEY_F               = GLFW_KEY_F;
+    public static final int KEY_G               = GLFW_KEY_G;
+    public static final int KEY_H               = GLFW_KEY_H;
+    public static final int KEY_J               = GLFW_KEY_J;
+    public static final int KEY_K               = GLFW_KEY_K;
+    public static final int KEY_L               = GLFW_KEY_L;
+    public static final int KEY_SEMICOLON       = GLFW_KEY_SEMICOLON;
+    public static final int KEY_APOSTROPHE      = GLFW_KEY_APOSTROPHE;
+    public static final int KEY_GRAVE           = GLFW_KEY_GRAVE_ACCENT;
+    public static final int KEY_LSHIFT          = GLFW_KEY_LEFT_SHIFT;
+    public static final int KEY_BACKSLASH       = GLFW_KEY_BACKSLASH;
+    public static final int KEY_Z               = GLFW_KEY_Z;
+    public static final int KEY_X               = GLFW_KEY_X;
+    public static final int KEY_C               = GLFW_KEY_C;
+    public static final int KEY_V               = GLFW_KEY_V;
+    public static final int KEY_B               = GLFW_KEY_B;
+    public static final int KEY_N               = GLFW_KEY_N;
+    public static final int KEY_M               = GLFW_KEY_M;
+    public static final int KEY_COMMA           = GLFW_KEY_COMMA;
+    public static final int KEY_PERIOD          = GLFW_KEY_PERIOD;
+    public static final int KEY_SLASH           = GLFW_KEY_SLASH;
+    public static final int KEY_RSHIFT          = GLFW_KEY_RIGHT_SHIFT;
+    public static final int KEY_MULTIPLY        = GLFW_KEY_KP_MULTIPLY;
+    public static final int KEY_LMENU           = GLFW_KEY_LEFT_SUPER;
+    public static final int KEY_LALT            = GLFW_KEY_LEFT_ALT;
+    public static final int KEY_SPACE           = GLFW_KEY_SPACE;
+    public static final int KEY_CAPITAL         = GLFW_KEY_CAPS_LOCK;
+    public static final int KEY_F1              = GLFW_KEY_F1;
+    public static final int KEY_F2              = GLFW_KEY_F2;
+    public static final int KEY_F3              = GLFW_KEY_F3;
+    public static final int KEY_F4              = GLFW_KEY_F4;
+    public static final int KEY_F5              = GLFW_KEY_F5;
+    public static final int KEY_F6              = GLFW_KEY_F6;
+    public static final int KEY_F7              = GLFW_KEY_F7;
+    public static final int KEY_F8              = GLFW_KEY_F8;
+    public static final int KEY_F9              = GLFW_KEY_F9;
+    public static final int KEY_F10             = GLFW_KEY_F10;
+    public static final int KEY_NUMLOCK         = GLFW_KEY_NUM_LOCK;
+    public static final int KEY_SCROLL          = GLFW_KEY_SCROLL_LOCK;
+    public static final int KEY_NUMPAD7         = GLFW_KEY_KP_7;
+    public static final int KEY_NUMPAD8         = GLFW_KEY_KP_8;
+    public static final int KEY_NUMPAD9         = GLFW_KEY_KP_9;
+    public static final int KEY_SUBTRACT        = GLFW_KEY_KP_SUBTRACT;
+    public static final int KEY_NUMPAD4         = GLFW_KEY_KP_4;
+    public static final int KEY_NUMPAD5         = GLFW_KEY_KP_5;
+    public static final int KEY_NUMPAD6         = GLFW_KEY_KP_6;
+    public static final int KEY_ADD             = GLFW_KEY_KP_ADD;
+    public static final int KEY_NUMPAD1         = GLFW_KEY_KP_1;
+    public static final int KEY_NUMPAD2         = GLFW_KEY_KP_2;
+    public static final int KEY_NUMPAD3         = GLFW_KEY_KP_3;
+    public static final int KEY_NUMPAD0         = GLFW_KEY_KP_0;
+    public static final int KEY_DECIMAL         = GLFW_KEY_KP_DECIMAL;
+    public static final int KEY_F11             = GLFW_KEY_F11;
+    public static final int KEY_F12             = GLFW_KEY_F12;
+    public static final int KEY_F13             = GLFW_KEY_F13;
+    public static final int KEY_F14             = GLFW_KEY_F14;
+    public static final int KEY_F15             = GLFW_KEY_F15;
+    // public static final int KEY_KANA         = ;
+    // public static final int KEY_CONVERT      = ;
+    // public static final int KEY_NOCONVERT    = ;
+    // public static final int KEY_YEN          = ;
+    public static final int KEY_NUMPADEQUALS    = GLFW_KEY_KP_EQUAL;
+    // public static final int KEY_CIRCUMFLEX   = ;
+    // public static final int KEY_AT           = ;
+    // public static final int KEY_COLON        = ;
+    // public static final int KEY_UNDERLINE    = ;
+    // public static final int KEY_KANJI        = ;
+    // public static final int KEY_STOP         = ;
+    // public static final int KEY_AX           = ;
+    // public static final int KEY_UNLABELED    = ;
+    public static final int KEY_NUMPADENTER     = GLFW_KEY_KP_ENTER;
+    public static final int KEY_RCONTROL        = GLFW_KEY_RIGHT_CONTROL;
+    public static final int KEY_NUMPADCOMMA     = GLFW_KEY_KP_DECIMAL;      // ?
+    public static final int KEY_DIVIDE          = GLFW_KEY_KP_DIVIDE;
+    // public static final int KEY_SYSRQ        = ;
+    public static final int KEY_RMENU           = GLFW_KEY_RIGHT_SUPER;
+    public static final int KEY_RALT            = GLFW_KEY_RIGHT_ALT;
+    public static final int KEY_PAUSE           = GLFW_KEY_PAUSE;
+    public static final int KEY_HOME            = GLFW_KEY_HOME;
+    public static final int KEY_UP              = GLFW_KEY_UP;
+    // public static final int KEY_PRIOR        = ;
+    public static final int KEY_LEFT            = GLFW_KEY_LEFT;
+    public static final int KEY_RIGHT           = GLFW_KEY_RIGHT;
+    public static final int KEY_END             = GLFW_KEY_END;
+    public static final int KEY_DOWN            = GLFW_KEY_DOWN;
+    // public static final int KEY_NEXT         = ;
+    public static final int KEY_INSERT          = GLFW_KEY_INSERT;
+    public static final int KEY_DELETE          = GLFW_KEY_DELETE;
+    // public static final int KEY_LMETA        = ;
+    // public static final int KEY_LWIN         = ;
+    // public static final int KEY_RMETA        = ;
+    // public static final int KEY_RWIN         = ;
+    // public static final int KEY_APPS         = ;
+    // public static final int KEY_POWER        = ;
+    // public static final int KEY_SLEEP        = ;
+    
+    public static final int KEYBOARD_SIZE       = GLFW_KEY_LAST;
 
-    private static ByteBuffer keyboard;
-    private static ByteBuffer keyboardRepeated;
-    private static ByteBuffer lastKeyboard;
+    private static ByteBuffer liveKeyboard;
+    private static ByteBuffer liveKeyboardRepeated;
+    private static ByteBuffer currentKeyboard;
+    private static ByteBuffer currentKeyboardRepeated;
+    private static ByteBuffer oldKeyboard;
 
-    private static ByteBuffer mouse;
-    private static ByteBuffer lastMouse;
+    private static ByteBuffer liveMouse;
+    private static ByteBuffer currentMouse;
+    private static ByteBuffer oldMouse;
     
     private static CharBuffer chars;
 
     private static float mouseX;
     private static float mouseY;
     
-    private static boolean initialized = false;
+    public static class KeyCallback extends GLFWKeyCallback
+    {
+        @Override
+        public void invoke(long window, int key, int scancode, int action, int mods)
+        {
+            boolean released = action == GLFW_RELEASE;
+            boolean pressed = action == GLFW_PRESS;
+            boolean repeated = action == GLFW_REPEAT;
+            
+            if (repeated)
+                liveKeyboardRepeated.put(key, (byte) 1);
+            else
+            {
+                liveKeyboard.put(key, (byte) (pressed ? 1 : 0));
+                if (released)
+                    liveKeyboardRepeated.put(key, (byte) 0);
+            }
+        }
+    }
+    
+    public static class MouseCallback extends GLFWMouseButtonCallback
+    {
+        @Override
+        public void invoke(long window, int button, int action, int mods)
+        {
+            // boolean released = action == GLFW_RELEASE;
+            boolean pressed = action == GLFW_PRESS;
+            
+            liveMouse.put(button, (byte) (pressed ? 1 : 0));
+        }
+    }
+    
+    public static class MotionCallback extends GLFWCursorPosCallback
+    {
+        @Override
+        public void invoke(long window, double xpos, double ypos)
+        {
+            ypos = Window.size.y - ypos;
+            
+            int vpx = Window.getViewportX();
+            int vpy = Window.getViewportY();
+            int vpw = Window.getViewportWidth();
+            int vph = Window.getViewportHeight();
+            
+            double tx = xpos - vpx;
+            double ty = ypos - vpy;
+            
+            mouseX = (float) (tx / vpw);
+            mouseY = (float) (ty / vph);
+        }
+    }
     
     private static void loadChar(char c)
     {
@@ -183,108 +241,75 @@ public class Input
         chars.put(KEY_COMMA, ',');
     }
     
-    private static void init()
+    public static void init()
     {
-        Keyboard.enableRepeatEvents(true);
+        liveKeyboard            = ByteBuffer.allocate(KEYBOARD_SIZE);
+        liveKeyboardRepeated    = ByteBuffer.allocate(liveKeyboard.capacity());
+        currentKeyboard         = ByteBuffer.allocate(liveKeyboard.capacity());
+        currentKeyboardRepeated = ByteBuffer.allocate(liveKeyboardRepeated.capacity());
+        oldKeyboard             = ByteBuffer.allocate(currentKeyboard.capacity());
+
+        liveMouse    = ByteBuffer.allocate(MOUSE_SIZE);
+        currentMouse = ByteBuffer.allocate(liveMouse.capacity());
+        oldMouse     = ByteBuffer.allocate(currentMouse.capacity());
         
-        keyboard = ByteBuffer.allocate(KEYBOARD_SIZE);
-        keyboardRepeated = ByteBuffer.allocate(keyboard.capacity());
-        lastKeyboard = ByteBuffer.allocate(keyboard.capacity());
-        
-        mouse = ByteBuffer.allocate(Mouse.getButtonCount());
-        lastMouse = ByteBuffer.allocate(mouse.capacity());
-        
-        chars = CharBuffer.allocate(keyboard.capacity());
+        chars = CharBuffer.allocate(currentKeyboard.capacity());
         loadChars();
-        
-        initialized = true;
     }
     
     public static void update()
     {
-        if(!initialized)
-            init();
+        oldKeyboard.position(0);
+        oldKeyboard.put(currentKeyboard.array());
+        currentKeyboard.position(0);
+        currentKeyboard.put(liveKeyboard.array());
+        currentKeyboardRepeated.position(0);
+        currentKeyboardRepeated.put(liveKeyboardRepeated.array());
         
-        lastKeyboard.position(0);
-        lastKeyboard.put(keyboard.array());
-        
-        Keyboard.poll();
-        while(Keyboard.next())
-        {
-            if(Keyboard.isRepeatEvent())
-                keyboardRepeated.put(Keyboard.getEventKey(), (byte) 1);
-            else
-            {
-                keyboard.put(Keyboard.getEventKey(), (byte) (Keyboard.getEventKeyState() ? 1 : 0));
-                if(!Keyboard.getEventKeyState())
-                    keyboardRepeated.put(Keyboard.getEventKey(), (byte) 0);
-            }
-        }
-        
-        lastMouse.position(0);
-        lastMouse.put(mouse.array());
-        
-        for(int button = 0; button < Mouse.getButtonCount(); button++)
-            mouse.put(button, (byte) (Mouse.isButtonDown(button) ? 1 : 0));
-        
-        int mx = Mouse.getX();
-        int my = Mouse.getY();
-
-        int vpx = Window.getViewportX();
-        int vpy = Window.getViewportY();
-        int vpw = Window.getViewportWidth();
-        int vph = Window.getViewportHeight();
-        
-        int tx = mx - vpx;
-        int ty = my - vpy;
-        
-        mouseX = tx / (float) vpw;
-        mouseY = ty / (float) vph;
+        oldMouse.position(0);
+        oldMouse.put(currentMouse.array());
+        currentMouse.position(0);
+        currentMouse.put(liveMouse.array());
     }
     
     public static boolean getKey(int key)
     {
-        return keyboard.get(key) == 1;
+        return currentKeyboard.get(key) == 1;
     }
     
     public static boolean getKeyDown(int key)
     {
-        return keyboard.get(key) == 1 && lastKeyboard.get(key) == 0;
+        return currentKeyboard.get(key) == 1 && oldKeyboard.get(key) == 0;
     }
     
     public static boolean getKeyUp(int key)
     {
-        return keyboard.get(key) == 0 && lastKeyboard.get(key) == 1;
+        return currentKeyboard.get(key) == 0 && oldKeyboard.get(key) == 1;
     }
     
     public static boolean getKeyRepeated(int key)
     {
-        return getKeyDown(key) || keyboardRepeated.get(key) == 1;
+        return getKeyDown(key) || currentKeyboardRepeated.get(key) == 1;
     }
     
     public static boolean getMouse(int key)
     {
-        return mouse.get(key) == 1;
+        return currentMouse.get(key) == 1;
     }
     
     public static boolean getMouseDown(int key)
     {
-        return mouse.get(key) == 1 && lastMouse.get(key) == 0;
+        return currentMouse.get(key) == 1 && oldMouse.get(key) == 0;
     }
     
     public static boolean getMouseUp(int key)
     {
-        return mouse.get(key) == 0 && lastMouse.get(key) == 1;
+        return currentMouse.get(key) == 0 && oldMouse.get(key) == 1;
     }
     
     public static Vector2 getMousePosition()
     {
         return new Vector2(mouseX, mouseY);
-    }
-    
-    public static int getMouseButtonCount()
-    {
-        return Mouse.getButtonCount();
     }
     
     public static char getChar(int key)

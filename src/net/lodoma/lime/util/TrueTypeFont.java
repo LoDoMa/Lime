@@ -432,6 +432,7 @@ public class TrueTypeFont
             
             GL11.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_MODULATE);
             
+            // NOTE: GLU isn't in LWJGL 3!!! This is from lwjgl_util.jar that comes with LWJGL 2
             GLU.gluBuild2DMipmaps(GL11.GL_TEXTURE_2D, internalFormat, width, height, format, GL11.GL_UNSIGNED_BYTE, byteBuffer);
             return textureId.get(0);
             

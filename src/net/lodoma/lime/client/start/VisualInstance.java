@@ -13,6 +13,7 @@ import net.lodoma.lime.texture.Texture;
 import net.lodoma.lime.util.FontHelper;
 import net.lodoma.lime.util.Timer;
 import net.lodoma.lime.util.TrueTypeFont;
+import net.lodoma.lime.util.Vector2;
 
 public class VisualInstance
 {
@@ -20,16 +21,17 @@ public class VisualInstance
     
     private void init()
     {
-        Window.setWindowSize(800, 450);
-        Window.setResolution(16, 9);
-        Window.setFullscreen(false);
-        Window.setTitle("Lime");
-        Window.setDebugEnabled(false);
-        Window.setFPS(60);
+        Window.size = new Vector2(800, 450);
+        Window.resolution = new Vector2(16, 9);
+        Window.resizable = true;
+        Window.fullscreen = false;
+        Window.title = "Lime";
+        Window.debugEnabled = false;
+        Window.vsync = true;
         
         try
         {
-            Window.open();
+            Window.create();
         }
         catch(WindowException e)
         {
@@ -55,7 +57,7 @@ public class VisualInstance
         int frames = 0;
         int fps = 0;
         
-        while(!Window.isCloseRequested())
+        while(!Window.closeRequested)
         {
             Window.clear();
             
@@ -63,15 +65,15 @@ public class VisualInstance
             stageManager.update(timer.getDelta());
             stageManager.render();
             
-            if(Window.isDebugEnabled())
+            if(Window.debugEnabled)
             {
-                debugText.setText("fps " + fps + "/" + Window.getFPS());
+                debugText.setText("fps " + fps);
                 debugText.render();
             }
             
             Window.update();
 
-            if(Window.isDebugEnabled())
+            if(Window.debugEnabled)
             {
                 frames++;
                 fpsTimer.update();
