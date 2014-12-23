@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.server.ServerUser;
@@ -60,8 +61,8 @@ public class UserManager implements ServerLogic
     
     public boolean addUser(ServerUser user)
     {
-        user.setID(idCounter++);
-        users.put(user.getID(), user);
+        user.setIdentifier(idCounter++);
+        users.put(user.getIdentifier(), user);
         userSet.add(user);
         return true;
     }
@@ -93,7 +94,7 @@ public class UserManager implements ServerLogic
                 continue;
             }
             
-            if(user.isClosed())
+            if(user.closed)
             {
                 user.stop();
                 toRemove.add(user);
@@ -101,6 +102,13 @@ public class UserManager implements ServerLogic
         }
         users.remove(toRemove);
         userSet.removeAll(toRemove);
-        
+    }
+    
+    public void foreach(Consumer<ServerUser> consumer)
+    {
+        // NOTE: Do we need a new set here, or is it already synchronized?
+        Set<ServerUser> userSet = new HashSet<ServerUser>(this.userSet);
+        for (ServerUser user : userSet)
+            consumer.accept(user);
     }
 }

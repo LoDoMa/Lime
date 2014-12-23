@@ -38,7 +38,7 @@ public abstract class ServerPacket
         }
         catch (IOException e)
         {
-            user.close();
+            user.closed = true;
         }
     }
     

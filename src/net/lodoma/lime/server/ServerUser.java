@@ -10,12 +10,15 @@ import java.net.Socket;
 
 import net.lodoma.lime.security.Credentials;
 import net.lodoma.lime.util.HashPool32;
+import net.lodoma.lime.util.Identifiable;
 
-public final class ServerUser implements Runnable
+// NOTE: This class required more neatness!
+
+public final class ServerUser implements Runnable, Identifiable<Integer>
 {
-    private HashPool32<ServerPacketHandler> sphPool;
+    public HashPool32<ServerPacketHandler> sphPool;
     
-    private Socket socket;
+    public Socket socket;
     
     private InputStream privateInputStream;
     private PipedOutputStream privateOutputStream;
@@ -23,13 +26,15 @@ public final class ServerUser implements Runnable
     public DataInputStream inputStream;
     public DataOutputStream outputStream;
     
-    private Thread thread;
-    private boolean running;
+    public Thread thread;
+    public boolean running;
     
-    private boolean isClosed;
+    public boolean closed;
     
-    private Credentials credentials;
-    private int ID;
+    public Credentials credentials;
+    public int identifier;
+    
+    public boolean fullSnapshot;
     
     @SuppressWarnings("unchecked")
     public ServerUser(Socket socket, Server server)
@@ -51,6 +56,20 @@ public final class ServerUser implements Runnable
         {
             e.printStackTrace();
         }
+        
+        fullSnapshot = true;
+    }
+    
+    @Override
+    public Integer getIdentifier()
+    {
+        return identifier;
+    }
+    
+    @Override
+    public void setIdentifier(Integer identifier)
+    {
+        this.identifier = identifier;
     }
     
     public void start()
@@ -80,29 +99,9 @@ public final class ServerUser implements Runnable
         return credentials;
     }
     
-    public int getID()
-    {
-        return ID;
-    }
-    
-    public void setID(int id)
-    {
-        ID = id;
-    }
-    
-    public void close()
-    {
-        isClosed = true;
-    }
-    
-    public boolean isClosed()
-    {
-        return isClosed;
-    }
-    
     public void handleInput() throws IOException
     {
-        while(inputStream.available() >= 8)
+        while(inputStream.available() >= 4)
         {
             int hash = inputStream.readInt();
             ServerPacketHandler handler = sphPool.get(hash);
@@ -139,6 +138,6 @@ public final class ServerUser implements Runnable
                 e.printStackTrace();
             }
         
-        close();
+        closed = true;
     }
 }

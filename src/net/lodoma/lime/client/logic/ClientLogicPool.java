@@ -1,9 +1,13 @@
 package net.lodoma.lime.client.logic;
 
+import java.io.DataInputStream;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
 import net.lodoma.lime.client.Client;
+import net.lodoma.lime.client.ClientPacketHandler;
+import net.lodoma.lime.util.HashPool32;
 import net.lodoma.lime.util.Timer;
 
 /**
@@ -26,6 +30,8 @@ public class ClientLogicPool implements Runnable
     
     private Set<ClientLogic> logicSet;
     
+    private HashPool32<ClientPacketHandler> cphPool;
+    
     /**
      * 
      * @param client - the client that uses this logic pool
@@ -43,12 +49,15 @@ public class ClientLogicPool implements Runnable
      * Calls all four stages of initialization
      * for all added ClientLogic objects.
      */
+    @SuppressWarnings("unchecked")
     public void init()
     {
         for(ClientLogic logic : logicSet)
             logic.baseInit(client);
         for(ClientLogic logic : logicSet)
             logic.propertyInit();
+        
+        cphPool = (HashPool32<ClientPacketHandler>) client.getProperty("cphPool");
         for(ClientLogic logic : logicSet)
             logic.fetchInit();
         for(ClientLogic logic : logicSet)
@@ -102,8 +111,32 @@ public class ClientLogicPool implements Runnable
         while(running)
         {
             timer.update();
+            
+            try
+            {
+                DataInputStream stream = client.getInputStream();
+                
+                int amountHandled = 0;
+                while(stream.available() >= 4 && amountHandled < 1)
+                {
+                    int hash = stream.readInt();
+                    ClientPacketHandler cih = cphPool.get(hash);
+                    if(cih != null)
+                        cih.handle();
+                    
+                    amountHandled++;
+                }
+            }
+            catch (IOException e)
+            {
+                client.setCloseMessage("CPH handling exception");
+                client.close();
+            }
+            
             for(ClientLogic logic : logicSet)
                 logic.logic();
+            
+            
             timer.update();
             double delta = timer.getDelta();
             double required = 1.0f / ups;

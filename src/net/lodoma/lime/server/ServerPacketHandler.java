@@ -21,7 +21,7 @@ public abstract class ServerPacketHandler
         }
         catch (IOException e)
         {
-            user.close();
+            user.closed = true;
         }
     }
 }

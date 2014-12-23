@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 // NOTE: HashPool32 is NOT thread safe. It should be synchronized later.
+// NOTE: Also, HashPool32 isn't different from IdentityPool at all
 public class HashPool32<T>
 {
     private Map<Integer, T> elements;

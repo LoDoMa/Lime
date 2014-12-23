@@ -2,6 +2,7 @@ package net.lodoma.lime.world;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.function.Consumer;
 
 import net.lodoma.lime.script.LuaScript;
@@ -57,5 +58,34 @@ public class World
     public void updateGamemode(double timeDelta)
     {
         gamemode.call("Lime_Update", 0, new Object[] { timeDelta });
+    }
+    
+    public void acceptSnapshot(ByteBuffer snapshot)
+    {
+        System.out.println("I accept!");
+    }
+    
+    public ByteBuffer buildFullSnapshot()
+    {
+        ByteBuffer snapshot = ByteBuffer.allocate(0);
+        return snapshot;
+    }
+    
+    public ByteBuffer buildDeltaSnapshot()
+    {
+        ByteBuffer snapshot = ByteBuffer.allocate(0);
+        return snapshot;
+    }
+    
+    public void snapshotUpdate()
+    {
+        entityPool.foreach(new Consumer<Entity>()
+        {
+            @Override
+            public void accept(Entity entity)
+            {
+                // New is outdated!
+            }
+        });
     }
 }
