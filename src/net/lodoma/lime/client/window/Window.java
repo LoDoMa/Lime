@@ -1,5 +1,7 @@
 package net.lodoma.lime.client.window;
 
+import java.nio.ByteBuffer;
+
 import net.lodoma.lime.input.Input;
 import net.lodoma.lime.util.Vector2;
 
@@ -7,6 +9,7 @@ import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
+import org.lwjgl.glfw.GLFWvidmode;
 import org.lwjgl.opengl.GLContext;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -54,7 +57,8 @@ public class Window
         
         setCallbacks();
         
-        glfwSetWindowPos(windowHandle, 0, 0);
+        ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+        glfwSetWindowPos(windowHandle, (int) ((GLFWvidmode.width(vidmode) - size.x) / 2.0), (int) ((GLFWvidmode.height(vidmode) - size.y) / 2.0));
         
         glfwMakeContextCurrent(windowHandle);
         glfwSwapInterval(1);
@@ -95,12 +99,14 @@ public class Window
         releaseCallbacks();
         glfwDestroyWindow(windowHandle);
         windowHandle = newWindowHandle;
+        setCallbacks();
+        
+        ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+        glfwSetWindowPos(windowHandle, (int) ((GLFWvidmode.width(vidmode) - size.x) / 2.0), (int) ((GLFWvidmode.height(vidmode) - size.y) / 2.0));
         
         glfwMakeContextCurrent(windowHandle);
         glfwSwapInterval(1);
         glfwShowWindow(windowHandle);
-        
-        setCallbacks();
         
         initGL();
     }
