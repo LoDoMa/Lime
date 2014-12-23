@@ -4,12 +4,11 @@ import net.lodoma.lime.input.Input;
 import net.lodoma.lime.util.Vector2;
 
 import org.lwjgl.glfw.GLFWCursorPosCallback;
-import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
+import org.lwjgl.glfw.GLFWWindowSizeCallback;
 import org.lwjgl.opengl.GLContext;
 
-import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.EXTFramebufferObject.*;
@@ -28,10 +27,10 @@ public class Window
 
     public static long windowHandle;
     // Callbacks MUST be strongly referenced
-    public static GLFWErrorCallback errorCallback;
     public static GLFWKeyCallback keyCallback;
     public static GLFWMouseButtonCallback mouseCallback;
     public static GLFWCursorPosCallback motionCallback;
+    public static GLFWWindowSizeCallback resizeCallback;
     
     private static int vpx;
     private static int vpy;
@@ -60,9 +59,6 @@ public class Window
     
     public static void create() throws WindowException
     {
-        errorCallback = errorCallbackPrint(System.err);
-        glfwSetErrorCallback(errorCallback);
-        
         if (glfwInit() != GL_TRUE)
             throw new WindowException("Failed to init GLFW");
         
@@ -70,20 +66,29 @@ public class Window
         glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, resizable ? GL_TRUE : GL_FALSE);
         
-        windowHandle = glfwCreateWindow((int) size.x, (int) size.y, title, NULL, NULL);
+        windowHandle = glfwCreateWindow((int) size.x, (int) size.y, title, fullscreen ? glfwGetPrimaryMonitor() : NULL, NULL);
         if (windowHandle == NULL)
             throw new WindowException("Failed to create GLFW window");
         
         Input.init();
         
         keyCallback = new Input.KeyCallback();
-        glfwSetKeyCallback(windowHandle, keyCallback);
-        
         mouseCallback = new Input.MouseCallback();
-        glfwSetMouseButtonCallback(windowHandle, mouseCallback);
-        
         motionCallback = new Input.MotionCallback();
+        resizeCallback = new GLFWWindowSizeCallback()
+        {
+            @Override
+            public void invoke(long window, int width, int height)
+            {
+                size.x = width;
+                size.y = height;
+            }
+        };
+        
+        glfwSetKeyCallback(windowHandle, keyCallback);
+        glfwSetMouseButtonCallback(windowHandle, mouseCallback);
         glfwSetCursorPosCallback(windowHandle, motionCallback);
+        glfwSetWindowSizeCallback(windowHandle, resizeCallback);
         
         glfwSetWindowPos(windowHandle, 0, 0);
         
@@ -114,20 +119,29 @@ public class Window
         updateViewport();
     }
     
+    public static void recreate() throws WindowException
+    {
+        close();
+        create();
+    }
+    
     public static void updateViewport()
     {
-        vpwidth = (int) (size.y * (resolution.x / resolution.y));
+        float width = size.x;
+        float height = size.y;
         
-        if(vpwidth < size.x)
-            vpheight = (int) size.y;
+        vpwidth = (int) (height * (resolution.x / resolution.y));
+        
+        if(vpwidth < width)
+            vpheight = (int) height;
         else
         {
-            vpwidth = (int) size.x;
-            vpheight = (int) (size.x * (resolution.y / resolution.x));
+            vpwidth = (int) width;
+            vpheight = (int) (width * (resolution.y / resolution.x));
         }
         
-        vpx = ((int) size.x - vpwidth) / 2;
-        vpy = ((int) size.y - vpheight) / 2;
+        vpx = ((int) width - vpwidth) / 2;
+        vpy = ((int) height - vpheight) / 2;
         
         glViewport(vpx, vpy, vpwidth, vpheight);
     }
@@ -162,12 +176,12 @@ public class Window
         {
             keyCallback.release();
             mouseCallback.release();
-            // motionCallback.release(); CRASH?
+            motionCallback.release();
+            resizeCallback.release();
             glfwDestroyWindow(windowHandle);
         }
         finally
        {
-            errorCallback.release();
             glfwTerminate();
         }
     }

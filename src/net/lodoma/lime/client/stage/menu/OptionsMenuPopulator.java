@@ -1,6 +1,7 @@
 package net.lodoma.lime.client.stage.menu;
 
 import net.lodoma.lime.client.window.Window;
+import net.lodoma.lime.client.window.WindowException;
 import net.lodoma.lime.gui.Button;
 import net.lodoma.lime.gui.ButtonListener;
 import net.lodoma.lime.gui.GUIContainer;
@@ -24,17 +25,14 @@ public class OptionsMenuPopulator implements MenuPopulator
             Window.fullscreen = !Window.fullscreen;
             ((SimpleButton) button).setText(Window.fullscreen ? "Fullscreen" : "Windowed");
             
-            // TODO: do something like apply
-            /*
             try
             {
-                Window.apply();
+                Window.recreate();
             }
             catch(WindowException e)
             {
                 e.printStackTrace();
             }
-            */
         }
         
         @Override
