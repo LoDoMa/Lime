@@ -5,8 +5,11 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.function.Consumer;
 
-import net.lodoma.lime.script.LimeLibrary;
 import net.lodoma.lime.script.LuaScript;
+import net.lodoma.lime.script.library.LimeLibrary;
+import net.lodoma.lime.script.library.UtilFunctions;
+import net.lodoma.lime.script.library.WorldFunctions;
+import net.lodoma.lime.server.Server;
 import net.lodoma.lime.util.IdentityPool;
 import net.lodoma.lime.world.entity.Entity;
 import net.lodoma.lime.world.entity.EntityType;
@@ -36,7 +39,7 @@ public class World
         });
     }
     
-    public void load(String filepath) throws IOException
+    public void load(String filepath, Server server) throws IOException
     {
         File[] entityTypeFiles = new File("./types").listFiles();
         for (File entityTypeFile : entityTypeFiles)
@@ -46,7 +49,11 @@ public class World
             entityTypePool.add(entityType);
         }
         
-        gamemode = new LuaScript(new LimeLibrary());
+        LimeLibrary library = new LimeLibrary(server);
+        UtilFunctions.addToLibrary(library);
+        WorldFunctions.addToLibrary(library);
+        
+        gamemode = new LuaScript(library);
         gamemode.load(new File("./script/world/" + filepath + ".lua"));
     }
     

@@ -3,8 +3,9 @@ package net.lodoma.lime.world.entity;
 import java.io.File;
 import java.io.IOException;
 
-import net.lodoma.lime.script.LimeLibrary;
 import net.lodoma.lime.script.LuaScript;
+import net.lodoma.lime.script.library.LimeLibrary;
+import net.lodoma.lime.server.Server;
 import net.lodoma.lime.util.Identifiable;
 import net.lodoma.lime.world.World;
 
@@ -17,13 +18,13 @@ public class Entity implements Identifiable<Integer>
     
     public Body body;
     
-    public Entity(World world, int hash)
+    public Entity(World world, int hash, Server server)
     {
         try
         {
             EntityType type = world.entityTypePool.get(hash);
             
-            script = new LuaScript(new LimeLibrary());
+            script = new LuaScript(new LimeLibrary(server));
             script.load(new File("./script/entity/" + type.script + ".lua"));       // load entity script
         }
         catch (IOException e)

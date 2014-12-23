@@ -52,7 +52,7 @@ public class SLWorld implements ServerLogic
         
         try
         {
-            server.world.load("test");
+            server.world.load("test", server);
         }
         catch(IOException e)
         {
