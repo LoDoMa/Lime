@@ -32,30 +32,10 @@ public class Window
     public static GLFWCursorPosCallback motionCallback;
     public static GLFWWindowSizeCallback resizeCallback;
     
-    private static int vpx;
-    private static int vpy;
-    private static int vpwidth;
-    private static int vpheight;
-    
-    public static int getViewportX()
-    {
-        return vpx;
-    }
-    
-    public static int getViewportY()
-    {
-        return vpy;
-    }
-    
-    public static int getViewportWidth()
-    {
-        return vpwidth;
-    }
-    
-    public static int getViewportHeight()
-    {
-        return vpheight;
-    }
+    public static int viewportX;
+    public static int viewportY;
+    public static int viewportWidth;
+    public static int viewportHeight;
     
     public static void create() throws WindowException
     {
@@ -72,23 +52,7 @@ public class Window
         
         Input.init();
         
-        keyCallback = new Input.KeyCallback();
-        mouseCallback = new Input.MouseCallback();
-        motionCallback = new Input.MotionCallback();
-        resizeCallback = new GLFWWindowSizeCallback()
-        {
-            @Override
-            public void invoke(long window, int width, int height)
-            {
-                size.x = width;
-                size.y = height;
-            }
-        };
-        
-        glfwSetKeyCallback(windowHandle, keyCallback);
-        glfwSetMouseButtonCallback(windowHandle, mouseCallback);
-        glfwSetCursorPosCallback(windowHandle, motionCallback);
-        glfwSetWindowSizeCallback(windowHandle, resizeCallback);
+        setCallbacks();
         
         glfwSetWindowPos(windowHandle, 0, 0);
         
@@ -121,8 +85,24 @@ public class Window
     
     public static void recreate() throws WindowException
     {
-        close();
-        create();
+        glfwMakeContextCurrent(windowHandle);
+        
+        glfwDefaultWindowHints();
+        glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
+        glfwWindowHint(GLFW_RESIZABLE, resizable ? GL_TRUE : GL_FALSE);
+        
+        long newWindowHandle = glfwCreateWindow((int) size.x, (int) size.y, title, fullscreen ? glfwGetPrimaryMonitor() : NULL, windowHandle);glfwSetWindowPos(windowHandle, 0, 0);
+        releaseCallbacks();
+        glfwDestroyWindow(windowHandle);
+        windowHandle = newWindowHandle;
+        
+        glfwMakeContextCurrent(windowHandle);
+        glfwSwapInterval(1);
+        glfwShowWindow(windowHandle);
+        
+        setCallbacks();
+        
+        initGL();
     }
     
     public static void updateViewport()
@@ -130,20 +110,20 @@ public class Window
         float width = size.x;
         float height = size.y;
         
-        vpwidth = (int) (height * (resolution.x / resolution.y));
+        viewportWidth = (int) (height * (resolution.x / resolution.y));
         
-        if(vpwidth < width)
-            vpheight = (int) height;
+        if(viewportWidth < width)
+            viewportHeight = (int) height;
         else
         {
-            vpwidth = (int) width;
-            vpheight = (int) (width * (resolution.y / resolution.x));
+            viewportWidth = (int) width;
+            viewportHeight = (int) (width * (resolution.y / resolution.x));
         }
         
-        vpx = ((int) width - vpwidth) / 2;
-        vpy = ((int) height - vpheight) / 2;
+        viewportX = ((int) width - viewportWidth) / 2;
+        viewportY = ((int) height - viewportHeight) / 2;
         
-        glViewport(vpx, vpy, vpwidth, vpheight);
+        glViewport(viewportX, viewportY, viewportWidth, viewportHeight);
     }
     
     public static void clear()
@@ -156,7 +136,7 @@ public class Window
     
     public static void bindFBO()
     {
-        glViewport(vpx, vpy, vpwidth, vpheight);
+        glViewport(viewportX, viewportY, viewportWidth, viewportHeight);
         glBindTexture(GL_TEXTURE_2D, 0);
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0); 
     }
@@ -174,15 +154,41 @@ public class Window
     {
         try
         {
-            keyCallback.release();
-            mouseCallback.release();
-            motionCallback.release();
-            resizeCallback.release();
+            releaseCallbacks();
             glfwDestroyWindow(windowHandle);
         }
         finally
-       {
+        {
             glfwTerminate();
         }
+    }
+    
+    public static void setCallbacks()
+    {
+        keyCallback = new Input.KeyCallback();
+        mouseCallback = new Input.MouseCallback();
+        motionCallback = new Input.MotionCallback();
+        resizeCallback = new GLFWWindowSizeCallback()
+        {
+            @Override
+            public void invoke(long window, int width, int height)
+            {
+                size.x = width;
+                size.y = height;
+            }
+        };
+        
+        glfwSetKeyCallback(windowHandle, keyCallback);
+        glfwSetMouseButtonCallback(windowHandle, mouseCallback);
+        glfwSetCursorPosCallback(windowHandle, motionCallback);
+        glfwSetWindowSizeCallback(windowHandle, resizeCallback);
+    }
+    
+    public static void releaseCallbacks()
+    {
+        keyCallback.release();
+        mouseCallback.release();
+        motionCallback.release();
+        resizeCallback.release();
     }
 }

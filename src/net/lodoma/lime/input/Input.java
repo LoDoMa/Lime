@@ -203,18 +203,8 @@ public class Input
         @Override
         public void invoke(long window, double xpos, double ypos)
         {
-            ypos = Window.size.y - ypos;
-            
-            int vpx = Window.getViewportX();
-            int vpy = Window.getViewportY();
-            int vpw = Window.getViewportWidth();
-            int vph = Window.getViewportHeight();
-            
-            double tx = xpos - vpx;
-            double ty = ypos - vpy;
-            
-            mouseX = (float) (tx / vpw);
-            mouseY = (float) (ty / vph);
+            mouseX = (float) ((xpos - Window.viewportX) / Window.viewportWidth);
+            mouseY = (float) (((Window.size.y - ypos) - Window.viewportY) / Window.viewportHeight);
         }
     }
     
