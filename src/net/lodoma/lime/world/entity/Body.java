@@ -16,6 +16,8 @@ public class Body implements Identifiable<Integer>
     public Vector2 position = new Vector2();
     public Vector2 velocity = new Vector2();
     public float radius = 0.0f;
+    public float density = 0.0f;
+    public float mass = 0.0f;
     
     @Override
     public Integer getIdentifier()
@@ -47,7 +49,7 @@ public class Body implements Identifiable<Integer>
         GL11.glColor3f(1.0f, 0.0f, 0.0f);
         GL11.glBegin(GL11.GL_LINE_LOOP);
 
-        for (int i=0; i <= 10; i++)
+        for (int i = 0; i <= 10; i++)
         {
            float angle = (float) Math.toRadians(i * 360.0 / 10.0);
            GL11.glVertex2f((float) Math.cos(angle) * radius, (float) Math.sin(angle) * radius);

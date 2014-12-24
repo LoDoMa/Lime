@@ -3,6 +3,7 @@ package net.lodoma.lime.world.entity;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.List;
 import java.util.Random;
 
 import net.lodoma.lime.client.Client;
@@ -28,6 +29,8 @@ public class Entity implements Identifiable<Integer>
     
     public Entity(World world, int hash, Server server)
     {
+        this.world = world;
+        
         EntityType type = world.entityTypePool.get(hash);
         script = new LuaScript(new LimeLibrary(server));
         
@@ -43,9 +46,11 @@ public class Entity implements Identifiable<Integer>
         
         // TODO: delete temp test code
         Random random = new Random();
-        body.velocity = new Vector2((random.nextFloat() * 2.0f - 1.0f) * 15.0f, (random.nextFloat() * 2.0f - 1.0f) * 15.0f);
-        body.position = new Vector2(random.nextFloat() * 20.0f, random.nextFloat() * 20.0f);
-        body.radius = 0.5f;
+        body.velocity = new Vector2((random.nextFloat() * 2.0f - 1.0f) * 1.0f, (random.nextFloat() * 2.0f - 1.0f) * 1.0f);
+        body.position = new Vector2(random.nextFloat() * 32.0f, random.nextFloat() * 25.0f);
+        body.radius = 0.5f + random.nextFloat() * 0.5f;
+        body.density = 1.0f;
+        body.mass = body.density * (float) ((4.0 / 3.0) * Math.PI * (body.radius * body.radius * body.radius));
     }
     
     public Entity(World world, int identifier, Client client)
@@ -90,6 +95,20 @@ public class Entity implements Identifiable<Integer>
         throw new UnsupportedOperationException();
     }
     
+    public boolean checkSpawnConditions()
+    {
+        List<Entity> entities = world.entityPool.getObjectList();
+        for (Entity other : entities)
+        {
+            float dx = body.position.x - other.body.position.x;
+            float dy = body.position.y - other.body.position.y;
+            float dist = (float) Math.sqrt(dx * dx + dy * dy);
+            if (dist < (body.radius + other.body.radius))
+                return false;
+        }
+        return true;
+    }
+    
     public IntersectionEvent intersects(Entity other)
     {
         double t = PhysicsUtils.getIntersectionTime(body.position,       body.velocity,       body.radius,
@@ -113,8 +132,9 @@ public class Entity implements Identifiable<Integer>
     
     public void collideWith(Entity other)
     {
-        body.velocity.set(0.0f, 0.0f);
-        other.body.velocity.set(0.0f, 0.0f);
+        PhysicsUtils.getPostCollisionVelocity(body.position,       body.velocity,       body.mass,
+                                              other.body.position, other.body.velocity, other.body.mass,
+                                              body.velocity, other.body.velocity);
     }
     
     public void acceptSnapshotCompo(ByteBuffer compo)

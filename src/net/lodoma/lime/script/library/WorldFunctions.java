@@ -4,6 +4,7 @@ import net.lodoma.lime.world.World;
 import net.lodoma.lime.world.entity.Entity;
 
 import org.luaj.vm2.LuaError;
+import org.luaj.vm2.LuaNil;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.VarArgFunction;
@@ -53,7 +54,11 @@ public class WorldFunctions
             case NEW_ENTITY:
             {
                 int hash = args.arg(1).checkinteger().toint();
-                int entityID = world.entityPool.add(new Entity(world, hash, library.server));
+                Entity entity = new Entity(world, hash, library.server);
+                if (!entity.checkSpawnConditions())
+                    return LuaNil.NIL;
+                
+                int entityID = world.entityPool.add(entity);
                 library.server.physicsEngine.updateQueue(entityID); 
                 return CoerceJavaToLua.coerce(entityID);
             }

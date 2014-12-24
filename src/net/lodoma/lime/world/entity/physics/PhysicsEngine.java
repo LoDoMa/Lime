@@ -9,7 +9,23 @@ import net.lodoma.lime.world.entity.Entity;
 
 public class PhysicsEngine
 {
+    private class AvoidEvent implements Comparable<AvoidEvent>
+    {
+        public int time;
+        public int entityID1;
+        public int entityID2;
+        
+        @Override
+        public int compareTo(AvoidEvent other)
+        {
+            if (time < other.time) return -1;
+            if (time > other.time) return 1;
+            return 0;
+        }
+    }
+    
     public PriorityQueue<IntersectionEvent> queue;
+    public PriorityQueue<AvoidEvent> avoid;
     
     public World world;
     
@@ -21,6 +37,7 @@ public class PhysicsEngine
         this.world = world;
         
         queue = new PriorityQueue<IntersectionEvent>();
+        avoid = new PriorityQueue<AvoidEvent>();
     }
     
     public void updateQueue(int entityID)
@@ -54,18 +71,49 @@ public class PhysicsEngine
         });
     }
     
+    public void updateAvoid()
+    {
+        Iterator<AvoidEvent> it = avoid.iterator();
+        while (it.hasNext())
+        {
+            AvoidEvent event = it.next();
+            event.time--;
+            if (event.time < 0)
+                it.remove();
+        }
+    }
+    
     public void update(double timeDelta)
     {
+        updateAvoid();
+        
         time += timeDelta;
         while (!queue.isEmpty())
         {
             IntersectionEvent nextEvent = queue.peek();
             double nextTime = nextEvent.time;
-            System.out.println(nextTime);
             
             if (time >= nextTime)
             {
-                queue.remove();   
+                Entity entity1 = world.entityPool.get(nextEvent.entityID1);
+                Entity entity2 = world.entityPool.get(nextEvent.entityID2);
+
+                boolean isAvoided = false;
+                Iterator<AvoidEvent> it2 = avoid.iterator();
+                while (it2.hasNext())
+                {
+                    AvoidEvent event = it2.next();
+                    if ((event.entityID1 == entity1.identifier && event.entityID2 == entity2.identifier) ||
+                        (event.entityID1 == entity2.identifier && event.entityID2 == entity1.identifier))
+                    {
+                        isAvoided = true;
+                        break;
+                    }
+                }
+
+                queue.remove();
+                if (isAvoided) continue;
+                   
                 time -= nextTime;
                 oldTime -= nextTime;
                 Iterator<IntersectionEvent> it = queue.iterator();
@@ -74,12 +122,15 @@ public class PhysicsEngine
                     IntersectionEvent event = it.next();
                     event.time -= nextTime;
                 }
-
-                Entity entity1 = world.entityPool.get(nextEvent.entityID1);
-                Entity entity2 = world.entityPool.get(nextEvent.entityID2);
                 
                 entity1.skipSimulation = true;
                 entity2.skipSimulation = true;
+                
+                AvoidEvent avoidEvent = new AvoidEvent();
+                avoidEvent.time = 1;
+                avoidEvent.entityID1 = entity1.identifier;
+                avoidEvent.entityID2 = entity2.identifier;
+                avoid.add(avoidEvent);
                 
                 float simtime1 = (float) (-oldTime);
                 entity1.simulate(simtime1);
