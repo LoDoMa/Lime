@@ -908,6 +908,16 @@ public class Vector2
         v.x = x;
         v.y = y;
     }
+    
+    public boolean equals(Vector2 v)
+    {
+        return x == v.x && y == v.y;
+    }
+    
+    public static boolean equals(Vector2 v1, Vector2 v2)
+    {
+        return v1.x == v2.x && v1.y == v2.y;
+    }
 
     @Override
     public Vector2 clone()

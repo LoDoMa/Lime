@@ -61,9 +61,10 @@ public class SLWorld implements ServerLogic
         updateTime -= timeDelta;
         if (updateTime <= 0.0)
         {
-            server.physicsEngine.update(timeDelta);
-            server.world.updateGamemode(timeDelta);
+            server.world.updateGamemode(UPDATE_MAXTIME);
+            server.physicsEngine.update(UPDATE_MAXTIME);
         }
+        
         while (updateTime <= 0.0)
             updateTime += UPDATE_MAXTIME;
         

@@ -35,7 +35,7 @@ public class SnapshotManager
                 {
                     // Sending full snapshot
                     if (fullSnapshot == null)
-                        fullSnapshot = world.buildFullSnapshot();
+                        fullSnapshot = world.buildSnapshot(true);
                     snapshotPacket.write(user, fullSnapshot);
                     
                     user.fullSnapshot = false;
@@ -44,7 +44,7 @@ public class SnapshotManager
                 {
                     // Sending delta snapshot
                     if (deltaSnapshot == null)
-                        deltaSnapshot = world.buildDeltaSnapshot();
+                        deltaSnapshot = world.buildSnapshot(false);
                     snapshotPacket.write(user, deltaSnapshot);
                 }
             }

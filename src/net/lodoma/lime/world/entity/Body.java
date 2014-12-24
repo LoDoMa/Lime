@@ -5,27 +5,17 @@ import org.lwjgl.opengl.GL11;
 import net.lodoma.lime.texture.Texture;
 import net.lodoma.lime.util.Identifiable;
 import net.lodoma.lime.util.Vector2;
-import net.lodoma.lime.world.entity.physics.PhysicsEngine;
 
 public class Body implements Identifiable<Integer>
 {
-    public static enum BodyType
-    {
-        CIRCLE,
-    }
-    
     public int identifier;
-    public PhysicsEngine world;
-    
-    public Vector2 position;
-    public Vector2 velocity;
-    public float radius;
-    
-    public float restitution;
-    public float density;
 
-    public float volume;
-    public float mass;
+    public Vector2 oldPosition = new Vector2();
+    public Vector2 oldVelocity = new Vector2();
+    
+    public Vector2 position = new Vector2();
+    public Vector2 velocity = new Vector2();
+    public float radius = 0.0f;
     
     @Override
     public Integer getIdentifier()
@@ -39,9 +29,12 @@ public class Body implements Identifiable<Integer>
         this.identifier = identifier;
     }
     
-    public void simulate(float timeDelta)
+    public boolean snapshotUpdate()
     {
-        position.addLocal(velocity.mul(timeDelta));
+        boolean changed = !oldPosition.equals(position) || !oldVelocity.equals(velocity);
+        oldPosition.set(position);
+        oldVelocity.set(velocity);
+        return changed;
     }
     
     public void debugRender()

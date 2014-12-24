@@ -88,7 +88,7 @@ public class UserManager implements ServerLogic
     
     public void foreach(Consumer<ServerUser> consumer)
     {
-        // NOTE: Do we need a new set here, or is it already synchronized?
+        // We create a new set, so that the consumer can remove elements
         Set<ServerUser> userSet = new HashSet<ServerUser>(this.userSet);
         for (ServerUser user : userSet)
             consumer.accept(user);

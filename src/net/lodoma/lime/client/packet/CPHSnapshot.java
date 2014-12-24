@@ -25,6 +25,6 @@ public class CPHSnapshot extends ClientPacketHandler
         inputStream.read(bytes);
         ByteBuffer snapshot = ByteBuffer.wrap(bytes);
         
-        client.world.acceptSnapshot(snapshot);
+        client.world.acceptSnapshot(snapshot, client);
     }
 }

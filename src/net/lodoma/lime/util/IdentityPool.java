@@ -44,6 +44,16 @@ public class IdentityPool<T extends Identifiable<Integer>>
         return identifier;
     }
     
+    // NOTE: This isn't really a good solution
+    public synchronized int addManaged(T object)
+    {
+        int identifier = object.getIdentifier();
+        if (objects.containsKey(identifier))
+            throw new IdentityException("duplicate identifier in IdentityPool [managed addition]");
+        objects.put(identifier, object);
+        return identifier;
+    }
+    
     public synchronized boolean has(int identifier)
     {
         return objects.containsKey(identifier);
@@ -62,6 +72,16 @@ public class IdentityPool<T extends Identifiable<Integer>>
     public void remove(T identifiable)
     {
         remove(identifiable.getIdentifier());
+    }
+    
+    public boolean isEmpty()
+    {
+        return objects.isEmpty();
+    }
+    
+    public void clear()
+    {
+        objects.clear();
     }
     
     /* NOTE: Is getIdentifierSet method needed?

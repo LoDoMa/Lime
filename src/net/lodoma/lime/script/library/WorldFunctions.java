@@ -53,7 +53,9 @@ public class WorldFunctions
             case NEW_ENTITY:
             {
                 int hash = args.arg(1).checkinteger().toint();
-                return CoerceJavaToLua.coerce(world.entityPool.add(new Entity(world, hash, library.server)));
+                int entityID = world.entityPool.add(new Entity(world, hash, library.server));
+                library.server.physicsEngine.updateQueue(entityID); 
+                return CoerceJavaToLua.coerce(entityID);
             }
             }
             return LuaValue.NONE;
