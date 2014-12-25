@@ -159,6 +159,15 @@ public class Window
         glfwSwapBuffers(windowHandle);
         glfwPollEvents();
         
+        try
+        {
+            Thread.sleep(10);
+        }
+        catch(InterruptedException e)
+        {
+            e.printStackTrace();
+        }
+        
         if (!closeRequested)
             closeRequested = glfwWindowShouldClose(windowHandle) == GL_TRUE;
     }

@@ -3,15 +3,12 @@ package net.lodoma.lime.world.entity;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.List;
-import java.util.Random;
 
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.script.LuaScript;
 import net.lodoma.lime.script.library.LimeLibrary;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.util.Identifiable;
-import net.lodoma.lime.util.Vector2;
 import net.lodoma.lime.world.World;
 import net.lodoma.lime.world.entity.physics.IntersectionEvent;
 import net.lodoma.lime.world.entity.physics.PhysicsUtils;
@@ -43,14 +40,6 @@ public class Entity implements Identifiable<Integer>
             // TODO: handle this
             e.printStackTrace();
         }
-        
-        // TODO: delete temp test code
-        Random random = new Random();
-        body.velocity = new Vector2((random.nextFloat() * 2.0f - 1.0f) * 1.0f, (random.nextFloat() * 2.0f - 1.0f) * 1.0f);
-        body.position = new Vector2(random.nextFloat() * 32.0f, random.nextFloat() * 25.0f);
-        body.radius = 0.5f + random.nextFloat() * 0.5f;
-        body.density = 1.0f;
-        body.mass = body.density * (float) ((4.0 / 3.0) * Math.PI * (body.radius * body.radius * body.radius));
     }
     
     public Entity(World world, int identifier, Client client)
@@ -93,20 +82,6 @@ public class Entity implements Identifiable<Integer>
     public void render()
     {
         throw new UnsupportedOperationException();
-    }
-    
-    public boolean checkSpawnConditions()
-    {
-        List<Entity> entities = world.entityPool.getObjectList();
-        for (Entity other : entities)
-        {
-            float dx = body.position.x - other.body.position.x;
-            float dy = body.position.y - other.body.position.y;
-            float dist = (float) Math.sqrt(dx * dx + dy * dy);
-            if (dist < (body.radius + other.body.radius))
-                return false;
-        }
-        return true;
     }
     
     public IntersectionEvent intersects(Entity other)

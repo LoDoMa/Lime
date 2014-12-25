@@ -177,7 +177,7 @@ public class WorldRenderer
         
         renderLights();
         */
-        
+
         renderWorld();
         
         /*

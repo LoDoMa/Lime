@@ -78,12 +78,13 @@ public class ClientReader implements Runnable
             {
                 if(inputStream.available() > 0)
                 {
-                    byte[] bytes = new byte[Math.min(1024, inputStream.available())];
-                    inputStream.read(bytes);
-                    outputStream.write(bytes);
+                    byte[] bytes = new byte[1024];
+                    int amount = inputStream.read(bytes);
+                    outputStream.write(bytes, 0, amount);
                 }
+                Thread.sleep(1);
             }
-            catch(IOException e)
+            catch(IOException | InterruptedException e)
             {
                 if(!running) break;
                 e.printStackTrace();

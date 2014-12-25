@@ -1,26 +1,24 @@
 package net.lodoma.lime.util;
 
 import java.io.IOException;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 
 public class Pipe
 {
-    private PipedInputStream inputStream;
-    private PipedOutputStream outputStream;
+    private FastPIS inputStream;
+    private FastPOS outputStream;
     
     public Pipe() throws IOException
     {
-        outputStream = new PipedOutputStream();
-        inputStream = new PipedInputStream(outputStream);
+        inputStream = new FastPIS();
+        outputStream = new FastPOS(inputStream);
     }
     
-    public PipedInputStream getInputStream()
+    public FastPIS getInputStream()
     {
         return inputStream;
     }
     
-    public PipedOutputStream getOutputStream()
+    public FastPOS getOutputStream()
     {
         return outputStream;
     }

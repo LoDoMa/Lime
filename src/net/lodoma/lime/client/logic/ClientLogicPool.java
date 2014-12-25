@@ -83,6 +83,7 @@ public class ClientLogicPool implements Runnable
             }
             catch (IOException e)
             {
+                e.printStackTrace();
                 client.setCloseMessage("CPH handling exception");
                 client.close();
             }
@@ -97,7 +98,7 @@ public class ClientLogicPool implements Runnable
             double freetime = required - delta;
             int millis = (int) (freetime * 1000);
             int nanos = (int) (freetime * 1000000000 - millis * 1000000);
-            if(nanos > 0)
+            if(millis > 0 || nanos > 0)
                 try
                 {
                     Thread.sleep(millis, nanos);
