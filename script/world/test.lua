@@ -5,22 +5,29 @@ function Lime_WorldInit()
 	lime.setWorldGravity(0.0, 0.0)
 end
 
+local playerIDs = {}
+
 local function onJoin(userID)
-	print("user [ID=" .. userID .. "] joined!")
+	local player = lime.newEntity()
+	lime.assignScript(player, "ball")
+
+	playerIDs[userID] = player
+	print("created player for user [ID=" .. userID .. "]")
+end
+
+local function onLeave(userID)
+	lime.removeEntity(playerIDs[userID])
+	print("removed player for user [ID=" .. userID .. "]")
 end
 
 local function init()
 	lime.addEventListener("Lime::OnJoin", onJoin)
+	lime.addEventListener("Lime::OnLeave", onLeave)
 end
 
 function Lime_Update(timeDelta)
 	if firstUpdate == true then
 		init()
-
-		for i = 1, 50 do
-			local id = lime.newEntity()
-			lime.assignScript(id, "ball")
-		end
 
 		firstUpdate = false
 	end

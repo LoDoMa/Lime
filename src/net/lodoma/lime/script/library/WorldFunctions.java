@@ -63,6 +63,13 @@ public class WorldFunctions
                 int entityID = world.entityPool.add(entity);
                 return CoerceJavaToLua.coerce(entityID);
             }
+            case REMOVE_ENTITY:
+            {
+                int entityID = args.arg(1).checkint();
+                world.entityPool.get(entityID).destroy();
+                world.entityPool.remove(entityID);
+                break;
+            }
             case ASSIGN_SCRIPT:
             {
                 int entityID = args.arg(1).checkint();
@@ -78,8 +85,9 @@ public class WorldFunctions
     private static enum FuncData
     {
         SET_WORLD_GRAVITY(2, true, "setWorldGravity"),
-        
+
         NEW_ENTITY(0, true, "newEntity"),
+        REMOVE_ENTITY(1, true, "removeEntity"),
         ASSIGN_SCRIPT(2, true, "assignScript");
         
         public int argc;

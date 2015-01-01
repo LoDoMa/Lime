@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import net.lodoma.lime.script.event.EMOnJoin;
+import net.lodoma.lime.script.event.EMOnLeave;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.server.ServerUser;
 
@@ -33,8 +34,9 @@ public class UserManager implements ServerLogic
     public void init(Server server)
     {
         this.server = server;
-        
+
         server.emanPool.add(new EMOnJoin());
+        server.emanPool.add(new EMOnLeave());
     }
     
     @Override
@@ -51,7 +53,8 @@ public class UserManager implements ServerLogic
         user.setIdentifier(idCounter++);
         users.put(user.getIdentifier(), user);
         userSet.add(user);
-        
+
+        // TODO: OnJoin and OnLeave events are not thread safe! Random crashes WILL occur.
         server.emanPool.get(EMOnJoin.HASH).event(user.getIdentifier());
         return true;
     }
@@ -91,6 +94,8 @@ public class UserManager implements ServerLogic
         }
         users.remove(toRemove);
         userSet.removeAll(toRemove);
+        for (ServerUser user : toRemove)
+            server.emanPool.get(EMOnLeave.HASH).event(user.getIdentifier());
     }
     
     public void foreach(Consumer<ServerUser> consumer)

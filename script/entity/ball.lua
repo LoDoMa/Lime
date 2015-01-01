@@ -6,7 +6,7 @@ function Lime_Init(entityID)
 		firstInit = false
 	end
 
-	local posx, posy = (math.random() - 0.0) * 40, (math.random() - 0.0) * 50
+	local posx, posy = (math.random() - 0.0) * 20, (math.random() - 0.0) * 20
 	local velx, vely = (math.random() - 0.5) * 8, (math.random() - 0.5) * 8
 	local radius = 0.25 + math.random() * 0.5
 
@@ -24,4 +24,8 @@ end
 
 function Lime_Update(entityID, timeDelta, isActor)
 
+end
+
+function Lime_Clean()
+	
 end

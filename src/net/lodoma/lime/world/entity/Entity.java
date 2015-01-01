@@ -2,9 +2,6 @@ package net.lodoma.lime.world.entity;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-
-import org.jbox2d.collision.shapes.CircleShape;
 
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.script.LuaScript;
@@ -14,7 +11,6 @@ import net.lodoma.lime.script.library.LimeLibrary;
 import net.lodoma.lime.script.library.UtilFunctions;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.util.Identifiable;
-import net.lodoma.lime.util.Vector2;
 import net.lodoma.lime.world.World;
 
 public class Entity implements Identifiable<Integer>
@@ -53,12 +49,6 @@ public class Entity implements Identifiable<Integer>
         this.identifier = identifier;
     }
     
-    public void destroy()
-    {
-        if (body != null)
-            body.destroy();
-    }
-    
     public void assignScript(Server server, String scriptName)
     {
         LimeLibrary library = new LimeLibrary(server);
@@ -91,6 +81,14 @@ public class Entity implements Identifiable<Integer>
         script.call("Lime_Update", new Object[] { identifier, timeDelta, false });
     }
     
+    public void destroy()
+    {
+        if (body != null)
+            body.destroy();
+        if (script != null)
+            script.call("Lime_Clean", new Object[] { identifier });
+    }
+    
     public void debugRender()
     {
         shape.debugRender();
@@ -99,49 +97,5 @@ public class Entity implements Identifiable<Integer>
     public void render()
     {
         throw new UnsupportedOperationException();
-    }
-    
-    public void acceptSnapshotCompo(ByteBuffer snapshotCompo)
-    {
-        int compoc = snapshotCompo.getInt();
-        if (shape.positionList.length != compoc)
-            shape.positionList = new Vector2[compoc];
-        if (shape.angleList.length != compoc)
-            shape.angleList = new float[compoc];
-        if (shape.radiusList.length != compoc)
-            shape.radiusList = new float[compoc];
-        
-        for (int i = 0; i < compoc; i++)
-        {
-            float positionX = snapshotCompo.getFloat();
-            float positionY = snapshotCompo.getFloat();
-            float angle = snapshotCompo.getFloat();
-            float radius = snapshotCompo.getFloat();
-            
-            if (shape.positionList[i] == null)
-                shape.positionList[i] = new Vector2();
-            shape.positionList[i].set(positionX, positionY);
-            shape.angleList[i] = angle;
-            shape.radiusList[i] = radius;
-        }
-    }
-    
-    public byte[] buildSnapshotCompo(boolean forced)
-    {
-        // NOTE: this is always sending full snapshots
-        
-        int compoc = body.components.size();
-        ByteBuffer snapshotCompo = ByteBuffer.allocate(8 + 16 * compoc);
-        snapshotCompo.putInt(identifier);
-        snapshotCompo.putInt(compoc);
-        
-        body.components.foreach((BodyComponent component) -> {
-            snapshotCompo.putFloat(component.engineBody.getPosition().x);
-            snapshotCompo.putFloat(component.engineBody.getPosition().y);
-            snapshotCompo.putFloat(component.engineBody.getAngle());
-            snapshotCompo.putFloat(((CircleShape) component.engineFixture.m_shape).m_radius);
-        });
-        
-        return snapshotCompo.array();
     }
 }
