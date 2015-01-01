@@ -1,7 +1,5 @@
 package net.lodoma.lime.script.event;
 
-import java.util.function.Consumer;
-
 import net.lodoma.lime.util.Identifiable;
 import net.lodoma.lime.util.IdentityPool;
 
@@ -30,13 +28,8 @@ public class EventManager implements Identifiable<Integer>
     
     public void event(Object... data)
     {
-        listeners.foreach(new Consumer<EventListener>()
-        {
-            @Override
-            public void accept(EventListener listener)
-            {
-                listener.onEvent(data);
-            }
+        listeners.foreach((EventListener listener) -> {
+            listener.onEvent(data);
         });
     }
 }

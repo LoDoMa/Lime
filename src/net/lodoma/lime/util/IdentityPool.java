@@ -2,10 +2,8 @@ package net.lodoma.lime.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Consumer;
 
 public class IdentityPool<T extends Identifiable<Integer>>
@@ -82,15 +80,6 @@ public class IdentityPool<T extends Identifiable<Integer>>
     public void clear()
     {
         objects.clear();
-    }
-    
-    /* NOTE: Is getIdentifierSet method needed?
-             Only elements whose identifiers are known should ever be accessed. */
-    
-    @Deprecated
-    public synchronized Set<Integer> getIdentifierSet()
-    {
-        return new HashSet<Integer>(objects.keySet());
     }
 
     public synchronized List<T> getObjectList()

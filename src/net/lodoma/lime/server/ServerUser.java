@@ -10,7 +10,7 @@ import java.net.Socket;
 
 import net.lodoma.lime.util.Identifiable;
 
-// NOTE: This class required more neatness!
+// NOTE: This class requires more neatness!
 
 public final class ServerUser implements Runnable, Identifiable<Integer>
 {

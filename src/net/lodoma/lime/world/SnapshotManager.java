@@ -1,7 +1,6 @@
 package net.lodoma.lime.world;
 
 import java.nio.ByteBuffer;
-import java.util.function.Consumer;
 
 import net.lodoma.lime.server.ServerPacket;
 import net.lodoma.lime.server.ServerUser;
@@ -26,27 +25,22 @@ public class SnapshotManager
     {
         long time_t1 = System.nanoTime();
         
-        userManager.foreach(new Consumer<ServerUser>()
-        {
-            @Override
-            public void accept(ServerUser user)
+        userManager.foreach((ServerUser user) -> {
+            if (user.fullSnapshot)
             {
-                if (user.fullSnapshot)
-                {
-                    // Sending full snapshot
-                    if (fullSnapshot == null)
-                        fullSnapshot = world.buildSnapshot(true);
-                    snapshotPacket.write(user, fullSnapshot);
-                    
-                    user.fullSnapshot = false;
-                }
-                else
-                {
-                    // Sending delta snapshot
-                    if (deltaSnapshot == null)
-                        deltaSnapshot = world.buildSnapshot(false);
-                    snapshotPacket.write(user, deltaSnapshot);
-                }
+                // Sending full snapshot
+                if (fullSnapshot == null)
+                    fullSnapshot = world.buildSnapshot(true);
+                snapshotPacket.write(user, fullSnapshot);
+                
+                user.fullSnapshot = false;
+            }
+            else
+            {
+                // Sending delta snapshot
+                if (deltaSnapshot == null)
+                    deltaSnapshot = world.buildSnapshot(false);
+                snapshotPacket.write(user, deltaSnapshot);
             }
         });
         

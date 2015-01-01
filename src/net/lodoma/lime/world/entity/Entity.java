@@ -3,7 +3,6 @@ package net.lodoma.lime.world.entity;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.function.Consumer;
 
 import org.jbox2d.collision.shapes.CircleShape;
 
@@ -136,16 +135,11 @@ public class Entity implements Identifiable<Integer>
         snapshotCompo.putInt(identifier);
         snapshotCompo.putInt(compoc);
         
-        body.components.foreach(new Consumer<BodyComponent>()
-        {
-            @Override
-            public void accept(BodyComponent component)
-            {
-                snapshotCompo.putFloat(component.engineBody.getPosition().x);
-                snapshotCompo.putFloat(component.engineBody.getPosition().y);
-                snapshotCompo.putFloat(component.engineBody.getAngle());
-                snapshotCompo.putFloat(((CircleShape) component.engineFixture.m_shape).m_radius);
-            }
+        body.components.foreach((BodyComponent component) -> {
+            snapshotCompo.putFloat(component.engineBody.getPosition().x);
+            snapshotCompo.putFloat(component.engineBody.getPosition().y);
+            snapshotCompo.putFloat(component.engineBody.getAngle());
+            snapshotCompo.putFloat(((CircleShape) component.engineFixture.m_shape).m_radius);
         });
         
         return snapshotCompo.array();

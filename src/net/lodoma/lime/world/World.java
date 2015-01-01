@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.script.LuaScript;
@@ -32,14 +31,9 @@ public class World
     
     public void clean()
     {
-        entityPool.foreach(new Consumer<Entity>()
-        {
-            @Override
-            public void accept(Entity entity)
-            {
-                entity.destroy();
-                entityPool.remove(entity);
-            }
+        entityPool.foreach((Entity entity) -> {
+            entity.destroy();
+            entityPool.remove(entity);
         });
         entityPool.clear();
         entityTypePool.clear();
@@ -68,14 +62,7 @@ public class World
     
     public void updateEntities(double timeDelta)
     {
-        entityPool.foreach(new Consumer<Entity>()
-        {
-            @Override
-            public void accept(Entity entity)
-            {
-                entity.update(timeDelta); 
-            }
-        });
+        entityPool.foreach((Entity entity) -> { entity.update(timeDelta); });
     }
     
     public void acceptSnapshot(ByteBuffer snapshot, Client client)
@@ -99,15 +86,10 @@ public class World
     {
         List<byte[]> snapshotCompos = new ArrayList<byte[]>();
         
-        entityPool.foreach(new Consumer<Entity>()
-        {
-            @Override
-            public void accept(Entity entity)
-            {
-                byte[] compo = entity.buildSnapshotCompo(forced);
-                if (compo != null)
-                    snapshotCompos.add(compo);
-            }
+        entityPool.foreach((Entity entity) -> {
+            byte[] compo = entity.buildSnapshotCompo(forced);
+            if (compo != null)
+                snapshotCompos.add(compo);
         });
         
         int snapshotSize = 0;
@@ -124,13 +106,8 @@ public class World
     
     public void snapshotUpdate()
     {
-        entityPool.foreach(new Consumer<Entity>()
-        {
-            @Override
-            public void accept(Entity entity)
-            {
-                // New is outdated!
-            }
+        entityPool.foreach((Entity entity) -> {
+            // New is outdated!
         });
     }
 }

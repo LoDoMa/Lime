@@ -1,7 +1,5 @@
 package net.lodoma.lime.world.entity;
 
-import java.util.function.Consumer;
-
 import net.lodoma.lime.util.IdentityPool;
 
 public class EntityBody
@@ -15,13 +13,8 @@ public class EntityBody
     
     public void destroy()
     {
-        components.foreach(new Consumer<BodyComponent>()
-        {
-            @Override
-            public void accept(BodyComponent compo)
-            {
-                compo.destroy();
-            }
+        components.foreach((BodyComponent component) -> {
+            component.destroy();
         });
     }
 }

@@ -1,7 +1,6 @@
 package net.lodoma.lime.world.gfx;
 
 import java.io.File;
-import java.util.function.Consumer;
 
 import net.lodoma.lime.client.window.Window;
 import net.lodoma.lime.shader.Program;
@@ -113,13 +112,9 @@ public class WorldRenderer
         glPushMatrix();
         glScalef(1.0f / 32.0f, 1.0f / 24.0f, 1.0f);
 
-        world.lightPool.foreach(new Consumer<Light>() {
-            @Override
-            public void accept(Light light)
-            {
-                light.useProgram();
-                light.render();
-            }
+        world.lightPool.foreach((Light light) -> {
+            light.useProgram();
+            light.render();
         });
         
         glPopMatrix();
@@ -139,13 +134,8 @@ public class WorldRenderer
         
         // worldProgram.useProgram();
         
-        world.entityPool.foreach(new Consumer<Entity>()
-        {
-            @Override
-            public void accept(Entity entity)
-            {
-                entity.debugRender();
-            }
+        world.entityPool.foreach((Entity entity) -> {
+            entity.debugRender();
         });
         
         /*
