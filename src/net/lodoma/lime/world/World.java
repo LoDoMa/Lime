@@ -47,14 +47,6 @@ public class World
     
     public void load(String filepath, Server server) throws IOException
     {
-        File[] entityTypeFiles = new File("./types").listFiles();
-        for (File entityTypeFile : entityTypeFiles)
-        {
-            if (!entityTypeFile.isFile()) continue;
-            EntityType entityType = new EntityType(entityTypeFile);
-            entityTypePool.add(entityType);
-        }
-        
         LimeLibrary library = new LimeLibrary(server);
         UtilFunctions.addToLibrary(library);
         WorldFunctions.addToLibrary(library);
@@ -64,9 +56,26 @@ public class World
         gamemode.load(new File("./script/world/" + filepath + ".lua"));
     }
     
+    public void init()
+    {
+        gamemode.call("Lime_WorldInit", null);
+    }
+    
     public void updateGamemode(double timeDelta)
     {
         gamemode.call("Lime_Update", new Object[] { timeDelta });
+    }
+    
+    public void updateEntities(double timeDelta)
+    {
+        entityPool.foreach(new Consumer<Entity>()
+        {
+            @Override
+            public void accept(Entity entity)
+            {
+                entity.update(timeDelta); 
+            }
+        });
     }
     
     public void acceptSnapshot(ByteBuffer snapshot, Client client)

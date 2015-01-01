@@ -50,13 +50,25 @@ public class WorldFunctions
             
             switch (data)
             {
+            case SET_WORLD_GRAVITY:
+            {
+                float gravityX = args.arg(1).checknumber().tofloat();
+                float gravityY = args.arg(2).checknumber().tofloat();
+                library.server.physicsWorld.definition.gravity.set(gravityX, gravityY);
+                break;
+            }
             case NEW_ENTITY:
             {
-                int hash = args.arg(1).checkinteger().toint();
-                Entity entity = new Entity(world, hash, library.server);
+                Entity entity = new Entity(world, library.server);
                 int entityID = world.entityPool.add(entity);
-                library.server.physicsEngine.updateQueue(entityID); 
                 return CoerceJavaToLua.coerce(entityID);
+            }
+            case ASSIGN_SCRIPT:
+            {
+                int entityID = args.arg(1).checkint();
+                String scriptName = args.arg(2).checkstring().tojstring();
+                world.entityPool.get(entityID).assignScript(library.server, scriptName);
+                break;
             }
             }
             return LuaValue.NONE;
@@ -65,7 +77,10 @@ public class WorldFunctions
     
     private static enum FuncData
     {
-        NEW_ENTITY(1, true, "newEntity");
+        SET_WORLD_GRAVITY(2, true, "setWorldGravity"),
+        
+        NEW_ENTITY(0, true, "newEntity"),
+        ASSIGN_SCRIPT(2, true, "assignScript");
         
         public int argc;
         public boolean argcexact;

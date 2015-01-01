@@ -7,7 +7,7 @@ import net.lodoma.lime.server.packet.SPSnapshot;
 import net.lodoma.lime.util.Timer;
 import net.lodoma.lime.world.SnapshotManager;
 import net.lodoma.lime.world.World;
-import net.lodoma.lime.world.entity.physics.PhysicsEngine;
+import net.lodoma.lime.world.entity.physics.PhysicsWorld;
 
 public class SLWorld implements ServerLogic
 {
@@ -28,7 +28,7 @@ public class SLWorld implements ServerLogic
     {
         this.server = server;
         server.world = new World();
-        server.physicsEngine = new PhysicsEngine(server.world);
+        server.physicsWorld = new PhysicsWorld();
         server.snapshotManager = new SnapshotManager(server.world, server.userManager);
         
         server.spPool.add(new SPSnapshot(server));
@@ -43,6 +43,9 @@ public class SLWorld implements ServerLogic
             // TODO: handle me!
             e.printStackTrace();
         }
+        
+        server.world.init();
+        server.physicsWorld.create();
     }
     
     @Override
@@ -62,7 +65,8 @@ public class SLWorld implements ServerLogic
         if (updateTime <= 0.0)
         {
             server.world.updateGamemode(UPDATE_MAXTIME);
-            server.physicsEngine.update(UPDATE_MAXTIME);
+            server.world.updateEntities(UPDATE_MAXTIME);
+            server.physicsWorld.update((float) UPDATE_MAXTIME);
         }
         
         while (updateTime <= 0.0)

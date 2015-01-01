@@ -6,7 +6,7 @@ import net.lodoma.lime.server.logic.UserManager;
 import net.lodoma.lime.util.IdentityPool;
 import net.lodoma.lime.world.SnapshotManager;
 import net.lodoma.lime.world.World;
-import net.lodoma.lime.world.entity.physics.PhysicsEngine;
+import net.lodoma.lime.world.entity.physics.PhysicsWorld;
 
 public final class Server
 {
@@ -23,7 +23,7 @@ public final class Server
     // public HashPool32<EventManager> emanPool;
     
     public World world;
-    public PhysicsEngine physicsEngine;
+    public PhysicsWorld physicsWorld;
     public SnapshotManager snapshotManager;
     
     public void open(int port)

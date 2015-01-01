@@ -1,11 +1,15 @@
 package net.lodoma.lime.script.library;
 
-import net.lodoma.lime.world.entity.Entity;
+import net.lodoma.lime.world.World;
+import net.lodoma.lime.world.entity.BodyComponent;
+import net.lodoma.lime.world.entity.BodyComponentDefinition;
 
+import org.jbox2d.common.Vec2;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.VarArgFunction;
+import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
 public class EntityFunctions
 {
@@ -15,12 +19,14 @@ public class EntityFunctions
     }
     
     public LimeLibrary library;
+    public World world;
     
-    public Entity workingEntity;
+    private BodyComponentDefinition bodyCompoDefinition;
     
     private EntityFunctions(LimeLibrary library)
     {
         this.library = library;
+        this.world = library.server.world;
         
         for (FuncData func : FuncData.values())
             new LimeFunc(func).addToLibrary();
@@ -48,60 +54,82 @@ public class EntityFunctions
             
             switch (data)
             {
-            case SET_ENTITY:
+            case START_COMPONENT:
             {
-                int id = args.arg(1).checkinteger().toint();
-                workingEntity = library.server.world.entityPool.get(id);
-                if (workingEntity == null)
-                    // TODO: throw something better
-                    throw new RuntimeException("entity doesn't exist");
+                bodyCompoDefinition = new BodyComponentDefinition();
                 break;
             }
-            case SET_BODY_POSITION:
+            case ATTACH_COMPONENT:
             {
-                double x = args.arg(1).checknumber().todouble();
-                double y = args.arg(2).checknumber().todouble();
-                if (workingEntity == null)
-                    // TODO: throw something better
-                    throw new RuntimeException("working entity not set");
-                workingEntity.body.position.set((float) x, (float) y);
-                library.server.physicsEngine.updateQueue(workingEntity.identifier);
-                break;
-            }
-            case SET_BODY_VELOCITY:
-            {
-                double x = args.arg(1).checknumber().todouble();
-                double y = args.arg(2).checknumber().todouble();
-                if (workingEntity == null)
-                    // TODO: throw something better
-                    throw new RuntimeException("working entity not set");
-                workingEntity.body.velocity.set((float) x, (float) y);
-                library.server.physicsEngine.updateQueue(workingEntity.identifier);
-                break;
-            }
-            case SET_BODY_RADIUS:
-            {
-                double radius = args.arg(1).checknumber().todouble();
-                if (workingEntity == null)
-                    // TODO: throw something better
-                    throw new RuntimeException("working entity not set");
-                workingEntity.body.radius = (float) radius;
+                int entityID = args.arg(1).checkint();
+                if (bodyCompoDefinition == null)
+                    throw new LuaError("attaching nonexistent body component");
                 
-                workingEntity.body.mass = (float) (workingEntity.body.density * (4.0 / 3.0) * Math.PI * (radius * radius * radius));
-                library.server.physicsEngine.updateQueue(workingEntity.identifier);
+                bodyCompoDefinition.create();
+                BodyComponent bodyCompo = new BodyComponent(bodyCompoDefinition, library.server.physicsWorld);
+                bodyCompoDefinition = null;
+                
+                int compoID = world.entityPool.get(entityID).body.components.add(bodyCompo);
+                return CoerceJavaToLua.coerce(compoID);
+            }
+            case SET_INITIAL_POSITION:
+            {
+                float positionX = args.arg(1).checknumber().tofloat();
+                float positionY = args.arg(2).checknumber().tofloat();
+                bodyCompoDefinition.position.set(positionX, positionY);
                 break;
             }
-            case SET_BODY_DENSITY:
+            case SET_INITIAL_ANGLE:
             {
-                double density = args.arg(1).checknumber().todouble();
-                if (workingEntity == null)
-                    // TODO: throw something better
-                    throw new RuntimeException("working entity not set");
-                workingEntity.body.density = (float) density;
+                float angle = args.arg(1).checknumber().tofloat();
+                bodyCompoDefinition.angle = angle;
+                break;
+            }
+            case SET_SHAPE_RADIUS:
+            {
+                float radius = args.arg(1).checknumber().tofloat();
+                if (bodyCompoDefinition == null)
+                    throw new LuaError("modifying nonexistent body component");
                 
-                float radius = workingEntity.body.radius;
-                workingEntity.body.mass = (float) (density * (4.0 / 3.0) * Math.PI * (radius * radius * radius));
-                library.server.physicsEngine.updateQueue(workingEntity.identifier);
+                bodyCompoDefinition.radius = radius;
+                break;
+            }
+            case SET_SHAPE_DENSITY:
+            {
+                float density = args.arg(1).checknumber().tofloat();
+                if (bodyCompoDefinition == null)
+                    throw new LuaError("modifying nonexistent body component");
+                
+                bodyCompoDefinition.density = density;
+                break;
+            }
+            case SET_SHAPE_FRICTION:
+            {
+                float friction = args.arg(1).checknumber().tofloat();
+                if (bodyCompoDefinition == null)
+                    throw new LuaError("modifying nonexistent body component");
+                
+                bodyCompoDefinition.friction = friction;
+                break;
+            }
+            case SET_SHAPE_RESTITUTION:
+            {
+                float restitution = args.arg(1).checknumber().tofloat();
+                if (bodyCompoDefinition == null)
+                    throw new LuaError("modifying nonexistent body component");
+                
+                bodyCompoDefinition.restitution = restitution;
+                break;
+            }
+            
+            case SET_LINEAR_VELOCITY:
+            {
+                int entityID = args.arg(1).checkint();
+                int compoID = args.arg(2).checkint();
+                float velocityX = args.arg(3).checknumber().tofloat();
+                float velocityY = args.arg(4).checknumber().tofloat();
+                
+                world.entityPool.get(entityID).body.components.get(compoID).engineBody.setLinearVelocity(new Vec2(velocityX, velocityY));
                 break;
             }
             }
@@ -111,11 +139,16 @@ public class EntityFunctions
     
     private static enum FuncData
     {
-        SET_ENTITY(1, true, "setEntity"),
-        SET_BODY_POSITION(2, true, "setBodyPosition"),
-        SET_BODY_VELOCITY(2, true, "setBodyVelocity"),
-        SET_BODY_RADIUS(1, true, "setBodyRadius"),
-        SET_BODY_DENSITY(1, true, "setBodyDensity");
+        START_COMPONENT(0, true, "startComponent"),
+        ATTACH_COMPONENT(1, true, "attachComponent"),
+        SET_INITIAL_POSITION(2, true, "setInitialPosition"),
+        SET_INITIAL_ANGLE(1, true, "setInitialAngle"),
+        SET_SHAPE_RADIUS(1, true, "setShapeRadius"),
+        SET_SHAPE_DENSITY(1, true, "setShapeDensity"),
+        SET_SHAPE_FRICTION(1, true, "setShapeFriction"),
+        SET_SHAPE_RESTITUTION(1, true, "setShapeRestitution"),
+        
+        SET_LINEAR_VELOCITY(4, true, "setLinearVelocity");
         
         public int argc;
         public boolean argcexact;

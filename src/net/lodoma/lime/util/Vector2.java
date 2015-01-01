@@ -1,5 +1,7 @@
 package net.lodoma.lime.util;
 
+import org.jbox2d.common.Vec2;
+
 public class Vector2
 {
     public float x;
@@ -929,5 +931,16 @@ public class Vector2
     public String toString()
     {
         return "(" + x + " " + y + ")";
+    }
+    
+    public Vector2(Vec2 v)
+    {
+        x = v.x;
+        y = v.y;
+    }
+    
+    public Vec2 toVec2()
+    {
+        return new Vec2(x, y);
     }
 }

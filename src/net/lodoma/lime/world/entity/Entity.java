@@ -3,15 +3,20 @@ package net.lodoma.lime.world.entity;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.function.Consumer;
+
+import org.jbox2d.collision.shapes.CircleShape;
 
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.script.LuaScript;
+import net.lodoma.lime.script.library.EntityFunctions;
 import net.lodoma.lime.script.library.LimeLibrary;
+import net.lodoma.lime.script.library.UtilFunctions;
+import net.lodoma.lime.script.library.WorldFunctions;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.util.Identifiable;
+import net.lodoma.lime.util.Vector2;
 import net.lodoma.lime.world.World;
-import net.lodoma.lime.world.entity.physics.IntersectionEvent;
-import net.lodoma.lime.world.entity.physics.PhysicsUtils;
 
 public class Entity implements Identifiable<Integer>
 {
@@ -20,31 +25,21 @@ public class Entity implements Identifiable<Integer>
     public LuaScript script;
     public World world;
     
-    public Body body = new Body();
+    public EntityBody body;
+    public EntityShape shape;
     
-    public boolean skipSimulation = false;
-    
-    public Entity(World world, int hash, Server server)
+    public Entity(World world, Server server)
     {
         this.world = world;
-        
-        EntityType type = world.entityTypePool.get(hash);
-        script = new LuaScript(new LimeLibrary(server));
-        
-        try
-        {
-            script.load(new File("./script/entity/" + type.script + ".lua"));       // load entity script
-        }
-        catch (IOException e)
-        {
-            // TODO: handle this
-            e.printStackTrace();
-        }
+        body = new EntityBody();
     }
     
     public Entity(World world, int identifier, Client client)
     {
+        this.world = world;
         this.identifier = identifier;
+        
+        shape = new EntityShape();
     }
     
     @Override
@@ -59,24 +54,47 @@ public class Entity implements Identifiable<Integer>
         this.identifier = identifier;
     }
     
-    public void initialize()
-    {
-        
-    }
-    
     public void destroy()
     {
-        
+        if (body != null)
+            body.destroy();
     }
     
-    public void update(float timeDelta)
+    public void assignScript(Server server, String scriptName)
+    {
+        LimeLibrary library = new LimeLibrary(server);
+        UtilFunctions.addToLibrary(library);
+        WorldFunctions.addToLibrary(library);
+        EntityFunctions.addToLibrary(library);
+        
+        script = new LuaScript(library);
+        
+        try
+        {
+            script.load(new File("./script/entity/" + scriptName + ".lua"));
+        }
+        catch (IOException e)
+        {
+            // TODO: handle this
+            e.printStackTrace();
+        }
+        
+        init();
+    }
+    
+    public void init()
+    {
+        script.call("Lime_Init", new Object[] { identifier });
+    }
+    
+    public void update(double timeDelta)
     {
         script.call("Lime_Update", new Object[] { identifier, timeDelta, false });
     }
     
     public void debugRender()
     {
-        body.debugRender();
+        shape.debugRender();
     }
     
     public void render()
@@ -84,57 +102,52 @@ public class Entity implements Identifiable<Integer>
         throw new UnsupportedOperationException();
     }
     
-    public IntersectionEvent intersects(Entity other)
+    public void acceptSnapshotCompo(ByteBuffer snapshotCompo)
     {
-        double t = PhysicsUtils.getIntersectionTime(body.position,       body.velocity,       body.radius,
-                                                    other.body.position, other.body.velocity, other.body.radius);
+        int compoc = snapshotCompo.getInt();
+        if (shape.positionList.length != compoc)
+            shape.positionList = new Vector2[compoc];
+        if (shape.angleList.length != compoc)
+            shape.angleList = new float[compoc];
+        if (shape.radiusList.length != compoc)
+            shape.radiusList = new float[compoc];
         
-        IntersectionEvent event = null;
-        if (t >= 0.0)
+        for (int i = 0; i < compoc; i++)
         {
-            event = new IntersectionEvent();
-            event.time = t;
-            event.entityID1 = identifier;
-            event.entityID2 = other.identifier;
+            float positionX = snapshotCompo.getFloat();
+            float positionY = snapshotCompo.getFloat();
+            float angle = snapshotCompo.getFloat();
+            float radius = snapshotCompo.getFloat();
+            
+            if (shape.positionList[i] == null)
+                shape.positionList[i] = new Vector2();
+            shape.positionList[i].set(positionX, positionY);
+            shape.angleList[i] = angle;
+            shape.radiusList[i] = radius;
         }
-        return event;
-    }
-    
-    public void simulate(float timeDelta)
-    {
-        body.position.addLocal(body.velocity.mul(timeDelta));
-    }
-    
-    public void collideWith(Entity other)
-    {
-        PhysicsUtils.getPostCollisionVelocity(body.position,       body.velocity,       body.mass,
-                                              other.body.position, other.body.velocity, other.body.mass,
-                                              body.velocity, other.body.velocity);
-    }
-    
-    public void acceptSnapshotCompo(ByteBuffer compo)
-    {
-        body.position.x = compo.getFloat();
-        body.position.y = compo.getFloat();
-        body.velocity.x = compo.getFloat();
-        body.velocity.y = compo.getFloat();
-        body.radius = compo.getFloat();
     }
     
     public byte[] buildSnapshotCompo(boolean forced)
     {
-        if (!forced && !body.snapshotUpdate())
-            return null;
+        // NOTE: this is always sending full snapshots
         
-        ByteBuffer compo = ByteBuffer.allocate(24);
-        compo.putInt(identifier);
+        int compoc = body.components.size();
+        ByteBuffer snapshotCompo = ByteBuffer.allocate(8 + 16 * compoc);
+        snapshotCompo.putInt(identifier);
+        snapshotCompo.putInt(compoc);
         
-        compo.putFloat(body.position.x);
-        compo.putFloat(body.position.y);
-        compo.putFloat(body.velocity.x);
-        compo.putFloat(body.velocity.y);
-        compo.putFloat(body.radius);
+        body.components.foreach(new Consumer<BodyComponent>()
+        {
+            @Override
+            public void accept(BodyComponent component)
+            {
+                snapshotCompo.putFloat(component.engineBody.getPosition().x);
+                snapshotCompo.putFloat(component.engineBody.getPosition().y);
+                snapshotCompo.putFloat(component.engineBody.getAngle());
+                snapshotCompo.putFloat(((CircleShape) component.engineFixture.m_shape).m_radius);
+            }
+        });
         
-        return compo.array();
+        return snapshotCompo.array();
     }
 }

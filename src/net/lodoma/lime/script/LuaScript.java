@@ -81,7 +81,7 @@ public class LuaScript
     	
     	LuaValue[] luaArguments = new LuaValue[arguments.length];
     	for (int i = 0; i < arguments.length; i++)
-    		luaArguments[i] = CoerceJavaToLua.coerce(arguments);
+    	    luaArguments[i] = CoerceJavaToLua.coerce(arguments[i]);
     	
     	Varargs returnedVarargs = function.invoke(luaArguments);
     	if (returnedVarargs.narg() != 0)
