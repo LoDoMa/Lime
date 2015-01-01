@@ -10,9 +10,9 @@ import org.jbox2d.collision.shapes.CircleShape;
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.script.LuaScript;
 import net.lodoma.lime.script.library.EntityFunctions;
+import net.lodoma.lime.script.library.EventFunctions;
 import net.lodoma.lime.script.library.LimeLibrary;
 import net.lodoma.lime.script.library.UtilFunctions;
-import net.lodoma.lime.script.library.WorldFunctions;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.util.Identifiable;
 import net.lodoma.lime.util.Vector2;
@@ -64,8 +64,8 @@ public class Entity implements Identifiable<Integer>
     {
         LimeLibrary library = new LimeLibrary(server);
         UtilFunctions.addToLibrary(library);
-        WorldFunctions.addToLibrary(library);
         EntityFunctions.addToLibrary(library);
+        EventFunctions.addToLibrary(library);
         
         script = new LuaScript(library);
         

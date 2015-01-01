@@ -10,11 +10,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import net.lodoma.lime.script.event.EMOnJoin;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.server.ServerUser;
 
 public class UserManager implements ServerLogic
 {
+    private Server server;
+    
     private int idCounter;
     private Set<ServerUser> userSet;
     private Map<Integer, ServerUser> users;
@@ -29,7 +32,9 @@ public class UserManager implements ServerLogic
     @Override
     public void init(Server server)
     {
+        this.server = server;
         
+        server.emanPool.add(new EMOnJoin());
     }
     
     @Override
@@ -46,6 +51,8 @@ public class UserManager implements ServerLogic
         user.setIdentifier(idCounter++);
         users.put(user.getIdentifier(), user);
         userSet.add(user);
+        
+        server.emanPool.get(EMOnJoin.HASH).event(user.getIdentifier());
         return true;
     }
     

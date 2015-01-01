@@ -11,7 +11,7 @@ function Lime_Init(entityID)
 	local radius = 0.25 + math.random() * 0.5
 
 	lime.startComponent()
-	lime.setInitialPosition(10, 10) --posx, posy)
+	lime.setInitialPosition(posx, posy)
 	lime.setInitialAngle(0.0)
 	lime.setShapeRadius(radius)
 	lime.setShapeDensity(2.3)

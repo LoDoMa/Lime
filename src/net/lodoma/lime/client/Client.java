@@ -43,7 +43,6 @@ public class Client
     
     public IdentityPool<ClientPacket> cpPool;
     public IdentityPool<ClientPacketHandler> cphPool;
-    // public IdentityPool<EventManager> emanPool;
     
     public World world;
     public WorldRenderer worldRenderer;

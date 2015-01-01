@@ -1,5 +1,6 @@
 package net.lodoma.lime.server;
 
+import net.lodoma.lime.script.event.EventManager;
 import net.lodoma.lime.server.logic.SLWorld;
 import net.lodoma.lime.server.logic.ServerLogicPool;
 import net.lodoma.lime.server.logic.UserManager;
@@ -20,7 +21,7 @@ public final class Server
     public UserManager userManager;
     public IdentityPool<ServerPacket> spPool;
     public IdentityPool<ServerPacketHandler> sphPool;
-    // public HashPool32<EventManager> emanPool;
+    public IdentityPool<EventManager> emanPool;
     
     public World world;
     public PhysicsWorld physicsWorld;
@@ -35,7 +36,7 @@ public final class Server
         userManager = new UserManager();
         sphPool = new IdentityPool<ServerPacketHandler>(true);
         spPool = new IdentityPool<ServerPacket>(true);
-        // emanPool = new HashPool32<EventManager>();
+        emanPool = new IdentityPool<EventManager>(true);
         
         logicPool.addLogic(new SLWorld());
         logicPool.addLogic(userManager);
