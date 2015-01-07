@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.script.LuaScript;
+import net.lodoma.lime.script.library.AttributeFunctions;
 import net.lodoma.lime.script.library.EntityFunctions;
 import net.lodoma.lime.script.library.EventFunctions;
 import net.lodoma.lime.script.library.LimeLibrary;
@@ -23,10 +24,13 @@ public class Entity implements Identifiable<Integer>
     public EntityBody body;
     public EntityShape shape;
     
+    public AttributeMap attributes;
+    
     public Entity(World world, Server server)
     {
         this.world = world;
         body = new EntityBody();
+        attributes = new AttributeMap();
     }
     
     public Entity(World world, int identifier, Client client)
@@ -55,6 +59,7 @@ public class Entity implements Identifiable<Integer>
         UtilFunctions.addToLibrary(library);
         EntityFunctions.addToLibrary(library);
         EventFunctions.addToLibrary(library);
+        AttributeFunctions.addToLibrary(library);
         
         script = new LuaScript(library);
         

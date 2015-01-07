@@ -14,7 +14,8 @@ public class PhysicsWorld
     
     public void create()
     {
-        engineWorld = new World(definition.gravity.toVec2(), false);
+        engineWorld = new World(definition.gravity.toVec2());
+        engineWorld.setAllowSleep(false);
     }
     
     public void update(float timeDelta)

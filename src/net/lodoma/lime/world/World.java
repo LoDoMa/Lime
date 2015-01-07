@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.script.LuaScript;
+import net.lodoma.lime.script.library.AttributeFunctions;
 import net.lodoma.lime.script.library.EventFunctions;
 import net.lodoma.lime.script.library.LimeLibrary;
 import net.lodoma.lime.script.library.UtilFunctions;
@@ -41,6 +42,7 @@ public class World
         UtilFunctions.addToLibrary(library);
         WorldFunctions.addToLibrary(library);
         EventFunctions.addToLibrary(library);
+        AttributeFunctions.addToLibrary(library);
         
         gamemode = new LuaScript(library);
         gamemode.load(new File("./script/world/" + filepath + ".lua"));

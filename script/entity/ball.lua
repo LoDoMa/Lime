@@ -6,12 +6,12 @@ function Lime_Init(entityID)
 		firstInit = false
 	end
 
-	local posx, posy = (math.random() - 0.0) * 20, (math.random() - 0.0) * 20
-	local velx, vely = (math.random() - 0.5) * 8, (math.random() - 0.5) * 8
-	local radius = 0.25 + math.random() * 0.5
+	local pos = lime.getAttribute(entityID, "pos")
+	local vel = lime.getAttribute(entityID, "vel")
+	local radius = lime.getAttribute(entityID, "radius")
 
 	lime.startComponent()
-	lime.setInitialPosition(posx, posy)
+	lime.setInitialPosition(pos.x, pos.y)
 	lime.setInitialAngle(0.0)
 	lime.setShapeRadius(radius)
 	lime.setShapeDensity(2.3)
@@ -19,7 +19,7 @@ function Lime_Init(entityID)
 	lime.setShapeRestitution(1.0)
 	local compoID = lime.attachComponent(entityID)
 
-	lime.setLinearVelocity(entityID, compoID, velx, vely)
+	lime.setLinearVelocity(entityID, compoID, vel.x, vel.y)
 end
 
 function Lime_Update(entityID, timeDelta, isActor)
