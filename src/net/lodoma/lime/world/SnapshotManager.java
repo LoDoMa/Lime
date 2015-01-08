@@ -28,8 +28,6 @@ public class SnapshotManager
         Snapshot snapshot = new Snapshot(world);
         lastSnapshot = snapshot;
         
-        long time_t1 = System.nanoTime();
-        
         userManager.foreach((ServerUser user) -> {
             if (user.fullSnapshot)
             {
@@ -42,10 +40,5 @@ public class SnapshotManager
                 snapshotPacket.write(user, snapshot);
             }
         });
-        
-        long time_t2 = System.nanoTime();
-        long time_td = time_t2 - time_t1;
-        double time_ts = time_td / 1000000000.0;
-        // System.out.println("snapshot sending time: " + time_ts);
     }
 }

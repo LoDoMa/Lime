@@ -55,7 +55,7 @@ public class UserManager implements ServerLogic
         userSet.add(user);
 
         // TODO: OnJoin and OnLeave events are not thread safe! Random crashes WILL occur.
-        server.emanPool.get(EMOnJoin.HASH).event(user.getIdentifier());
+        server.emanPool.get(EMOnJoin.HASH).newEvent(user.getIdentifier());
         return true;
     }
     
@@ -95,7 +95,7 @@ public class UserManager implements ServerLogic
         users.remove(toRemove);
         userSet.removeAll(toRemove);
         for (ServerUser user : toRemove)
-            server.emanPool.get(EMOnLeave.HASH).event(user.getIdentifier());
+            server.emanPool.get(EMOnLeave.HASH).newEvent(user.getIdentifier());
     }
     
     public void foreach(Consumer<ServerUser> consumer)

@@ -2,6 +2,7 @@ package net.lodoma.lime.server.logic;
 
 import java.io.IOException;
 
+import net.lodoma.lime.script.event.EventManager;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.server.packet.SPSnapshot;
 import net.lodoma.lime.util.Timer;
@@ -67,6 +68,9 @@ public class SLWorld implements ServerLogic
             server.world.updateGamemode(UPDATE_MAXTIME);
             server.world.updateEntities(UPDATE_MAXTIME);
             server.physicsWorld.update((float) UPDATE_MAXTIME);
+            server.emanPool.foreach((EventManager eman) -> {
+            	eman.runEvents();
+            });
         }
         
         while (updateTime <= 0.0)
