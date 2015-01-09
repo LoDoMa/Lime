@@ -1,11 +1,36 @@
-Lime
-====
+# Lime
 
-Lime - action-oriented side-scrolling video game  
-Developed by: Dominik Fistrić, Lovro Kalinovčić, Matej Varzić  
+### Current Version
 
-Art-style: cartoon  
-Platform: Linux, Windows, OS X ..... Xbox One, PlayStation 4  
+pre-pre-alpha
 
-Language: Java, Lua, GLSL  
-Libraries: LWJGL, JBox2D, SLF4J, JNLua
+### Developed by:
+
+- Dominik Fistrić
+- Lovro Kalinovčić
+- Matej Varzić
+
+#### Target platforms
+
+- Windows
+- OS X
+- Linux
+- Solaris
+
+#### Possible future targets
+
+- Android
+- iOS
+- PlayStation 4
+- Xbox One
+
+#### Tech
+
+Languages:
+- Java
+- Lua
+- GLSL
+
+Libraries:
+- LWJGL 3
+- JBox2D 2.2.1.1
