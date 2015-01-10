@@ -17,11 +17,17 @@ import static org.lwjgl.opengl.EXTFramebufferObject.*;
 public class WorldRenderer
 {
     private World world;
-
+    
     private boolean initialized;
     
     private Program worldProgram;
     private Program copyProgram;
+
+    private int viewportWidth = -1;
+    private int viewportHeight = -1;
+
+    private int[] lightFBO;
+    private int[] worldFBO;
     
     public WorldRenderer(World world)
     {
@@ -83,10 +89,16 @@ public class WorldRenderer
     
     public void clean()
     {
-        worldProgram.deleteProgram();
-        copyProgram.deleteProgram();
+        if (lightFBO != null) destroyFramebuffer(lightFBO);
+        if (worldFBO != null) destroyFramebuffer(worldFBO);
         
-        initialized = false;
+        if (initialized)
+        {
+            worldProgram.deleteProgram();
+            copyProgram.deleteProgram();
+            
+            initialized = false;
+        }
     }
     
     private void renderLights()
@@ -149,8 +161,17 @@ public class WorldRenderer
         if(!initialized)
             init();
         
-        int[] lightFBO = generateFramebuffer(Window.viewportWidth, Window.viewportHeight);
-        int[] worldFBO = generateFramebuffer(Window.viewportWidth, Window.viewportHeight);
+        if (Window.viewportWidth != viewportWidth || Window.viewportHeight != viewportHeight)
+        {
+            viewportWidth = Window.viewportWidth;
+            viewportHeight = Window.viewportHeight;
+
+            if (lightFBO != null) destroyFramebuffer(lightFBO);
+            if (worldFBO != null) destroyFramebuffer(worldFBO);
+            
+            lightFBO = generateFramebuffer(viewportWidth, viewportHeight);
+            worldFBO = generateFramebuffer(viewportWidth, viewportHeight);
+        }
 
         bindFramebuffer(lightFBO);
         renderLights();
@@ -159,10 +180,6 @@ public class WorldRenderer
         renderWorld();
         
         Window.bindFBO();
-        
         renderFull(lightFBO[1], worldFBO[1]);
-
-        destroyFramebuffer(lightFBO);
-        destroyFramebuffer(worldFBO);
     }
 }
