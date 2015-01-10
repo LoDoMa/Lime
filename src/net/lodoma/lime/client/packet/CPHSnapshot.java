@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.client.ClientPacketHandler;
+import net.lodoma.lime.gui.Color;
+import net.lodoma.lime.shader.light.LightData;
 import net.lodoma.lime.util.HashHelper;
 import net.lodoma.lime.util.Vector2;
 import net.lodoma.lime.world.Snapshot;
@@ -25,9 +27,13 @@ public class CPHSnapshot extends ClientPacketHandler
         Snapshot snapshot = new Snapshot();
         snapshot.isDelta = inputStream.readBoolean();
         
-        int removedCount = inputStream.readInt();
-        while ((removedCount--) != 0)
-            snapshot.removed.add(inputStream.readInt());
+        int removedEntityCount = inputStream.readInt();
+        while ((removedEntityCount--) != 0)
+            snapshot.removedEntities.add(inputStream.readInt());
+        
+        int removedLightCount = inputStream.readInt();
+        while ((removedLightCount--) != 0)
+            snapshot.removedLights.add(inputStream.readInt());
         
         int shapeCount = inputStream.readInt();
         while ((shapeCount--) != 0)
@@ -48,6 +54,21 @@ public class CPHSnapshot extends ClientPacketHandler
             }
             
             snapshot.entityData.put(identifier, shape);
+        }
+        
+        int lightDataCount = inputStream.readInt();
+        while ((lightDataCount--) != 0)
+        {
+            int identifier = inputStream.readInt();
+            
+            LightData data = new LightData();
+            data.position = new Vector2(inputStream.readFloat(), inputStream.readFloat());
+            data.radius = inputStream.readFloat();
+            data.color = new Color(inputStream.readFloat(), inputStream.readFloat(), inputStream.readFloat(), inputStream.readFloat());
+            data.angleRangeBegin = inputStream.readFloat();
+            data.angleRangeEnd = inputStream.readFloat();
+            
+            snapshot.lightData.put(identifier, data);
         }
         
         client.world.applySnapshot(snapshot, client);

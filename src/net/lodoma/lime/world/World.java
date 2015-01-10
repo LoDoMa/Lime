@@ -13,6 +13,8 @@ import net.lodoma.lime.script.library.LimeLibrary;
 import net.lodoma.lime.script.library.UtilFunctions;
 import net.lodoma.lime.script.library.WorldFunctions;
 import net.lodoma.lime.server.Server;
+import net.lodoma.lime.shader.light.Light;
+import net.lodoma.lime.shader.light.LightData;
 import net.lodoma.lime.util.IdentityPool;
 import net.lodoma.lime.world.entity.Entity;
 import net.lodoma.lime.world.entity.EntityShape;
@@ -21,10 +23,12 @@ public class World
 {
     public LuaScript gamemode;
     public IdentityPool<Entity> entityPool;
+    public IdentityPool<Light> lightPool;
     
     public World()
     {
         entityPool = new IdentityPool<Entity>(false);
+        lightPool = new IdentityPool<Light>(false);
     }
     
     public void clean()
@@ -67,33 +71,54 @@ public class World
     {
         if (snapshot.isDelta)
         {
-            for (Integer identifier : snapshot.removed)
+            for (Integer identifier : snapshot.removedEntities)
             {
                 entityPool.get(identifier).destroy();
                 entityPool.remove(identifier);
             }
+            
+            for (Integer identifier : snapshot.removedLights)
+                lightPool.remove(identifier);
         }
         else
         {
-            Set<Integer> identifierSet = entityPool.getIdentifierSet();
-            for (Integer identifier : identifierSet)
+            Set<Integer> entityIdentifierSet = entityPool.getIdentifierSet();
+            for (Integer identifier : entityIdentifierSet)
                 if (!snapshot.entityData.containsKey(identifier))
                 {
                     entityPool.get(identifier).destroy();
                     entityPool.remove(identifier);
                 }
+
+            Set<Integer> lightIdentifierSet = lightPool.getIdentifierSet();
+            for (Integer identifier : lightIdentifierSet)
+                if (!snapshot.lightData.containsKey(identifier))
+                    lightPool.remove(identifier);
         }
         
-        Set<Integer> keySet = snapshot.entityData.keySet();
-        for (Integer identifier : keySet)
+        Set<Integer> entityKeySet = snapshot.entityData.keySet();
+        for (Integer identifier : entityKeySet)
             if (!entityPool.has(identifier))
             {
                 Entity entity = new Entity(this, identifier, client);
                 entityPool.addManaged(entity);
             }
+        
+        Set<Integer> lightKeySet = snapshot.lightData.keySet();
+        for (Integer identifier : lightKeySet)
+            if (!lightPool.has(identifier))
+            {
+                Light light = new Light();
+                light.identifier = identifier;
+                lightPool.addManaged(light);
+            }
 
-        Set<Entry<Integer, EntityShape>> entrySet = snapshot.entityData.entrySet();
-        for (Entry<Integer, EntityShape> entry : entrySet)
+        Set<Entry<Integer, EntityShape>> entityEntrySet = snapshot.entityData.entrySet();
+        for (Entry<Integer, EntityShape> entry : entityEntrySet)
             entityPool.get(entry.getKey()).shape = entry.getValue();
+
+        Set<Entry<Integer, LightData>> lightEntrySet = snapshot.lightData.entrySet();
+        for (Entry<Integer, LightData> entry : lightEntrySet)
+            lightPool.get(entry.getKey()).data = entry.getValue();
     }
 }

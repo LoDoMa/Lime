@@ -21,8 +21,7 @@ public class EventManager implements Identifiable<Integer>
         }
     }
     
-    public static PriorityQueue<Event> events = new PriorityQueue<Event>((eventA, eventB) ->
-    {
+    public static PriorityQueue<Event> events = new PriorityQueue<Event>((eventA, eventB) -> {
         return eventA.eventTime < eventB.eventTime ? -1
              : eventA.eventTime > eventB.eventTime ? 1 : 0;
     });

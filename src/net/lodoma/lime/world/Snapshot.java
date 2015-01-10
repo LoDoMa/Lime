@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.jbox2d.collision.shapes.CircleShape;
 
+import net.lodoma.lime.shader.light.Light;
+import net.lodoma.lime.shader.light.LightData;
 import net.lodoma.lime.util.Vector2;
 import net.lodoma.lime.world.entity.BodyComponent;
 import net.lodoma.lime.world.entity.Entity;
@@ -15,13 +17,17 @@ import net.lodoma.lime.world.entity.EntityShape;
 public class Snapshot
 {
     public boolean isDelta;
-    public List<Integer> removed;
+    public List<Integer> removedEntities;
+    public List<Integer> removedLights;
     public Map<Integer, EntityShape> entityData;
+    public Map<Integer, LightData> lightData;
     
     public Snapshot()
     {
-        removed = new ArrayList<Integer>();
+        removedEntities = new ArrayList<Integer>();
+        removedLights = new ArrayList<Integer>();
         entityData = new HashMap<Integer, EntityShape>();
+        lightData = new HashMap<Integer, LightData>();
     }
     
     public Snapshot(World world)
@@ -47,6 +53,10 @@ public class Snapshot
             }
             
             entityData.put(entity.identifier, shape);
+        });
+        
+        world.lightPool.foreach((Light light) -> {
+            lightData.put(light.identifier, light.data);
         });
     }
 }

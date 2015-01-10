@@ -101,6 +101,6 @@ public class Entity implements Identifiable<Integer>
     
     public void render()
     {
-        throw new UnsupportedOperationException();
+        shape.tempRender();
     }
 }

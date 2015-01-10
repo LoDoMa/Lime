@@ -18,7 +18,6 @@ public class WorldRenderer
 {
     private World world;
 
-    /*
     private boolean initialized;
     
     private Program worldProgram;
@@ -29,15 +28,13 @@ public class WorldRenderer
 
     private int[] lightFBO;
     private int[] worldFBO;
-    */
     
     public WorldRenderer(World world)
     {
         this.world = world;
-        // initialized = false;
+        initialized = false;
     }
     
-    /*
     private int generateTexture(int width, int height)
     {
         int texID = glGenTextures();
@@ -64,7 +61,6 @@ public class WorldRenderer
         return new int[] {fbo, ct, width, height};
     }
     
-    @SuppressWarnings("unused")
     private void destroyFramebuffer(int[] data)
     {
         glDeleteFramebuffersEXT(data[0]);
@@ -81,10 +77,9 @@ public class WorldRenderer
     private void init()
     {
         // FIXME: framebuffers are always the same size size as the default viewport
-        fbow = Window.getViewportWidth();
-        fboh = Window.getViewportHeight();
+        fbow = Window.viewportWidth;
+        fboh = Window.viewportHeight;
 
-        // FIXME: framebuffers are never deleted
         lightFBO = generateFramebuffer(fbow, fboh);
         worldFBO = generateFramebuffer(fbow, fboh);
         
@@ -98,9 +93,15 @@ public class WorldRenderer
         
         initialized = true;
     }
-    */
     
-    /*
+    public void clean()
+    {
+        destroyFramebuffer(lightFBO);
+        destroyFramebuffer(worldFBO);
+        
+        initialized = false;
+    }
+    
     private void renderLights()
     {
         useFramebuffer(lightFBO);
@@ -112,14 +113,13 @@ public class WorldRenderer
         glPushMatrix();
         glScalef(1.0f / 32.0f, 1.0f / 24.0f, 1.0f);
 
-        world.lightPool.foreach((Light light) -> {
-            light.useProgram();
+        world.lightPool.foreach((Light light) ->
+        {
             light.render();
         });
         
         glPopMatrix();
     }
-    */
     
     private void renderWorld()
     {
@@ -132,45 +132,38 @@ public class WorldRenderer
         glPushMatrix();
         glScalef(1.0f / 32.0f, 1.0f / 24.0f, 1.0f);
         
-        // worldProgram.useProgram();
+        worldProgram.useProgram();
         
         world.entityPool.foreach((Entity entity) -> {
-            entity.debugRender();
+            entity.render();
         });
-        
-        /*
-        world.visualWorld.render();
-        world.physicsWorld.debugRender();
-        */
         
         glPopMatrix();
     }
     
-    /*
     private void renderDebug()
     {
         glPushMatrix();
         glScalef(1.0f / 32.0f, 1.0f / 24.0f, 1.0f);
         
         worldProgram.useProgram();
-        world.physicsWorld.debugRender();
+        
+        world.entityPool.foreach((Entity entity) -> {
+            entity.debugRender();
+        });
         
         glPopMatrix();
     }
-    */
     
     public void render()
     {
-        /*
         if(!initialized)
             init();
         
         renderLights();
-        */
 
         renderWorld();
         
-        /*
         Window.bindFBO();
         
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -200,6 +193,5 @@ public class WorldRenderer
         glEnd();
         
         renderDebug();
-        */
     }
 }
