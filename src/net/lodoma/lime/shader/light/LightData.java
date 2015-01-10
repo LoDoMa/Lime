@@ -12,4 +12,10 @@ public class LightData
     
     public float angleRangeBegin;
     public float angleRangeEnd;
+    
+    public LightData()
+    {
+        position = new Vector2(0.0f, 0.0f);
+        color = new Color(0.0f, 0.0f, 0.0f, 0.0f);
+    }
 }

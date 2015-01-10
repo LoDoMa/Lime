@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.client.ClientPacketHandler;
-import net.lodoma.lime.gui.Color;
 import net.lodoma.lime.shader.light.LightData;
 import net.lodoma.lime.util.HashHelper;
 import net.lodoma.lime.util.Vector2;
@@ -62,9 +61,9 @@ public class CPHSnapshot extends ClientPacketHandler
             int identifier = inputStream.readInt();
             
             LightData data = new LightData();
-            data.position = new Vector2(inputStream.readFloat(), inputStream.readFloat());
+            data.position.set(inputStream.readFloat(), inputStream.readFloat());
             data.radius = inputStream.readFloat();
-            data.color = new Color(inputStream.readFloat(), inputStream.readFloat(), inputStream.readFloat(), inputStream.readFloat());
+            data.color.set(inputStream.readFloat(), inputStream.readFloat(), inputStream.readFloat(), inputStream.readFloat());
             data.angleRangeBegin = inputStream.readFloat();
             data.angleRangeEnd = inputStream.readFloat();
             

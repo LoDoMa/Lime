@@ -28,6 +28,12 @@ local function onLeave(userID)
 end
 
 local function init()
+	local light = lime.newLight()
+	lime.setLightPosition(light, 10, 10)
+	lime.setLightRadius(light, 40)
+	lime.setLightColor(light, 1, 0, 1, 1)
+	lime.setLightAngleRange(light, -4, 4)
+
 	lime.addEventListener("Lime::OnJoin", onJoin)
 	lime.addEventListener("Lime::OnLeave", onLeave)
 end

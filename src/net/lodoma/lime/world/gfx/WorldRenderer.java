@@ -22,12 +22,6 @@ public class WorldRenderer
     
     private Program worldProgram;
     private Program copyProgram;
-
-    private int fbow;
-    private int fboh;
-
-    private int[] lightFBO;
-    private int[] worldFBO;
     
     public WorldRenderer(World world)
     {
@@ -67,7 +61,7 @@ public class WorldRenderer
         glDeleteTextures(data[1]);
     }
     
-    private void useFramebuffer(int[] data)
+    private void bindFramebuffer(int[] data)
     {
         glViewport(0, 0, data[2], data[3]);
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -76,19 +70,12 @@ public class WorldRenderer
     
     private void init()
     {
-        // FIXME: framebuffers are always the same size size as the default viewport
-        fbow = Window.viewportWidth;
-        fboh = Window.viewportHeight;
-
-        lightFBO = generateFramebuffer(fbow, fboh);
-        worldFBO = generateFramebuffer(fbow, fboh);
-        
         Shader worldVS = Shader.getShader("worldVS", new File("shader/world.vs"), ShaderType.VERTEX);
         Shader worldFS = Shader.getShader("worldFS", new File("shader/world.fs"), ShaderType.FRAGMENT);
+        worldProgram = Program.getProgram("world", worldVS, worldFS);
+        
         Shader copyVS = Shader.getShader("copyVS", new File("shader/copy.vs"), ShaderType.VERTEX);
         Shader copyFS = Shader.getShader("copyFS", new File("shader/copy.fs"), ShaderType.FRAGMENT);
-        
-        worldProgram = Program.getProgram("world", worldVS, worldFS);
         copyProgram = Program.getProgram("copy", copyVS, copyFS);
         
         initialized = true;
@@ -96,35 +83,28 @@ public class WorldRenderer
     
     public void clean()
     {
-        destroyFramebuffer(lightFBO);
-        destroyFramebuffer(worldFBO);
+        worldProgram.deleteProgram();
+        copyProgram.deleteProgram();
         
         initialized = false;
     }
     
     private void renderLights()
     {
-        useFramebuffer(lightFBO);
-        
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         glLoadIdentity();
-
+        
         glPushMatrix();
         glScalef(1.0f / 32.0f, 1.0f / 24.0f, 1.0f);
-
-        world.lightPool.foreach((Light light) ->
-        {
-            light.render();
-        });
+        
+        world.lightPool.foreach((Light light) -> light.render());
         
         glPopMatrix();
     }
     
     private void renderWorld()
     {
-        // useFramebuffer(worldFBO);
-        
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         glLoadIdentity();
@@ -133,26 +113,35 @@ public class WorldRenderer
         glScalef(1.0f / 32.0f, 1.0f / 24.0f, 1.0f);
         
         worldProgram.useProgram();
-        
-        world.entityPool.foreach((Entity entity) -> {
-            entity.render();
-        });
+        world.entityPool.foreach((Entity entity) -> entity.render());
         
         glPopMatrix();
     }
     
-    private void renderDebug()
+    private void renderFull(int lightTexture, int worldTexture)
     {
-        glPushMatrix();
-        glScalef(1.0f / 32.0f, 1.0f / 24.0f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glLoadIdentity();
         
-        worldProgram.useProgram();
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, lightTexture);
         
-        world.entityPool.foreach((Entity entity) -> {
-            entity.debugRender();
-        });
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, worldTexture);
         
-        glPopMatrix();
+        glActiveTexture(GL_TEXTURE0);
+
+        copyProgram.useProgram();
+        copyProgram.setUniform("light", UniformType.INT1, 0);
+        copyProgram.setUniform("world", UniformType.INT1, 1);
+        
+        glBegin(GL_QUADS);
+        glTexCoord2f(0.0f, 0.0f); glVertex2f(0.0f, 0.0f);
+        glTexCoord2f(1.0f, 0.0f); glVertex2f(1.0f, 0.0f);
+        glTexCoord2f(1.0f, 1.0f); glVertex2f(1.0f, 1.0f);
+        glTexCoord2f(0.0f, 1.0f); glVertex2f(0.0f, 1.0f);
+        glEnd();
     }
     
     public void render()
@@ -160,38 +149,20 @@ public class WorldRenderer
         if(!initialized)
             init();
         
-        renderLights();
+        int[] lightFBO = generateFramebuffer(Window.viewportWidth, Window.viewportHeight);
+        int[] worldFBO = generateFramebuffer(Window.viewportWidth, Window.viewportHeight);
 
+        bindFramebuffer(lightFBO);
+        renderLights();
+        
+        bindFramebuffer(worldFBO);
         renderWorld();
         
         Window.bindFBO();
         
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-        glLoadIdentity();
+        renderFull(lightFBO[1], worldFBO[1]);
 
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, lightFBO[1]);
-        
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, worldFBO[1]);
-        
-        glActiveTexture(GL_TEXTURE0);
-
-        copyProgram.useProgram();
-        
-        copyProgram.setUniform("light", UniformType.INT1, 0);
-        copyProgram.setUniform("world", UniformType.INT1, 1);
-        
-        glBegin(GL_QUADS);
-        {
-            glTexCoord2f(0.0f, 0.0f); glVertex2f(0.0f, 0.0f);
-            glTexCoord2f(1.0f, 0.0f); glVertex2f(1.0f, 0.0f);
-            glTexCoord2f(1.0f, 1.0f); glVertex2f(1.0f, 1.0f);
-            glTexCoord2f(0.0f, 1.0f); glVertex2f(0.0f, 1.0f);
-        }
-        glEnd();
-        
-        renderDebug();
+        destroyFramebuffer(lightFBO);
+        destroyFramebuffer(worldFBO);
     }
 }

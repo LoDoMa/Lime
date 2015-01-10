@@ -13,6 +13,8 @@ public class EntityShape
 
     public void debugRender()
     {
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, Texture.NO_TEXTURE);
+        
         for (int i = 0; i < positionList.length; i++)
         {
             GL11.glPushMatrix();
@@ -45,8 +47,8 @@ public class EntityShape
             GL11.glRotatef(angleList[i], 0.0f, 0.0f, 1.0f);
             
             GL11.glBindTexture(GL11.GL_TEXTURE_2D, Texture.NO_TEXTURE);
-            
-            GL11.glColor3f(1.0f, 0.0f, 0.0f);
+
+            GL11.glColor3f(1.0f, 1.0f, 1.0f);
             GL11.glBegin(GL11.GL_TRIANGLE_FAN);
 
             GL11.glVertex2f(0.0f, 0.0f);
