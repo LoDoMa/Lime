@@ -1,5 +1,6 @@
 package net.lodoma.lime.server;
 
+import net.lodoma.lime.input.Input;
 import net.lodoma.lime.script.event.EventManager;
 import net.lodoma.lime.server.logic.SLWorld;
 import net.lodoma.lime.server.logic.ServerLogicPool;
@@ -50,6 +51,8 @@ public final class Server
         service.start();
         
         logicPool.start();
+        
+        Input.init();
     }
     
     public void close()

@@ -21,7 +21,7 @@ public abstract class ClientPacket implements Identifiable<Integer>
     protected DataOutputStream outputStream;    // output stream to server
     
     private int hash;               // 32-bit hash at the start of the packet.
-    private Object[] expected;      // expected arguments to the handle function
+    private Class<?>[] expected;    // expected arguments to the handle function
     
     /**
      * 
@@ -29,7 +29,7 @@ public abstract class ClientPacket implements Identifiable<Integer>
      * @param hash - 32-bit hash at the start of the packet
      * @param expected - expected arguments to the handle function
      */
-    public ClientPacket(Client client, int hash, Object... expected)
+    public ClientPacket(Client client, int hash, Class<?>... expected)
     {
         this.client = client;
         outputStream = this.client.getOutputStream();
@@ -70,10 +70,10 @@ public abstract class ClientPacket implements Identifiable<Integer>
         {
             outputStream.writeInt(hash);
             
-            if(expected.length != args.length)
+            if (expected.length != args.length)
                 throw new IllegalArgumentException();
-            for(int i = 0; i < expected.length; i++)
-                if(args[i].getClass() != expected[i])
+            for (int i = 0; i < expected.length; i++)
+                if (!expected[i].isInstance(args[i]))
                     throw new IllegalArgumentException();
             
             localWrite(args);

@@ -68,9 +68,7 @@ public class SLWorld implements ServerLogic
             server.world.updateGamemode(UPDATE_MAXTIME);
             server.world.updateEntities(UPDATE_MAXTIME);
             server.physicsWorld.update((float) UPDATE_MAXTIME);
-            server.emanPool.foreach((EventManager eman) -> {
-            	eman.runEvents();
-            });
+            EventManager.runEvents();
         }
         
         while (updateTime <= 0.0)

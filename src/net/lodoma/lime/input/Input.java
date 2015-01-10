@@ -150,6 +150,8 @@ public class Input
     // public static final int KEY_SLEEP        = ;
     
     public static final int KEYBOARD_SIZE       = GLFW_KEY_LAST;
+    
+    public static final int STATE_SIZE          = KEYBOARD_SIZE + MOUSE_SIZE;
 
     private static ByteBuffer liveKeyboard;
     private static ByteBuffer liveKeyboardRepeated;
@@ -260,6 +262,25 @@ public class Input
         oldMouse.put(currentMouse.array());
         currentMouse.position(0);
         currentMouse.put(liveMouse.array());
+    }
+    
+    public static void loadState(ByteBuffer state)
+    {
+        state.position(0);
+        liveKeyboard.position(0);
+        liveKeyboard.put(state);
+        liveMouse.position(0);
+        liveMouse.put(state);
+    }
+    
+    public static ByteBuffer getState()
+    {
+        ByteBuffer state = ByteBuffer.allocate(STATE_SIZE);
+        currentKeyboard.position(0);
+        state.put(currentKeyboard);
+        currentMouse.position(0);
+        state.put(currentMouse);
+        return state;
     }
     
     public static boolean getKey(int key)
