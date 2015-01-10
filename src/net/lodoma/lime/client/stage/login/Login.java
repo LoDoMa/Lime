@@ -1,7 +1,5 @@
 package net.lodoma.lime.client.stage.login;
 
-import java.io.File;
-
 import net.lodoma.lime.client.stage.Stage;
 import net.lodoma.lime.client.stage.StageManager;
 import net.lodoma.lime.client.stage.menu.MainMenuPopulator;
@@ -15,8 +13,6 @@ import net.lodoma.lime.gui.simple.SimpleTextField;
 import net.lodoma.lime.input.Input;
 import net.lodoma.lime.security.Credentials;
 import net.lodoma.lime.shader.Program;
-import net.lodoma.lime.shader.Shader;
-import net.lodoma.lime.shader.ShaderType;
 import net.lodoma.lime.shader.UniformType;
 import net.lodoma.lime.util.HashHelper;
 import net.lodoma.lime.util.Vector2;
@@ -49,8 +45,6 @@ public class Login extends Stage
 
     private SimpleTextField usernameField;
     private SimpleTextField passwordField;
-    
-    private Program menuProgram;
     
     public Login(StageManager manager)
     {
@@ -100,14 +94,8 @@ public class Login extends Stage
     @Override
     public void render()
     {
-        if(menuProgram == null)
-        {
-            Shader menuVS = Shader.getShader("menuVS", new File("shader/menu.vs"), ShaderType.VERTEX);
-            Shader menuFS = Shader.getShader("menuFS", new File("shader/menu.fs"), ShaderType.FRAGMENT);
-            menuProgram = Program.getProgram("menu", menuVS, menuFS);
-        }
-        menuProgram.useProgram();
-        menuProgram.setUniform("texture", UniformType.INT1, 0);
+        Program.menuProgram.useProgram();
+        Program.menuProgram.setUniform("texture", UniformType.INT1, 0);
         
         container.render();
     }

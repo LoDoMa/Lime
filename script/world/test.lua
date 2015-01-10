@@ -28,11 +28,17 @@ local function onLeave(userID)
 end
 
 local function init()
-	local light = lime.newLight()
-	lime.setLightPosition(light, 10, 10)
-	lime.setLightRadius(light, 40)
-	lime.setLightColor(light, 1, 0, 1, 1)
-	lime.setLightAngleRange(light, -4, 4)
+	for i = 1, 10, 1 do
+		local posx, posy = (math.random() - 0.0) * 20, (math.random() - 0.0) * 20
+		local radius = math.random() * 25
+		local colr, colg, colb, cola = math.random(), math.random(), math.random(), 1
+
+		local light = lime.newLight()
+		lime.setLightPosition(light, posx, posy)
+		lime.setLightRadius(light, radius)
+		lime.setLightColor(light, colr, colg, colb, cola)
+		lime.setLightAngleRange(light, -4, 4)
+	end
 
 	lime.addEventListener("Lime::OnJoin", onJoin)
 	lime.addEventListener("Lime::OnLeave", onLeave)

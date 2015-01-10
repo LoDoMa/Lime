@@ -1,27 +1,61 @@
 package net.lodoma.lime.shader;
 
+import java.io.File;
 import java.nio.FloatBuffer;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.lwjgl.opengl.GL20;
 
 public class Program
 {
-    private static final Map<String, Program> programs = new HashMap<String, Program>();
+    public static Shader menuVS, menuFS;
+    public static Shader lightVS, lightFS;
+    public static Shader worldVS, worldFS;
+    public static Shader copyVS, copyFS;
     
-    public static Program getProgram(String name, Shader... shaders)
+    public static Program menuProgram;
+    public static Program lightProgram;
+    public static Program worldProgram;
+    public static Program copyProgram;
+    
+    public static void createAll()
     {
-        if(programs.containsKey(name))
-            return programs.get(name);
-        Program program = new Program(shaders);
-        programs.put(name, program);
-        return program;
+        menuVS = new Shader(new File("shader/menu.vs"), ShaderType.VERTEX);
+        menuFS = new Shader(new File("shader/menu.fs"), ShaderType.FRAGMENT);
+        menuProgram = new Program(menuVS, menuFS);
+        
+        lightVS = new Shader(new File("shader/light.vs"), ShaderType.VERTEX);
+        lightFS = new Shader(new File("shader/light.fs"), ShaderType.FRAGMENT);
+        lightProgram = new Program(lightVS, lightFS);
+        
+        worldVS = new Shader(new File("shader/world.vs"), ShaderType.VERTEX);
+        worldFS = new Shader(new File("shader/world.fs"), ShaderType.FRAGMENT);
+        worldProgram = new Program(worldVS, worldFS);
+        
+        copyVS = new Shader(new File("shader/copy.vs"), ShaderType.VERTEX);
+        copyFS = new Shader(new File("shader/copy.fs"), ShaderType.FRAGMENT);
+        copyProgram = new Program(copyVS, copyFS);
+    }
+    
+    public static void destroyAll()
+    {
+        menuProgram.deleteProgram();
+        lightProgram.deleteProgram();
+        worldProgram.deleteProgram();
+        copyProgram.deleteProgram();
+
+        menuVS.deleteShader();
+        menuFS.deleteShader();
+        lightVS.deleteShader();
+        lightFS.deleteShader();
+        worldVS.deleteShader();
+        worldFS.deleteShader();
+        copyVS.deleteShader();
+        copyFS.deleteShader();
     }
     
     private int program;
     
-    private Program(Shader[] shaders)
+    public Program(Shader... shaders)
     {
         createProgram();
         for(Shader shader : shaders)

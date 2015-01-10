@@ -1,11 +1,7 @@
 package net.lodoma.lime.world.gfx;
 
-import java.io.File;
-
 import net.lodoma.lime.client.window.Window;
 import net.lodoma.lime.shader.Program;
-import net.lodoma.lime.shader.Shader;
-import net.lodoma.lime.shader.ShaderType;
 import net.lodoma.lime.shader.UniformType;
 import net.lodoma.lime.shader.light.Light;
 import net.lodoma.lime.world.World;
@@ -17,11 +13,6 @@ import static org.lwjgl.opengl.EXTFramebufferObject.*;
 public class WorldRenderer
 {
     private World world;
-    
-    private boolean initialized;
-    
-    private Program worldProgram;
-    private Program copyProgram;
 
     private int viewportWidth = -1;
     private int viewportHeight = -1;
@@ -32,7 +23,6 @@ public class WorldRenderer
     public WorldRenderer(World world)
     {
         this.world = world;
-        initialized = false;
     }
     
     private int generateTexture(int width, int height)
@@ -74,31 +64,10 @@ public class WorldRenderer
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, data[0]);
     }
     
-    private void init()
-    {
-        Shader worldVS = Shader.getShader("worldVS", new File("shader/world.vs"), ShaderType.VERTEX);
-        Shader worldFS = Shader.getShader("worldFS", new File("shader/world.fs"), ShaderType.FRAGMENT);
-        worldProgram = Program.getProgram("world", worldVS, worldFS);
-        
-        Shader copyVS = Shader.getShader("copyVS", new File("shader/copy.vs"), ShaderType.VERTEX);
-        Shader copyFS = Shader.getShader("copyFS", new File("shader/copy.fs"), ShaderType.FRAGMENT);
-        copyProgram = Program.getProgram("copy", copyVS, copyFS);
-        
-        initialized = true;
-    }
-    
     public void clean()
     {
         if (lightFBO != null) destroyFramebuffer(lightFBO);
         if (worldFBO != null) destroyFramebuffer(worldFBO);
-        
-        if (initialized)
-        {
-            worldProgram.deleteProgram();
-            copyProgram.deleteProgram();
-            
-            initialized = false;
-        }
     }
     
     private void renderLights()
@@ -124,7 +93,7 @@ public class WorldRenderer
         glPushMatrix();
         glScalef(1.0f / 32.0f, 1.0f / 24.0f, 1.0f);
         
-        worldProgram.useProgram();
+        Program.worldProgram.useProgram();
         world.entityPool.foreach((Entity entity) -> entity.render());
         
         glPopMatrix();
@@ -144,9 +113,9 @@ public class WorldRenderer
         
         glActiveTexture(GL_TEXTURE0);
 
-        copyProgram.useProgram();
-        copyProgram.setUniform("light", UniformType.INT1, 0);
-        copyProgram.setUniform("world", UniformType.INT1, 1);
+        Program.copyProgram.useProgram();
+        Program.copyProgram.setUniform("light", UniformType.INT1, 0);
+        Program.copyProgram.setUniform("world", UniformType.INT1, 1);
         
         glBegin(GL_QUADS);
         glTexCoord2f(0.0f, 0.0f); glVertex2f(0.0f, 0.0f);
@@ -158,9 +127,6 @@ public class WorldRenderer
     
     public void render()
     {
-        if(!initialized)
-            init();
-        
         if (Window.viewportWidth != viewportWidth || Window.viewportHeight != viewportHeight)
         {
             viewportWidth = Window.viewportWidth;

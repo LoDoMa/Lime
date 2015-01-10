@@ -3,6 +3,7 @@ package net.lodoma.lime.client.window;
 import java.nio.ByteBuffer;
 
 import net.lodoma.lime.input.Input;
+import net.lodoma.lime.shader.Program;
 import net.lodoma.lime.util.Vector2;
 
 import org.lwjgl.glfw.GLFWCursorPosCallback;
@@ -70,6 +71,8 @@ public class Window
         glfwShowWindow(windowHandle);
         
         initGL();
+        
+        Program.createAll();
     }
     
     public static void initGL()
@@ -174,6 +177,8 @@ public class Window
     
     public static void close()
     {
+        Program.destroyAll();
+        
         try
         {
             releaseCallbacks();
