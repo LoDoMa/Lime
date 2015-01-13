@@ -3,6 +3,7 @@ package net.lodoma.lime.client.window;
 import java.nio.ByteBuffer;
 
 import net.lodoma.lime.input.Input;
+import net.lodoma.lime.input.InputData;
 import net.lodoma.lime.shader.Program;
 import net.lodoma.lime.util.Vector2;
 
@@ -56,6 +57,7 @@ public class Window
         if (windowHandle == NULL)
             throw new WindowException("Failed to create GLFW window");
         
+        Input.inputData = new InputData();
         Input.init();
         
         setCallbacks();

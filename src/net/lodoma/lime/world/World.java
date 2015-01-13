@@ -9,6 +9,7 @@ import net.lodoma.lime.client.Client;
 import net.lodoma.lime.script.LuaScript;
 import net.lodoma.lime.script.library.AttributeFunctions;
 import net.lodoma.lime.script.library.EventFunctions;
+import net.lodoma.lime.script.library.InputFunctions;
 import net.lodoma.lime.script.library.LightFunctions;
 import net.lodoma.lime.script.library.LimeLibrary;
 import net.lodoma.lime.script.library.UtilFunctions;
@@ -48,6 +49,7 @@ public class World
         WorldFunctions.addToLibrary(library);
         EventFunctions.addToLibrary(library);
         LightFunctions.addToLibrary(library);
+        InputFunctions.addToLibrary(library);
         AttributeFunctions.addToLibrary(library);
         
         gamemode = new LuaScript(library);

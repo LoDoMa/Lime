@@ -53,7 +53,7 @@ public class CLWorld implements ClientLogic
         if (inputTime <= 0.0)
         {
             Input.update();
-            ByteBuffer state = Input.getState();
+            ByteBuffer state = Input.inputData.getState();
             inputStatePacket.write(state);
         }
         while (inputTime <= 0.0)

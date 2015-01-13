@@ -1,6 +1,5 @@
 package net.lodoma.lime.input;
 
-import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 
 import net.lodoma.lime.client.window.Window;
@@ -14,6 +13,48 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public class Input
 {
+    public static class KeyCallback extends GLFWKeyCallback
+    {
+        @Override
+        public void invoke(long window, int key, int scancode, int action, int mods)
+        {
+            boolean released = action == GLFW_RELEASE;
+            boolean pressed = action == GLFW_PRESS;
+            boolean repeated = action == GLFW_REPEAT;
+            
+            if (repeated)
+                inputData.liveKeyboardRepeated.put(key, (byte) 1);
+            else
+            {
+                inputData.liveKeyboard.put(key, (byte) (pressed ? 1 : 0));
+                if (released)
+                    inputData.liveKeyboardRepeated.put(key, (byte) 0);
+            }
+        }
+    }
+    
+    public static class MouseCallback extends GLFWMouseButtonCallback
+    {
+        @Override
+        public void invoke(long window, int button, int action, int mods)
+        {
+            // boolean released = action == GLFW_RELEASE;
+            boolean pressed = action == GLFW_PRESS;
+            
+            inputData.liveMouse.put(button, (byte) (pressed ? 1 : 0));
+        }
+    }
+    
+    public static class MotionCallback extends GLFWCursorPosCallback
+    {
+        @Override
+        public void invoke(long window, double xpos, double ypos)
+        {
+            inputData.liveMousePosition.set((float) ((xpos - Window.viewportX) / Window.viewportWidth),
+                                            (float) (((Window.accsize.y - ypos) - Window.viewportY) / Window.viewportHeight));
+        }
+    }
+    
     public static final int LEFT_MOUSE_BUTTON   = GLFW_MOUSE_BUTTON_LEFT;
     public static final int RIGHT_MOUSE_BUTTON  = GLFW_MOUSE_BUTTON_RIGHT;
     public static final int MIDDLE_MOUSE_BUTTON = GLFW_MOUSE_BUTTON_MIDDLE;
@@ -151,64 +192,10 @@ public class Input
     
     public static final int KEYBOARD_SIZE       = GLFW_KEY_LAST;
     
-    public static final int STATE_SIZE          = KEYBOARD_SIZE + MOUSE_SIZE;
+    public static final int STATE_SIZE          = (int) Math.ceil(KEYBOARD_SIZE / 8.0) * 2 + (int) Math.ceil(MOUSE_SIZE / 8.0);
 
-    private static ByteBuffer liveKeyboard;
-    private static ByteBuffer liveKeyboardRepeated;
-    private static ByteBuffer currentKeyboard;
-    private static ByteBuffer currentKeyboardRepeated;
-    private static ByteBuffer oldKeyboard;
-
-    private static ByteBuffer liveMouse;
-    private static ByteBuffer currentMouse;
-    private static ByteBuffer oldMouse;
-    
-    private static CharBuffer chars;
-
-    private static float mouseX;
-    private static float mouseY;
-    
-    public static class KeyCallback extends GLFWKeyCallback
-    {
-        @Override
-        public void invoke(long window, int key, int scancode, int action, int mods)
-        {
-            boolean released = action == GLFW_RELEASE;
-            boolean pressed = action == GLFW_PRESS;
-            boolean repeated = action == GLFW_REPEAT;
-            
-            if (repeated)
-                liveKeyboardRepeated.put(key, (byte) 1);
-            else
-            {
-                liveKeyboard.put(key, (byte) (pressed ? 1 : 0));
-                if (released)
-                    liveKeyboardRepeated.put(key, (byte) 0);
-            }
-        }
-    }
-    
-    public static class MouseCallback extends GLFWMouseButtonCallback
-    {
-        @Override
-        public void invoke(long window, int button, int action, int mods)
-        {
-            // boolean released = action == GLFW_RELEASE;
-            boolean pressed = action == GLFW_PRESS;
-            
-            liveMouse.put(button, (byte) (pressed ? 1 : 0));
-        }
-    }
-    
-    public static class MotionCallback extends GLFWCursorPosCallback
-    {
-        @Override
-        public void invoke(long window, double xpos, double ypos)
-        {
-            mouseX = (float) ((xpos - Window.viewportX) / Window.viewportWidth);
-            mouseY = (float) (((Window.accsize.y - ypos) - Window.viewportY) / Window.viewportHeight);
-        }
-    }
+    public static InputData inputData;
+    public static CharBuffer chars;
     
     private static void loadChar(char c)
     {
@@ -235,92 +222,53 @@ public class Input
     
     public static void init()
     {
-        liveKeyboard            = ByteBuffer.allocate(KEYBOARD_SIZE);
-        liveKeyboardRepeated    = ByteBuffer.allocate(liveKeyboard.capacity());
-        currentKeyboard         = ByteBuffer.allocate(liveKeyboard.capacity());
-        currentKeyboardRepeated = ByteBuffer.allocate(liveKeyboardRepeated.capacity());
-        oldKeyboard             = ByteBuffer.allocate(currentKeyboard.capacity());
-
-        liveMouse    = ByteBuffer.allocate(MOUSE_SIZE);
-        currentMouse = ByteBuffer.allocate(liveMouse.capacity());
-        oldMouse     = ByteBuffer.allocate(currentMouse.capacity());
-        
-        chars = CharBuffer.allocate(currentKeyboard.capacity());
+        chars = CharBuffer.allocate(KEYBOARD_SIZE);
         loadChars();
     }
     
     public static void update()
     {
-        oldKeyboard.position(0);
-        oldKeyboard.put(currentKeyboard.array());
-        currentKeyboard.position(0);
-        currentKeyboard.put(liveKeyboard.array());
-        currentKeyboardRepeated.position(0);
-        currentKeyboardRepeated.put(liveKeyboardRepeated.array());
-        
-        oldMouse.position(0);
-        oldMouse.put(currentMouse.array());
-        currentMouse.position(0);
-        currentMouse.put(liveMouse.array());
-    }
-    
-    public static void loadState(ByteBuffer state)
-    {
-        state.position(0);
-        liveKeyboard.position(0);
-        liveKeyboard.put(state);
-        liveMouse.position(0);
-        liveMouse.put(state);
-    }
-    
-    public static ByteBuffer getState()
-    {
-        ByteBuffer state = ByteBuffer.allocate(STATE_SIZE);
-        currentKeyboard.position(0);
-        state.put(currentKeyboard);
-        currentMouse.position(0);
-        state.put(currentMouse);
-        return state;
+        inputData.update();
     }
     
     public static boolean getKey(int key)
     {
-        return currentKeyboard.get(key) == 1;
+        return inputData.currentKeyboard.get(key) == 1;
     }
     
     public static boolean getKeyDown(int key)
     {
-        return currentKeyboard.get(key) == 1 && oldKeyboard.get(key) == 0;
+        return inputData.currentKeyboard.get(key) == 1 && inputData.oldKeyboard.get(key) == 0;
     }
     
     public static boolean getKeyUp(int key)
     {
-        return currentKeyboard.get(key) == 0 && oldKeyboard.get(key) == 1;
+        return inputData.currentKeyboard.get(key) == 0 && inputData.oldKeyboard.get(key) == 1;
     }
     
     public static boolean getKeyRepeated(int key)
     {
-        return getKeyDown(key) || currentKeyboardRepeated.get(key) == 1;
+        return getKeyDown(key) || inputData.currentKeyboardRepeated.get(key) == 1;
     }
     
     public static boolean getMouse(int key)
     {
-        return currentMouse.get(key) == 1;
+        return inputData.currentMouse.get(key) == 1;
     }
     
     public static boolean getMouseDown(int key)
     {
-        return currentMouse.get(key) == 1 && oldMouse.get(key) == 0;
+        return inputData.currentMouse.get(key) == 1 && inputData.oldMouse.get(key) == 0;
     }
     
     public static boolean getMouseUp(int key)
     {
-        return currentMouse.get(key) == 0 && oldMouse.get(key) == 1;
+        return inputData.currentMouse.get(key) == 0 && inputData.oldMouse.get(key) == 1;
     }
     
     public static Vector2 getMousePosition()
     {
-        return new Vector2(mouseX, mouseY);
+        return new Vector2(inputData.currentMousePosition.x, inputData.currentMousePosition.y);
     }
     
     public static char getChar(int key)

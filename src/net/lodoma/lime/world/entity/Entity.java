@@ -8,6 +8,7 @@ import net.lodoma.lime.script.LuaScript;
 import net.lodoma.lime.script.library.AttributeFunctions;
 import net.lodoma.lime.script.library.EntityFunctions;
 import net.lodoma.lime.script.library.EventFunctions;
+import net.lodoma.lime.script.library.InputFunctions;
 import net.lodoma.lime.script.library.LimeLibrary;
 import net.lodoma.lime.script.library.UtilFunctions;
 import net.lodoma.lime.server.Server;
@@ -59,6 +60,7 @@ public class Entity implements Identifiable<Integer>
         UtilFunctions.addToLibrary(library);
         EntityFunctions.addToLibrary(library);
         EventFunctions.addToLibrary(library);
+        InputFunctions.addToLibrary(library);
         AttributeFunctions.addToLibrary(library);
         
         script = new LuaScript(library);
@@ -83,7 +85,7 @@ public class Entity implements Identifiable<Integer>
     
     public void update(double timeDelta)
     {
-        script.call("Lime_Update", new Object[] { identifier, timeDelta, false });
+        script.call("Lime_Update", new Object[] { identifier, timeDelta });
     }
     
     public void destroy()

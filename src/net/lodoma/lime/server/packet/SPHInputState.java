@@ -22,11 +22,10 @@ public class SPHInputState extends ServerPacketHandler
     @Override
     protected void localHandle(ServerUser user) throws IOException
     {
-        ByteBuffer buffer = ByteBuffer.allocate(Input.STATE_SIZE);
-        while (buffer.remaining() > 0)
-            buffer.put(user.inputStream.readByte());
-        
-        Input.loadState(buffer);
-        Input.update();
+        ByteBuffer state = ByteBuffer.allocate(Input.STATE_SIZE);
+        while (state.remaining() > 0)
+            state.put(user.inputStream.readByte());
+
+        user.inputData.loadState(state);
     }
 }

@@ -16,6 +16,7 @@ local function onJoin(userID)
 	lime.setAttribute(player, "pos", { x = posx, y = posy })
 	lime.setAttribute(player, "vel", { x = velx, y = vely })
 	lime.setAttribute(player, "radius", radius)
+	lime.setAttribute(player, "master", userID)
 	lime.assignScript(player, "ball")
 
 	playerIDs[userID] = player

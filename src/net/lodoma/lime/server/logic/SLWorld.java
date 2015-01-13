@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import net.lodoma.lime.script.event.EventManager;
 import net.lodoma.lime.server.Server;
+import net.lodoma.lime.server.ServerUser;
+import net.lodoma.lime.server.packet.SPHInputState;
 import net.lodoma.lime.server.packet.SPSnapshot;
 import net.lodoma.lime.util.Timer;
 import net.lodoma.lime.world.SnapshotManager;
@@ -33,6 +35,8 @@ public class SLWorld implements ServerLogic
         server.snapshotManager = new SnapshotManager(server.world, server.userManager);
         
         server.spPool.add(new SPSnapshot(server));
+        server.sphPool.add(new SPHInputState(server));
+        
         server.snapshotManager.snapshotPacket = server.spPool.get(SPSnapshot.HASH);
         
         try
@@ -61,6 +65,10 @@ public class SLWorld implements ServerLogic
         if(timer == null) timer = new Timer();
         timer.update();
         double timeDelta = timer.getDelta();
+        
+        server.userManager.foreach((ServerUser user) -> {
+            user.inputData.update();
+        });
         
         updateTime -= timeDelta;
         if (updateTime <= 0.0)
