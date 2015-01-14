@@ -26,7 +26,7 @@ end
 
 function Lime_Update(entityID, timeDelta)
 	lime.setInputData(userID[entityID])
-	if lime.getKeyDown(lime.KEY_A) then
+	if lime.getKeyPress(lime.KEY_A) then
 		print("key press")
 	end
 end

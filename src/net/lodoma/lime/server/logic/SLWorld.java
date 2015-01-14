@@ -66,13 +66,13 @@ public class SLWorld implements ServerLogic
         timer.update();
         double timeDelta = timer.getDelta();
         
-        server.userManager.foreach((ServerUser user) -> {
-            user.inputData.update();
-        });
-        
         updateTime -= timeDelta;
         if (updateTime <= 0.0)
         {
+            server.userManager.foreach((ServerUser user) -> {
+                user.inputData.update();
+            });
+            
             server.world.updateGamemode(UPDATE_MAXTIME);
             server.world.updateEntities(UPDATE_MAXTIME);
             server.physicsWorld.update((float) UPDATE_MAXTIME);
