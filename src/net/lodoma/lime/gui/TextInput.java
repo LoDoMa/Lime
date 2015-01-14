@@ -36,12 +36,12 @@ public class TextInput implements GUIElement
         
         String content = text.getText();
         
-        for(int i = 0; i < Input.KEYBOARD_SIZE; i++)
+        for(int i = 0; i < Input.SIZE_KEYBOARD; i++)
             if(Input.getKeyRepeated(i))
                 if(Input.getChar(i) != 0)
-                    if(Input.getKey(Input.KEY_LSHIFT)) content += Character.toUpperCase(Input.getChar(i));
+                    if(Input.getKey(Input.KEY_LEFT_SHIFT)) content += Character.toUpperCase(Input.getChar(i));
                     else content += Input.getChar(i);
-        if(content.length() > 0 && Input.getKeyRepeated(Input.KEY_BACK))
+        if(content.length() > 0 && Input.getKeyRepeated(Input.KEY_BACKSPACE))
             content = content.substring(0, content.length() - 1);
         
         text.setText(content);

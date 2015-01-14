@@ -72,7 +72,7 @@ public class Button implements GUIElement
     public void update(double timeDelta, Vector2 mousePosition)
     {
         mouseHover = bounds.isInside(mousePosition.x, mousePosition.y);
-        boolean mouseUp = Input.getMouseUp(Input.LEFT_MOUSE_BUTTON);
+        boolean mouseUp = Input.getMouseUp(Input.MOUSE_BUTTON_LEFT);
         mouseClick = mouseHover && mouseUp;
 
         if(listener != null)

@@ -33,7 +33,9 @@ public class InputFunctions
         {
             Field[] inputFields = Input.class.getFields();
             for (Field field : inputFields)
-                if (field.getName().startsWith("KEY_"))
+                if (field.getName().startsWith("KEY_") ||
+                    field.getName().startsWith("MOUSE_") ||
+                    field.getName().startsWith("JOYSTICK_"))
                     library.table.set(field.getName(), CoerceJavaToLua.coerce(field.getInt(null)));
         }
         catch (IllegalAccessException e)

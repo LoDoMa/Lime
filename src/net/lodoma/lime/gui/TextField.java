@@ -71,7 +71,7 @@ public class TextField extends Button
         
         if(isMouseClicked())
             active = true;
-        else if(Input.getMouseUp(Input.LEFT_MOUSE_BUTTON))
+        else if(Input.getMouseUp(Input.MOUSE_BUTTON_LEFT))
             active = false;
         
         if(active)

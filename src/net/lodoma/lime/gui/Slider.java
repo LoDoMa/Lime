@@ -60,7 +60,7 @@ public class Slider implements GUIElement
         hover = bounds.isInside(mousePosition.x, mousePosition.y);
         if(listener != null)
             if(hover)
-                if(Input.getMouse(Input.LEFT_MOUSE_BUTTON))
+                if(Input.getMouse(Input.MOUSE_BUTTON_LEFT))
                 {
                     float newValue = (mousePosition.x - bounds.x) / bounds.w;
                     if(value != newValue)
