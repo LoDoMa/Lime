@@ -116,6 +116,6 @@ public class InputData
     {
         offset = (int) Math.ceil(offset / 8.0);
         for (int i = 0; i < destination.capacity(); i++)
-            destination.put(i, (byte) (compressed.get(offset + i / 8) >>> (i % 8)));
+            destination.put(i, (byte) ((compressed.get(offset + i / 8) >>> (i % 8)) & 0x1));
     }
 }

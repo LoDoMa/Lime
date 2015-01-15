@@ -1,6 +1,7 @@
 
 local firstInit = true
 local userID = {}
+local compoID = {}
 
 function Lime_Init(entityID)
 	if firstInit then
@@ -19,16 +20,21 @@ function Lime_Init(entityID)
 	lime.setShapeDensity(2.3)
 	lime.setShapeFriction(0.3)
 	lime.setShapeRestitution(1.0)
-	local compoID = lime.attachComponent(entityID)
+	compoID[entityID] = lime.attachComponent(entityID)
 
-	lime.setLinearVelocity(entityID, compoID, vel.x, vel.y)
+	lime.setLinearVelocity(entityID, compoID[entityID], vel.x, vel.y)
 end
 
 function Lime_Update(entityID, timeDelta)
 	lime.setInputData(userID[entityID])
-	if lime.getKeyPress(lime.KEY_A) then
-		print("key press")
-	end
+
+	local velx, vely = 0, 0
+	if lime.getKeyState(lime.KEY_W) then vely = 6 end
+	if lime.getKeyState(lime.KEY_A) then velx = -6 end
+	if lime.getKeyState(lime.KEY_S) then vely = -6 end
+	if lime.getKeyState(lime.KEY_D) then velx = 6 end
+
+	lime.setLinearVelocity(entityID, compoID[entityID], velx, vely)
 end
 
 function Lime_Clean(entityID)
