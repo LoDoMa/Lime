@@ -241,8 +241,8 @@ public class Input
     
     private static void loadChars()
     {
-        for(char i = 'a'; i < 'z'; i++) loadChar(i);
-        for(char i = '0'; i < '9'; i++) loadChar(i);
+        for(char i = 'a'; i <= 'z'; i++) loadChar(i);
+        for(char i = '0'; i <= '9'; i++) loadChar(i);
         chars.put(KEY_SPACE, ' ');
         chars.put(KEY_PERIOD, '.');
         chars.put(KEY_COMMA, ',');
