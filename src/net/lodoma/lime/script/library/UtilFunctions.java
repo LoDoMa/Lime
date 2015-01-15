@@ -6,7 +6,6 @@ import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.VarArgFunction;
-import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
 public class UtilFunctions
 {
@@ -50,12 +49,12 @@ public class UtilFunctions
             case HASH32:
             {
                 String string = args.arg(1).checkstring().toString();
-                return CoerceJavaToLua.coerce(HashHelper.hash32(string));
+                return LuaValue.valueOf(HashHelper.hash32(string));
             }
             case HASH64:
             {
                 String string = args.arg(1).checkstring().toString();
-                return CoerceJavaToLua.coerce(HashHelper.hash64(string));
+                return LuaValue.valueOf(HashHelper.hash64(string));
             }
             }
             return LuaValue.NONE;

@@ -10,7 +10,6 @@ import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.VarArgFunction;
-import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
 public class EventFunctions
 {
@@ -59,7 +58,7 @@ public class EventFunctions
                 LuaFunction callback = args.arg(2).checkfunction();
                 int hash = HashHelper.hash32(eventName);
                 int listenerID = emanPool.get(hash).listeners.add(new LuaEventListener(callback));
-                return CoerceJavaToLua.coerce(listenerID);
+                return LuaValue.valueOf(listenerID);
             }
             case REMOVE_EVENT_LISTENER:
             {

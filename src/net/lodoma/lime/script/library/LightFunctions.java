@@ -8,7 +8,6 @@ import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.VarArgFunction;
-import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
 public class LightFunctions
 {
@@ -55,7 +54,7 @@ public class LightFunctions
             {
                 Light light = new Light();
                 int lightID = world.lightPool.add(light);
-                return CoerceJavaToLua.coerce(lightID);
+                return LuaValue.valueOf(lightID);
             }
             case SET_POSITION:
             {

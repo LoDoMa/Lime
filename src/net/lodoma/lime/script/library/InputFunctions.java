@@ -9,7 +9,6 @@ import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.VarArgFunction;
-import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
 public class InputFunctions
 {
@@ -36,7 +35,7 @@ public class InputFunctions
                 if (field.getName().startsWith("KEY_") ||
                     field.getName().startsWith("MOUSE_") ||
                     field.getName().startsWith("JOYSTICK_"))
-                    library.table.set(field.getName(), CoerceJavaToLua.coerce(field.getInt(null)));
+                    library.table.set(field.getName(), LuaValue.valueOf(field.getInt(null)));
         }
         catch (IllegalAccessException e)
         {
@@ -75,40 +74,36 @@ public class InputFunctions
             case GET_KEY_STATE:
             {
                 int keyID = args.arg(1).checkint();
-                return CoerceJavaToLua.coerce(Input.getKey(keyID));
+                return LuaValue.valueOf(Input.getKey(keyID));
             }
             case GET_KEY_PRESS:
             {
                 int keyID = args.arg(1).checkint();
-                return CoerceJavaToLua.coerce(Input.getKeyDown(keyID));
+                return LuaValue.valueOf(Input.getKeyDown(keyID));
             }
             case GET_KEY_RELEASE:
             {
                 int keyID = args.arg(1).checkint();
-                return CoerceJavaToLua.coerce(Input.getKeyUp(keyID));
+                return LuaValue.valueOf(Input.getKeyUp(keyID));
             }
-            case GET_MOUSE_X:
+            case GET_MOUSE_POSITION:
             {
-                return CoerceJavaToLua.coerce(Input.getMousePosition().x);
-            }
-            case GET_MOUSE_Y:
-            {
-                return CoerceJavaToLua.coerce(Input.getMousePosition().y);
+                return LuaValue.varargsOf(new LuaValue[] { LuaValue.valueOf(Input.getMousePosition().x), LuaValue.valueOf(Input.getMousePosition().y) });
             }
             case GET_MOUSE_STATE:
             {
                 int mouseID = args.arg(1).checkint();
-                return CoerceJavaToLua.coerce(Input.getMouse(mouseID));
+                return LuaValue.valueOf(Input.getMouse(mouseID));
             }
             case GET_MOUSE_PRESS:
             {
                 int mouseID = args.arg(1).checkint();
-                return CoerceJavaToLua.coerce(Input.getMouseDown(mouseID));
+                return LuaValue.valueOf(Input.getMouseDown(mouseID));
             }
             case GET_MOUSE_RELEASE:
             {
                 int mouseID = args.arg(1).checkint();
-                return CoerceJavaToLua.coerce(Input.getMouseUp(mouseID));
+                return LuaValue.valueOf(Input.getMouseUp(mouseID));
             }
             }
             return LuaValue.NONE;
@@ -121,8 +116,7 @@ public class InputFunctions
         GET_KEY_STATE(1, true, "getKeyState"),
         GET_KEY_PRESS(1, true, "getKeyPress"),
         GET_KEY_RELEASE(1, true, "getKeyRelease"),
-        GET_MOUSE_X(1, true, "getMouseX"),
-        GET_MOUSE_Y(1, true, "getMouseY"),
+        GET_MOUSE_POSITION(1, true, "getMousePosition"),
         GET_MOUSE_STATE(1, true, "getMouseState"),
         GET_MOUSE_PRESS(1, true, "getMousePress"),
         GET_MOUSE_RELEASE(1, true, "getMouseRelease");

@@ -9,7 +9,6 @@ import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.VarArgFunction;
-import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
 public class EntityFunctions
 {
@@ -70,7 +69,7 @@ public class EntityFunctions
                 bodyCompoDefinition = null;
                 
                 int compoID = world.entityPool.get(entityID).body.components.add(bodyCompo);
-                return CoerceJavaToLua.coerce(compoID);
+                return LuaValue.valueOf(compoID);
             }
             case SET_INITIAL_POSITION:
             {
@@ -121,7 +120,15 @@ public class EntityFunctions
                 bodyCompoDefinition.restitution = restitution;
                 break;
             }
-            
+
+            case GET_LINEAR_VELOCITY:
+            {
+                int entityID = args.arg(1).checkint();
+                int compoID = args.arg(2).checkint();
+                
+                Vec2 velocity = world.entityPool.get(entityID).body.components.get(compoID).engineBody.getLinearVelocity();
+                return LuaValue.varargsOf(new LuaValue[] { LuaValue.valueOf(velocity.x), LuaValue.valueOf(velocity.y) });
+            }
             case SET_LINEAR_VELOCITY:
             {
                 int entityID = args.arg(1).checkint();
@@ -147,7 +154,8 @@ public class EntityFunctions
         SET_SHAPE_DENSITY(1, true, "setShapeDensity"),
         SET_SHAPE_FRICTION(1, true, "setShapeFriction"),
         SET_SHAPE_RESTITUTION(1, true, "setShapeRestitution"),
-        
+
+        GET_LINEAR_VELOCITY(2, true, "getLinearVelocity"),
         SET_LINEAR_VELOCITY(4, true, "setLinearVelocity");
         
         public int argc;

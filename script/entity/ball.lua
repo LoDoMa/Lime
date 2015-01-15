@@ -28,11 +28,11 @@ end
 function Lime_Update(entityID, timeDelta)
 	lime.setInputData(userID[entityID])
 
-	local velx, vely = 0, 0
-	if lime.getKeyState(lime.KEY_W) then vely = 6 end
-	if lime.getKeyState(lime.KEY_A) then velx = -6 end
-	if lime.getKeyState(lime.KEY_S) then vely = -6 end
-	if lime.getKeyState(lime.KEY_D) then velx = 6 end
+	local velx, vely = lime.getLinearVelocity(entityID, compoID[entityID])
+	if lime.getKeyState(lime.KEY_W) then vely = vely + 0.1 end
+	if lime.getKeyState(lime.KEY_A) then velx = velx - 0.1 end
+	if lime.getKeyState(lime.KEY_S) then vely = vely - 0.1 end
+	if lime.getKeyState(lime.KEY_D) then velx = velx + 0.1 end
 
 	lime.setLinearVelocity(entityID, compoID[entityID], velx, vely)
 end
