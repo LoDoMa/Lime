@@ -6,10 +6,10 @@ import java.io.IOException;
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.script.LuaScript;
 import net.lodoma.lime.script.library.AttributeFunctions;
-import net.lodoma.lime.script.library.EntityFunctions;
 import net.lodoma.lime.script.library.EventFunctions;
 import net.lodoma.lime.script.library.InputFunctions;
 import net.lodoma.lime.script.library.LimeLibrary;
+import net.lodoma.lime.script.library.PhysicsFunctions;
 import net.lodoma.lime.script.library.UtilFunctions;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.util.Identifiable;
@@ -58,7 +58,7 @@ public class Entity implements Identifiable<Integer>
     {
         LimeLibrary library = new LimeLibrary(server);
         UtilFunctions.addToLibrary(library);
-        EntityFunctions.addToLibrary(library);
+        PhysicsFunctions.addToLibrary(library);
         EventFunctions.addToLibrary(library);
         InputFunctions.addToLibrary(library);
         AttributeFunctions.addToLibrary(library);
