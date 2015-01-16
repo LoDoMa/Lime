@@ -5,14 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jbox2d.collision.shapes.CircleShape;
-
 import net.lodoma.lime.shader.light.Light;
 import net.lodoma.lime.shader.light.LightData;
-import net.lodoma.lime.util.Vector2;
 import net.lodoma.lime.world.entity.Entity;
 import net.lodoma.lime.world.entity.EntityShape;
 import net.lodoma.lime.world.physics.PhysicsComponent;
+import net.lodoma.lime.world.physics.PhysicsComponentSnapshot;
 
 public class Snapshot
 {
@@ -39,17 +37,14 @@ public class Snapshot
             int compoc = entity.body.components.size();
             
             EntityShape shape = new EntityShape();
-            shape.positionList = new Vector2[compoc];
-            shape.angleList = new float[compoc];
-            shape.radiusList = new float[compoc];
+            shape.snapshots = new PhysicsComponentSnapshot[compoc];
             
             List<PhysicsComponent> objects = entity.body.components.getObjectList();
             for (int i = 0; i < objects.size(); i++)
             {
                 PhysicsComponent component = objects.get(i);
-                shape.positionList[i] = new Vector2(component.engineBody.getPosition());
-                shape.angleList[i] = component.engineBody.getAngle();
-                shape.radiusList[i] = ((CircleShape) component.engineFixture.m_shape).m_radius;
+                PhysicsComponentSnapshot compoSnapshot = component.createSnapshot();
+                shape.snapshots[i] = compoSnapshot;
             }
             
             entityData.put(entity.identifier, shape);

@@ -44,13 +44,27 @@ public class SPSnapshot extends ServerPacket
             user.outputStream.writeInt(entry.getKey());
             
             EntityShape shape = entry.getValue();
-            user.outputStream.writeInt(shape.positionList.length);
-            for (int i = 0; i < shape.positionList.length; i++)
+            user.outputStream.writeInt(shape.snapshots.length);
+            for (int i = 0; i < shape.snapshots.length; i++)
             {
-                user.outputStream.writeFloat(shape.positionList[i].x);
-                user.outputStream.writeFloat(shape.positionList[i].y);
-                user.outputStream.writeFloat(shape.angleList[i]);
-                user.outputStream.writeFloat(shape.radiusList[i]);
+                user.outputStream.writeFloat(shape.snapshots[i].position.x);
+                user.outputStream.writeFloat(shape.snapshots[i].position.y);
+                user.outputStream.writeFloat(shape.snapshots[i].angle);
+                user.outputStream.writeInt(shape.snapshots[i].type.ordinal());
+                switch (shape.snapshots[i].type)
+                {
+                case CIRCLE:
+                    user.outputStream.writeFloat(shape.snapshots[i].radius);
+                    break;
+                case POLYGON:
+                    user.outputStream.writeInt(shape.snapshots[i].vertices.length);
+                    for (int j = 0; j < shape.snapshots[i].vertices.length; j++)
+                    {
+                        user.outputStream.writeFloat(shape.snapshots[i].vertices[j].x);
+                        user.outputStream.writeFloat(shape.snapshots[i].vertices[j].y);
+                    }
+                    break;
+                }
             }
         };
         

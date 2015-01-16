@@ -7,6 +7,7 @@ public class PhysicsComponentCircleShape extends PhysicsComponentShape
 {
     public float radius;
 
+    @Override
     public void validate() throws InvalidPhysicsComponentException
     {
         if (radius < 0) throw new InvalidPhysicsComponentException("invalid component circle shape radius: negative");

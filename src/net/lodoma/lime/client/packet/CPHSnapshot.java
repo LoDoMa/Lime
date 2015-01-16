@@ -9,6 +9,8 @@ import net.lodoma.lime.util.HashHelper;
 import net.lodoma.lime.util.Vector2;
 import net.lodoma.lime.world.Snapshot;
 import net.lodoma.lime.world.entity.EntityShape;
+import net.lodoma.lime.world.physics.PhysicsComponentShapeType;
+import net.lodoma.lime.world.physics.PhysicsComponentSnapshot;
 
 public class CPHSnapshot extends ClientPacketHandler
 {
@@ -41,15 +43,25 @@ public class CPHSnapshot extends ClientPacketHandler
             int componentCount = inputStream.readInt();
             
             EntityShape shape = new EntityShape();
-            shape.positionList = new Vector2[componentCount];
-            shape.angleList = new float[componentCount];
-            shape.radiusList = new float[componentCount];
+            shape.snapshots = new PhysicsComponentSnapshot[componentCount];;
             
-            while ((componentCount--) != 0)
+            for (int i = 0; i < componentCount; i++)
             {
-                shape.positionList[componentCount] = new Vector2(inputStream.readFloat(), inputStream.readFloat());
-                shape.angleList[componentCount] = inputStream.readFloat();
-                shape.radiusList[componentCount] = inputStream.readFloat();
+                shape.snapshots[i] = new PhysicsComponentSnapshot();
+                shape.snapshots[i].position = new Vector2(inputStream.readFloat(), inputStream.readFloat());
+                shape.snapshots[i].angle = inputStream.readFloat();
+                shape.snapshots[i].type = PhysicsComponentShapeType.values()[inputStream.readInt()];
+                switch (shape.snapshots[i].type)
+                {
+                case CIRCLE:
+                    shape.snapshots[i].radius = inputStream.readFloat();
+                    break;
+                case POLYGON:
+                    shape.snapshots[i].vertices = new Vector2[inputStream.readInt()];
+                    for (int j = 0; j < shape.snapshots[i].vertices.length; j++)
+                        shape.snapshots[i].vertices[j] = new Vector2(inputStream.readFloat(), inputStream.readFloat());
+                    break;
+                }
             }
             
             snapshot.entityData.put(identifier, shape);

@@ -11,6 +11,7 @@ public class PhysicsComponentPolygonShape extends PhysicsComponentShape
 {
     public Vector2 vertices[];
     
+    @Override
     public void validate() throws InvalidPhysicsComponentException
     {
         if (vertices == null)    throw new InvalidPhysicsComponentException("invalid component polygon shape vertices: null");
