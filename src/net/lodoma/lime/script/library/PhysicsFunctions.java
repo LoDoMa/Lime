@@ -198,6 +198,24 @@ public class PhysicsFunctions
                 int compoID = library.server.world.entityPool.get(entityID).body.components.add(newCompo);
                 return LuaValue.valueOf(compoID);
             }
+            case ATTACH_COMPONENT_TO_TERRAIN:
+            {
+                try
+                {
+                    compoDefinition.validate();
+                }
+                catch (InvalidPhysicsComponentException e)
+                {
+                    throw new LuaError(e);
+                }
+                
+                compoDefinition.create();
+                PhysicsComponent newCompo = new PhysicsComponent(compoDefinition, library.server.physicsWorld);
+                compoDefinition = null;
+                
+                int compoID = library.server.world.terrain.physicalComponents.add(newCompo);
+                return LuaValue.valueOf(compoID);
+            }
             case SELECT_ENTITY_COMPONENT:
             {
                 int entityID = args.arg(1).checkint();
@@ -235,6 +253,7 @@ public class PhysicsFunctions
         SET_SHAPE_FRICTION(1, true, "setShapeFriction"),
         SET_SHAPE_RESTITUTION(1, true, "setShapeRestitution"),
         ATTACH_COMPONENT_TO_ENTITY(1, true, "attachComponentToEntity"),
+        ATTACH_COMPONENT_TO_TERRAIN(0, true, "attachComponentToTerrain"),
         
         SELECT_ENTITY_COMPONENT(2, true, "selectEntityComponent"),
         GET_LINEAR_VELOCITY(0, true, "getLinearVelocity"),

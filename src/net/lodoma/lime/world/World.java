@@ -27,11 +27,13 @@ public class World
     public LuaScript gamemode;
     public IdentityPool<Entity> entityPool;
     public IdentityPool<Light> lightPool;
+    public Terrain terrain;
     
     public World()
     {
         entityPool = new IdentityPool<Entity>(false);
         lightPool = new IdentityPool<Light>(false);
+        terrain = new Terrain();
     }
     
     public void clean()

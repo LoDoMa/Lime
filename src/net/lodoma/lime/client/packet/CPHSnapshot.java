@@ -6,10 +6,8 @@ import net.lodoma.lime.client.Client;
 import net.lodoma.lime.client.ClientPacketHandler;
 import net.lodoma.lime.shader.light.LightData;
 import net.lodoma.lime.util.HashHelper;
-import net.lodoma.lime.util.Vector2;
 import net.lodoma.lime.world.Snapshot;
 import net.lodoma.lime.world.entity.EntityShape;
-import net.lodoma.lime.world.physics.PhysicsComponentShapeType;
 import net.lodoma.lime.world.physics.PhysicsComponentSnapshot;
 
 public class CPHSnapshot extends ClientPacketHandler
@@ -27,6 +25,10 @@ public class CPHSnapshot extends ClientPacketHandler
     {
         Snapshot snapshot = new Snapshot();
         snapshot.isDelta = inputStream.readBoolean();
+
+        int removedTerrainCount = inputStream.readInt();
+        while ((removedTerrainCount--) != 0)
+            snapshot.removedTerrain.add(inputStream.readInt());
         
         int removedEntityCount = inputStream.readInt();
         while ((removedEntityCount--) != 0)
@@ -35,7 +37,17 @@ public class CPHSnapshot extends ClientPacketHandler
         int removedLightCount = inputStream.readInt();
         while ((removedLightCount--) != 0)
             snapshot.removedLights.add(inputStream.readInt());
-        
+
+        int terrainCount = inputStream.readInt();
+        client.world.terrain.componentSnapshots = new PhysicsComponentSnapshot[terrainCount];
+        for (int i = 0; i < terrainCount; i++)
+        {
+            @SuppressWarnings("unused")
+            int identifier = inputStream.readInt();
+            client.world.terrain.componentSnapshots[i] = new PhysicsComponentSnapshot();
+            client.world.terrain.componentSnapshots[i].read(inputStream);
+        }
+            
         int shapeCount = inputStream.readInt();
         while ((shapeCount--) != 0)
         {
@@ -48,20 +60,7 @@ public class CPHSnapshot extends ClientPacketHandler
             for (int i = 0; i < componentCount; i++)
             {
                 shape.snapshots[i] = new PhysicsComponentSnapshot();
-                shape.snapshots[i].position = new Vector2(inputStream.readFloat(), inputStream.readFloat());
-                shape.snapshots[i].angle = inputStream.readFloat();
-                shape.snapshots[i].type = PhysicsComponentShapeType.values()[inputStream.readInt()];
-                switch (shape.snapshots[i].type)
-                {
-                case CIRCLE:
-                    shape.snapshots[i].radius = inputStream.readFloat();
-                    break;
-                case POLYGON:
-                    shape.snapshots[i].vertices = new Vector2[inputStream.readInt()];
-                    for (int j = 0; j < shape.snapshots[i].vertices.length; j++)
-                        shape.snapshots[i].vertices[j] = new Vector2(inputStream.readFloat(), inputStream.readFloat());
-                    break;
-                }
+                shape.snapshots[i].read(inputStream);
             }
             
             snapshot.entityData.put(identifier, shape);

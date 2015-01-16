@@ -15,15 +15,19 @@ import net.lodoma.lime.world.physics.PhysicsComponentSnapshot;
 public class Snapshot
 {
     public boolean isDelta;
+    public List<Integer> removedTerrain;
     public List<Integer> removedEntities;
     public List<Integer> removedLights;
+    public Map<Integer, PhysicsComponentSnapshot> terrainData;
     public Map<Integer, EntityShape> entityData;
     public Map<Integer, LightData> lightData;
     
     public Snapshot()
     {
+        removedTerrain = new ArrayList<Integer>();
         removedEntities = new ArrayList<Integer>();
         removedLights = new ArrayList<Integer>();
+        terrainData = new HashMap<Integer, PhysicsComponentSnapshot>();
         entityData = new HashMap<Integer, EntityShape>();
         lightData = new HashMap<Integer, LightData>();
     }
@@ -32,6 +36,10 @@ public class Snapshot
     {
         this();
         isDelta = false;
+        
+        world.terrain.physicalComponents.foreach((PhysicsComponent compo) -> {
+            terrainData.put(compo.identifier, compo.createSnapshot());
+        });
         
         world.entityPool.foreach((Entity entity) -> {
             int compoc = entity.body.components.size();

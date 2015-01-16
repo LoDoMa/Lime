@@ -95,6 +95,7 @@ public class WorldRenderer
         
         Program.worldProgram.useProgram();
         world.entityPool.foreach((Entity entity) -> entity.render());
+        world.terrain.debugRender();
         
         glPopMatrix();
     }

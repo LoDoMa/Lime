@@ -11,6 +11,7 @@ import net.lodoma.lime.shader.light.LightData;
 import net.lodoma.lime.util.HashHelper;
 import net.lodoma.lime.world.Snapshot;
 import net.lodoma.lime.world.entity.EntityShape;
+import net.lodoma.lime.world.physics.PhysicsComponentSnapshot;
 
 public class SPSnapshot extends ServerPacket
 {
@@ -29,6 +30,10 @@ public class SPSnapshot extends ServerPacket
         
         user.outputStream.writeBoolean(snapshot.isDelta);
 
+        user.outputStream.writeInt(snapshot.removedTerrain.size());
+        for (Integer id : snapshot.removedTerrain)
+            user.outputStream.writeInt(id);
+
         user.outputStream.writeInt(snapshot.removedEntities.size());
         for (Integer id : snapshot.removedEntities)
             user.outputStream.writeInt(id);
@@ -36,6 +41,14 @@ public class SPSnapshot extends ServerPacket
         user.outputStream.writeInt(snapshot.removedLights.size());
         for (Integer id : snapshot.removedLights)
             user.outputStream.writeInt(id);
+
+        user.outputStream.writeInt(snapshot.terrainData.size());
+        Set<Entry<Integer, PhysicsComponentSnapshot>> terrainEntrySet = snapshot.terrainData.entrySet();
+        for (Entry<Integer, PhysicsComponentSnapshot> entry : terrainEntrySet)
+        {
+            user.outputStream.writeInt(entry.getKey());
+            entry.getValue().write(user.outputStream);
+        }
         
         user.outputStream.writeInt(snapshot.entityData.size());
         Set<Entry<Integer, EntityShape>> entityEntrySet = snapshot.entityData.entrySet();
@@ -46,26 +59,7 @@ public class SPSnapshot extends ServerPacket
             EntityShape shape = entry.getValue();
             user.outputStream.writeInt(shape.snapshots.length);
             for (int i = 0; i < shape.snapshots.length; i++)
-            {
-                user.outputStream.writeFloat(shape.snapshots[i].position.x);
-                user.outputStream.writeFloat(shape.snapshots[i].position.y);
-                user.outputStream.writeFloat(shape.snapshots[i].angle);
-                user.outputStream.writeInt(shape.snapshots[i].type.ordinal());
-                switch (shape.snapshots[i].type)
-                {
-                case CIRCLE:
-                    user.outputStream.writeFloat(shape.snapshots[i].radius);
-                    break;
-                case POLYGON:
-                    user.outputStream.writeInt(shape.snapshots[i].vertices.length);
-                    for (int j = 0; j < shape.snapshots[i].vertices.length; j++)
-                    {
-                        user.outputStream.writeFloat(shape.snapshots[i].vertices[j].x);
-                        user.outputStream.writeFloat(shape.snapshots[i].vertices[j].y);
-                    }
-                    break;
-                }
-            }
+                shape.snapshots[i].write(user.outputStream);
         };
         
         user.outputStream.writeInt(snapshot.lightData.size());

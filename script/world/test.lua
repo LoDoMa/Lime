@@ -43,6 +43,17 @@ local function init()
 
 	lime.addEventListener("Lime::OnJoin", onJoin)
 	lime.addEventListener("Lime::OnLeave", onLeave)
+
+	lime.startComponent()
+	lime.setInitialPosition(2.0, 2.0)
+	lime.setInitialAngle(0.0)
+	lime.setComponentType("static")
+	lime.setShapeType("circle")
+	lime.setShapeRadius(0.75)
+	lime.setShapeDensity(0.0)
+	lime.setShapeFriction(0.0)
+	lime.setShapeRestitution(0.0)
+	local compoID = lime.attachComponentToTerrain()
 end
 
 function Lime_Update(timeDelta)
