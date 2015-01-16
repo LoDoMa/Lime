@@ -10,9 +10,9 @@ import org.jbox2d.collision.shapes.CircleShape;
 import net.lodoma.lime.shader.light.Light;
 import net.lodoma.lime.shader.light.LightData;
 import net.lodoma.lime.util.Vector2;
-import net.lodoma.lime.world.entity.BodyComponent;
 import net.lodoma.lime.world.entity.Entity;
 import net.lodoma.lime.world.entity.EntityShape;
+import net.lodoma.lime.world.physics.PhysicsComponent;
 
 public class Snapshot
 {
@@ -43,10 +43,10 @@ public class Snapshot
             shape.angleList = new float[compoc];
             shape.radiusList = new float[compoc];
             
-            List<BodyComponent> objects = entity.body.components.getObjectList();
+            List<PhysicsComponent> objects = entity.body.components.getObjectList();
             for (int i = 0; i < objects.size(); i++)
             {
-                BodyComponent component = objects.get(i);
+                PhysicsComponent component = objects.get(i);
                 shape.positionList[i] = new Vector2(component.engineBody.getPosition());
                 shape.angleList[i] = component.engineBody.getAngle();
                 shape.radiusList[i] = ((CircleShape) component.engineFixture.m_shape).m_radius;

@@ -10,7 +10,7 @@ import net.lodoma.lime.server.packet.SPSnapshot;
 import net.lodoma.lime.util.Timer;
 import net.lodoma.lime.world.SnapshotManager;
 import net.lodoma.lime.world.World;
-import net.lodoma.lime.world.entity.physics.PhysicsWorld;
+import net.lodoma.lime.world.physics.PhysicsWorld;
 
 public class SLWorld implements ServerLogic
 {

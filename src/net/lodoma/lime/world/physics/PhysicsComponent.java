@@ -1,12 +1,11 @@
-package net.lodoma.lime.world.entity;
+package net.lodoma.lime.world.physics;
 
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.Fixture;
 
 import net.lodoma.lime.util.Identifiable;
-import net.lodoma.lime.world.entity.physics.PhysicsWorld;
 
-public class BodyComponent implements Identifiable<Integer>
+public class PhysicsComponent implements Identifiable<Integer>
 {
     public int identifier;
     
@@ -15,7 +14,7 @@ public class BodyComponent implements Identifiable<Integer>
     public Body engineBody;
     public Fixture engineFixture;
     
-    public BodyComponent(BodyComponentDefinition definition, PhysicsWorld world)
+    public PhysicsComponent(PhysicsComponentDefinition definition, PhysicsWorld world)
     {
         this.world = world;
         

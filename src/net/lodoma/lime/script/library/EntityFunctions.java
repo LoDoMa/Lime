@@ -1,8 +1,8 @@
 package net.lodoma.lime.script.library;
 
 import net.lodoma.lime.world.World;
-import net.lodoma.lime.world.entity.BodyComponent;
-import net.lodoma.lime.world.entity.BodyComponentDefinition;
+import net.lodoma.lime.world.physics.PhysicsComponent;
+import net.lodoma.lime.world.physics.PhysicsComponentDefinition;
 
 import org.jbox2d.common.Vec2;
 import org.luaj.vm2.LuaError;
@@ -20,7 +20,7 @@ public class EntityFunctions
     public LimeLibrary library;
     public World world;
     
-    private BodyComponentDefinition bodyCompoDefinition;
+    private PhysicsComponentDefinition bodyCompoDefinition;
     
     private EntityFunctions(LimeLibrary library)
     {
@@ -55,7 +55,7 @@ public class EntityFunctions
             {
             case START_COMPONENT:
             {
-                bodyCompoDefinition = new BodyComponentDefinition();
+                bodyCompoDefinition = new PhysicsComponentDefinition();
                 break;
             }
             case ATTACH_COMPONENT:
@@ -65,7 +65,7 @@ public class EntityFunctions
                     throw new LuaError("attaching nonexistent body component");
                 
                 bodyCompoDefinition.create();
-                BodyComponent bodyCompo = new BodyComponent(bodyCompoDefinition, library.server.physicsWorld);
+                PhysicsComponent bodyCompo = new PhysicsComponent(bodyCompoDefinition, library.server.physicsWorld);
                 bodyCompoDefinition = null;
                 
                 int compoID = world.entityPool.get(entityID).body.components.add(bodyCompo);

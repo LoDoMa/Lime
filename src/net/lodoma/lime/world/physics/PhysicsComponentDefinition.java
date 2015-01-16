@@ -1,4 +1,4 @@
-package net.lodoma.lime.world.entity;
+package net.lodoma.lime.world.physics;
 
 import net.lodoma.lime.util.Vector2;
 
@@ -7,7 +7,7 @@ import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 
-public class BodyComponentDefinition
+public class PhysicsComponentDefinition
 {
     public Vector2 position = new Vector2(0.0f, 0.0f);
     public float angle;

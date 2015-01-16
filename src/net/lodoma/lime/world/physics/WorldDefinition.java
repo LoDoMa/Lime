@@ -1,4 +1,4 @@
-package net.lodoma.lime.world.entity.physics;
+package net.lodoma.lime.world.physics;
 
 import net.lodoma.lime.util.Vector2;
 

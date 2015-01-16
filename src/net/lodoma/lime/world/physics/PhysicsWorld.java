@@ -1,4 +1,4 @@
-package net.lodoma.lime.world.entity.physics;
+package net.lodoma.lime.world.physics;
 
 import org.jbox2d.dynamics.World;
 
