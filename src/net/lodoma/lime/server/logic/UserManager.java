@@ -54,7 +54,6 @@ public class UserManager implements ServerLogic
         users.put(user.getIdentifier(), user);
         userSet.add(user);
 
-        // TODO: OnJoin and OnLeave events are not thread safe! Random crashes WILL occur.
         server.emanPool.get(EMOnJoin.HASH).newEvent(user.getIdentifier());
         return true;
     }
