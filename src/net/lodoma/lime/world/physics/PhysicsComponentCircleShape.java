@@ -6,6 +6,11 @@ import org.jbox2d.collision.shapes.Shape;
 public class PhysicsComponentCircleShape extends PhysicsComponentShape
 {
     public float radius;
+
+    public void validate() throws InvalidPhysicsComponentException
+    {
+        if (radius < 0) throw new InvalidPhysicsComponentException("invalid component circle shape radius: negative");
+    }
     
     @Override
     public Shape newEngineInstance()

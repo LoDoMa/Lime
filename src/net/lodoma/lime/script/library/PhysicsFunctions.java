@@ -1,8 +1,10 @@
 package net.lodoma.lime.script.library;
 
+import net.lodoma.lime.util.Vector2;
 import net.lodoma.lime.world.physics.InvalidPhysicsComponentException;
 import net.lodoma.lime.world.physics.PhysicsComponent;
 import net.lodoma.lime.world.physics.PhysicsComponentCircleShape;
+import net.lodoma.lime.world.physics.PhysicsComponentPolygonShape;
 import net.lodoma.lime.world.physics.PhysicsComponentDefinition;
 import net.lodoma.lime.world.physics.PhysicsComponentShape;
 import net.lodoma.lime.world.physics.PhysicsComponentType;
@@ -107,6 +109,9 @@ public class PhysicsFunctions
                 case "circle":
                     shape = new PhysicsComponentCircleShape();
                     break;
+                case "polygon":
+                    shape = new PhysicsComponentPolygonShape();
+                    break;
                 default:
                     throw new LuaError("invalid physics component shape typename");
                 }
@@ -124,6 +129,24 @@ public class PhysicsFunctions
                 if (!(compoDefinition.shape instanceof PhysicsComponentCircleShape))
                     throw new LuaError("setting radius to non-circular shape");
                 ((PhysicsComponentCircleShape) compoDefinition.shape).radius = radius;
+                break;
+            }
+            case SET_SHAPE_VERTICES:
+            {
+                if ((args.narg() % 2) != 0)
+                    throw new LuaError("argument count to \"" + data.name + "\" must be even");
+                if (args.narg() < 6)
+                    throw new LuaError("insufficient arguments to \"" + data.name + "\", minimum of 6 required");
+
+                if (compoDefinition.shape == null)
+                    throw new LuaError("setting radius to nonexistent shape");
+                if (!(compoDefinition.shape instanceof PhysicsComponentPolygonShape))
+                    throw new LuaError("setting radius to non-polygonal shape");
+                
+                PhysicsComponentPolygonShape shape = (PhysicsComponentPolygonShape) compoDefinition.shape;
+                shape.vertices = new Vector2[args.narg() / 2];
+                for (int i = 0; i < args.narg() / 2; i++)
+                    shape.vertices[i] = new Vector2(args.arg(i * 2).checknumber().tofloat(), args.arg(i * 2 + 1).checknumber().tofloat());
                 break;
             }
             case SET_SHAPE_DENSITY:
@@ -207,6 +230,7 @@ public class PhysicsFunctions
         SET_COMPONENT_TYPE(1, true, "setComponentType"),
         SET_SHAPE_TYPE(1, true, "setShapeType"),
         SET_SHAPE_RADIUS(1, true, "setShapeRadius"),
+        SET_SHAPE_VERTICES(0, false, "setShapeVertices"),
         SET_SHAPE_DENSITY(1, true, "setShapeDensity"),
         SET_SHAPE_FRICTION(1, true, "setShapeFriction"),
         SET_SHAPE_RESTITUTION(1, true, "setShapeRestitution"),
