@@ -44,9 +44,11 @@ public class Game extends Stage
     @Override
     public void onEnd()
     {
-        client.worldRenderer.clean();
         if(client.isRunning())
+        {
+            client.worldRenderer.clean();
             client.close();
+        }
     }
     
     @Override

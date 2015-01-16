@@ -8,6 +8,7 @@ import net.lodoma.lime.util.Vector2;
 public class Text implements GUIElement
 {
     private static final int SIZE = 42;
+    private static TrueTypeFont font;
     
     private float x;
     private float y;
@@ -17,7 +18,6 @@ public class Text implements GUIElement
     private String text;
     private Color textColor;
     private String fontName;
-    private TrueTypeFont font;
     private int style;
     private int alignment;
     

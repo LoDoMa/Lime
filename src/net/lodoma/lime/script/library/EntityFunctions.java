@@ -1,8 +1,12 @@
 package net.lodoma.lime.script.library;
 
 import net.lodoma.lime.world.World;
+import net.lodoma.lime.world.physics.InvalidPhysicsComponentException;
 import net.lodoma.lime.world.physics.PhysicsComponent;
+import net.lodoma.lime.world.physics.PhysicsComponentCircleShape;
 import net.lodoma.lime.world.physics.PhysicsComponentDefinition;
+import net.lodoma.lime.world.physics.PhysicsComponentShape;
+import net.lodoma.lime.world.physics.PhysicsComponentType;
 
 import org.jbox2d.common.Vec2;
 import org.luaj.vm2.LuaError;
@@ -64,6 +68,15 @@ public class EntityFunctions
                 if (bodyCompoDefinition == null)
                     throw new LuaError("attaching nonexistent body component");
                 
+                try
+                {
+                    bodyCompoDefinition.validate();
+                }
+                catch (InvalidPhysicsComponentException e)
+                {
+                    throw new LuaError(e);
+                }
+                
                 bodyCompoDefinition.create();
                 PhysicsComponent bodyCompo = new PhysicsComponent(bodyCompoDefinition, library.server.physicsWorld);
                 bodyCompoDefinition = null;
@@ -84,13 +97,57 @@ public class EntityFunctions
                 bodyCompoDefinition.angle = angle;
                 break;
             }
+            case SET_COMPONENT_TYPE:
+            {
+                String typeName = args.arg(1).checkstring().tojstring();
+                if (bodyCompoDefinition == null)
+                    throw new LuaError("modifying nonexistent body component");
+                
+                switch (typeName)
+                {
+                case "dynamic": 
+                    bodyCompoDefinition.type = PhysicsComponentType.DYNAMIC;
+                    break;
+                case "kinematic": 
+                    bodyCompoDefinition.type = PhysicsComponentType.KINEMATIC;
+                    break;
+                case "static": 
+                    bodyCompoDefinition.type = PhysicsComponentType.STATIC;
+                    break;
+                default:
+                    throw new LuaError("invalid physics component typename");
+                }
+                break;
+            }
+            case SET_SHAPE_TYPE:
+            {
+                String typeName = args.arg(1).checkstring().tojstring();
+                if (bodyCompoDefinition == null)
+                    throw new LuaError("modifying nonexistent body component");
+                
+                PhysicsComponentShape shape = null;
+                switch (typeName)
+                {
+                case "circle":
+                    shape = new PhysicsComponentCircleShape();
+                    break;
+                default:
+                    throw new LuaError("invalid physics component shape typename");
+                }
+                bodyCompoDefinition.shape = shape;
+                break;
+            }
             case SET_SHAPE_RADIUS:
             {
                 float radius = args.arg(1).checknumber().tofloat();
                 if (bodyCompoDefinition == null)
                     throw new LuaError("modifying nonexistent body component");
-                
-                bodyCompoDefinition.radius = radius;
+
+                if (bodyCompoDefinition.shape == null)
+                    throw new LuaError("setting radius to nonexistent shape");
+                if (!(bodyCompoDefinition.shape instanceof PhysicsComponentCircleShape))
+                    throw new LuaError("setting radius to non-circular shape");
+                ((PhysicsComponentCircleShape) bodyCompoDefinition.shape).radius = radius;
                 break;
             }
             case SET_SHAPE_DENSITY:
@@ -150,6 +207,8 @@ public class EntityFunctions
         ATTACH_COMPONENT(1, true, "attachComponent"),
         SET_INITIAL_POSITION(2, true, "setInitialPosition"),
         SET_INITIAL_ANGLE(1, true, "setInitialAngle"),
+        SET_COMPONENT_TYPE(1, true, "setComponentType"),
+        SET_SHAPE_TYPE(1, true, "setShapeType"),
         SET_SHAPE_RADIUS(1, true, "setShapeRadius"),
         SET_SHAPE_DENSITY(1, true, "setShapeDensity"),
         SET_SHAPE_FRICTION(1, true, "setShapeFriction"),
