@@ -1,10 +1,12 @@
 package net.lodoma.lime.input;
 
-import java.nio.CharBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.lodoma.lime.client.window.Window;
 import net.lodoma.lime.util.Vector2;
 
+import org.lwjgl.glfw.GLFWCharCallback;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
@@ -30,6 +32,15 @@ public class Input
                 if (released)
                     inputData.liveKeyboardRepeated.put(key, (byte) 0);
             }
+        }
+    }
+    
+    public static class CharCallback extends GLFWCharCallback
+    {
+        @Override
+        public void invoke(long window, int codepoint)
+        {
+            liveCharacters.add((char) codepoint);
         }
     }
     
@@ -200,7 +211,6 @@ public class Input
         MOUSE_BUTTON_MIDDLE = MOUSE_BUTTON_3,
         SIZE_MOUSE          = MOUSE_BUTTON_8;
 
-    /** Joysticks. */
     public static final int
         JOYSTICK_1          = 0x0,
         JOYSTICK_2          = 0x1,
@@ -223,40 +233,15 @@ public class Input
     public static final int STATE_SIZE          = (int) Math.ceil(SIZE_KEYBOARD / 8.0) * 2 + (int) Math.ceil(SIZE_MOUSE / 8.0);
 
     public static InputData inputData;
-    public static CharBuffer chars;
-    
-    private static void loadChar(char c)
-    {
-        try
-        {
-            chars.put(Input.class.getField("KEY_" + Character.toUpperCase(c)).getInt(null), c);
-        }
-        catch(Exception e)
-        {
-            System.err.println("Error loading chars");
-            e.printStackTrace();
-            System.exit(1);
-        }
-    }
-    
-    private static void loadChars()
-    {
-        for(char i = 'a'; i <= 'z'; i++) loadChar(i);
-        for(char i = '0'; i <= '9'; i++) loadChar(i);
-        chars.put(KEY_SPACE, ' ');
-        chars.put(KEY_PERIOD, '.');
-        chars.put(KEY_COMMA, ',');
-    }
-    
-    public static void init()
-    {
-        chars = CharBuffer.allocate(SIZE_KEYBOARD);
-        loadChars();
-    }
+    public static List<Character> liveCharacters;
+    public static List<Character> currentCharacters;
     
     public static void update()
     {
         inputData.update();
+        
+        currentCharacters = liveCharacters;
+        liveCharacters = new ArrayList<Character>();
     }
     
     public static boolean getKey(int key)
@@ -299,8 +284,8 @@ public class Input
         return new Vector2(inputData.currentMousePosition.x, inputData.currentMousePosition.y);
     }
     
-    public static char getChar(int key)
+    public static List<Character> getCharList()
     {
-        return chars.get(key);
+        return currentCharacters;
     }
 }

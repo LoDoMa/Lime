@@ -1,5 +1,7 @@
 package net.lodoma.lime.gui;
 
+import java.util.List;
+
 import net.lodoma.lime.input.Input;
 import net.lodoma.lime.util.Vector2;
 
@@ -36,11 +38,10 @@ public class TextInput implements GUIElement
         
         String content = text.getText();
         
-        for(int i = 0; i < Input.SIZE_KEYBOARD; i++)
-            if(Input.getKeyRepeated(i))
-                if(Input.getChar(i) != 0)
-                    if(Input.getKey(Input.KEY_LEFT_SHIFT)) content += Character.toUpperCase(Input.getChar(i));
-                    else content += Input.getChar(i);
+        List<Character> pressedCharacters = Input.getCharList();
+        for (Character character : pressedCharacters)
+            content += character;
+        
         if(content.length() > 0 && Input.getKeyRepeated(Input.KEY_BACKSPACE))
             content = content.substring(0, content.length() - 1);
         

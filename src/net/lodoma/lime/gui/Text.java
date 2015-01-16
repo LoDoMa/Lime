@@ -72,7 +72,12 @@ public class Text implements GUIElement
     public void render()
     {
         if(font == null)
-            font = new TrueTypeFont(new Font(fontName, style, SIZE), true);
+        {
+            char[] additionalCharacters = new char[Character.MAX_VALUE - 256 + 1];
+            for (int i = 256; i <= Character.MAX_VALUE; i++)
+                additionalCharacters[i - 256] = (char) i;
+            font = new TrueTypeFont(new Font(fontName, style, SIZE), true, additionalCharacters);
+        }
         textColor.setGL();
         font.drawString(x, y, text, sx, sy, alignment);
     }

@@ -7,6 +7,7 @@ import net.lodoma.lime.input.InputData;
 import net.lodoma.lime.shader.Program;
 import net.lodoma.lime.util.Vector2;
 
+import org.lwjgl.glfw.GLFWCharCallback;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
@@ -35,6 +36,7 @@ public class Window
     public static long windowHandle;
     // Callbacks MUST be strongly referenced
     public static GLFWKeyCallback keyCallback;
+    public static GLFWCharCallback charCallback;
     public static GLFWMouseButtonCallback mouseCallback;
     public static GLFWCursorPosCallback motionCallback;
     public static GLFWWindowSizeCallback resizeCallback;
@@ -58,7 +60,6 @@ public class Window
             throw new WindowException("Failed to create GLFW window");
         
         Input.inputData = new InputData();
-        Input.init();
         
         setCallbacks();
         
@@ -195,6 +196,7 @@ public class Window
     public static void setCallbacks()
     {
         keyCallback = new Input.KeyCallback();
+        charCallback = new Input.CharCallback();
         mouseCallback = new Input.MouseCallback();
         motionCallback = new Input.MotionCallback();
         resizeCallback = new GLFWWindowSizeCallback()
@@ -211,6 +213,7 @@ public class Window
         };
         
         glfwSetKeyCallback(windowHandle, keyCallback);
+        glfwSetCharCallback(windowHandle, charCallback);
         glfwSetMouseButtonCallback(windowHandle, mouseCallback);
         glfwSetCursorPosCallback(windowHandle, motionCallback);
         glfwSetWindowSizeCallback(windowHandle, resizeCallback);
@@ -219,6 +222,7 @@ public class Window
     public static void releaseCallbacks()
     {
         keyCallback.release();
+        charCallback.release();
         mouseCallback.release();
         motionCallback.release();
         resizeCallback.release();
