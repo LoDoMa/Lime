@@ -12,7 +12,6 @@ import net.lodoma.lime.gui.ToggleListener;
 import net.lodoma.lime.gui.simple.SimpleButton;
 import net.lodoma.lime.gui.simple.SimpleSlider;
 import net.lodoma.lime.gui.simple.SimpleToggle;
-import net.lodoma.lime.security.Credentials;
 import net.lodoma.lime.util.Vector2;
 
 public class OptionsMenuPopulator implements MenuPopulator
@@ -71,19 +70,18 @@ public class OptionsMenuPopulator implements MenuPopulator
         @Override
         public void onClick(Button button, Vector2 mousePosition)
         {
-            menu.setPopulator(new MainMenuPopulator(credentials));
+            menu.setPopulator(new MainMenuPopulator());
         }
         
         @Override
         public void onHover(Button button, Vector2 mousePosition) {}
     }
     
-    private Credentials credentials;
     private Menu menu;
     
-    public OptionsMenuPopulator(Credentials credentials)
+    public OptionsMenuPopulator()
     {
-        this.credentials = credentials;
+        
     }
     
     @Override

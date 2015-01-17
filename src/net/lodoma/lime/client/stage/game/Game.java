@@ -5,7 +5,6 @@ import net.lodoma.lime.client.ClientConnectionException;
 import net.lodoma.lime.client.stage.Stage;
 import net.lodoma.lime.client.stage.StageManager;
 import net.lodoma.lime.input.Input;
-import net.lodoma.lime.security.Credentials;
 
 public class Game extends Stage
 {
@@ -13,7 +12,7 @@ public class Game extends Stage
     
     private String host;
     
-    public Game(StageManager manager, String host, Credentials credentials)
+    public Game(StageManager manager, String host)
     {
         super(manager);
         this.host = host;

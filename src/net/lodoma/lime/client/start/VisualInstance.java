@@ -4,7 +4,8 @@ import java.awt.Font;
 import java.io.File;
 
 import net.lodoma.lime.client.stage.StageManager;
-import net.lodoma.lime.client.stage.login.Login;
+import net.lodoma.lime.client.stage.menu.MainMenuPopulator;
+import net.lodoma.lime.client.stage.menu.Menu;
 import net.lodoma.lime.client.window.Window;
 import net.lodoma.lime.client.window.WindowException;
 import net.lodoma.lime.gui.Color;
@@ -47,7 +48,7 @@ public class VisualInstance
     
     private void loop()
     {
-        new Login(stageManager).startStage();
+        new Menu(stageManager, new MainMenuPopulator()).startStage();
 
         Timer timer = new Timer();
 

@@ -7,7 +7,6 @@ import net.lodoma.lime.gui.GUIContainer;
 import net.lodoma.lime.gui.Rectangle;
 import net.lodoma.lime.gui.simple.SimpleButton;
 import net.lodoma.lime.gui.simple.SimpleTextField;
-import net.lodoma.lime.security.Credentials;
 import net.lodoma.lime.util.Vector2;
 
 public class MultiplayerMenuPopulator implements MenuPopulator
@@ -17,7 +16,7 @@ public class MultiplayerMenuPopulator implements MenuPopulator
         @Override
         public void onClick(Button button, Vector2 mousePosition)
         {
-            new Game(menu.getManager(), hostField.getText(), credentials).startStage();
+            new Game(menu.getManager(), hostField.getText()).startStage();
         }
         
         @Override
@@ -29,21 +28,20 @@ public class MultiplayerMenuPopulator implements MenuPopulator
         @Override
         public void onClick(Button button, Vector2 mousePosition)
         {
-            menu.setPopulator(new MainMenuPopulator(credentials));
+            menu.setPopulator(new MainMenuPopulator());
         }
         
         @Override
         public void onHover(Button button, Vector2 mousePosition) {}
     }
     
-    private Credentials credentials;
     private Menu menu;
     
     private SimpleTextField hostField;
     
-    public MultiplayerMenuPopulator(Credentials credentials)
+    public MultiplayerMenuPopulator()
     {
-        this.credentials = credentials;
+        
     }
     
     @Override
