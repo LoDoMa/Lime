@@ -22,4 +22,10 @@ public class Pipe
     {
         return outputStream;
     }
+    
+    public void close() throws IOException
+    {
+        inputStream.close();
+        outputStream.close();
+    }
 }

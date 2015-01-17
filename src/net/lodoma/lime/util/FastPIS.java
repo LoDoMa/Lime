@@ -5,11 +5,24 @@ import java.io.InputStream;
 
 public class FastPIS extends InputStream
 {
+    boolean closed = false;
     byte[] buffer = new byte[1024];
     int readpos = 0;
     int readlap = 0;
     int writepos = 0;
     int writelap = 0;
+    
+    @Override
+    public void close() throws IOException
+    {
+        super.close();
+        
+        synchronized (buffer)
+        {
+            closed = true;
+            buffer.notifyAll();
+        }
+    }
     
     @Override
     public int available() throws IOException
@@ -43,6 +56,8 @@ public class FastPIS extends InputStream
                 try
                 {
                     buffer.wait();
+                    if (closed)
+                        throw new IOException("broken pipe");
                 }
                 catch(InterruptedException e)
                 {

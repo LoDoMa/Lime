@@ -13,6 +13,18 @@ public class FastPOS extends OutputStream
     }
     
     @Override
+    public void close() throws IOException
+    {
+        super.close();
+        
+        synchronized (sink.buffer)
+        {
+            sink.closed = true;
+            sink.buffer.notifyAll();
+        }
+    }
+    
+    @Override
     public void write(int b) throws IOException
     {
         write(new byte[] { (byte) b }, 0, 1);
@@ -34,6 +46,8 @@ public class FastPOS extends OutputStream
                 try
                 {
                     sink.buffer.wait();
+                    if (sink.closed)
+                        throw new IOException("broken pipe");
                 }
                 catch(InterruptedException e)
                 {

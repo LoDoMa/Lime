@@ -118,6 +118,7 @@ public class Client
         
         try
         {
+            pipe.close();
             socket.close();
         }
         catch (IOException e)
