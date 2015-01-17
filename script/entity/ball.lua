@@ -32,10 +32,17 @@ function Lime_Update(entityID, timeDelta)
 	lime.setInputData(userID[entityID])
 
 	lime.selectEntityComponent(entityID, compoID[entityID])
-	if lime.getKeyState(lime.KEY_W) then lime.applyForceToCenter(0.0, 4.0) end
-	if lime.getKeyState(lime.KEY_A) then lime.applyForceToCenter(-4.0, 0.0) end
-	if lime.getKeyState(lime.KEY_S) then lime.applyForceToCenter(0.0, -4.0) end
-	if lime.getKeyState(lime.KEY_D) then lime.applyForceToCenter(4.0, 0.0) end
+	if lime.getKeyState(lime.KEY_LEFT_SHIFT) then
+		if lime.getKeyState(lime.KEY_W) then lime.applyLinearImpulseToCenter(0.0, 1.0) end
+		if lime.getKeyState(lime.KEY_A) then lime.applyLinearImpulseToCenter(-1.0, 0.0) end
+		if lime.getKeyState(lime.KEY_S) then lime.applyLinearImpulseToCenter(0.0, -1.0) end
+		if lime.getKeyState(lime.KEY_D) then lime.applyLinearImpulseToCenter(1.0, 0.0) end
+	else
+		if lime.getKeyState(lime.KEY_W) then lime.applyForceToCenter(0.0, 4.0) end
+		if lime.getKeyState(lime.KEY_A) then lime.applyForceToCenter(-4.0, 0.0) end
+		if lime.getKeyState(lime.KEY_S) then lime.applyForceToCenter(0.0, -4.0) end
+		if lime.getKeyState(lime.KEY_D) then lime.applyForceToCenter(4.0, 0.0) end
+	end
 end
 
 function Lime_Clean(entityID)

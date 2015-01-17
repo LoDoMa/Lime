@@ -251,6 +251,28 @@ public class PhysicsFunctions
                 compo.engineBody.applyForceToCenter(new Vec2(forceX, forceY));
                 break;
             }
+            case APPLY_ANGULAR_IMPULSE:
+            {
+                float impulse = args.arg(1).checknumber().tofloat();
+                compo.engineBody.applyAngularImpulse(impulse);
+                break;
+            }
+            case APPLY_LINEAR_IMPULSE:
+            {
+                float impulseX = args.arg(1).checknumber().tofloat();
+                float impulseY = args.arg(2).checknumber().tofloat();
+                float pointX = args.arg(3).checknumber().tofloat();
+                float pointY = args.arg(4).checknumber().tofloat();
+                compo.engineBody.applyLinearImpulse(new Vec2(impulseX, impulseY), new Vec2(pointX, pointY));
+                break;
+            }
+            case APPLY_LINEAR_IMPULSE_TO_CENTER:
+            {
+                float impulseX = args.arg(1).checknumber().tofloat();
+                float impulseY = args.arg(2).checknumber().tofloat();
+                compo.engineBody.applyLinearImpulse(new Vec2(impulseX, impulseY), compo.engineBody.getLocalCenter());
+                break;
+            }
             }
             return LuaValue.NONE;
         }
@@ -275,7 +297,10 @@ public class PhysicsFunctions
         GET_LINEAR_VELOCITY(0, true, "getLinearVelocity"),
         SET_LINEAR_VELOCITY(2, true, "setLinearVelocity"),
         APPLY_FORCE(4, true, "applyForce"),
-        APPLY_FORCE_TO_CENTER(2, true, "applyForceToCenter");
+        APPLY_FORCE_TO_CENTER(2, true, "applyForceToCenter"),
+        APPLY_ANGULAR_IMPULSE(1, true, "applyAngularImpulse"),
+        APPLY_LINEAR_IMPULSE(4, true, "applyLinearImpulse"),
+        APPLY_LINEAR_IMPULSE_TO_CENTER(2, true, "applyLinearImpulseToCenter");
         
         public int argc;
         public boolean argcexact;
