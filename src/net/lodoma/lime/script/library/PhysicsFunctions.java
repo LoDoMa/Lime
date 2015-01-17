@@ -235,6 +235,22 @@ public class PhysicsFunctions
                 compo.engineBody.setLinearVelocity(new Vec2(velocityX, velocityY));
                 break;
             }
+            case APPLY_FORCE:
+            {
+                float forceX = args.arg(1).checknumber().tofloat();
+                float forceY = args.arg(2).checknumber().tofloat();
+                float pointX = args.arg(3).checknumber().tofloat();
+                float pointY = args.arg(4).checknumber().tofloat();
+                compo.engineBody.applyForce(new Vec2(forceX, forceY), new Vec2(pointX, pointY));
+                break;
+            }
+            case APPLY_FORCE_TO_CENTER:
+            {
+                float forceX = args.arg(1).checknumber().tofloat();
+                float forceY = args.arg(2).checknumber().tofloat();
+                compo.engineBody.applyForceToCenter(new Vec2(forceX, forceY));
+                break;
+            }
             }
             return LuaValue.NONE;
         }
@@ -257,7 +273,9 @@ public class PhysicsFunctions
         
         SELECT_ENTITY_COMPONENT(2, true, "selectEntityComponent"),
         GET_LINEAR_VELOCITY(0, true, "getLinearVelocity"),
-        SET_LINEAR_VELOCITY(2, true, "setLinearVelocity");
+        SET_LINEAR_VELOCITY(2, true, "setLinearVelocity"),
+        APPLY_FORCE(4, true, "applyForce"),
+        APPLY_FORCE_TO_CENTER(2, true, "applyForceToCenter");
         
         public int argc;
         public boolean argcexact;

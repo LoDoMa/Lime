@@ -21,7 +21,7 @@ function Lime_Init(entityID)
 	lime.setShapeRadius(radius)
 	lime.setShapeDensity(2.3)
 	lime.setShapeFriction(0.3)
-	lime.setShapeRestitution(1.0)
+	lime.setShapeRestitution(0.3)
 	compoID[entityID] = lime.attachComponentToEntity(entityID)
 
 	lime.selectEntityComponent(entityID, compoID[entityID])
@@ -32,13 +32,10 @@ function Lime_Update(entityID, timeDelta)
 	lime.setInputData(userID[entityID])
 
 	lime.selectEntityComponent(entityID, compoID[entityID])
-	local velx, vely = lime.getLinearVelocity()
-	if lime.getKeyState(lime.KEY_W) then vely = vely + 0.1 end
-	if lime.getKeyState(lime.KEY_A) then velx = velx - 0.1 end
-	if lime.getKeyState(lime.KEY_S) then vely = vely - 0.1 end
-	if lime.getKeyState(lime.KEY_D) then velx = velx + 0.1 end
-
-	lime.setLinearVelocity(velx, vely)
+	if lime.getKeyState(lime.KEY_W) then lime.applyForceToCenter(0.0, 4.0) end
+	if lime.getKeyState(lime.KEY_A) then lime.applyForceToCenter(-4.0, 0.0) end
+	if lime.getKeyState(lime.KEY_S) then lime.applyForceToCenter(0.0, -4.0) end
+	if lime.getKeyState(lime.KEY_D) then lime.applyForceToCenter(4.0, 0.0) end
 end
 
 function Lime_Clean(entityID)

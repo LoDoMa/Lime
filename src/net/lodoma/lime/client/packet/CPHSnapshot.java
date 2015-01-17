@@ -38,14 +38,17 @@ public class CPHSnapshot extends ClientPacketHandler
         while ((removedLightCount--) != 0)
             snapshot.removedLights.add(inputStream.readInt());
 
-        int terrainCount = inputStream.readInt();
-        client.world.terrain.componentSnapshots = new PhysicsComponentSnapshot[terrainCount];
-        for (int i = 0; i < terrainCount; i++)
+        synchronized (client.world.terrain.updateLock)
         {
-            @SuppressWarnings("unused")
-            int identifier = inputStream.readInt();
-            client.world.terrain.componentSnapshots[i] = new PhysicsComponentSnapshot();
-            client.world.terrain.componentSnapshots[i].read(inputStream);
+            int terrainCount = inputStream.readInt();
+            client.world.terrain.componentSnapshots = new PhysicsComponentSnapshot[terrainCount];
+            for (int i = 0; i < terrainCount; i++)
+            {
+                @SuppressWarnings("unused")
+                int identifier = inputStream.readInt();
+                client.world.terrain.componentSnapshots[i] = new PhysicsComponentSnapshot();
+                client.world.terrain.componentSnapshots[i].read(inputStream);
+            }
         }
             
         int shapeCount = inputStream.readInt();

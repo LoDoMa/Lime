@@ -6,6 +6,8 @@ import net.lodoma.lime.world.physics.PhysicsComponentSnapshot;
 
 public class Terrain
 {
+    public Object updateLock = new Object();
+    
     public IdentityPool<PhysicsComponent> physicalComponents;
     public PhysicsComponentSnapshot[] componentSnapshots;
     
@@ -16,7 +18,13 @@ public class Terrain
     
     public void debugRender()
     {
-        for (PhysicsComponentSnapshot snapshot : componentSnapshots)
-            snapshot.debugRender();
+        if (componentSnapshots == null)
+            return;
+        
+        synchronized (updateLock)
+        {
+            for (PhysicsComponentSnapshot snapshot : componentSnapshots)
+                snapshot.debugRender();
+        }
     }
 }
