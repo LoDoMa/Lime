@@ -66,7 +66,7 @@ public class PhysicsComponent implements Identifiable<Integer>
         case POLYGON:
         {
             Vec2[] engineVertices = ((PolygonShape) engineFixture.m_shape).m_vertices;
-            snapshot.vertices = new Vector2[engineVertices.length];
+            snapshot.vertices = new Vector2[((PolygonShape) engineFixture.m_shape).m_count];
             for (int i = 0; i < snapshot.vertices.length; i++)
                 snapshot.vertices[i] = new Vector2(engineVertices[i].x, engineVertices[i].y);
             break;

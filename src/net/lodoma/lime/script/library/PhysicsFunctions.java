@@ -146,7 +146,7 @@ public class PhysicsFunctions
                 PhysicsComponentPolygonShape shape = (PhysicsComponentPolygonShape) compoDefinition.shape;
                 shape.vertices = new Vector2[args.narg() / 2];
                 for (int i = 0; i < args.narg() / 2; i++)
-                    shape.vertices[i] = new Vector2(args.arg(i * 2).checknumber().tofloat(), args.arg(i * 2 + 1).checknumber().tofloat());
+                    shape.vertices[i] = new Vector2(args.arg(i * 2 + 1).checknumber().tofloat(), args.arg(i * 2 + 2).checknumber().tofloat());
                 break;
             }
             case SET_SHAPE_DENSITY:

@@ -28,6 +28,19 @@ local function onLeave(userID)
 	print("removed player for user [ID=" .. userID .. "]")
 end
 
+local function addBox(x, y, w, h)
+	lime.startComponent()
+	lime.setInitialPosition(0.0, 0.0)
+	lime.setInitialAngle(0.0)
+	lime.setComponentType("static")
+	lime.setShapeType("polygon")
+	lime.setShapeVertices(x, y, x + w, y, x + w, y + h, x, y + h)
+	lime.setShapeDensity(0.0)
+	lime.setShapeFriction(0.0)
+	lime.setShapeRestitution(0.0)
+	local compoID = lime.attachComponentToTerrain()
+end
+
 local function init()
 	for i = 1, 10, 1 do
 		local posx, posy = (math.random() - 0.0) * 20, (math.random() - 0.0) * 20
@@ -44,16 +57,26 @@ local function init()
 	lime.addEventListener("Lime::OnJoin", onJoin)
 	lime.addEventListener("Lime::OnLeave", onLeave)
 
-	lime.startComponent()
-	lime.setInitialPosition(2.0, 2.0)
-	lime.setInitialAngle(0.0)
-	lime.setComponentType("static")
-	lime.setShapeType("circle")
-	lime.setShapeRadius(0.75)
-	lime.setShapeDensity(0.0)
-	lime.setShapeFriction(0.0)
-	lime.setShapeRestitution(0.0)
-	local compoID = lime.attachComponentToTerrain()
+	addBox(0.0, 0.0, 0.1, 20.0)
+	addBox(20.0, 0.0, 0.1, 20.0)
+	addBox(0.0, 0.0, 20.0, 0.1)
+	addBox(0.0, 20.0, 20.0, 0.1)
+
+	for i = 1, 20 do
+		local posx, posy = (math.random() - 0.0) * 20, (math.random() - 0.0) * 20
+		local radius = 0.25 + math.random() * 0.5
+
+		lime.startComponent()
+		lime.setInitialPosition(posx, posy)
+		lime.setInitialAngle(0.0)
+		lime.setComponentType("static")
+		lime.setShapeType("circle")
+		lime.setShapeRadius(radius)
+		lime.setShapeDensity(0.0)
+		lime.setShapeFriction(0.0)
+		lime.setShapeRestitution(0.0)
+		local compoID = lime.attachComponentToTerrain()
+	end
 end
 
 function Lime_Update(timeDelta)
