@@ -158,7 +158,7 @@ public class PhysicsFunctions
                     shape.vertices[i] = new Vector2(args.arg(i * 2 + 1).checknumber().tofloat(), args.arg(i * 2 + 2).checknumber().tofloat());
                 break;
             }
-            case SET_SHAPE_DENSITY:
+            case SET_COMPONENT_DENSITY:
             {
                 float density = args.arg(1).checknumber().tofloat();
                 if (compoDefinition == null)
@@ -167,7 +167,7 @@ public class PhysicsFunctions
                 compoDefinition.density = density;
                 break;
             }
-            case SET_SHAPE_FRICTION:
+            case SET_COMPONENT_FRICTION:
             {
                 float friction = args.arg(1).checknumber().tofloat();
                 if (compoDefinition == null)
@@ -176,7 +176,7 @@ public class PhysicsFunctions
                 compoDefinition.friction = friction;
                 break;
             }
-            case SET_SHAPE_RESTITUTION:
+            case SET_COMPONENT_RESTITUTION:
             {
                 float restitution = args.arg(1).checknumber().tofloat();
                 if (compoDefinition == null)
@@ -296,9 +296,9 @@ public class PhysicsFunctions
         SET_SHAPE_TYPE(1, true, "setShapeType"),
         SET_SHAPE_RADIUS(1, true, "setShapeRadius"),
         SET_SHAPE_VERTICES(0, false, "setShapeVertices"),
-        SET_SHAPE_DENSITY(1, true, "setShapeDensity"),
-        SET_SHAPE_FRICTION(1, true, "setShapeFriction"),
-        SET_SHAPE_RESTITUTION(1, true, "setShapeRestitution"),
+        SET_COMPONENT_DENSITY(1, true, "setComponentDensity"),
+        SET_COMPONENT_FRICTION(1, true, "setComponentFriction"),
+        SET_COMPONENT_RESTITUTION(1, true, "setComponentRestitution"),
         ATTACH_COMPONENT_TO_ENTITY(1, true, "attachComponentToEntity"),
         ATTACH_COMPONENT_TO_TERRAIN(0, true, "attachComponentToTerrain"),
         
