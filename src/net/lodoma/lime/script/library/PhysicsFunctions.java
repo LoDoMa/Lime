@@ -240,6 +240,8 @@ public class PhysicsFunctions
             }
             case GET_LINEAR_VELOCITY:
             {
+                if (compo == null)
+                    throw new LuaError("manipulating nonexistent body component");
                 Vec2 velocity = compo.engineBody.getLinearVelocity();
                 return LuaValue.varargsOf(new LuaValue[] { LuaValue.valueOf(velocity.x), LuaValue.valueOf(velocity.y) });
             }
@@ -247,6 +249,8 @@ public class PhysicsFunctions
             {
                 float velocityX = args.arg(1).checknumber().tofloat();
                 float velocityY = args.arg(2).checknumber().tofloat();
+                if (compo == null)
+                    throw new LuaError("manipulating nonexistent body component");
                 compo.engineBody.setLinearVelocity(new Vec2(velocityX, velocityY));
                 break;
             }
@@ -256,6 +260,8 @@ public class PhysicsFunctions
                 float forceY = args.arg(2).checknumber().tofloat();
                 float pointX = args.arg(3).checknumber().tofloat();
                 float pointY = args.arg(4).checknumber().tofloat();
+                if (compo == null)
+                    throw new LuaError("manipulating nonexistent body component");
                 compo.engineBody.applyForce(new Vec2(forceX, forceY), new Vec2(pointX, pointY));
                 break;
             }
@@ -263,12 +269,16 @@ public class PhysicsFunctions
             {
                 float forceX = args.arg(1).checknumber().tofloat();
                 float forceY = args.arg(2).checknumber().tofloat();
+                if (compo == null)
+                    throw new LuaError("manipulating nonexistent body component");
                 compo.engineBody.applyForceToCenter(new Vec2(forceX, forceY));
                 break;
             }
             case APPLY_ANGULAR_IMPULSE:
             {
                 float impulse = args.arg(1).checknumber().tofloat();
+                if (compo == null)
+                    throw new LuaError("manipulating nonexistent body component");
                 compo.engineBody.applyAngularImpulse(impulse);
                 break;
             }
@@ -278,6 +288,8 @@ public class PhysicsFunctions
                 float impulseY = args.arg(2).checknumber().tofloat();
                 float pointX = args.arg(3).checknumber().tofloat();
                 float pointY = args.arg(4).checknumber().tofloat();
+                if (compo == null)
+                    throw new LuaError("manipulating nonexistent body component");
                 compo.engineBody.applyLinearImpulse(new Vec2(impulseX, impulseY), new Vec2(pointX, pointY));
                 break;
             }
@@ -285,6 +297,8 @@ public class PhysicsFunctions
             {
                 float impulseX = args.arg(1).checknumber().tofloat();
                 float impulseY = args.arg(2).checknumber().tofloat();
+                if (compo == null)
+                    throw new LuaError("manipulating nonexistent body component");
                 compo.engineBody.applyLinearImpulse(new Vec2(impulseX, impulseY), compo.engineBody.getLocalCenter());
                 break;
             }
