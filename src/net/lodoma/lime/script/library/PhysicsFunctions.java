@@ -148,9 +148,9 @@ public class PhysicsFunctions
                 if (compoDefinition == null)
                     throw new LuaError("modifying nonexistent body component");
                 if (compoDefinition.shape == null)
-                    throw new LuaError("setting radius to nonexistent shape");
+                    throw new LuaError("setting vertices to nonexistent shape");
                 if (!(compoDefinition.shape instanceof PhysicsComponentPolygonShape))
-                    throw new LuaError("setting radius to non-polygonal shape");
+                    throw new LuaError("setting vertices to non-polygonal shape");
                 
                 PhysicsComponentPolygonShape shape = (PhysicsComponentPolygonShape) compoDefinition.shape;
                 shape.vertices = new Vector2[args.narg() / 2];
