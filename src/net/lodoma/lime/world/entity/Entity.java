@@ -13,6 +13,7 @@ import net.lodoma.lime.script.library.PhysicsFunctions;
 import net.lodoma.lime.script.library.UtilFunctions;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.util.Identifiable;
+import net.lodoma.lime.util.OsHelper;
 import net.lodoma.lime.world.World;
 
 public class Entity implements Identifiable<Integer>
@@ -67,7 +68,7 @@ public class Entity implements Identifiable<Integer>
         
         try
         {
-            script.load(new File("./script/entity/" + scriptName + ".lua"));
+            script.load(new File(OsHelper.JARPATH + "script/entity/" + scriptName + ".lua"));
         }
         catch (IOException e)
         {

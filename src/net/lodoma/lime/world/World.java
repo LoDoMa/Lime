@@ -19,6 +19,7 @@ import net.lodoma.lime.server.Server;
 import net.lodoma.lime.shader.light.Light;
 import net.lodoma.lime.shader.light.LightData;
 import net.lodoma.lime.util.IdentityPool;
+import net.lodoma.lime.util.OsHelper;
 import net.lodoma.lime.world.entity.Entity;
 import net.lodoma.lime.world.entity.EntityShape;
 
@@ -57,7 +58,7 @@ public class World
         AttributeFunctions.addToLibrary(library);
         
         gamemode = new LuaScript(library);
-        gamemode.load(new File("./script/world/" + filepath + ".lua"));
+        gamemode.load(new File(OsHelper.JARPATH + "script/world/" + filepath + ".lua"));
     }
     
     public void init()

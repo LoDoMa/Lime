@@ -3,6 +3,8 @@ package net.lodoma.lime.shader;
 import java.io.File;
 import java.nio.FloatBuffer;
 
+import net.lodoma.lime.util.OsHelper;
+
 import org.lwjgl.opengl.GL20;
 
 public class Program
@@ -19,20 +21,20 @@ public class Program
     
     public static void createAll()
     {
-        menuVS = new Shader(new File("shader/menu.vs"), ShaderType.VERTEX);
-        menuFS = new Shader(new File("shader/menu.fs"), ShaderType.FRAGMENT);
+        menuVS = new Shader(new File(OsHelper.JARPATH + "shader/menu.vs"), ShaderType.VERTEX);
+        menuFS = new Shader(new File(OsHelper.JARPATH + "shader/menu.fs"), ShaderType.FRAGMENT);
         menuProgram = new Program(menuVS, menuFS);
         
-        lightVS = new Shader(new File("shader/light.vs"), ShaderType.VERTEX);
-        lightFS = new Shader(new File("shader/light.fs"), ShaderType.FRAGMENT);
+        lightVS = new Shader(new File(OsHelper.JARPATH + "shader/light.vs"), ShaderType.VERTEX);
+        lightFS = new Shader(new File(OsHelper.JARPATH + "shader/light.fs"), ShaderType.FRAGMENT);
         lightProgram = new Program(lightVS, lightFS);
         
-        worldVS = new Shader(new File("shader/world.vs"), ShaderType.VERTEX);
-        worldFS = new Shader(new File("shader/world.fs"), ShaderType.FRAGMENT);
+        worldVS = new Shader(new File(OsHelper.JARPATH + "shader/world.vs"), ShaderType.VERTEX);
+        worldFS = new Shader(new File(OsHelper.JARPATH + "shader/world.fs"), ShaderType.FRAGMENT);
         worldProgram = new Program(worldVS, worldFS);
         
-        copyVS = new Shader(new File("shader/copy.vs"), ShaderType.VERTEX);
-        copyFS = new Shader(new File("shader/copy.fs"), ShaderType.FRAGMENT);
+        copyVS = new Shader(new File(OsHelper.JARPATH + "shader/copy.vs"), ShaderType.VERTEX);
+        copyFS = new Shader(new File(OsHelper.JARPATH + "shader/copy.fs"), ShaderType.FRAGMENT);
         copyProgram = new Program(copyVS, copyFS);
     }
     

@@ -12,6 +12,7 @@ import net.lodoma.lime.gui.Color;
 import net.lodoma.lime.gui.Text;
 import net.lodoma.lime.texture.Texture;
 import net.lodoma.lime.util.FontHelper;
+import net.lodoma.lime.util.OsHelper;
 import net.lodoma.lime.util.Timer;
 import net.lodoma.lime.util.TrueTypeFont;
 import net.lodoma.lime.util.Vector2;
@@ -41,7 +42,7 @@ public class VisualInstance
         }
         
         Texture.init();
-        FontHelper.registerFont(new File("fonts/mytype.ttf"));
+        FontHelper.registerFont(new File(OsHelper.JARPATH + "fonts/mytype.ttf"));
         
         stageManager = new StageManager();
     }
