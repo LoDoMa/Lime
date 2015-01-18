@@ -309,7 +309,7 @@ public class PhysicsFunctions
         ATTACH_COMPONENT_TO_TERRAIN(0, true, "attachComponentToTerrain"),
 
         SELECT_ENTITY_COMPONENT(2, true, "selectEntityComponent"),
-        SELECT_TERRAIN_COMPONENT(2, true, "selectTerrainComponent"),
+        SELECT_TERRAIN_COMPONENT(1, true, "selectTerrainComponent"),
         GET_LINEAR_VELOCITY(0, true, "getLinearVelocity"),
         SET_LINEAR_VELOCITY(2, true, "setLinearVelocity"),
         APPLY_FORCE(4, true, "applyForce"),
