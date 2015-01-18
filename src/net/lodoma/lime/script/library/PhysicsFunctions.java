@@ -66,12 +66,16 @@ public class PhysicsFunctions
             {
                 float positionX = args.arg(1).checknumber().tofloat();
                 float positionY = args.arg(2).checknumber().tofloat();
+                if (compoDefinition == null)
+                    throw new LuaError("modifying nonexistent body component");
                 compoDefinition.position.set(positionX, positionY);
                 break;
             }
             case SET_INITIAL_ANGLE:
             {
                 float angle = args.arg(1).checknumber().tofloat();
+                if (compoDefinition == null)
+                    throw new LuaError("modifying nonexistent body component");
                 compoDefinition.angle = angle;
                 break;
             }
