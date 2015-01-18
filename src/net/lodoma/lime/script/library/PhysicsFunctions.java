@@ -9,6 +9,7 @@ import net.lodoma.lime.world.physics.PhysicsComponentDefinition;
 import net.lodoma.lime.world.physics.PhysicsComponentShape;
 import net.lodoma.lime.world.physics.PhysicsComponentType;
 
+import org.jbox2d.common.Settings;
 import org.jbox2d.common.Vec2;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaValue;
@@ -141,7 +142,11 @@ public class PhysicsFunctions
                     throw new LuaError("argument count to \"" + data.name + "\" must be even");
                 if (args.narg() < 6)
                     throw new LuaError("insufficient arguments to \"" + data.name + "\", minimum of 6 required");
+                if (args.narg() > Settings.maxPolygonVertices * 2)
+                    throw new LuaError("too many arguments to \"" + data.name + "\", maximum vertex count " + Settings.maxPolygonVertices);
 
+                if (compoDefinition == null)
+                    throw new LuaError("modifying nonexistent body component");
                 if (compoDefinition.shape == null)
                     throw new LuaError("setting radius to nonexistent shape");
                 if (!(compoDefinition.shape instanceof PhysicsComponentPolygonShape))
