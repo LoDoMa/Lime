@@ -232,6 +232,12 @@ public class PhysicsFunctions
                 compo = library.server.world.entityPool.get(entityID).body.components.get(compoID);
                 break;
             }
+            case SELECT_TERRAIN_COMPONENT:
+            {
+                int compoID = args.arg(1).checkint();
+                compo = library.server.world.terrain.physicalComponents.get(compoID);
+                break;
+            }
             case GET_LINEAR_VELOCITY:
             {
                 Vec2 velocity = compo.engineBody.getLinearVelocity();
@@ -301,8 +307,9 @@ public class PhysicsFunctions
         SET_COMPONENT_RESTITUTION(1, true, "setComponentRestitution"),
         ATTACH_COMPONENT_TO_ENTITY(1, true, "attachComponentToEntity"),
         ATTACH_COMPONENT_TO_TERRAIN(0, true, "attachComponentToTerrain"),
-        
+
         SELECT_ENTITY_COMPONENT(2, true, "selectEntityComponent"),
+        SELECT_TERRAIN_COMPONENT(2, true, "selectTerrainComponent"),
         GET_LINEAR_VELOCITY(0, true, "getLinearVelocity"),
         SET_LINEAR_VELOCITY(2, true, "setLinearVelocity"),
         APPLY_FORCE(4, true, "applyForce"),
