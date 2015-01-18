@@ -61,30 +61,35 @@ public class LuaScript
 		LuaValue chunk = globals.load(source, chunkname);
 		chunk.call();
 	}
-	
+    
     public void call(String functionPath, Object[] arguments)
     {
-    	if(arguments == null)
+        String[] segm = functionPath.split("\\.");
+        
+        LuaTable table = globals;
+        for (int i = 0; i < segm.length - 1; i++)
+        {
+            LuaValue newTable = table.get(segm[i]);
+            table = newTable.checktable();
+        }
+        
+        LuaValue functionValue = table.get(segm[segm.length - 1]);
+        LuaFunction function = functionValue.checkfunction();
+        
+        call(function, arguments);
+    }
+    
+    public void call(LuaFunction function, Object[] arguments)
+    {
+        if(arguments == null)
             arguments = new Object[0];
-    	
-    	String[] segm = functionPath.split("\\.");
-    	
-    	LuaTable table = globals;
-    	for (int i = 0; i < segm.length - 1; i++)
-    	{
-    		LuaValue newTable = table.get(segm[i]);
-    		table = newTable.checktable();
-    	}
-    	
-    	LuaValue functionValue = table.get(segm[segm.length - 1]);
-    	LuaFunction function = functionValue.checkfunction();
-    	
-    	LuaValue[] luaArguments = new LuaValue[arguments.length];
-    	for (int i = 0; i < arguments.length; i++)
-    	    luaArguments[i] = CoerceJavaToLua.coerce(arguments[i]);
-    	
-    	Varargs returnedVarargs = function.invoke(luaArguments);
-    	if (returnedVarargs.narg() != 0)
-    		throw new LuaError("function \"" + functionPath + "\" may not return anything");
+        
+        LuaValue[] luaArguments = new LuaValue[arguments.length];
+        for (int i = 0; i < arguments.length; i++)
+            luaArguments[i] = CoerceJavaToLua.coerce(arguments[i]);
+        
+        Varargs returnedVarargs = function.invoke(luaArguments);
+        if (returnedVarargs.narg() != 0)
+            throw new LuaError("script functions may not return anything");
     }
 }

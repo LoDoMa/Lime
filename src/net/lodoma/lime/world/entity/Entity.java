@@ -3,14 +3,10 @@ package net.lodoma.lime.world.entity;
 import java.io.File;
 import java.io.IOException;
 
+import org.luaj.vm2.LuaFunction;
+import org.luaj.vm2.LuaValue;
+
 import net.lodoma.lime.client.Client;
-import net.lodoma.lime.script.LuaScript;
-import net.lodoma.lime.script.library.AttributeFunctions;
-import net.lodoma.lime.script.library.EventFunctions;
-import net.lodoma.lime.script.library.InputFunctions;
-import net.lodoma.lime.script.library.LimeLibrary;
-import net.lodoma.lime.script.library.PhysicsFunctions;
-import net.lodoma.lime.script.library.UtilFunctions;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.util.Identifiable;
 import net.lodoma.lime.util.OsHelper;
@@ -19,8 +15,11 @@ import net.lodoma.lime.world.World;
 public class Entity implements Identifiable<Integer>
 {
     public int identifier;
+
+    public LuaFunction scriptInit;
+    public LuaFunction scriptUpdate;
+    public LuaFunction scriptClean;
     
-    public LuaScript script;
     public World world;
     
     public EntityBody body;
@@ -57,18 +56,17 @@ public class Entity implements Identifiable<Integer>
     
     public void assignScript(Server server, String scriptName)
     {
-        LimeLibrary library = new LimeLibrary(server);
-        UtilFunctions.addToLibrary(library);
-        PhysicsFunctions.addToLibrary(library);
-        EventFunctions.addToLibrary(library);
-        InputFunctions.addToLibrary(library);
-        AttributeFunctions.addToLibrary(library);
-        
-        script = new LuaScript(library);
-        
         try
         {
-            script.load(new File(OsHelper.JARPATH + "script/entity/" + scriptName + ".lua"));
+            world.luaInstance.load(new File(OsHelper.JARPATH + "script/entity/" + scriptName + ".lua"));
+            
+            scriptInit = world.luaInstance.globals.get("Lime_Init").checkfunction();
+            scriptUpdate = world.luaInstance.globals.get("Lime_Update").checkfunction();
+            scriptClean = world.luaInstance.globals.get("Lime_Clean").checkfunction();
+            
+            world.luaInstance.globals.set("Lime_Init", LuaValue.NIL);
+            world.luaInstance.globals.set("Lime_Update", LuaValue.NIL);
+            world.luaInstance.globals.set("Lime_Clean", LuaValue.NIL);
         }
         catch (IOException e)
         {
@@ -81,20 +79,20 @@ public class Entity implements Identifiable<Integer>
     
     public void init()
     {
-        script.call("Lime_Init", new Object[] { identifier });
+        world.luaInstance.call(scriptInit, new Object[] { identifier });
     }
     
     public void update(double timeDelta)
     {
-        script.call("Lime_Update", new Object[] { identifier, timeDelta });
+        world.luaInstance.call(scriptUpdate, new Object[] { identifier, timeDelta });
     }
     
     public void destroy()
     {
         if (body != null)
             body.destroy();
-        if (script != null)
-            script.call("Lime_Clean", new Object[] { identifier });
+        if (scriptClean != null)
+            world.luaInstance.call("scriptClean", new Object[] { identifier });
     }
     
     public void debugRender()

@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import org.luaj.vm2.LuaFunction;
+import org.luaj.vm2.LuaValue;
+
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.script.LuaScript;
 import net.lodoma.lime.script.library.AttributeFunctions;
@@ -25,7 +28,10 @@ import net.lodoma.lime.world.entity.EntityShape;
 
 public class World
 {
-    public LuaScript gamemode;
+    public LuaScript luaInstance;
+    public LuaFunction gamemodeWorldInit;
+    public LuaFunction gamemodeUpdate;
+    
     public IdentityPool<Entity> entityPool;
     public IdentityPool<Light> lightPool;
     public Terrain terrain;
@@ -49,26 +55,32 @@ public class World
     public void load(String filepath, Server server) throws IOException
     {
         LimeLibrary library = new LimeLibrary(server);
+        AttributeFunctions.addToLibrary(library);
+        EventFunctions.addToLibrary(library);
+        InputFunctions.addToLibrary(library);
+        LightFunctions.addToLibrary(library);
+        PhysicsFunctions.addToLibrary(library);
         UtilFunctions.addToLibrary(library);
         WorldFunctions.addToLibrary(library);
-        PhysicsFunctions.addToLibrary(library);
-        EventFunctions.addToLibrary(library);
-        LightFunctions.addToLibrary(library);
-        InputFunctions.addToLibrary(library);
-        AttributeFunctions.addToLibrary(library);
+        luaInstance = new LuaScript(library);
         
-        gamemode = new LuaScript(library);
-        gamemode.load(new File(OsHelper.JARPATH + "script/world/" + filepath + ".lua"));
+        luaInstance.load(new File(OsHelper.JARPATH + "script/world/" + filepath + ".lua"));
+        
+        gamemodeWorldInit = luaInstance.globals.get("Lime_WorldInit").checkfunction();
+        gamemodeUpdate = luaInstance.globals.get("Lime_Update").checkfunction();
+
+        luaInstance.globals.set("Lime_WorldInit", LuaValue.NIL);
+        luaInstance.globals.set("Lime_Update", LuaValue.NIL);
     }
     
     public void init()
     {
-        gamemode.call("Lime_WorldInit", null);
+        luaInstance.call(gamemodeWorldInit, null);
     }
     
     public void updateGamemode(double timeDelta)
     {
-        gamemode.call("Lime_Update", new Object[] { timeDelta });
+        luaInstance.call(gamemodeUpdate, new Object[] { timeDelta });
     }
     
     public void updateEntities(double timeDelta)
