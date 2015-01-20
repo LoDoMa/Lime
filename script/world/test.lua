@@ -2,7 +2,7 @@
 local firstUpdate = true
 
 function Lime_WorldInit()
-	lime.setWorldGravity(0.0, 0.0)
+	lime.setWorldGravity(0.0, -16.0)
 end
 
 local playerIDs = {}
@@ -36,7 +36,7 @@ local function addBox(x, y, w, h)
 	lime.setShapeType("polygon")
 	lime.setShapeVertices(x, y, x + w, y, x + w, y + h, x, y + h)
 	lime.setComponentDensity(0.0)
-	lime.setComponentFriction(0.0)
+	lime.setComponentFriction(0.3)
 	lime.setComponentRestitution(0.0)
 	local compoID = lime.endComponent()
 end
@@ -57,26 +57,7 @@ local function init()
 	lime.addEventListener("Lime::OnJoin", onJoin)
 	lime.addEventListener("Lime::OnLeave", onLeave)
 
-	addBox(0.0, 0.0, 0.1, 20.0)
-	addBox(20.0, 0.0, 0.1, 20.0)
-	addBox(0.0, 0.0, 20.0, 0.1)
-	addBox(0.0, 20.0, 20.0, 0.1)
-
-	for i = 1, 20 do
-		local posx, posy = (math.random() - 0.0) * 20, (math.random() - 0.0) * 20
-		local radius = 0.25 + math.random() * 0.5
-
-		lime.startComponent()
-		lime.setInitialPosition(posx, posy)
-		lime.setInitialAngle(0.0)
-		lime.setComponentType("static")
-		lime.setShapeType("circle")
-		lime.setShapeRadius(radius)
-		lime.setComponentDensity(0.0)
-		lime.setComponentFriction(0.0)
-		lime.setComponentRestitution(0.0)
-		local compoID = lime.endComponent()
-	end
+	addBox(-1000.0, 0.0, 2000.0, 0.1)
 end
 
 function Lime_Update(timeDelta)

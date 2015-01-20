@@ -2,15 +2,22 @@ package net.lodoma.lime.script.library;
 
 import net.lodoma.lime.util.Vector2;
 import net.lodoma.lime.world.physics.InvalidPhysicsComponentException;
+import net.lodoma.lime.world.physics.InvalidPhysicsJointException;
 import net.lodoma.lime.world.physics.PhysicsComponent;
 import net.lodoma.lime.world.physics.PhysicsComponentCircleShape;
 import net.lodoma.lime.world.physics.PhysicsComponentPolygonShape;
 import net.lodoma.lime.world.physics.PhysicsComponentDefinition;
 import net.lodoma.lime.world.physics.PhysicsComponentShape;
 import net.lodoma.lime.world.physics.PhysicsComponentType;
+import net.lodoma.lime.world.physics.PhysicsJoint;
+import net.lodoma.lime.world.physics.PhysicsJointDefinition;
+import net.lodoma.lime.world.physics.PhysicsJointRevoluteDefinition;
+import net.lodoma.lime.world.physics.PhysicsJointType;
+import net.lodoma.lime.world.physics.PhysicsJointTypeDefinition;
 
 import org.jbox2d.common.Settings;
 import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.joints.RevoluteJoint;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
@@ -27,6 +34,8 @@ public class PhysicsFunctions
 
     private PhysicsComponent compo;
     private PhysicsComponentDefinition compoDefinition;
+    private PhysicsJoint joint;
+    private PhysicsJointDefinition jointDefinition;
     
     private PhysicsFunctions(LimeLibrary library)
     {
@@ -87,6 +96,7 @@ public class PhysicsFunctions
             case REMOVE_COMPONENT:
             {
                 int compoID = args.arg(1).checkint();
+                library.server.world.componentPool.get(compoID).destroy();
                 library.server.world.componentPool.remove(compoID);
                 break;
             }
@@ -212,11 +222,140 @@ public class PhysicsFunctions
                 compoDefinition.restitution = restitution;
                 break;
             }
+            case START_JOINT:
+            {
+                jointDefinition = new PhysicsJointDefinition();
+                break;
+            }
+            case END_JOINT:
+            {
+                if (jointDefinition == null)
+                    throw new LuaError("ending nonexistent joint");
+                
+                try
+                 {
+                    jointDefinition.validate();
+                }
+                catch (InvalidPhysicsJointException e)
+                {
+                    throw new LuaError(e);
+                }
+                
+                jointDefinition.create();
+                PhysicsJoint newJoint = new PhysicsJoint(jointDefinition, library.server.physicsWorld);
+                jointDefinition = null;
+                
+                int jointID = library.server.world.jointPool.add(newJoint);
+                return LuaValue.valueOf(jointID);
+            }
+            case REMOVE_JOINT:
+            {
+                int jointID = args.arg(1).checkint();
+                library.server.world.jointPool.get(jointID).destroy();
+                library.server.world.jointPool.remove(jointID);
+                break;
+            }
+            case SET_JOINT_COMPONENT_A:
+            {
+                int compoID = args.arg(1).checkint();
+                if (jointDefinition == null)
+                    throw new LuaError("modifying nonexistent joint");
+                
+                if (!library.server.world.componentPool.has(compoID))
+                    throw new LuaError("joint component A set to nonexistent component");
+                jointDefinition.componentA = library.server.world.componentPool.get(compoID);
+                break;
+            }
+            case SET_JOINT_COMPONENT_B:
+            {
+                int compoID = args.arg(1).checkint();
+                if (jointDefinition == null)
+                    throw new LuaError("modifying nonexistent joint");
+                
+                if (!library.server.world.componentPool.has(compoID))
+                    throw new LuaError("joint component B set to nonexistent component");
+                jointDefinition.componentB = library.server.world.componentPool.get(compoID);
+                break;
+            }
+            case ENABLE_JOINT_COLLISION:
+            {
+                boolean enabled = args.arg(1).checkboolean();
+                if (jointDefinition == null)
+                    throw new LuaError("modifying nonexistent joint");
+                
+                jointDefinition.collideConnected = enabled;
+                break;
+            }
+            case SET_JOINT_TYPE:
+            {
+                String typeName = args.arg(1).checkstring().tojstring();
+                if (jointDefinition == null)
+                    throw new LuaError("modifying nonexistent joint");
+
+                PhysicsJointType type;
+                PhysicsJointTypeDefinition typedef;
+                
+                switch (typeName)
+                {
+                case "revolute":
+                    type = PhysicsJointType.REVOLUTE;
+                    typedef = new PhysicsJointRevoluteDefinition();
+                    break;
+                default:
+                    throw new LuaError("invalid joint typename");
+                }
+                
+                jointDefinition.type = type;
+                jointDefinition.typeDefinition = typedef;
+                break;
+            }
+            case SET_REVOLUTE_ANCHOR_A:
+            {
+                float anchorX = args.arg(1).checknumber().tofloat();
+                float anchorY = args.arg(2).checknumber().tofloat();
+                if (jointDefinition == null)
+                    throw new LuaError("modifying nonexistent joint");
+
+                if (jointDefinition.type == null)
+                    throw new LuaError("setting anchor to typeless joint");
+                if (!(jointDefinition.typeDefinition instanceof PhysicsJointRevoluteDefinition))
+                    throw new LuaError("setting anchor to non-revolute joint");
+                ((PhysicsJointRevoluteDefinition) jointDefinition.typeDefinition).localAnchorA = new Vector2(anchorX, anchorY);
+                break;
+            }
+            case SET_REVOLUTE_ANCHOR_B:
+            {   
+                float anchorX = args.arg(1).checknumber().tofloat();
+                float anchorY = args.arg(2).checknumber().tofloat();
+                if (jointDefinition == null)
+                    throw new LuaError("modifying nonexistent joint");
+
+                if (jointDefinition.type == null)
+                    throw new LuaError("setting anchor to typeless joint");
+                if (!(jointDefinition.typeDefinition instanceof PhysicsJointRevoluteDefinition))
+                    throw new LuaError("setting anchor to non-revolute joint");
+                ((PhysicsJointRevoluteDefinition) jointDefinition.typeDefinition).localAnchorB = new Vector2(anchorX, anchorY);
+                break;
+            }
             case SELECT_COMPONENT:
             {
                 int compoID = args.arg(1).checkint();
                 compo = library.server.world.componentPool.get(compoID);
                 break;
+            }
+            case GET_POSITION:
+            {
+                if (compo == null)
+                    throw new LuaError("manipulating nonexistent body component");
+                Vec2 position = compo.engineBody.getPosition();
+                return LuaValue.varargsOf(new LuaValue[] { LuaValue.valueOf(position.x), LuaValue.valueOf(position.y) });
+            }
+            case GET_ANGLE:
+            {
+                if (compo == null)
+                    throw new LuaError("manipulating nonexistent body component");
+                float angle = compo.engineBody.getAngle();
+                return LuaValue.valueOf(angle);
             }
             case GET_LINEAR_VELOCITY:
             {
@@ -282,6 +421,68 @@ public class PhysicsFunctions
                 compo.engineBody.applyLinearImpulse(new Vec2(impulseX, impulseY), compo.engineBody.getLocalCenter());
                 break;
             }
+            case SELECT_JOINT:
+            {
+                int jointID = args.arg(1).checkint();
+                joint = library.server.world.jointPool.get(jointID);
+                break;
+            }
+            case ENABLE_REVOLUTE_ANGLE_LIMIT:
+            {
+                boolean enabled = args.arg(1).checkboolean();
+                if (joint == null)
+                    throw new LuaError("modifying nonexistent joint");
+
+                if (!(joint.engineJoint instanceof RevoluteJoint))
+                    throw new LuaError("modifying angle limit of non-revolute joint");
+                ((RevoluteJoint) joint.engineJoint).enableLimit(enabled);
+                break;
+            }
+            case SET_REVOLUTE_ANGLE_LIMIT:
+            {
+                float lowerLimit = args.arg(1).checknumber().tofloat();
+                float upperLimit = args.arg(2).checknumber().tofloat();
+                if (joint == null)
+                    throw new LuaError("modifying nonexistent joint");
+
+                if (!(joint.engineJoint instanceof RevoluteJoint))
+                    throw new LuaError("modifying angle limit of non-revolute joint");
+                ((RevoluteJoint) joint.engineJoint).setLimits(lowerLimit, upperLimit);
+                break;
+            }
+            case ENABLE_REVOLUTE_MOTOR:
+            {
+                boolean enabled = args.arg(1).checkboolean();
+                if (joint == null)
+                    throw new LuaError("modifying nonexistent joint");
+
+                if (!(joint.engineJoint instanceof RevoluteJoint))
+                    throw new LuaError("modifying angle limit of non-revolute joint");
+                ((RevoluteJoint) joint.engineJoint).enableMotor(enabled);
+                break;
+            }
+            case SET_REVOLUTE_MOTOR_SPEED:
+            {
+                float speed = args.arg(1).checknumber().tofloat();
+                if (joint == null)
+                    throw new LuaError("modifying nonexistent joint");
+
+                if (!(joint.engineJoint instanceof RevoluteJoint))
+                    throw new LuaError("modifying angle limit of non-revolute joint");
+                ((RevoluteJoint) joint.engineJoint).setMotorSpeed(speed);
+                break;
+            }
+            case SET_REVOLUTE_MAX_MOTOR_TORQUE:
+            {
+                float maxTorque = args.arg(1).checknumber().tofloat();
+                if (joint == null)
+                    throw new LuaError("modifying nonexistent joint");
+
+                if (!(joint.engineJoint instanceof RevoluteJoint))
+                    throw new LuaError("modifying angle limit of non-revolute joint");
+                ((RevoluteJoint) joint.engineJoint).setMaxMotorTorque(maxTorque);
+                break;
+            }
             }
             return LuaValue.NONE;
         }
@@ -301,15 +502,34 @@ public class PhysicsFunctions
         SET_COMPONENT_DENSITY(1, true, "setComponentDensity"),
         SET_COMPONENT_FRICTION(1, true, "setComponentFriction"),
         SET_COMPONENT_RESTITUTION(1, true, "setComponentRestitution"),
+        
+        START_JOINT(0, true, "startJoint"),
+        END_JOINT(0, true, "endJoint"),
+        REMOVE_JOINT(1, true, "removeJoint"),
+        SET_JOINT_COMPONENT_A(1, true, "setJointComponentA"),
+        SET_JOINT_COMPONENT_B(1, true, "setJointComponentB"),
+        ENABLE_JOINT_COLLISION(1, true, "enableJointCollision"),
+        SET_JOINT_TYPE(1, true, "setJointType"),
+        SET_REVOLUTE_ANCHOR_A(2, true, "setRevoluteAnchorA"),
+        SET_REVOLUTE_ANCHOR_B(2, true, "setRevoluteAnchorB"),
 
         SELECT_COMPONENT(1, true, "selectComponent"),
+        GET_POSITION(0, true, "getComponentPosition"),
+        GET_ANGLE(0, true, "getComponentAngle"),
         GET_LINEAR_VELOCITY(0, true, "getLinearVelocity"),
         SET_LINEAR_VELOCITY(2, true, "setLinearVelocity"),
         APPLY_FORCE(4, true, "applyForce"),
         APPLY_FORCE_TO_CENTER(2, true, "applyForceToCenter"),
         APPLY_ANGULAR_IMPULSE(1, true, "applyAngularImpulse"),
         APPLY_LINEAR_IMPULSE(4, true, "applyLinearImpulse"),
-        APPLY_LINEAR_IMPULSE_TO_CENTER(2, true, "applyLinearImpulseToCenter");
+        APPLY_LINEAR_IMPULSE_TO_CENTER(2, true, "applyLinearImpulseToCenter"),
+        
+        SELECT_JOINT(1, true, "selectJoint"),
+        ENABLE_REVOLUTE_ANGLE_LIMIT(1, true, "enableRevoluteAngleLimit"),
+        SET_REVOLUTE_ANGLE_LIMIT(1, true, "setRevoluteAngleLimit"),
+        ENABLE_REVOLUTE_MOTOR(1, true, "enableRevoluteMotor"),
+        SET_REVOLUTE_MOTOR_SPEED(1, true, "setRevoluteMotorSpeed"),
+        SET_REVOLUTE_MAX_MOTOR_TORQUE(1, true, "setRevoluteMaxMotorTorque");
         
         public int argc;
         public boolean argcexact;
