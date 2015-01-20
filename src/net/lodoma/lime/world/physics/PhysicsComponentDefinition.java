@@ -28,6 +28,8 @@ public class PhysicsComponentDefinition
         if (density < 0)        throw new InvalidPhysicsComponentException("invalid component density: negative");
         if (friction < 0)       throw new InvalidPhysicsComponentException("invalid component friction: negative");
         if (restitution < 0)    throw new InvalidPhysicsComponentException("invalid component restitution: negative");
+        
+        shape.validate();
     }
     
     public void create()

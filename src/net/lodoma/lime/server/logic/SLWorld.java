@@ -56,6 +56,7 @@ public class SLWorld implements ServerLogic
     @Override
     public void clean()
     {
+        server.physicsWorld.destroy();
         server.world.clean();
     }
     
