@@ -38,7 +38,7 @@ local function addBox(x, y, w, h)
 	lime.setComponentDensity(0.0)
 	lime.setComponentFriction(0.0)
 	lime.setComponentRestitution(0.0)
-	local compoID = lime.attachComponentToTerrain()
+	local compoID = lime.endComponent()
 end
 
 local function init()
@@ -75,7 +75,7 @@ local function init()
 		lime.setComponentDensity(0.0)
 		lime.setComponentFriction(0.0)
 		lime.setComponentRestitution(0.0)
-		local compoID = lime.attachComponentToTerrain()
+		local compoID = lime.endComponent()
 	end
 end
 

@@ -22,16 +22,16 @@ function Lime_Init(entityID)
 	lime.setComponentDensity(2.3)
 	lime.setComponentFriction(0.3)
 	lime.setComponentRestitution(0.3)
-	compoID[entityID] = lime.attachComponentToEntity(entityID)
+	compoID[entityID] = lime.endComponent()
 
-	lime.selectEntityComponent(entityID, compoID[entityID])
+	lime.selectComponent(compoID[entityID])
 	lime.setLinearVelocity(vel.x, vel.y)
 end
 
 function Lime_Update(entityID, timeDelta)
 	lime.setInputData(userID[entityID])
 
-	lime.selectEntityComponent(entityID, compoID[entityID])
+	lime.selectComponent(compoID[entityID])
 	if lime.getKeyState(lime.KEY_LEFT_SHIFT) then
 		if lime.getKeyState(lime.KEY_W) then lime.applyLinearImpulseToCenter(0.0, 1.0) end
 		if lime.getKeyState(lime.KEY_A) then lime.applyLinearImpulseToCenter(-1.0, 0.0) end
@@ -46,5 +46,7 @@ function Lime_Update(entityID, timeDelta)
 end
 
 function Lime_Clean(entityID)
+	lime.removeComponent(compoID[entityID])
 	userID[entityID] = nil
+	compoID[entityID] = nil
 end

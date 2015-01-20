@@ -5,7 +5,7 @@ import net.lodoma.lime.shader.Program;
 import net.lodoma.lime.shader.UniformType;
 import net.lodoma.lime.shader.light.Light;
 import net.lodoma.lime.world.World;
-import net.lodoma.lime.world.entity.Entity;
+import net.lodoma.lime.world.physics.PhysicsComponentSnapshot;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.*;
 import static org.lwjgl.opengl.EXTFramebufferObject.*;
@@ -94,8 +94,11 @@ public class WorldRenderer
         glScalef(1.0f / 32.0f, 1.0f / 24.0f, 1.0f);
         
         Program.worldProgram.useProgram();
-        world.entityPool.foreach((Entity entity) -> entity.render());
-        world.terrain.debugRender();
+        
+        synchronized (world.lock)
+        {
+            world.compoSnapshotPool.foreach((PhysicsComponentSnapshot compoSnapshot) -> compoSnapshot.debugRender());
+        }
         
         glPopMatrix();
     }

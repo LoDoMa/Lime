@@ -22,15 +22,11 @@ public class Entity implements Identifiable<Integer>
     
     public World world;
     
-    public EntityBody body;
-    public EntityShape shape;
-    
     public AttributeMap attributes;
     
     public Entity(World world, Server server)
     {
         this.world = world;
-        body = new EntityBody();
         attributes = new AttributeMap();
     }
     
@@ -38,8 +34,6 @@ public class Entity implements Identifiable<Integer>
     {
         this.world = world;
         this.identifier = identifier;
-        
-        shape = new EntityShape();
     }
     
     @Override
@@ -89,19 +83,6 @@ public class Entity implements Identifiable<Integer>
     
     public void destroy()
     {
-        if (body != null)
-            body.destroy();
-        if (scriptClean != null)
-            world.luaInstance.call("scriptClean", new Object[] { identifier });
-    }
-    
-    public void debugRender()
-    {
-        shape.debugRender();
-    }
-    
-    public void render()
-    {
-        shape.tempRender();
+        world.luaInstance.call(scriptClean, new Object[] { identifier });
     }
 }

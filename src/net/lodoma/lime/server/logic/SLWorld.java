@@ -32,7 +32,7 @@ public class SLWorld implements ServerLogic
         this.server = server;
         server.world = new World();
         server.physicsWorld = new PhysicsWorld();
-        server.snapshotManager = new SnapshotManager(server.world, server.userManager);
+        server.snapshotManager = new SnapshotManager(server);
         
         server.spPool.add(new SPSnapshot(server));
         server.sphPool.add(new SPHInputState(server));

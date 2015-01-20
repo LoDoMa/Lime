@@ -1,34 +1,32 @@
 package net.lodoma.lime.world;
 
+import net.lodoma.lime.server.Server;
 import net.lodoma.lime.server.ServerPacket;
 import net.lodoma.lime.server.ServerUser;
-import net.lodoma.lime.server.logic.UserManager;
 
 // Server-side
 
 public class SnapshotManager
 {
-    public World world;
-    public UserManager userManager;
+    public Server server;
     
     public ServerPacket snapshotPacket;
     
     public Snapshot lastSnapshot;
     
-    public SnapshotManager(World world, UserManager userManager)
+    public SnapshotManager(Server server)
     {
-        this.world = world;
-        this.userManager = userManager;
+        this.server = server;
         
-        lastSnapshot = new Snapshot(world);
+        lastSnapshot = new Snapshot(server);
     }
     
     public void send()
     {
-        Snapshot snapshot = new Snapshot(world);
+        Snapshot snapshot = new Snapshot(server);
         lastSnapshot = snapshot;
         
-        userManager.foreach((ServerUser user) -> {
+        server.userManager.foreach((ServerUser user) -> {
             if (user.fullSnapshot)
             {
                 snapshotPacket.write(user, snapshot);

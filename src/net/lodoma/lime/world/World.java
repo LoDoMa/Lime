@@ -24,7 +24,9 @@ import net.lodoma.lime.shader.light.LightData;
 import net.lodoma.lime.util.IdentityPool;
 import net.lodoma.lime.util.OsHelper;
 import net.lodoma.lime.world.entity.Entity;
-import net.lodoma.lime.world.entity.EntityShape;
+import net.lodoma.lime.world.physics.PhysicsComponent;
+import net.lodoma.lime.world.physics.PhysicsComponentSnapshot;
+import net.lodoma.lime.world.physics.PhysicsJoint;
 
 public class World
 {
@@ -32,15 +34,20 @@ public class World
     public LuaFunction gamemodeWorldInit;
     public LuaFunction gamemodeUpdate;
     
+    public Object lock = new Object();
     public IdentityPool<Entity> entityPool;
+    public IdentityPool<PhysicsComponent> componentPool;
+    public IdentityPool<PhysicsComponentSnapshot> compoSnapshotPool;
+    public IdentityPool<PhysicsJoint> jointPool;
     public IdentityPool<Light> lightPool;
-    public Terrain terrain;
     
     public World()
     {
         entityPool = new IdentityPool<Entity>(false);
+        componentPool = new IdentityPool<PhysicsComponent>(false);
+        compoSnapshotPool = new IdentityPool<PhysicsComponentSnapshot>(false);
+        jointPool = new IdentityPool<PhysicsJoint>(false);
         lightPool = new IdentityPool<Light>(false);
-        terrain = new Terrain();
     }
     
     public void clean()
@@ -50,6 +57,14 @@ public class World
             entityPool.remove(entity);
         });
         entityPool.clear();
+        
+        componentPool.foreach((PhysicsComponent component) -> component.destroy());
+        componentPool.clear();
+        
+        jointPool.foreach((PhysicsJoint joint) -> joint.destroy());
+        jointPool.clear();
+        
+        lightPool.clear();
     }
     
     public void load(String filepath, Server server) throws IOException
@@ -90,56 +105,51 @@ public class World
     
     public void applySnapshot(Snapshot snapshot, Client client)
     {
-        if (snapshot.isDelta)
+        synchronized (lock)
         {
-            for (Integer identifier : snapshot.removedEntities)
+            if (snapshot.isDelta)
             {
-                entityPool.get(identifier).destroy();
-                entityPool.remove(identifier);
+                for (Integer identifier : snapshot.removedComponents)
+                    compoSnapshotPool.remove(identifier);
+                for (Integer identifier : snapshot.removedLights)
+                    lightPool.remove(identifier);
+            }
+            else
+            {
+                Set<Integer> componentIdentifierSet = compoSnapshotPool.getIdentifierSet();
+                for (Integer identifier : componentIdentifierSet)
+                    if (!snapshot.componentData.containsKey(identifier))
+                        compoSnapshotPool.remove(identifier);
+                
+                Set<Integer> lightIdentifierSet = lightPool.getIdentifierSet();
+                for (Integer identifier : lightIdentifierSet)
+                    if (!snapshot.lightData.containsKey(identifier))
+                        lightPool.remove(identifier);
             }
             
-            for (Integer identifier : snapshot.removedLights)
-                lightPool.remove(identifier);
-        }
-        else
-        {
-            Set<Integer> entityIdentifierSet = entityPool.getIdentifierSet();
-            for (Integer identifier : entityIdentifierSet)
-                if (!snapshot.entityData.containsKey(identifier))
+            Set<Integer> lightKeySet = snapshot.lightData.keySet();
+            for (Integer identifier : lightKeySet)
+                if (!lightPool.has(identifier))
                 {
-                    entityPool.get(identifier).destroy();
-                    entityPool.remove(identifier);
+                    Light light = new Light();
+                    light.identifier = identifier;
+                    lightPool.addManaged(light);
                 }
-
-            Set<Integer> lightIdentifierSet = lightPool.getIdentifierSet();
-            for (Integer identifier : lightIdentifierSet)
-                if (!snapshot.lightData.containsKey(identifier))
-                    lightPool.remove(identifier);
+    
+            Set<Entry<Integer, PhysicsComponentSnapshot>> componentEntrySet = snapshot.componentData.entrySet();
+            for (Entry<Integer, PhysicsComponentSnapshot> entry : componentEntrySet)
+            {
+                int identifier = entry.getKey();
+                PhysicsComponentSnapshot compoSnapshot = entry.getValue();
+                compoSnapshot.identifier = identifier;
+                if (compoSnapshotPool.has(identifier))
+                    compoSnapshotPool.remove(identifier);
+                compoSnapshotPool.addManaged(compoSnapshot);
+            }
+    
+            Set<Entry<Integer, LightData>> lightEntrySet = snapshot.lightData.entrySet();
+            for (Entry<Integer, LightData> entry : lightEntrySet)
+                lightPool.get(entry.getKey()).data = entry.getValue();
         }
-        
-        Set<Integer> entityKeySet = snapshot.entityData.keySet();
-        for (Integer identifier : entityKeySet)
-            if (!entityPool.has(identifier))
-            {
-                Entity entity = new Entity(this, identifier, client);
-                entityPool.addManaged(entity);
-            }
-        
-        Set<Integer> lightKeySet = snapshot.lightData.keySet();
-        for (Integer identifier : lightKeySet)
-            if (!lightPool.has(identifier))
-            {
-                Light light = new Light();
-                light.identifier = identifier;
-                lightPool.addManaged(light);
-            }
-
-        Set<Entry<Integer, EntityShape>> entityEntrySet = snapshot.entityData.entrySet();
-        for (Entry<Integer, EntityShape> entry : entityEntrySet)
-            entityPool.get(entry.getKey()).shape = entry.getValue();
-
-        Set<Entry<Integer, LightData>> lightEntrySet = snapshot.lightData.entrySet();
-        for (Entry<Integer, LightData> entry : lightEntrySet)
-            lightPool.get(entry.getKey()).data = entry.getValue();
     }
 }

@@ -63,6 +63,33 @@ public class PhysicsFunctions
                 compoDefinition = new PhysicsComponentDefinition();
                 break;
             }
+            case END_COMPONENT:
+            {
+                if (compoDefinition == null)
+                    throw new LuaError("ending nonexistent body component");
+                
+                try
+                {
+                    compoDefinition.validate();
+                }
+                catch (InvalidPhysicsComponentException e)
+                {
+                    throw new LuaError(e);
+                }
+                
+                compoDefinition.create();
+                PhysicsComponent newCompo = new PhysicsComponent(compoDefinition, library.server.physicsWorld);
+                compoDefinition = null;
+                
+                int compoID = library.server.world.componentPool.add(newCompo);
+                return LuaValue.valueOf(compoID);
+            }
+            case REMOVE_COMPONENT:
+            {
+                int compoID = args.arg(1).checkint();
+                library.server.world.componentPool.remove(compoID);
+                break;
+            }
             case SET_INITIAL_POSITION:
             {
                 float positionX = args.arg(1).checknumber().tofloat();
@@ -185,57 +212,10 @@ public class PhysicsFunctions
                 compoDefinition.restitution = restitution;
                 break;
             }
-            case ATTACH_COMPONENT_TO_ENTITY:
-            {
-                int entityID = args.arg(1).checkint();
-                if (compoDefinition == null)
-                    throw new LuaError("attaching nonexistent body component");
-                
-                try
-                {
-                    compoDefinition.validate();
-                }
-                catch (InvalidPhysicsComponentException e)
-                {
-                    throw new LuaError(e);
-                }
-                
-                compoDefinition.create();
-                PhysicsComponent newCompo = new PhysicsComponent(compoDefinition, library.server.physicsWorld);
-                compoDefinition = null;
-                
-                int compoID = library.server.world.entityPool.get(entityID).body.components.add(newCompo);
-                return LuaValue.valueOf(compoID);
-            }
-            case ATTACH_COMPONENT_TO_TERRAIN:
-            {
-                try
-                {
-                    compoDefinition.validate();
-                }
-                catch (InvalidPhysicsComponentException e)
-                {
-                    throw new LuaError(e);
-                }
-                
-                compoDefinition.create();
-                PhysicsComponent newCompo = new PhysicsComponent(compoDefinition, library.server.physicsWorld);
-                compoDefinition = null;
-                
-                int compoID = library.server.world.terrain.physicalComponents.add(newCompo);
-                return LuaValue.valueOf(compoID);
-            }
-            case SELECT_ENTITY_COMPONENT:
-            {
-                int entityID = args.arg(1).checkint();
-                int compoID = args.arg(2).checkint();
-                compo = library.server.world.entityPool.get(entityID).body.components.get(compoID);
-                break;
-            }
-            case SELECT_TERRAIN_COMPONENT:
+            case SELECT_COMPONENT:
             {
                 int compoID = args.arg(1).checkint();
-                compo = library.server.world.terrain.physicalComponents.get(compoID);
+                compo = library.server.world.componentPool.get(compoID);
                 break;
             }
             case GET_LINEAR_VELOCITY:
@@ -310,6 +290,8 @@ public class PhysicsFunctions
     private static enum FuncData
     {
         START_COMPONENT(0, true, "startComponent"),
+        END_COMPONENT(0, true, "endComponent"),
+        REMOVE_COMPONENT(1, true, "removeComponent"),
         SET_INITIAL_POSITION(2, true, "setInitialPosition"),
         SET_INITIAL_ANGLE(1, true, "setInitialAngle"),
         SET_COMPONENT_TYPE(1, true, "setComponentType"),
@@ -319,11 +301,8 @@ public class PhysicsFunctions
         SET_COMPONENT_DENSITY(1, true, "setComponentDensity"),
         SET_COMPONENT_FRICTION(1, true, "setComponentFriction"),
         SET_COMPONENT_RESTITUTION(1, true, "setComponentRestitution"),
-        ATTACH_COMPONENT_TO_ENTITY(1, true, "attachComponentToEntity"),
-        ATTACH_COMPONENT_TO_TERRAIN(0, true, "attachComponentToTerrain"),
 
-        SELECT_ENTITY_COMPONENT(2, true, "selectEntityComponent"),
-        SELECT_TERRAIN_COMPONENT(1, true, "selectTerrainComponent"),
+        SELECT_COMPONENT(1, true, "selectComponent"),
         GET_LINEAR_VELOCITY(0, true, "getLinearVelocity"),
         SET_LINEAR_VELOCITY(2, true, "setLinearVelocity"),
         APPLY_FORCE(4, true, "applyForce"),

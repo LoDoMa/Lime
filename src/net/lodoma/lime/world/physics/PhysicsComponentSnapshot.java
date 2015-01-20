@@ -7,16 +7,31 @@ import java.io.IOException;
 import org.lwjgl.opengl.GL11;
 
 import net.lodoma.lime.texture.Texture;
+import net.lodoma.lime.util.Identifiable;
 import net.lodoma.lime.util.Vector2;
 
-public class PhysicsComponentSnapshot
+public class PhysicsComponentSnapshot implements Identifiable<Integer>
 {
+    public int identifier;
+    
     public Vector2 position;
     public float angle;
     
     public PhysicsComponentShapeType type;
     public float radius;
     public Vector2[] vertices;
+    
+    @Override
+    public Integer getIdentifier()
+    {
+        return identifier;
+    }
+    
+    @Override
+    public void setIdentifier(Integer identifier)
+    {
+        this.identifier = identifier;
+    }
     
     public void read(DataInputStream stream) throws IOException
     {

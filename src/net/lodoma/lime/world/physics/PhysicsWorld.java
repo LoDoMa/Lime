@@ -1,7 +1,5 @@
 package net.lodoma.lime.world.physics;
 
-import net.lodoma.lime.util.IdentityPool;
-
 import org.jbox2d.dynamics.World;
 
 public class PhysicsWorld
@@ -9,13 +7,9 @@ public class PhysicsWorld
     public WorldDefinition definition;
     public org.jbox2d.dynamics.World engineWorld;
     
-    public IdentityPool<PhysicsJoint> jointPool;
-    
     public PhysicsWorld()
     {
         definition = new WorldDefinition();
-        
-        jointPool = new IdentityPool<PhysicsJoint>(false);
     }
     
     public void create()
@@ -31,6 +25,6 @@ public class PhysicsWorld
     
     public void destroy()
     {
-        jointPool.foreach((PhysicsJoint joint) -> joint.destroy());
+        
     }
 }
