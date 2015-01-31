@@ -2,7 +2,7 @@
 local firstUpdate = true
 
 function Lime_WorldInit()
-	lime.setWorldGravity(0.0, -16.0)
+	lime.setWorldGravity(0.0, 0.0)
 end
 
 local playerIDs = {}
@@ -42,7 +42,7 @@ local function addBox(x, y, w, h)
 end
 
 local function init()
-	for i = 1, 10, 1 do
+	for i = 1, 4, 1 do
 		local posx, posy = (math.random() - 0.0) * 20, (math.random() - 0.0) * 20
 		local radius = math.random() * 25
 		local colr, colg, colb, cola = math.random(), math.random(), math.random(), 1
@@ -51,13 +51,28 @@ local function init()
 		lime.setLightPosition(light, posx, posy)
 		lime.setLightRadius(light, radius)
 		lime.setLightColor(light, colr, colg, colb, cola)
-		lime.setLightAngleRange(light, -4, 4)
 	end
 
 	lime.addEventListener("Lime::OnJoin", onJoin)
 	lime.addEventListener("Lime::OnLeave", onLeave)
 
 	addBox(-1000.0, 0.0, 2000.0, 0.1)
+
+	for i = 1, 20 do
+		local posx, posy = (math.random() - 0.0) * 20, (math.random() - 0.0) * 20
+		local radius = 0.25 + math.random() * 0.5
+
+		lime.startComponent()
+		lime.setInitialPosition(posx, posy)
+		lime.setInitialAngle(0.0)
+		lime.setComponentType("static")
+		lime.setShapeType("circle")
+		lime.setShapeRadius(radius)
+		lime.setComponentDensity(0.0)
+		lime.setComponentFriction(0.0)
+		lime.setComponentRestitution(0.0)
+		local compoID = lime.endComponent()
+	end
 end
 
 function Lime_Update(timeDelta)

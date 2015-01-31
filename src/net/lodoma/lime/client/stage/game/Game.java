@@ -3,7 +3,6 @@ package net.lodoma.lime.client.stage.game;
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.client.ClientConnectionException;
 import net.lodoma.lime.client.stage.Stage;
-import net.lodoma.lime.client.stage.StageManager;
 import net.lodoma.lime.input.Input;
 
 public class Game extends Stage
@@ -12,21 +11,16 @@ public class Game extends Stage
     
     private String host;
     
-    public Game(StageManager manager, String host)
+    public Game(String host)
     {
-        super(manager);
         this.host = host;
     }
     
     @Override
-    public void preStart()
+    public void onActive()
     {
+        super.onActive();
         
-    }
-    
-    @Override
-    public void onStart()
-    {
         client = new Client();
         
         try
@@ -36,25 +30,24 @@ public class Game extends Stage
         catch(ClientConnectionException e)
         {
             Throwable cause = e.getCause();
-            new GameMessage(manager, cause.getClass().getSimpleName() + ": " + cause.getMessage()).startStage();
+            manager.pop();
+            manager.push(new GameMessage(cause.getClass().getSimpleName() + ": " + cause.getMessage()));
         }
     }
     
     @Override
-    public void onEnd()
+    public void onInactive()
     {
+        super.onInactive();
+        
         if(client.isRunning())
         {
             client.worldRenderer.clean();
             client.close();
         }
-    }
-    
-    @Override
-    public void postEnd()
-    {
+        
         if(client.getCloseMessage() != null)
-            new GameMessage(manager, client.getCloseMessage()).startStage();
+            manager.push(new GameMessage(client.getCloseMessage()));
     }
     
     @Override
@@ -64,7 +57,7 @@ public class Game extends Stage
             client.close();
         
         if(!client.isRunning())
-            endStage();
+            manager.pop();
     }
     
     @Override

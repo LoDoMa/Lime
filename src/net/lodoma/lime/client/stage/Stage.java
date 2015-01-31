@@ -1,38 +1,24 @@
 package net.lodoma.lime.client.stage;
 
-public abstract class Stage
+import net.lodoma.lime.gui.exp.UIObject;
+
+public class Stage
 {
-    protected final StageManager manager;
+    public StageManager manager;
+    public Stage parent;
     
-    public Stage(StageManager manager) 
+    public UIObject ui = new UIObject();
+    
+    public void onActive() {}
+    public void onInactive() {}
+    
+    public void update(double timeDelta)
     {
-        this.manager = manager;
+        ui.update(timeDelta);
     }
     
-    public final StageManager getManager()
+    public void render()
     {
-        return manager;
+        ui.render();
     }
-    
-    public final void startStage()
-    {
-        preStart();
-        manager.pushStage(this);
-        onStart();
-    }
-    
-    public final void endStage()
-    {
-        onEnd();
-        manager.popStage();
-        postEnd();
-    }
-    
-    public abstract void preStart();
-    public abstract void onStart();
-    public abstract void onEnd();
-    public abstract void postEnd();
-    
-    public abstract void update(double timeDelta);
-    public abstract void render();
 }

@@ -1,41 +1,49 @@
 package net.lodoma.lime.client.stage;
 
-import java.util.Stack;
-
 public class StageManager
 {
-    private Stack<Stage> stack;
+    public Stage leaf;
+
+    private boolean reupdate;
     
-    public StageManager()
+    public void push(Stage leaf)
     {
-        stack = new Stack<Stage>();
+        leaf.manager = this;
+        leaf.parent = this.leaf;
+        if (this.leaf != null)
+            this.leaf.onInactive();
+        this.leaf = leaf;
+        this.leaf.onActive();
+        reupdate = true;
     }
     
-    public void pushStage(Stage stage)
+    public void pop()
     {
-        stack.push(stage);
+        leaf.onInactive();
+        if (leaf.parent != null)
+            leaf.parent.onActive();
+        leaf = leaf.parent;
+        reupdate = true;
     }
     
-    public void popStage()
+    public boolean empty()
     {
-        stack.pop();
-    }
-    
-    public void popAll()
-    {
-        while(!stack.empty())
-            stack.peek().endStage();
+        return leaf == null;
     }
     
     public void update(double timeDelta)
     {
-        if(!stack.isEmpty())
-            stack.peek().update(timeDelta);
+        reupdate = true;
+        while (reupdate)
+        {
+            reupdate = false;
+            if (leaf != null)
+                leaf.update(timeDelta);
+        }
     }
     
     public void render()
     {
-        if(!stack.isEmpty())
-            stack.peek().render();
+        leaf.render();
     }
 }

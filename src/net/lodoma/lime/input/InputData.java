@@ -25,9 +25,9 @@ public class InputData
     
     public InputData()
     {
-        liveKeyboard            = ByteBuffer.allocate(Input.SIZE_KEYBOARD);
+        liveKeyboard            = ByteBuffer.allocate(Input.SIZE_KEYBOARD + 1);
         liveKeyboardRepeated    = ByteBuffer.allocate(liveKeyboard.capacity());
-        liveMouse               = ByteBuffer.allocate(Input.SIZE_MOUSE);
+        liveMouse               = ByteBuffer.allocate(Input.SIZE_MOUSE + 1);
         liveMousePosition       = new Vector2(0.0f, 0.0f);
         
         currentKeyboard         = ByteBuffer.allocate(liveKeyboard.capacity());

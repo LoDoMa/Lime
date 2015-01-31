@@ -11,11 +11,7 @@ public class LightData
 {
     public Vector2 position;
     public float radius;
-    
     public Color color;
-    
-    public float angleRangeBegin;
-    public float angleRangeEnd;
     
     public LightData()
     {
@@ -28,8 +24,6 @@ public class LightData
         position.set(inputStream.readFloat(), inputStream.readFloat());
         radius = inputStream.readFloat();
         color.set(inputStream.readFloat(), inputStream.readFloat(), inputStream.readFloat(), inputStream.readFloat());
-        angleRangeBegin = inputStream.readFloat();
-        angleRangeEnd = inputStream.readFloat();
     }
     
     public void write(DataOutputStream outputStream) throws IOException
@@ -41,7 +35,5 @@ public class LightData
         outputStream.writeFloat(color.getG());
         outputStream.writeFloat(color.getB());
         outputStream.writeFloat(color.getA());
-        outputStream.writeFloat(angleRangeBegin);
-        outputStream.writeFloat(angleRangeEnd);
     }
 }

@@ -4,12 +4,13 @@ import java.awt.Font;
 import java.io.File;
 
 import net.lodoma.lime.client.stage.StageManager;
-import net.lodoma.lime.client.stage.menu.MainMenuPopulator;
-import net.lodoma.lime.client.stage.menu.Menu;
+import net.lodoma.lime.client.stage.menu.MainMenu;
 import net.lodoma.lime.client.window.Window;
 import net.lodoma.lime.client.window.WindowException;
 import net.lodoma.lime.gui.Color;
 import net.lodoma.lime.gui.Text;
+import net.lodoma.lime.shader.Program;
+import net.lodoma.lime.shader.UniformType;
 import net.lodoma.lime.texture.Texture;
 import net.lodoma.lime.util.FontHelper;
 import net.lodoma.lime.util.OsHelper;
@@ -49,7 +50,7 @@ public class VisualInstance
     
     private void loop()
     {
-        new Menu(stageManager, new MainMenuPopulator()).startStage();
+        stageManager.push(new MainMenu());
 
         Timer timer = new Timer();
 
@@ -69,6 +70,9 @@ public class VisualInstance
             
             if(Window.debugEnabled)
             {
+                Program.menuProgram.useProgram();
+                Program.menuProgram.setUniform("texture", UniformType.INT1, 0);
+                
                 debugText.setText("fps " + fps);
                 debugText.render();
             }
@@ -92,8 +96,6 @@ public class VisualInstance
     
     private void clean()
     {
-        stageManager.popAll();
-        
         Window.close();
     }
     

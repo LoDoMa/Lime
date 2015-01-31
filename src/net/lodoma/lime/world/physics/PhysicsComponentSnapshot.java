@@ -81,7 +81,7 @@ public class PhysicsComponentSnapshot implements Identifiable<Integer>
         {
             GL11.glPushMatrix();
             GL11.glTranslatef(position.x, position.y, 0.0f);
-            GL11.glRotatef(angle, 0.0f, 0.0f, 1.0f);
+            GL11.glRotatef((float) Math.toDegrees(angle), 0.0f, 0.0f, 1.0f);
             GL11.glScalef(radius, radius, 1.0f);
             
             GL11.glBindTexture(GL11.GL_TEXTURE_2D, Texture.NO_TEXTURE);
@@ -105,7 +105,7 @@ public class PhysicsComponentSnapshot implements Identifiable<Integer>
         {
             GL11.glPushMatrix();
             GL11.glTranslatef(position.x, position.y, 0.0f);
-            GL11.glRotatef(angle, 0.0f, 0.0f, 1.0f);
+            GL11.glRotatef((float) Math.toDegrees(angle), 0.0f, 0.0f, 1.0f);
             
             GL11.glBindTexture(GL11.GL_TEXTURE_2D, Texture.NO_TEXTURE);
 

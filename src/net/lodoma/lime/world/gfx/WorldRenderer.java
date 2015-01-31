@@ -18,6 +18,7 @@ public class WorldRenderer
     private int viewportHeight = -1;
 
     private int[] lightFBO;
+    private int[] brightnessFBO;
     private int[] worldFBO;
     
     public WorldRenderer(World world)
@@ -78,8 +79,11 @@ public class WorldRenderer
         
         glPushMatrix();
         glScalef(1.0f / 32.0f, 1.0f / 24.0f, 1.0f);
-        
-        world.lightPool.foreach((Light light) -> light.render());
+
+        synchronized (world.lock)
+        {
+            world.lightPool.foreach((Light light) -> light.render());
+        }
         
         glPopMatrix();
     }
@@ -109,6 +113,17 @@ public class WorldRenderer
         glClear(GL_COLOR_BUFFER_BIT);
         glLoadIdentity();
         
+        glPushMatrix();
+        glScalef(1.0f / 32.0f, 1.0f / 24.0f, 1.0f);
+        
+        Program.lightProgram.useProgram();
+        synchronized (world.lock)
+        {
+            world.lightPool.foreach((Light light) -> light.renderShadows());
+        }
+        
+        glPopMatrix();
+        
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, lightTexture);
         
@@ -137,9 +152,11 @@ public class WorldRenderer
             viewportHeight = Window.viewportHeight;
 
             if (lightFBO != null) destroyFramebuffer(lightFBO);
+            if (brightnessFBO != null) destroyFramebuffer(lightFBO);
             if (worldFBO != null) destroyFramebuffer(worldFBO);
-            
+
             lightFBO = generateFramebuffer(viewportWidth, viewportHeight);
+            brightnessFBO = generateFramebuffer(viewportWidth, viewportHeight);
             worldFBO = generateFramebuffer(viewportWidth, viewportHeight);
         }
 

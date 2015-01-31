@@ -1,7 +1,6 @@
 package net.lodoma.lime.script.library;
 
 import net.lodoma.lime.shader.light.Light;
-import net.lodoma.lime.shader.light.LightData;
 import net.lodoma.lime.world.World;
 
 import org.luaj.vm2.LuaError;
@@ -52,7 +51,7 @@ public class LightFunctions
             {
             case NEW_LIGHT:
             {
-                Light light = new Light();
+                Light light = new Light(world);
                 int lightID = world.lightPool.add(light);
                 return LuaValue.valueOf(lightID);
             }
@@ -81,16 +80,6 @@ public class LightFunctions
                 world.lightPool.get(lightID).data.color.set(colorR, colorG, colorB, colorA);
                 break;
             }
-            case SET_ANGLE_RANGE:
-            {
-                int lightID = args.arg(1).checkint();
-                float begin = args.arg(2).checknumber().tofloat();
-                float end = args.arg(3).checknumber().tofloat();
-                LightData data = world.lightPool.get(lightID).data;
-                data.angleRangeBegin = begin;
-                data.angleRangeEnd = end;
-                break;
-            }
             }
             return LuaValue.NONE;
         }
@@ -101,8 +90,7 @@ public class LightFunctions
         NEW_LIGHT(0, true, "newLight"),
         SET_POSITION(3, true, "setLightPosition"),
         SET_RADIUS(2, true, "setLightRadius"),
-        SET_COLOR(5, true, "setLightColor"),
-        SET_ANGLE_RANGE(3, true, "setLightAngleRange");
+        SET_COLOR(5, true, "setLightColor");
         
         public int argc;
         public boolean argcexact;

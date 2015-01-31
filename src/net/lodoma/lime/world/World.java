@@ -131,7 +131,7 @@ public class World
             for (Integer identifier : lightKeySet)
                 if (!lightPool.has(identifier))
                 {
-                    Light light = new Light();
+                    Light light = new Light(this);
                     light.identifier = identifier;
                     lightPool.addManaged(light);
                 }

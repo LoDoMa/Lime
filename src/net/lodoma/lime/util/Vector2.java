@@ -514,7 +514,7 @@ public class Vector2
     public Vector2 rotate(float a)
     {
         float cos = (float) Math.cos(a);
-        float sin = -(float) Math.sin(a);
+        float sin = (float) Math.sin(a);
         float nx = x * cos - y * sin;
         float ny = x * sin + y * cos;
         return new Vector2(nx, ny);
@@ -592,7 +592,7 @@ public class Vector2
 
     public float angle()
     {
-        return (float) Math.atan2(x, y);
+        return (float) Math.atan2(y, x);
     }
 
     public float angleDeg()
