@@ -17,6 +17,7 @@ public class WorldRenderer
     private int viewportHeight = -1;
 
     private FBO occlusionMap;
+    private FBO brightnessMap;
     private FBO lightMap;
     
     public WorldRenderer(World world)
@@ -27,6 +28,7 @@ public class WorldRenderer
     public void clean()
     {
         if (occlusionMap != null) occlusionMap.destroy();
+        if (brightnessMap != null) brightnessMap.destroy();
         if (lightMap != null) lightMap.destroy();
     }
     
@@ -36,7 +38,7 @@ public class WorldRenderer
         occlusionMap.clear();
 
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glScalef(1.0f / 32.0f, 1.0f / 24.0f, 1.0f);
+        Camera.scale();
         
         Program.worldProgram.useProgram();
         synchronized (world.lock)
@@ -47,12 +49,27 @@ public class WorldRenderer
         occlusionMap.unbind();
     }
     
+    private void renderBrightnessMap()
+    {
+        brightnessMap.bind();
+        brightnessMap.clear();
+
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+        
+        synchronized (world.lock)
+        {
+            world.lightPool.foreach((Light light) -> light.renderBrightness(brightnessMap));
+        }
+        
+        brightnessMap.unbind();
+    }
+    
     private void renderLightMap()
     {
         lightMap.bind();
         lightMap.clear();
 
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
         
         synchronized (world.lock)
         {
@@ -71,17 +88,22 @@ public class WorldRenderer
         glLoadIdentity();
         
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        
+
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, occlusionMap.textureID);
+        
         glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, brightnessMap.textureID);
+        
+        glActiveTexture(GL_TEXTURE2);
         glBindTexture(GL_TEXTURE_2D, lightMap.textureID);
         
         glActiveTexture(GL_TEXTURE0);
 
         Program.copyProgram.useProgram();
-        Program.copyProgram.setUniform("light", UniformType.INT1, 1);
-        Program.copyProgram.setUniform("world", UniformType.INT1, 0);
+        Program.copyProgram.setUniform("occlusion", UniformType.INT1, 0);
+        Program.copyProgram.setUniform("brightness", UniformType.INT1, 1);
+        Program.copyProgram.setUniform("light", UniformType.INT1, 2);
         
         glBegin(GL_QUADS);
         glTexCoord2f(0.0f, 0.0f); glVertex2f(0.0f, 0.0f);
@@ -101,10 +123,12 @@ public class WorldRenderer
             clean();
 
             occlusionMap = new FBO(viewportWidth, viewportHeight);
+            brightnessMap = new FBO(viewportWidth, viewportHeight);
             lightMap = new FBO(viewportWidth, viewportHeight);
         }
 
         renderOcclusionMap();
+        renderBrightnessMap();
         renderLightMap();
         
         renderFinal();

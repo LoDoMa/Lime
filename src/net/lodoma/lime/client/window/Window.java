@@ -69,7 +69,7 @@ public class Window
         glfwSetWindowPos(windowHandle, (int) ((fullsize.x - size.x) / 2.0), (int) ((fullsize.y - size.y) / 2.0));
         
         glfwMakeContextCurrent(windowHandle);
-        glfwSwapInterval(1);
+        glfwSwapInterval(vsync ? 1 : 0);
         
         glfwShowWindow(windowHandle);
         
@@ -116,10 +116,15 @@ public class Window
         glfwSetWindowPos(windowHandle, (int) ((fullsize.x - size.x) / 2.0), (int) ((fullsize.y - size.y) / 2.0));
         
         glfwMakeContextCurrent(windowHandle);
-        glfwSwapInterval(1);
+        glfwSwapInterval(vsync ? 1 : 0);
         glfwShowWindow(windowHandle);
         
         initGL();
+    }
+    
+    public static void updateSyncInterval()
+    {
+        glfwSwapInterval(vsync ? 1 : 0);
     }
     
     public static void updateViewport()

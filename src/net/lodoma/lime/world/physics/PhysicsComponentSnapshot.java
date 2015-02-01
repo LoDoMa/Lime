@@ -86,7 +86,7 @@ public class PhysicsComponentSnapshot implements Identifiable<Integer>
             
             GL11.glBindTexture(GL11.GL_TEXTURE_2D, Texture.NO_TEXTURE);
 
-            GL11.glColor3f(1.0f, 1.0f, 1.0f);
+            GL11.glColor3f(0.7f, 0.7f, 0.7f);
             GL11.glBegin(GL11.GL_TRIANGLE_FAN);
 
             GL11.glVertex2f(0.0f, 0.0f);
@@ -109,7 +109,7 @@ public class PhysicsComponentSnapshot implements Identifiable<Integer>
             
             GL11.glBindTexture(GL11.GL_TEXTURE_2D, Texture.NO_TEXTURE);
 
-            GL11.glColor3f(1.0f, 1.0f, 1.0f);
+            GL11.glColor3f(0.7f, 0.7f, 0.7f);
             GL11.glBegin(GL11.GL_POLYGON);
 
             for (int i = 0; i < vertices.length; i++)

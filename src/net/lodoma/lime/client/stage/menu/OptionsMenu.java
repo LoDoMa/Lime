@@ -41,6 +41,7 @@ public class OptionsMenu extends Stage
         public void call()
         {
             Window.vsync = vsyncGroup.selected == vsyncOn;
+            Window.updateSyncInterval();
         }
     }
     

@@ -13,17 +13,21 @@ public class Program
     public static Shader lightVS, lightFS;
     public static Shader worldVS, worldFS;
     public static Shader copyVS, copyFS;
+    
     public static Shader occlusionCopyVS, occlusionCopyFS;
     public static Shader shadowMapVS, shadowMapFS;
     public static Shader renderLightVS, renderLightFS;
+    public static Shader brightnessVS, brightnessFS;
     
     public static Program menuProgram;
     public static Program lightProgram;
     public static Program worldProgram;
     public static Program copyProgram;
+    
     public static Program occlusionCopyProgram;
     public static Program shadowMapProgram;
     public static Program renderLightProgram;
+    public static Program brightnessProgram;
     
     public static void createAll()
     {
@@ -54,6 +58,10 @@ public class Program
         renderLightVS = new Shader(new File(OsHelper.JARPATH + "shader/RenderLight.vs"), ShaderType.VERTEX);
         renderLightFS = new Shader(new File(OsHelper.JARPATH + "shader/RenderLight.fs"), ShaderType.FRAGMENT);
         renderLightProgram = new Program(renderLightVS, renderLightFS);
+        
+        brightnessVS = new Shader(new File(OsHelper.JARPATH + "shader/Brightness.vs"), ShaderType.VERTEX);
+        brightnessFS = new Shader(new File(OsHelper.JARPATH + "shader/Brightness.fs"), ShaderType.FRAGMENT);
+        brightnessProgram = new Program(brightnessVS, brightnessFS);
     }
     
     public static void destroyAll()
@@ -65,6 +73,7 @@ public class Program
         occlusionCopyProgram.deleteProgram();
         shadowMapProgram.deleteProgram();
         renderLightProgram.deleteProgram();
+        brightnessProgram.deleteProgram();
 
         menuVS.deleteShader();
         menuFS.deleteShader();
@@ -80,6 +89,8 @@ public class Program
         shadowMapFS.deleteShader();
         renderLightVS.deleteShader();
         renderLightFS.deleteShader();
+        brightnessVS.deleteShader();
+        brightnessFS.deleteShader();
     }
     
     private int program;
