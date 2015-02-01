@@ -64,6 +64,7 @@ public class World
         jointPool.foreach((PhysicsJoint joint) -> joint.destroy());
         jointPool.clear();
         
+        lightPool.foreach((Light light) -> light.destroy());
         lightPool.clear();
     }
     
@@ -112,7 +113,10 @@ public class World
                 for (Integer identifier : snapshot.removedComponents)
                     compoSnapshotPool.remove(identifier);
                 for (Integer identifier : snapshot.removedLights)
+                {
+                    lightPool.get(identifier).destroy();
                     lightPool.remove(identifier);
+                }
             }
             else
             {
@@ -124,7 +128,10 @@ public class World
                 Set<Integer> lightIdentifierSet = lightPool.getIdentifierSet();
                 for (Integer identifier : lightIdentifierSet)
                     if (!snapshot.lightData.containsKey(identifier))
+                    {
+                        lightPool.get(identifier).destroy();
                         lightPool.remove(identifier);
+                    }
             }
             
             Set<Integer> lightKeySet = snapshot.lightData.keySet();

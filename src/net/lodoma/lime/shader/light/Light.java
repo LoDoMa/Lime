@@ -1,16 +1,14 @@
 package net.lodoma.lime.shader.light;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import net.lodoma.lime.client.window.Window;
 import net.lodoma.lime.shader.Program;
 import net.lodoma.lime.shader.UniformType;
 import net.lodoma.lime.util.Identifiable;
-import net.lodoma.lime.util.Vector2;
 import net.lodoma.lime.world.World;
-import net.lodoma.lime.world.physics.PhysicsComponentSnapshot;
+import net.lodoma.lime.world.gfx.FBO;
 
 public class Light implements Identifiable<Integer>
 {
@@ -18,6 +16,9 @@ public class Light implements Identifiable<Integer>
     
     public World world;
     public LightData data;
+    
+    private FBO occlusionLocal;
+    private FBO shadowMap;
     
     public Light(World world)
     {
@@ -37,217 +38,119 @@ public class Light implements Identifiable<Integer>
         this.identifier = identifier;
     }
     
-    public void render()
+    public void destroy()
     {
-        Program.lightProgram.useProgram();
-        
-        Program.lightProgram.setUniform("color", UniformType.FLOAT3, data.color.getR(), data.color.getG(), data.color.getB());
-        Program.lightProgram.setUniform("radius", UniformType.FLOAT1, data.radius);
-        Program.lightProgram.setUniform("center", UniformType.FLOAT2, data.position.x, data.position.y);
-        
-        glBegin(GL_QUADS);
-        glVertex2f(data.position.x - data.radius, data.position.y - data.radius);
-        glVertex2f(data.position.x + data.radius, data.position.y - data.radius);
-        glVertex2f(data.position.x + data.radius, data.position.y + data.radius);
-        glVertex2f(data.position.x - data.radius, data.position.y + data.radius);
-        glEnd();
+        synchronized (FBO.destroyList)
+        {
+            if (occlusionLocal != null) FBO.destroyList.add(occlusionLocal);
+            if (shadowMap != null) FBO.destroyList.add(shadowMap);
+        }
     }
     
-    public void renderShadows()
+    public void renderDSL(FBO occlusionMap, FBO lightMap)
     {
-        Program.lightProgram.useProgram();
+        float lightFW = Window.viewportWidth * data.radius / 32.0f;
+        float lightFH = Window.viewportHeight * data.radius / 24.0f;
+        int lightRW = (int) lightFW;
+        int lightRH = (int) lightFH;
         
-        Program.lightProgram.setUniform("color", UniformType.FLOAT4, data.color.getR(), data.color.getG(), data.color.getB(), data.color.getA());
-        Program.lightProgram.setUniform("radius", UniformType.FLOAT1, data.radius);
-        Program.lightProgram.setUniform("center", UniformType.FLOAT2, data.position.x, data.position.y);
+        if (occlusionLocal == null || occlusionLocal.width != lightRW || occlusionLocal.height != lightRH)
+        {
+            if (occlusionLocal != null)
+                occlusionLocal.destroy();
+            occlusionLocal = new FBO(lightRW, lightRH);
+        }
         
-        List<Vector2> lightPolygon = new ArrayList<Vector2>();
+        if (shadowMap == null || shadowMap.width != lightRW)
+        {
+            if (shadowMap != null)
+                shadowMap.destroy();
+            shadowMap = new FBO(lightRW, 1);
+
+            glBindTexture(GL_TEXTURE_2D, shadowMap.textureID);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        }
         
         /*
-        if (world.compoSnapshotPool != null)
-        {
-            world.compoSnapshotPool.foreach((PhysicsComponentSnapshot snapshot) -> {
-                switch (snapshot.type)
-                {
-                case CIRCLE:
-                    for (int i = 0; i <= 10; i++)
-                    {
-                        float cangle = snapshot.angle + (float) Math.toRadians(i * 360.0 / 10.0);
-                        float x = (float) Math.cos(cangle) * snapshot.radius;
-                        float y = (float) Math.sin(cangle) * snapshot.radius;
-                        float nx = snapshot.position.x + x;
-                        float ny = snapshot.position.y + y;
-                        Vector2 v = new Vector2(nx, ny);
-                        lightPolygon.add(raycast(v));
-                        v.rotateLocal(0.0001f);
-                        lightPolygon.add(raycast(v));
-                        v.rotateLocal(-2 * 0.0001f);
-                        lightPolygon.add(raycast(v));
-                    }
-                    break;
-                case POLYGON:
-                    for (int i = 0; i < snapshot.vertices.length; i++)
-                    {
-                        Vector2 v = snapshot.vertices[i].rotate(snapshot.angle);
-                        v.addLocal(snapshot.position);
-                        lightPolygon.add(raycast(v));
-                        v.rotateLocal(0.0001f);
-                        lightPolygon.add(raycast(v));
-                        v.rotateLocal(-2 * 0.0001f);
-                        lightPolygon.add(raycast(v));
-                    }
-                    break;
-                }
-            });
-        }
+         * Copy a section from the occlusion map FBO to the local occlusion FBO
+         * NOTE: this can probably be skipped
+         */
         
-        lightPolygon.add(raycast(new Vector2(data.position.x - data.radius, data.position.y - data.radius)));
-        lightPolygon.add(raycast(new Vector2(data.position.x + data.radius, data.position.y - data.radius)));
-        lightPolygon.add(raycast(new Vector2(data.position.x + data.radius, data.position.y + data.radius)));
-        lightPolygon.add(raycast(new Vector2(data.position.x - data.radius, data.position.y + data.radius)));
-        */
-        
-        for (int i = 0; i < 180; i++)
-        {
-            Vector2 d = new Vector2(0.0f, 1.0f);
-            d.rotateLocalDeg((360.0f / 180.0f) * i);
-            d.addLocal(data.position);
-            lightPolygon.add(raycast(d));
-        }
-        
-        lightPolygon.sort((Vector2 v1, Vector2 v2) ->
-        {
-            double a1 = v1.sub(data.position).angle();
-            double a2 = v2.sub(data.position).angle();
-            return a1 < a2 ? -1 : a1 > a2 ? 1 : 0;
-        });
-        
-        for (int i = 0; i < lightPolygon.size(); i++)
-        {
-            Vector2 v1 = lightPolygon.get(i);
-            Vector2 v2 = lightPolygon.get((i + 1) % lightPolygon.size());
-            glBegin(GL_TRIANGLES);
-            glVertex2f(data.position.x, data.position.y);
-            glVertex2f(v1.x, v1.y);
-            glVertex2f(v2.x, v2.y);
-            glEnd();
-        }
-    }
+        occlusionLocal.bind();
+        occlusionLocal.clear();
 
-    private Vector2 raycast(Vector2 target)
-    {
-        Vector2 edgeA = new Vector2(data.position.x - data.radius, data.position.y - data.radius);
-        Vector2 edgeB = new Vector2(data.position.x + data.radius, data.position.y - data.radius);
-        Vector2 edgeC = new Vector2(data.position.x + data.radius, data.position.y + data.radius);
-        Vector2 edgeD = new Vector2(data.position.x - data.radius, data.position.y + data.radius);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, occlusionMap.textureID);
+        
+        Program.occlusionCopyProgram.useProgram();
+        Program.occlusionCopyProgram.setUniform("occlusionMap", UniformType.INT1, 0);
 
-        Vector2 best = new Vector2(Float.MAX_VALUE, Float.MAX_VALUE);
+        float occlusionLX = (data.position.x - data.radius) / 32.0f;
+        float occlusionHX = (data.position.x + data.radius) / 32.0f;
+        float occlusionLY = (data.position.y - data.radius) / 24.0f;
+        float occlusionHY = (data.position.y + data.radius) / 24.0f;
         
-        if (world.compoSnapshotPool != null)
-        {
-            world.compoSnapshotPool.foreach((PhysicsComponentSnapshot snapshot) -> {
-                switch (snapshot.type)
-                {
-                case CIRCLE:
-                    for (int i = 0; i < 10; i++)
-                    {
-                        float cangle = snapshot.angle + (float) Math.toRadians(i * 360.0 / 10.0);
-                        float cangle2 = snapshot.angle + (float) Math.toRadians(((i + 1) % 10) * 360.0 / 10.0);
-                        float x = (float) Math.cos(cangle) * snapshot.radius;
-                        float y = (float) Math.sin(cangle) * snapshot.radius;
-                        float x2 = (float) Math.cos(cangle2) * snapshot.radius;
-                        float y2 = (float) Math.sin(cangle2) * snapshot.radius;
-                        tryReplace(new Vector2(snapshot.position.x + x, snapshot.position.y + y),
-                                   new Vector2(snapshot.position.x + x2, snapshot.position.y + y2),
-                                   target, best); 
-                    }
-                    break;
-                case POLYGON:
-                    for (int i = 0; i < snapshot.vertices.length; i++)
-                    {
-                        Vector2 v = snapshot.vertices[i].rotate(snapshot.angle);
-                        Vector2 v2 = snapshot.vertices[(i + 1) % snapshot.vertices.length].rotate(snapshot.angle);
-                        v.addLocal(snapshot.position);
-                        v2.addLocal(snapshot.position);
-                        tryReplace(v, v2, target, best);
-                    }
-                    break;
-                }
-            });
-        }
-        
-        tryReplace(edgeA, edgeB, target, best);
-        tryReplace(edgeB, edgeC, target, best);
-        tryReplace(edgeC, edgeD, target, best);
-        tryReplace(edgeD, edgeA, target, best);
-        
-        return best;
-    }
-    
-    private void tryReplace(Vector2 a, Vector2 b, Vector2 target, Vector2 best)
-    {
-        Vector2 cand = intersect(a, b, data.position, target);
-        if (cand == null) return;
-        if (cand.dist(data.position) < best.dist(data.position))
-            best.set(cand);
-    }
-    
-    private Vector2 intersect(Vector2 a, Vector2 b, Vector2 c, Vector2 d)
-    {
-        boolean v1 = compareDoubles(a.x - b.x, 0.0);
-        boolean v2 = compareDoubles(c.x - d.x, 0.0);
-        
-        if (v1 && v2) return null;
+        glBegin(GL_QUADS);
+        glTexCoord2f(occlusionLX, occlusionLY); glVertex2f(0.0f, 0.0f);
+        glTexCoord2f(occlusionHX, occlusionLY); glVertex2f(1.0f, 0.0f);
+        glTexCoord2f(occlusionHX, occlusionHY); glVertex2f(1.0f, 1.0f);
+        glTexCoord2f(occlusionLX, occlusionHY); glVertex2f(0.0f, 1.0f);
+        glEnd();
+        occlusionLocal.unbind();
 
-        double k1 = 0;
-        double k2 = 0;
-        double l1 = 0;
-        double l2 = 0;
+        /*
+         * Create a 1D shadow map
+         */
         
-        if (!v1)
-        {
-            k1 = (a.y - b.y) / (a.x - b.x);
-            l1 = a.y - k1 * a.x;
-        }
+        shadowMap.bind();
+        shadowMap.clear();
         
-        if (!v2)
-        {
-            k2 = (c.y - d.y) / (c.x - d.x);
-            l2 = c.y - k2 * c.x;
-        }
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, occlusionLocal.textureID);
         
-        double x = 0;
-        double y = 0;
+        Program.shadowMapProgram.useProgram();
+        Program.shadowMapProgram.setUniform("texture", UniformType.INT1, 0);
+        Program.shadowMapProgram.setUniform("resolution", UniformType.FLOAT2, lightFW, lightFH);
         
-        if (!v1 && !v2)
-        {
-            x = (l2 - l1) / (k1 - k2);
-            y = k1 * x + l1;
-        }
+        data.color.setGL();
         
-        if (v1)
-        {
-            x = a.x;
-            y = k2 * x + l2; 
-        }
+        glBegin(GL_QUADS);
+        glTexCoord2f(0.0f, 0.0f); glVertex2f(0.0f, 0.0f);
+        glTexCoord2f(1.0f, 0.0f); glVertex2f(1.0f, 0.0f);
+        glTexCoord2f(1.0f, 1.0f); glVertex2f(1.0f, 1.0f);
+        glTexCoord2f(0.0f, 1.0f); glVertex2f(0.0f, 1.0f);
+        glEnd();
         
-        if (v2)
-        {
-            x = c.x;
-            y = k1 * x + l1;
-        }
+        shadowMap.unbind();
         
-        if (x < Math.min(a.x, b.x) || x > Math.max(a.x, b.x)) return null;
-        if (y < Math.min(a.y, b.y) || y > Math.max(a.y, b.y)) return null;
-        if ((d.x < c.x && x >= c.x) || (d.x > c.x && x <= c.x)) return null;
-        if ((d.y < c.y && y >= c.y) || (d.y > c.y && y <= c.y)) return null;
+        /*
+         * Render the light to the light map FBO
+         */
         
-        return new Vector2((float) x, (float) y);
-    }
-    
-    private boolean compareDoubles(double a, double b)
-    {
-        double diff = Math.abs(a - b);
-        return diff < 0.000001;
+        lightMap.bind();
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, shadowMap.textureID);
+        
+        Program.renderLightProgram.useProgram();
+        Program.renderLightProgram.setUniform("texture", UniformType.INT1, 0);
+        Program.renderLightProgram.setUniform("resolution", UniformType.FLOAT2, lightFW, lightFH);
+        
+        glPushMatrix();
+        glScalef(1.0f / 32.0f, 1.0f / 24.0f, 1.0f);
+        
+        glBegin(GL_QUADS);
+        glTexCoord2f(0.0f, 1.0f); glVertex2f(data.position.x - data.radius, data.position.y - data.radius);
+        glTexCoord2f(1.0f, 1.0f); glVertex2f(data.position.x + data.radius, data.position.y - data.radius);
+        glTexCoord2f(1.0f, 0.0f); glVertex2f(data.position.x + data.radius, data.position.y + data.radius);
+        glTexCoord2f(0.0f, 0.0f); glVertex2f(data.position.x - data.radius, data.position.y + data.radius);
+        glEnd();
+        
+        glPopMatrix();
+        
+        lightMap.unbind();
     }
 }

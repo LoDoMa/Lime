@@ -42,7 +42,7 @@ local function addBox(x, y, w, h)
 end
 
 local function init()
-	for i = 1, 4, 1 do
+	for i = 1, 3, 1 do
 		local posx, posy = (math.random() - 0.0) * 20, (math.random() - 0.0) * 20
 		local radius = math.random() * 25
 		local colr, colg, colb, cola = math.random(), math.random(), math.random(), 1

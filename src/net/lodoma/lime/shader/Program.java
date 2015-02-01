@@ -13,11 +13,17 @@ public class Program
     public static Shader lightVS, lightFS;
     public static Shader worldVS, worldFS;
     public static Shader copyVS, copyFS;
+    public static Shader occlusionCopyVS, occlusionCopyFS;
+    public static Shader shadowMapVS, shadowMapFS;
+    public static Shader renderLightVS, renderLightFS;
     
     public static Program menuProgram;
     public static Program lightProgram;
     public static Program worldProgram;
     public static Program copyProgram;
+    public static Program occlusionCopyProgram;
+    public static Program shadowMapProgram;
+    public static Program renderLightProgram;
     
     public static void createAll()
     {
@@ -32,10 +38,22 @@ public class Program
         worldVS = new Shader(new File(OsHelper.JARPATH + "shader/world.vs"), ShaderType.VERTEX);
         worldFS = new Shader(new File(OsHelper.JARPATH + "shader/world.fs"), ShaderType.FRAGMENT);
         worldProgram = new Program(worldVS, worldFS);
-        
+
         copyVS = new Shader(new File(OsHelper.JARPATH + "shader/copy.vs"), ShaderType.VERTEX);
         copyFS = new Shader(new File(OsHelper.JARPATH + "shader/copy.fs"), ShaderType.FRAGMENT);
         copyProgram = new Program(copyVS, copyFS);
+        
+        occlusionCopyVS = new Shader(new File(OsHelper.JARPATH + "shader/OcclusionCopy.vs"), ShaderType.VERTEX);
+        occlusionCopyFS = new Shader(new File(OsHelper.JARPATH + "shader/OcclusionCopy.fs"), ShaderType.FRAGMENT);
+        occlusionCopyProgram = new Program(occlusionCopyVS, occlusionCopyFS);
+        
+        shadowMapVS = new Shader(new File(OsHelper.JARPATH + "shader/ShadowMap.vs"), ShaderType.VERTEX);
+        shadowMapFS = new Shader(new File(OsHelper.JARPATH + "shader/ShadowMap.fs"), ShaderType.FRAGMENT);
+        shadowMapProgram = new Program(shadowMapVS, shadowMapFS);
+        
+        renderLightVS = new Shader(new File(OsHelper.JARPATH + "shader/RenderLight.vs"), ShaderType.VERTEX);
+        renderLightFS = new Shader(new File(OsHelper.JARPATH + "shader/RenderLight.fs"), ShaderType.FRAGMENT);
+        renderLightProgram = new Program(renderLightVS, renderLightFS);
     }
     
     public static void destroyAll()
@@ -44,6 +62,9 @@ public class Program
         lightProgram.deleteProgram();
         worldProgram.deleteProgram();
         copyProgram.deleteProgram();
+        occlusionCopyProgram.deleteProgram();
+        shadowMapProgram.deleteProgram();
+        renderLightProgram.deleteProgram();
 
         menuVS.deleteShader();
         menuFS.deleteShader();
@@ -53,6 +74,12 @@ public class Program
         worldFS.deleteShader();
         copyVS.deleteShader();
         copyFS.deleteShader();
+        occlusionCopyVS.deleteShader();
+        occlusionCopyFS.deleteShader();
+        shadowMapVS.deleteShader();
+        shadowMapFS.deleteShader();
+        renderLightVS.deleteShader();
+        renderLightFS.deleteShader();
     }
     
     private int program;

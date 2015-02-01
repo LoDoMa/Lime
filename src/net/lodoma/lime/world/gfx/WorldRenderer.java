@@ -8,7 +8,6 @@ import net.lodoma.lime.world.World;
 import net.lodoma.lime.world.physics.PhysicsComponentSnapshot;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.*;
-import static org.lwjgl.opengl.EXTFramebufferObject.*;
 
 public class WorldRenderer
 {
@@ -17,124 +16,72 @@ public class WorldRenderer
     private int viewportWidth = -1;
     private int viewportHeight = -1;
 
-    private int[] lightFBO;
-    private int[] brightnessFBO;
-    private int[] worldFBO;
+    private FBO occlusionMap;
+    private FBO lightMap;
     
     public WorldRenderer(World world)
     {
         this.world = world;
     }
     
-    private int generateTexture(int width, int height)
-    {
-        int texID = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, texID);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_BYTE, (java.nio.ByteBuffer) null);
-        
-        return texID;
-    }
-    
-    private int[] generateFramebuffer(int width, int height)
-    {
-        int fbo = glGenFramebuffersEXT();
-        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo);
-        
-        int ct = generateTexture(width, height);
-        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, ct, 0);
-        
-        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
-        
-        return new int[] {fbo, ct, width, height};
-    }
-    
-    private void destroyFramebuffer(int[] data)
-    {
-        glDeleteFramebuffersEXT(data[0]);
-        glDeleteTextures(data[1]);
-    }
-    
-    private void bindFramebuffer(int[] data)
-    {
-        glViewport(0, 0, data[2], data[3]);
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, data[0]);
-    }
-    
     public void clean()
     {
-        if (lightFBO != null) destroyFramebuffer(lightFBO);
-        if (worldFBO != null) destroyFramebuffer(worldFBO);
+        if (occlusionMap != null) occlusionMap.destroy();
+        if (lightMap != null) lightMap.destroy();
     }
     
-    private void renderLights()
+    private void renderOcclusionMap()
     {
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-        glLoadIdentity();
-        
-        glPushMatrix();
-        glScalef(1.0f / 32.0f, 1.0f / 24.0f, 1.0f);
+        occlusionMap.bind();
+        occlusionMap.clear();
 
-        synchronized (world.lock)
-        {
-            world.lightPool.foreach((Light light) -> light.render());
-        }
-        
-        glPopMatrix();
-    }
-    
-    private void renderWorld()
-    {
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-        glLoadIdentity();
-        
-        glPushMatrix();
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glScalef(1.0f / 32.0f, 1.0f / 24.0f, 1.0f);
         
         Program.worldProgram.useProgram();
-        
         synchronized (world.lock)
         {
             world.compoSnapshotPool.foreach((PhysicsComponentSnapshot compoSnapshot) -> compoSnapshot.debugRender());
         }
         
-        glPopMatrix();
+        occlusionMap.unbind();
     }
     
-    private void renderFull(int lightTexture, int worldTexture)
+    private void renderLightMap()
     {
+        lightMap.bind();
+        lightMap.clear();
+
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        
+        synchronized (world.lock)
+        {
+            world.lightPool.foreach((Light light) -> light.renderDSL(occlusionMap, lightMap));
+        }
+        
+        lightMap.unbind();
+    }
+    
+    private void renderFinal()
+    {
+        Window.bindFBO();
+        
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         glLoadIdentity();
         
-        glPushMatrix();
-        glScalef(1.0f / 32.0f, 1.0f / 24.0f, 1.0f);
-        
-        Program.lightProgram.useProgram();
-        synchronized (world.lock)
-        {
-            world.lightPool.foreach((Light light) -> light.renderShadows());
-        }
-        
-        glPopMatrix();
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, lightTexture);
-        
+        glBindTexture(GL_TEXTURE_2D, occlusionMap.textureID);
         glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, worldTexture);
+        glBindTexture(GL_TEXTURE_2D, lightMap.textureID);
         
         glActiveTexture(GL_TEXTURE0);
 
         Program.copyProgram.useProgram();
-        Program.copyProgram.setUniform("light", UniformType.INT1, 0);
-        Program.copyProgram.setUniform("world", UniformType.INT1, 1);
+        Program.copyProgram.setUniform("light", UniformType.INT1, 1);
+        Program.copyProgram.setUniform("world", UniformType.INT1, 0);
         
         glBegin(GL_QUADS);
         glTexCoord2f(0.0f, 0.0f); glVertex2f(0.0f, 0.0f);
@@ -151,22 +98,15 @@ public class WorldRenderer
             viewportWidth = Window.viewportWidth;
             viewportHeight = Window.viewportHeight;
 
-            if (lightFBO != null) destroyFramebuffer(lightFBO);
-            if (brightnessFBO != null) destroyFramebuffer(lightFBO);
-            if (worldFBO != null) destroyFramebuffer(worldFBO);
+            clean();
 
-            lightFBO = generateFramebuffer(viewportWidth, viewportHeight);
-            brightnessFBO = generateFramebuffer(viewportWidth, viewportHeight);
-            worldFBO = generateFramebuffer(viewportWidth, viewportHeight);
+            occlusionMap = new FBO(viewportWidth, viewportHeight);
+            lightMap = new FBO(viewportWidth, viewportHeight);
         }
 
-        bindFramebuffer(lightFBO);
-        renderLights();
+        renderOcclusionMap();
+        renderLightMap();
         
-        bindFramebuffer(worldFBO);
-        renderWorld();
-        
-        Window.bindFBO();
-        renderFull(lightFBO[1], worldFBO[1]);
+        renderFinal();
     }
 }

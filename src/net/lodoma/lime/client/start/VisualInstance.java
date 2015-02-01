@@ -17,6 +17,7 @@ import net.lodoma.lime.util.OsHelper;
 import net.lodoma.lime.util.Timer;
 import net.lodoma.lime.util.TrueTypeFont;
 import net.lodoma.lime.util.Vector2;
+import net.lodoma.lime.world.gfx.FBO;
 
 public class VisualInstance
 {
@@ -67,6 +68,13 @@ public class VisualInstance
             timer.update();
             stageManager.update(timer.getDelta());
             stageManager.render();
+            
+            synchronized (FBO.destroyList)
+            {
+                for (FBO fbo : FBO.destroyList)
+                    fbo.destroy();
+                FBO.destroyList.clear();
+            }
             
             if(Window.debugEnabled)
             {
