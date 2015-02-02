@@ -41,8 +41,8 @@ public class WorldRenderer
         occlusionMap.clear();
 
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        camera.scale();
         camera.transform();
+        camera.scale();
         
         Program.worldProgram.useProgram();
         synchronized (world.lock)
