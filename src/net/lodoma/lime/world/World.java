@@ -11,6 +11,7 @@ import org.luaj.vm2.LuaValue;
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.script.LuaScript;
 import net.lodoma.lime.script.library.AttributeFunctions;
+import net.lodoma.lime.script.library.CameraFunctions;
 import net.lodoma.lime.script.library.EventFunctions;
 import net.lodoma.lime.script.library.InputFunctions;
 import net.lodoma.lime.script.library.LightFunctions;
@@ -72,6 +73,7 @@ public class World
     {
         LimeLibrary library = new LimeLibrary(server);
         AttributeFunctions.addToLibrary(library);
+        CameraFunctions.addToLibrary(library);
         EventFunctions.addToLibrary(library);
         InputFunctions.addToLibrary(library);
         LightFunctions.addToLibrary(library);

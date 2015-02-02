@@ -1,5 +1,4 @@
 local firstInit = true
-local userID = {}
 local compoID = {}
 
 function Lime_Init(entityID)
@@ -10,7 +9,6 @@ function Lime_Init(entityID)
 	local pos = lime.getAttribute(entityID, "pos")
 	local vel = lime.getAttribute(entityID, "vel")
 	local radius = lime.getAttribute(entityID, "radius")
-	userID[entityID] = lime.getAttribute(entityID, "master")
 
 	lime.startComponent()
 	lime.setInitialPosition(pos.x, pos.y)
@@ -25,27 +23,35 @@ function Lime_Init(entityID)
 
 	lime.selectComponent(compoID[entityID])
 	lime.setLinearVelocity(vel.x, vel.y)
+
+	lime.setCameraScale(lime.getAttribute(entityID, "master"), 32, 18);
 end
 
 function Lime_Update(entityID, timeDelta)
-	lime.setInputData(userID[entityID])
+	local master = lime.getAttribute(entityID, "master")
+
+	lime.setInputData(master)
 
 	lime.selectComponent(compoID[entityID])
 	if lime.getKeyState(lime.KEY_LEFT_SHIFT) then
-		if lime.getKeyState(lime.KEY_W) then lime.applyLinearImpulseToCenter(0.0, 10.0) end
-		if lime.getKeyState(lime.KEY_A) then lime.applyLinearImpulseToCenter(-10.0, 0.0) end
-		if lime.getKeyState(lime.KEY_S) then lime.applyLinearImpulseToCenter(0.0, -10.0) end
-		if lime.getKeyState(lime.KEY_D) then lime.applyLinearImpulseToCenter(10.0, 0.0) end
+		if lime.getKeyState(lime.KEY_W) then lime.applyLinearImpulseToCenter(0.0, 1.0) end
+		if lime.getKeyState(lime.KEY_A) then lime.applyLinearImpulseToCenter(-1.0, 0.0) end
+		if lime.getKeyState(lime.KEY_S) then lime.applyLinearImpulseToCenter(0.0, -1.0) end
+		if lime.getKeyState(lime.KEY_D) then lime.applyLinearImpulseToCenter(1.0, 0.0) end
 	else
-		if lime.getKeyState(lime.KEY_W) then lime.applyForceToCenter(0.0, 40.0) end
-		if lime.getKeyState(lime.KEY_A) then lime.applyForceToCenter(-40.0, 0.0) end
-		if lime.getKeyState(lime.KEY_S) then lime.applyForceToCenter(0.0, -40.0) end
-		if lime.getKeyState(lime.KEY_D) then lime.applyForceToCenter(40.0, 0.0) end
+		if lime.getKeyState(lime.KEY_W) then lime.applyForceToCenter(0.0, 4.0) end
+		if lime.getKeyState(lime.KEY_A) then lime.applyForceToCenter(-4.0, 0.0) end
+		if lime.getKeyState(lime.KEY_S) then lime.applyForceToCenter(0.0, -4.0) end
+		if lime.getKeyState(lime.KEY_D) then lime.applyForceToCenter(4.0, 0.0) end
 	end
+
+	local transX, transY = lime.getComponentPosition();
+	transX = transX - 16;
+	transY = transY - 8;
+	lime.setCameraTranslation(master, transX, transY);
 end
 
 function Lime_Clean(entityID)
 	lime.removeComponent(compoID[entityID])
-	userID[entityID] = nil
 	compoID[entityID] = nil
 end

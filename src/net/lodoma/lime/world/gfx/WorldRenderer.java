@@ -20,9 +20,12 @@ public class WorldRenderer
     private FBO brightnessMap;
     private FBO lightMap;
     
+    public Camera camera;
+    
     public WorldRenderer(World world)
     {
         this.world = world;
+        camera = new Camera();
     }
     
     public void clean()
@@ -38,7 +41,8 @@ public class WorldRenderer
         occlusionMap.clear();
 
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        Camera.scale();
+        camera.scale();
+        camera.transform();
         
         Program.worldProgram.useProgram();
         synchronized (world.lock)
@@ -58,7 +62,7 @@ public class WorldRenderer
         
         synchronized (world.lock)
         {
-            world.lightPool.foreach((Light light) -> light.renderBrightness(brightnessMap));
+            world.lightPool.foreach((Light light) -> light.renderBrightness(brightnessMap, camera));
         }
         
         brightnessMap.unbind();
@@ -73,7 +77,7 @@ public class WorldRenderer
         
         synchronized (world.lock)
         {
-            world.lightPool.foreach((Light light) -> light.renderDSL(occlusionMap, lightMap));
+            world.lightPool.foreach((Light light) -> light.renderDSL(occlusionMap, lightMap, camera));
         }
         
         lightMap.unbind();
@@ -115,22 +119,25 @@ public class WorldRenderer
     
     public void render()
     {
-        if (Window.viewportWidth != viewportWidth || Window.viewportHeight != viewportHeight)
+        synchronized (camera)
         {
-            viewportWidth = Window.viewportWidth;
-            viewportHeight = Window.viewportHeight;
-
-            clean();
-
-            occlusionMap = new FBO(viewportWidth, viewportHeight);
-            brightnessMap = new FBO(viewportWidth, viewportHeight);
-            lightMap = new FBO(viewportWidth, viewportHeight);
+            if (Window.viewportWidth != viewportWidth || Window.viewportHeight != viewportHeight)
+            {
+                viewportWidth = Window.viewportWidth;
+                viewportHeight = Window.viewportHeight;
+    
+                clean();
+    
+                occlusionMap = new FBO(viewportWidth, viewportHeight);
+                brightnessMap = new FBO(viewportWidth, viewportHeight);
+                lightMap = new FBO(viewportWidth, viewportHeight);
+            }
+    
+            renderOcclusionMap();
+            renderBrightnessMap();
+            renderLightMap();
+            
+            renderFinal();
         }
-
-        renderOcclusionMap();
-        renderBrightnessMap();
-        renderLightMap();
-        
-        renderFinal();
     }
 }

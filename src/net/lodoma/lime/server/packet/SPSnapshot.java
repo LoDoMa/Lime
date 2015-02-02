@@ -29,6 +29,12 @@ public class SPSnapshot extends ServerPacket
         
         user.outputStream.writeBoolean(snapshot.isDelta);
 
+        user.outputStream.writeFloat(user.camera.translation.x);
+        user.outputStream.writeFloat(user.camera.translation.y);
+        user.outputStream.writeFloat(user.camera.rotation);
+        user.outputStream.writeFloat(user.camera.scale.x);
+        user.outputStream.writeFloat(user.camera.scale.y);
+        
         user.outputStream.writeInt(snapshot.removedComponents.size());
         for (Integer id : snapshot.removedComponents)
             user.outputStream.writeInt(id);

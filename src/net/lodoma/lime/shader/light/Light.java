@@ -6,6 +6,7 @@ import net.lodoma.lime.client.window.Window;
 import net.lodoma.lime.shader.Program;
 import net.lodoma.lime.shader.UniformType;
 import net.lodoma.lime.util.Identifiable;
+import net.lodoma.lime.util.Vector2;
 import net.lodoma.lime.world.World;
 import net.lodoma.lime.world.gfx.Camera;
 import net.lodoma.lime.world.gfx.FBO;
@@ -47,22 +48,26 @@ public class Light implements Identifiable<Integer>
         }
     }
     
-    public void renderBrightness(FBO brightnessMap)
+    public void renderBrightness(FBO brightnessMap, Camera camera)
     {
+        Vector2 lightPos = data.position.clone();
+        lightPos.rotateAroundLocalDeg(camera.translation.add(camera.scale.mul(0.5f)), -camera.rotation);
+        lightPos.subLocal(camera.translation);
+        
         brightnessMap.bind();
         
         Program.brightnessProgram.useProgram();
         
         glPushMatrix();
-        Camera.scale();
+        camera.scale();
         
         data.color.setGL();
         
         glBegin(GL_QUADS);
-        glTexCoord2f(0.0f, 1.0f); glVertex2f(data.position.x - data.radius, data.position.y - data.radius);
-        glTexCoord2f(1.0f, 1.0f); glVertex2f(data.position.x + data.radius, data.position.y - data.radius);
-        glTexCoord2f(1.0f, 0.0f); glVertex2f(data.position.x + data.radius, data.position.y + data.radius);
-        glTexCoord2f(0.0f, 0.0f); glVertex2f(data.position.x - data.radius, data.position.y + data.radius);
+        glTexCoord2f(0.0f, 1.0f); glVertex2f(lightPos.x - data.radius, lightPos.y - data.radius);
+        glTexCoord2f(1.0f, 1.0f); glVertex2f(lightPos.x + data.radius, lightPos.y - data.radius);
+        glTexCoord2f(1.0f, 0.0f); glVertex2f(lightPos.x + data.radius, lightPos.y + data.radius);
+        glTexCoord2f(0.0f, 0.0f); glVertex2f(lightPos.x - data.radius, lightPos.y + data.radius);
         glEnd();
         
         glPopMatrix();
@@ -70,10 +75,14 @@ public class Light implements Identifiable<Integer>
         brightnessMap.unbind();
     }
     
-    public void renderDSL(FBO occlusionMap, FBO lightMap)
+    public void renderDSL(FBO occlusionMap, FBO lightMap, Camera camera)
     {
-        float lightFW = Window.viewportWidth * data.radius / Camera.SCALEW;
-        float lightFH = Window.viewportHeight * data.radius / Camera.SCALEH;
+        Vector2 lightPos = data.position.clone();
+        lightPos.rotateAroundLocalDeg(camera.translation.add(camera.scale.mul(0.5f)), -camera.rotation);
+        lightPos.subLocal(camera.translation);
+        
+        float lightFW = Window.viewportWidth * data.radius / camera.scale.x;
+        float lightFH = Window.viewportHeight * data.radius / camera.scale.y;
         int lightRW = (int) lightFW;
         int lightRH = (int) lightFH;
         
@@ -111,10 +120,10 @@ public class Light implements Identifiable<Integer>
         Program.occlusionCopyProgram.useProgram();
         Program.occlusionCopyProgram.setUniform("occlusionMap", UniformType.INT1, 0);
 
-        float occlusionLX = (data.position.x - data.radius) / Camera.SCALEW;
-        float occlusionHX = (data.position.x + data.radius) / Camera.SCALEW;
-        float occlusionLY = (data.position.y - data.radius) / Camera.SCALEH;
-        float occlusionHY = (data.position.y + data.radius) / Camera.SCALEH;
+        float occlusionLX = (lightPos.x - data.radius) / camera.scale.x;
+        float occlusionHX = (lightPos.x + data.radius) / camera.scale.x;
+        float occlusionLY = (lightPos.y - data.radius) / camera.scale.y;
+        float occlusionHY = (lightPos.y + data.radius) / camera.scale.y;
         
         glBegin(GL_QUADS);
         glTexCoord2f(occlusionLX, occlusionLY); glVertex2f(0.0f, 0.0f);
@@ -163,13 +172,13 @@ public class Light implements Identifiable<Integer>
         Program.renderLightProgram.setUniform("resolution", UniformType.FLOAT2, lightFW, lightFH);
         
         glPushMatrix();
-        Camera.scale();
+        camera.scale();
         
         glBegin(GL_QUADS);
-        glTexCoord2f(0.0f, 1.0f); glVertex2f(data.position.x - data.radius, data.position.y - data.radius);
-        glTexCoord2f(1.0f, 1.0f); glVertex2f(data.position.x + data.radius, data.position.y - data.radius);
-        glTexCoord2f(1.0f, 0.0f); glVertex2f(data.position.x + data.radius, data.position.y + data.radius);
-        glTexCoord2f(0.0f, 0.0f); glVertex2f(data.position.x - data.radius, data.position.y + data.radius);
+        glTexCoord2f(0.0f, 1.0f); glVertex2f(lightPos.x - data.radius, lightPos.y - data.radius);
+        glTexCoord2f(1.0f, 1.0f); glVertex2f(lightPos.x + data.radius, lightPos.y - data.radius);
+        glTexCoord2f(1.0f, 0.0f); glVertex2f(lightPos.x + data.radius, lightPos.y + data.radius);
+        glTexCoord2f(0.0f, 0.0f); glVertex2f(lightPos.x - data.radius, lightPos.y + data.radius);
         glEnd();
         
         glPopMatrix();

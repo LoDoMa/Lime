@@ -25,6 +25,10 @@ public class CPHSnapshot extends ClientPacketHandler
         Snapshot snapshot = new Snapshot();
         snapshot.isDelta = inputStream.readBoolean();
 
+        client.worldRenderer.camera.translation.set(inputStream.readFloat(), inputStream.readFloat());
+        client.worldRenderer.camera.rotation = inputStream.readFloat();
+        client.worldRenderer.camera.scale.set(inputStream.readFloat(), inputStream.readFloat());
+        
         int removedComponentsCount = inputStream.readInt();
         while ((removedComponentsCount--) != 0)
             snapshot.removedComponents.add(inputStream.readInt());

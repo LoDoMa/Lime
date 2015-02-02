@@ -12,8 +12,6 @@ local function onJoin(userID)
 	local velx, vely = (math.random() - 0.5) * 8, (math.random() - 0.5) * 8
 	local radius = 0.25 + math.random() * 0.5
 
-	radius = 2
-
 	local player = lime.newEntity()
 	lime.setAttribute(player, "pos", { x = posx, y = posy })
 	lime.setAttribute(player, "vel", { x = velx, y = vely })
@@ -60,7 +58,7 @@ local function init()
 
 	addBox(-1000.0, 0.0, 2000.0, 0.1)
 
-	for i = 1, 0, 1 do
+	for i = 1, 10, 1 do
 		local posx, posy = (math.random() - 0.0) * 20, (math.random() - 0.0) * 20
 		local radius = 0.25 + math.random() * 0.5
 
