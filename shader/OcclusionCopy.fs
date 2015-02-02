@@ -1,3 +1,5 @@
+precision highp float;
+
 uniform sampler2D occlusionMap;
 
 varying vec2 texCoord;

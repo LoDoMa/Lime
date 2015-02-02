@@ -1,3 +1,5 @@
+precision highp float;
+
 #define PI 3.14
 
 varying vec2 texCoord;
