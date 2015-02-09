@@ -10,19 +10,19 @@ public class StageManager
     {
         leaf.manager = this;
         leaf.parent = this.leaf;
-        if (this.leaf != null)
-            this.leaf.onInactive();
         this.leaf = leaf;
+        if (leaf.parent != null)
+            leaf.parent.onInactive();
         this.leaf.onActive();
         reupdate = true;
     }
     
     public void pop()
     {
+        leaf = leaf.parent;
         leaf.onInactive();
         if (leaf.parent != null)
             leaf.parent.onActive();
-        leaf = leaf.parent;
         reupdate = true;
     }
     
