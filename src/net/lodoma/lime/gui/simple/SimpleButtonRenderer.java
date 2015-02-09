@@ -32,8 +32,8 @@ public class SimpleButtonRenderer implements ButtonRenderer
         if(transparency != 0.0f)
         {
             Rectangle bounds = button.getBounds();
-            
-            glBindTexture(GL_TEXTURE_2D, Texture.NO_TEXTURE);
+
+            Texture.NO_TEXTURE.bind();
             
             glBegin(GL_LINES);
             {

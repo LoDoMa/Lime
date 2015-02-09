@@ -26,7 +26,7 @@ public class ColoredMask extends Mask
     @Override
     public void render()
     {
-        glBindTexture(GL_TEXTURE_2D, Texture.NO_TEXTURE);
+        Texture.NO_TEXTURE.bind();
         glBegin(GL_POLYGON);
         for(int i = 0; i < vertices.length; i++)
         {

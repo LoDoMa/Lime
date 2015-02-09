@@ -475,7 +475,7 @@ public class TrueTypeFont
     {
         IntBuffer scratch = BufferUtils.createIntBuffer(1);
         scratch.put(0, fontTextureID);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, Texture.NO_TEXTURE);
+        Texture.NO_TEXTURE.bind();
         GL11.glDeleteTextures(scratch);
     }
 }

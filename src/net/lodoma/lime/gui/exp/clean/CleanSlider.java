@@ -70,7 +70,7 @@ public class CleanSlider extends UIAbstractButton
         glPushMatrix();
         glTranslatef(position.x, position.y, 0.0f);
         
-        glBindTexture(GL_TEXTURE_2D, Texture.NO_TEXTURE);
+        Texture.NO_TEXTURE.bind();
         
         if(transparency != 0.0f)
         {

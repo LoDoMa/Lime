@@ -39,8 +39,8 @@ public class PhysicsComponentSnapshot implements Identifiable<Integer>
             GL11.glTranslatef(position.x, position.y, 0.0f);
             GL11.glRotatef((float) Math.toDegrees(angle), 0.0f, 0.0f, 1.0f);
             GL11.glScalef(radius, radius, 1.0f);
-            
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D, Texture.NO_TEXTURE);
+
+            Texture.NO_TEXTURE.bind();
 
             GL11.glColor3f(0.7f, 0.7f, 0.7f);
             GL11.glBegin(GL11.GL_TRIANGLE_FAN);
@@ -62,8 +62,8 @@ public class PhysicsComponentSnapshot implements Identifiable<Integer>
             GL11.glPushMatrix();
             GL11.glTranslatef(position.x, position.y, 0.0f);
             GL11.glRotatef((float) Math.toDegrees(angle), 0.0f, 0.0f, 1.0f);
-            
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D, Texture.NO_TEXTURE);
+
+            Texture.NO_TEXTURE.bind();
 
             GL11.glColor3f(0.7f, 0.7f, 0.7f);
             GL11.glBegin(GL11.GL_POLYGON);

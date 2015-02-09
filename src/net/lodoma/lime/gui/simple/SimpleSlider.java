@@ -58,7 +58,7 @@ public class SimpleSlider extends Slider
         Rectangle bounds = getBounds();
         GL11.glTranslatef(bounds.x, bounds.y, 1.0f);
 
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, Texture.NO_TEXTURE);
+        Texture.NO_TEXTURE.bind();
         
         if(isMouseHovering())
         {

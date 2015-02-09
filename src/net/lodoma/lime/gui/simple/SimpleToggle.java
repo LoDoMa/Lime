@@ -33,8 +33,8 @@ public class SimpleToggle extends Toggle implements ToggleListener
             if(button.isMouseHovering())
             {
                 Rectangle bounds = button.getBounds();
-                
-                glBindTexture(GL_TEXTURE_2D, Texture.NO_TEXTURE);
+
+                Texture.NO_TEXTURE.bind();
                 
                 glBegin(GL_LINES);
                 {
@@ -125,7 +125,7 @@ public class SimpleToggle extends Toggle implements ToggleListener
         glPushMatrix();
         glTranslatef(visualX, visualY, 0.0f);
 
-        glBindTexture(GL_TEXTURE_2D, Texture.NO_TEXTURE);
+        Texture.NO_TEXTURE.bind();
         
         HIGHLIGHT_COLOR.setGL();
         glBegin(GL_QUADS);
