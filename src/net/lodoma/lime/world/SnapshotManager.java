@@ -27,16 +27,14 @@ public class SnapshotManager
         lastSnapshot = snapshot;
         
         server.userManager.foreach((ServerUser user) -> {
-            if (user.fullSnapshot)
-            {
-                snapshotPacket.write(user, snapshot);
-                user.fullSnapshot = false;
-            }
-            else
-            {
-                // TODO: This should be a delta snapshot
-                snapshotPacket.write(user, snapshot);
-            }
+            Snapshot lastSnapshot = user.lastSnapshot;
+            user.lastSnapshot = snapshot;
+            
+            if (lastSnapshot == null)
+                lastSnapshot = new Snapshot();
+            
+            SnapshotSegment segment = new SnapshotSegment(snapshot, lastSnapshot);
+            snapshotPacket.write(user, segment);
         });
     }
 }

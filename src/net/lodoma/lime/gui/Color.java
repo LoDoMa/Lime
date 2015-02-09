@@ -99,4 +99,12 @@ public final class Color
     {
         return new Color(r, g, b, a);
     }
+    
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (!(obj instanceof Color)) return false;
+        Color c = (Color) obj;
+        return r == c.r && g == c.g && b == c.b && a == c.a;
+    }
 }

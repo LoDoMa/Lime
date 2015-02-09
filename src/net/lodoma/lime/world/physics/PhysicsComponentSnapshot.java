@@ -1,9 +1,5 @@
 package net.lodoma.lime.world.physics;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-
 import org.lwjgl.opengl.GL11;
 
 import net.lodoma.lime.texture.Texture;
@@ -31,46 +27,6 @@ public class PhysicsComponentSnapshot implements Identifiable<Integer>
     public void setIdentifier(Integer identifier)
     {
         this.identifier = identifier;
-    }
-    
-    public void read(DataInputStream stream) throws IOException
-    {
-        position = new Vector2(stream.readFloat(), stream.readFloat());
-        angle = stream.readFloat();
-        type = PhysicsComponentShapeType.values()[stream.readInt()];
-        switch (type)
-        {
-        case CIRCLE:
-            radius = stream.readFloat();
-            break;
-        case POLYGON:
-            vertices = new Vector2[stream.readInt()];
-            for (int j = 0; j < vertices.length; j++)
-                vertices[j] = new Vector2(stream.readFloat(), stream.readFloat());
-            break;
-        }
-    }
-    
-    public void write(DataOutputStream stream) throws IOException
-    {
-        stream.writeFloat(position.x);
-        stream.writeFloat(position.y);
-        stream.writeFloat(angle);
-        stream.writeInt(type.ordinal());
-        switch (type)
-        {
-        case CIRCLE:
-            stream.writeFloat(radius);
-            break;
-        case POLYGON:
-            stream.writeInt(vertices.length);
-            for (int j = 0; j < vertices.length; j++)
-            {
-                stream.writeFloat(vertices[j].x);
-                stream.writeFloat(vertices[j].y);
-            }
-            break;
-        }
     }
     
     public void debugRender()

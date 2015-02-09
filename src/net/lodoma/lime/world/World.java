@@ -2,8 +2,6 @@ package net.lodoma.lime.world;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Set;
-import java.util.Map.Entry;
 
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaValue;
@@ -21,7 +19,6 @@ import net.lodoma.lime.script.library.UtilFunctions;
 import net.lodoma.lime.script.library.WorldFunctions;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.shader.light.Light;
-import net.lodoma.lime.shader.light.LightData;
 import net.lodoma.lime.util.IdentityPool;
 import net.lodoma.lime.util.OsHelper;
 import net.lodoma.lime.world.entity.Entity;
@@ -106,59 +103,52 @@ public class World
         entityPool.foreach((Entity entity) -> { entity.update(timeDelta); });
     }
     
-    public void applySnapshot(Snapshot snapshot, Client client)
+    public void applySnapshot(SnapshotSegment segment, Client client)
     {
         synchronized (lock)
         {
-            if (snapshot.isDelta)
+            // Remove components and lights
+            
+            for (int key : segment.removedComponents)
             {
-                for (Integer identifier : snapshot.removedComponents)
-                    compoSnapshotPool.remove(identifier);
-                for (Integer identifier : snapshot.removedLights)
-                {
-                    lightPool.get(identifier).destroy();
-                    lightPool.remove(identifier);
-                }
-            }
-            else
-            {
-                Set<Integer> componentIdentifierSet = compoSnapshotPool.getIdentifierSet();
-                for (Integer identifier : componentIdentifierSet)
-                    if (!snapshot.componentData.containsKey(identifier))
-                        compoSnapshotPool.remove(identifier);
-                
-                Set<Integer> lightIdentifierSet = lightPool.getIdentifierSet();
-                for (Integer identifier : lightIdentifierSet)
-                    if (!snapshot.lightData.containsKey(identifier))
-                    {
-                        lightPool.get(identifier).destroy();
-                        lightPool.remove(identifier);
-                    }
+                compoSnapshotPool.remove(key);
             }
             
-            Set<Integer> lightKeySet = snapshot.lightData.keySet();
-            for (Integer identifier : lightKeySet)
-                if (!lightPool.has(identifier))
-                {
-                    Light light = new Light(this);
-                    light.identifier = identifier;
-                    lightPool.addManaged(light);
-                }
-    
-            Set<Entry<Integer, PhysicsComponentSnapshot>> componentEntrySet = snapshot.componentData.entrySet();
-            for (Entry<Integer, PhysicsComponentSnapshot> entry : componentEntrySet)
+            for (int key : segment.removedLights)
             {
-                int identifier = entry.getKey();
-                PhysicsComponentSnapshot compoSnapshot = entry.getValue();
-                compoSnapshot.identifier = identifier;
-                if (compoSnapshotPool.has(identifier))
-                    compoSnapshotPool.remove(identifier);
-                compoSnapshotPool.addManaged(compoSnapshot);
+                lightPool.get(key).destroy();
+                lightPool.remove(key);
             }
-    
-            Set<Entry<Integer, LightData>> lightEntrySet = snapshot.lightData.entrySet();
-            for (Entry<Integer, LightData> entry : lightEntrySet)
-                lightPool.get(entry.getKey()).data = entry.getValue();
+            
+            // Create components and lights
+            
+            for (int key : segment.createdComponents)
+            {
+                PhysicsComponentSnapshot compo = new PhysicsComponentSnapshot();
+                compo.identifier = key;
+                compoSnapshotPool.addManaged(compo);
+            }
+            
+            for (int key : segment.createdLights)
+            {
+                Light light = new Light(this);
+                light.identifier = key;
+                lightPool.addManaged(light);
+            }
+            
+            // Modify components and lights
+            
+            for (int i = 0; i < segment.modifiedComponents.length; i++)
+            {
+                int key = (int) (segment.modifiedComponents[i] & 0xFFFFFFFF);
+                segment.productComponents[i].apply(compoSnapshotPool.get(key));
+            }
+            
+            for (int i = 0; i < segment.modifiedLights.length; i++)
+            {
+                int key = (int) (segment.modifiedLights[i] & 0xFFFFFFFF);
+                segment.productLights[i].apply(lightPool.get(key).data);
+            }
         }
     }
 }

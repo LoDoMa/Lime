@@ -911,6 +911,14 @@ public class Vector2
         v.y = y;
     }
     
+    @Override
+    public boolean equals(Object o)
+    {
+        if (!(o instanceof Vector2)) return false;
+        Vector2 v = (Vector2) o;
+        return x == v.x && y == v.y;
+    }
+    
     public boolean equals(Vector2 v)
     {
         return x == v.x && y == v.y;
