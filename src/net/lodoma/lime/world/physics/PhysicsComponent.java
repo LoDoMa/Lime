@@ -25,6 +25,9 @@ public class PhysicsComponent implements Identifiable<Integer>
         
         engineBody = world.engineWorld.createBody(definition.engineBodyDefinition);
         engineFixture = engineBody.createFixture(definition.engineFixtureDefinition);
+        
+        // UserData for JBox2D bodies is the PhysicsComponent ID.
+        engineBody.m_userData = identifier;
     }
     
     @Override

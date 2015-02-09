@@ -1,6 +1,14 @@
 local firstInit = true
 local compoID = {}
 
+local function preSolve(bodyA, bodyB)
+	
+end
+
+local function postSolve(bodyA, bodyB)
+
+end
+
 function Lime_Init(entityID)
 	if firstInit then
 		firstInit = false
@@ -25,6 +33,8 @@ function Lime_Init(entityID)
 	lime.setLinearVelocity(vel.x, vel.y)
 
 	lime.setCameraScale(lime.getAttribute(entityID, "master"), 32, 18);
+
+	lime.addContactListener(preSolve, postSolve)
 end
 
 function Lime_Update(entityID, timeDelta)

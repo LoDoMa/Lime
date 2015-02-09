@@ -6,6 +6,7 @@ public class PhysicsWorld
 {
     public WorldDefinition definition;
     public org.jbox2d.dynamics.World engineWorld;
+    public PhysicsContactManager contactManager;
     
     public PhysicsWorld()
     {
@@ -14,8 +15,11 @@ public class PhysicsWorld
     
     public void create()
     {
+        contactManager = new PhysicsContactManager();
+        
         engineWorld = new World(definition.gravity.toVec2());
         engineWorld.setAllowSleep(false);
+        engineWorld.setContactListener(contactManager);
     }
     
     public void update(float timeDelta)

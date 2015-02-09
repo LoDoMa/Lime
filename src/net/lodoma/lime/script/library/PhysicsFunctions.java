@@ -1,5 +1,6 @@
 package net.lodoma.lime.script.library;
 
+import net.lodoma.lime.script.LuaContactListener;
 import net.lodoma.lime.util.Vector2;
 import net.lodoma.lime.world.physics.InvalidPhysicsComponentException;
 import net.lodoma.lime.world.physics.InvalidPhysicsJointException;
@@ -19,6 +20,7 @@ import org.jbox2d.common.Settings;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.joints.RevoluteJoint;
 import org.luaj.vm2.LuaError;
+import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.VarArgFunction;
@@ -483,6 +485,41 @@ public class PhysicsFunctions
                 ((RevoluteJoint) joint.engineJoint).setMaxMotorTorque(maxTorque);
                 break;
             }
+            case ADD_CONTACT_LISTENER:
+            {
+                if (args.narg() > 4)
+                    throw new LuaError("too many arguments to \"" + data.name + "\"");
+                LuaFunction preSolve = args.arg(1).checkfunction();
+                LuaFunction postSolve = args.arg(2).checkfunction();
+                
+                int filterLevel = 0;
+                int bodyA = 0;
+                int bodyB = 0;
+                if (args.narg() > 3)
+                {
+                    filterLevel++;
+                    bodyA = args.arg(3).checkint();
+                }
+                if (args.narg() == 4)
+                {
+                    filterLevel++;
+                    bodyB = args.arg(4).checkint();
+                }
+                
+                LuaContactListener listener = null;
+                if (filterLevel == 0) listener = new LuaContactListener(preSolve, postSolve);
+                else if (filterLevel == 1) listener = new LuaContactListener(bodyA, preSolve, postSolve);
+                else if (filterLevel == 2) listener = new LuaContactListener(bodyA, bodyB, preSolve, postSolve);
+                
+                int listenerID = library.server.physicsWorld.contactManager.listeners.add(listener);
+                return LuaValue.valueOf(listenerID);
+            }
+            case REMOVE_CONTACT_LISTENER:
+            {
+                int listenerID = args.arg(1).checkint();
+                library.server.physicsWorld.contactManager.listeners.remove(listenerID);
+                break;
+            }
             }
             return LuaValue.NONE;
         }
@@ -529,7 +566,10 @@ public class PhysicsFunctions
         SET_REVOLUTE_ANGLE_LIMIT(1, true, "setRevoluteAngleLimit"),
         ENABLE_REVOLUTE_MOTOR(1, true, "enableRevoluteMotor"),
         SET_REVOLUTE_MOTOR_SPEED(1, true, "setRevoluteMotorSpeed"),
-        SET_REVOLUTE_MAX_MOTOR_TORQUE(1, true, "setRevoluteMaxMotorTorque");
+        SET_REVOLUTE_MAX_MOTOR_TORQUE(1, true, "setRevoluteMaxMotorTorque"),
+        
+        ADD_CONTACT_LISTENER(2, false, "addContactListener"),
+        REMOVE_CONTACT_LISTENER(1, true, "removeContactListener");
         
         public int argc;
         public boolean argcexact;
