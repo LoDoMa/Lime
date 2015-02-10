@@ -76,7 +76,7 @@ public class SnapshotSegment
                         modified |= MODIFIED_SHAPE;
                     break;
                 case POLYGON:
-                    if (Arrays.equals(currentCompo.vertices, previousCompo.vertices))
+                    if (!Arrays.equals(currentCompo.vertices, previousCompo.vertices))
                         modified |= MODIFIED_SHAPE;
                     break;
                 }
