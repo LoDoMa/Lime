@@ -375,6 +375,66 @@ public class PhysicsFunctions
                 compo.engineBody.setLinearVelocity(new Vec2(velocityX, velocityY));
                 break;
             }
+            case GET_ANGULAR_VELOCITY:
+            {
+                if (compo == null)
+                    throw new LuaError("manipulating nonexistent body component");
+                float velocity = compo.engineBody.getAngularVelocity();
+                return LuaValue.valueOf(velocity);
+            }
+            case SET_ANGULAR_VELOCITY:
+            {
+                float velocity = args.arg(1).checknumber().tofloat();
+                if (compo == null)
+                    throw new LuaError("manipulating nonexistent body component");
+                compo.engineBody.setAngularVelocity(velocity);
+                break;
+            }
+            case GET_LINEAR_DAMPING:
+            {
+                if (compo == null)
+                    throw new LuaError("manipulating nonexistent body component");
+                float damping = compo.engineBody.getLinearDamping();
+                return LuaValue.valueOf(damping);
+            }
+            case SET_LINEAR_DAMPING:
+            {
+                float damping = args.arg(1).checknumber().tofloat();
+                if (compo == null)
+                    throw new LuaError("manipulating nonexistent body component");
+                compo.engineBody.setLinearDamping(damping);
+                break;
+            }
+            case GET_ANGULAR_DAMPING:
+            {
+                if (compo == null)
+                    throw new LuaError("manipulating nonexistent body component");
+                float damping = compo.engineBody.getAngularDamping();
+                return LuaValue.valueOf(damping);
+            }
+            case SET_ANGULAR_DAMPING:
+            {
+                float damping = args.arg(1).checknumber().tofloat();
+                if (compo == null)
+                    throw new LuaError("manipulating nonexistent body component");
+                compo.engineBody.setAngularDamping(damping);
+                break;
+            }
+            case GET_ANGLE_LOCKED:
+            {
+                if (compo == null)
+                    throw new LuaError("manipulating nonexistent body component");
+                boolean locked = compo.engineBody.isFixedRotation();
+                return LuaValue.valueOf(locked);
+            }
+            case SET_ANGLE_LOCKED:
+            {
+                boolean locked = args.arg(1).checkboolean();
+                if (compo == null)
+                    throw new LuaError("manipulating nonexistent body component");
+                compo.engineBody.setFixedRotation(locked);
+                break;
+            }
             case APPLY_FORCE:
             {
                 float forceX = args.arg(1).checknumber().tofloat();
@@ -421,6 +481,21 @@ public class PhysicsFunctions
                 if (compo == null)
                     throw new LuaError("manipulating nonexistent body component");
                 compo.engineBody.applyLinearImpulse(new Vec2(impulseX, impulseY), compo.engineBody.getLocalCenter());
+                break;
+            }
+            case GET_USING_CCD:
+            {
+                if (compo == null)
+                    throw new LuaError("manipulating nonexistent body component");
+                boolean using = compo.engineBody.isBullet();
+                return LuaValue.valueOf(using);
+            }
+            case SET_USING_CCD:
+            {
+                boolean using = args.arg(1).checkboolean();
+                if (compo == null)
+                    throw new LuaError("manipulating nonexistent body component");
+                compo.engineBody.setBullet(using);
                 break;
             }
             case SELECT_JOINT:
@@ -555,11 +630,21 @@ public class PhysicsFunctions
         GET_ANGLE(0, true, "getComponentAngle"),
         GET_LINEAR_VELOCITY(0, true, "getLinearVelocity"),
         SET_LINEAR_VELOCITY(2, true, "setLinearVelocity"),
+        GET_ANGULAR_VELOCITY(0, true, "getAngularVelocity"),
+        SET_ANGULAR_VELOCITY(1, true, "setAngularVelocity"),
+        GET_LINEAR_DAMPING(0, true, "getLinearDamping"),
+        SET_LINEAR_DAMPING(1, true, "setLinearDamping"),
+        GET_ANGULAR_DAMPING(0, true, "getAngularDamping"),
+        SET_ANGULAR_DAMPING(1, true, "setAngularDamping"),
+        GET_ANGLE_LOCKED(0, true, "getAngleLocked"),
+        SET_ANGLE_LOCKED(1, true, "setAngleLocked"),
         APPLY_FORCE(4, true, "applyForce"),
         APPLY_FORCE_TO_CENTER(2, true, "applyForceToCenter"),
         APPLY_ANGULAR_IMPULSE(1, true, "applyAngularImpulse"),
         APPLY_LINEAR_IMPULSE(4, true, "applyLinearImpulse"),
         APPLY_LINEAR_IMPULSE_TO_CENTER(2, true, "applyLinearImpulseToCenter"),
+        GET_USING_CCD(0, true, "getUsingCCD"),
+        SET_USING_CCD(1, true, "setUsingCCD"),
         
         SELECT_JOINT(1, true, "selectJoint"),
         ENABLE_REVOLUTE_ANGLE_LIMIT(1, true, "enableRevoluteAngleLimit"),

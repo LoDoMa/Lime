@@ -2,7 +2,7 @@ local firstInit = true
 local compoID = {}
 
 local function preSolve(bodyA, bodyB)
-	
+
 end
 
 local function postSolve(bodyA, bodyB)
@@ -31,6 +31,10 @@ function Lime_Init(entityID)
 
 	lime.selectComponent(compoID[entityID])
 	lime.setLinearVelocity(vel.x, vel.y)
+	lime.setLinearDamping(0.1);
+	lime.setAngularDamping(0.1);
+	lime.setAngleLocked(true);
+	lime.setUsingCCD(false);
 
 	lime.setCameraScale(lime.getAttribute(entityID, "master"), 32, 18);
 
