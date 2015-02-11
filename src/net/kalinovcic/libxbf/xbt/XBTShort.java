@@ -16,13 +16,13 @@ public class XBTShort extends XBTElement
     }
     
     @Override
-    void read(DataInputStream dis) throws IOException
+    void read(DataInputStream dis, int version) throws IOException
     {
         value = dis.readShort();
     }
     
     @Override
-    void write(DataOutputStream dos) throws IOException
+    void write(DataOutputStream dos, int version) throws IOException
     {
         dos.writeShort(value);
     }

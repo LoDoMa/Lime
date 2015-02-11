@@ -19,7 +19,7 @@ public class XBTArrayByte extends XBTElement
     }
     
     @Override
-    void read(DataInputStream dis) throws IOException
+    void read(DataInputStream dis, int version) throws IOException
     {
         int length = dis.readInt();
         value = new byte[length];
@@ -27,7 +27,7 @@ public class XBTArrayByte extends XBTElement
     }
     
     @Override
-    void write(DataOutputStream dos) throws IOException
+    void write(DataOutputStream dos, int version) throws IOException
     {
         dos.writeInt(value.length);
         dos.write(value);

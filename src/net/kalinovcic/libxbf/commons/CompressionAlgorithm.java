@@ -1,74 +1,108 @@
 package net.kalinovcic.libxbf.commons;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import net.jpountz.lz4.LZ4Compressor;
+import net.jpountz.lz4.LZ4Factory;
+import net.jpountz.lz4.LZ4FastDecompressor;
+
 public enum CompressionAlgorithm
 {
-    NONE(new CompressionISFactory()
+    NONE
     {
         @Override
-        public InputStream newIS(InputStream source) throws IOException
+        public byte[] compress(byte[] uncompressedData) throws IOException
+        {
+            return uncompressedData;
+        }
+        
+        @Override
+        public byte[] decompress(byte[] compressedData, int decompressedSize) throws IOException
+        {
+            return compressedData;
+        }
+        
+        @Override
+        public InputStream decompressionStream(InputStream source) throws IOException
         {
             return source;
         }
-    }, new CompressionOSFactory()
-    {
-        @Override
-        public OutputStream newOS(OutputStream destination) throws IOException
-        {
-            return destination;
-        }
-    }),
+    },
     
-    GZIP(new CompressionISFactory()
+    GZIP
     {
         @Override
-        public InputStream newIS(InputStream source) throws IOException
+        public byte[] compress(byte[] uncompressedData) throws IOException
+        {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            GZIPOutputStream gzip = new GZIPOutputStream(baos);
+            gzip.write(uncompressedData, 0, uncompressedData.length);
+            gzip.close();
+            return baos.toByteArray();
+        }
+        
+        @Override
+        public byte[] decompress(byte[] compressedData, int decompressedSize) throws IOException
+        {
+            ByteArrayInputStream bais = new ByteArrayInputStream(compressedData);
+            GZIPInputStream gzip = new GZIPInputStream(bais);
+            byte[] decompressed = new byte[decompressedSize];
+            gzip.read(decompressed, 0, decompressed.length);
+            gzip.close();
+            return decompressed;
+        }
+        
+        @Override
+        public InputStream decompressionStream(InputStream source) throws IOException
         {
             return new GZIPInputStream(source);
         }
-    }, new CompressionOSFactory()
+    },
+    
+    LZ4
     {
         @Override
-        public OutputStream newOS(OutputStream destination) throws IOException
+        public byte[] compress(byte[] uncompressedData) throws IOException
         {
-            return new GZIPOutputStream(destination);
+            LZ4Compressor compressor = factory.fastCompressor();
+            byte[] compressedMax = new byte[compressor.maxCompressedLength(uncompressedData.length)];
+            int compressedSize = compressor.compress(uncompressedData, 0, uncompressedData.length, compressedMax, 0, compressedMax.length);
+            byte[] compressed = new byte[compressedSize];
+            System.arraycopy(compressedMax, 0, compressed, 0, compressed.length);
+            return compressed;
         }
-    });
+        
+        @Override
+        public byte[] decompress(byte[] compressedData, int decompressedSize) throws IOException
+        {
+            LZ4FastDecompressor decompressor = factory.fastDecompressor();
+            byte[] decompressed = new byte[decompressedSize];
+            decompressor.decompress(compressedData, 0, decompressed, 0, decompressedSize);
+            return decompressed;
+        }
+        
+        @Override
+        public InputStream decompressionStream(InputStream source) throws IOException
+        {
+            throw new UnsupportedOperationException("LZ4 doesn't support streamed decompression");
+        }
+    };
     
     public final int ID;
     
-    private final CompressionISFactory isFactory;
-    private final CompressionOSFactory osFactory;
-    
-    CompressionAlgorithm(CompressionISFactory isFactory, CompressionOSFactory osFactory)
+    CompressionAlgorithm()
     {
         ID = ordinal();
-        this.isFactory = isFactory;
-        this.osFactory = osFactory;
     }
+
+    public abstract byte[] compress(byte[] uncompressedData) throws IOException;
+    public abstract byte[] decompress(byte[] compressedData, int decompressedSize) throws IOException;
+    public abstract InputStream decompressionStream(InputStream source) throws IOException;
     
-    public OutputStream newOS(OutputStream destination) throws IOException
-    {
-        return osFactory.newOS(destination);
-    }
-    
-    public InputStream newIS(InputStream destination) throws IOException
-    {
-        return isFactory.newIS(destination);
-    }
-    
-    private static interface CompressionISFactory
-    {
-        public InputStream newIS(InputStream source) throws IOException;
-    }
-    
-    private static interface CompressionOSFactory
-    {
-        public OutputStream newOS(OutputStream destination) throws IOException;
-    }
+    private static LZ4Factory factory = LZ4Factory.fastestInstance();
 }

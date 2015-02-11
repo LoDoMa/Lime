@@ -15,6 +15,6 @@ abstract class XBTElement
         return this;
     }
     
-    abstract void read(DataInputStream dis) throws IOException;
-    abstract void write(DataOutputStream dos) throws IOException;
+    abstract void read(DataInputStream dis, int version) throws IOException;
+    abstract void write(DataOutputStream dos, int version) throws IOException;
 }

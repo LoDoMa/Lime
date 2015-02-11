@@ -4,16 +4,16 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class XBTArrayFloat extends XBTElement
+public class XBTArrayInt extends XBTElement
 {
-    public float[] value;
+    public int[] value;
     
-    public XBTArrayFloat()
+    public XBTArrayInt()
     {
         
     }
     
-    public XBTArrayFloat(float[] value)
+    public XBTArrayInt(int[] value)
     {
         this.value = value;
     }
@@ -22,9 +22,9 @@ public class XBTArrayFloat extends XBTElement
     void read(DataInputStream dis, int version) throws IOException
     {
         int length = dis.readInt();
-        value = new float[length];
+        value = new int[length];
         for (int i = 0; i < length; i++)
-            value[i] = dis.readFloat();
+            value[i] = dis.readInt();
     }
     
     @Override
@@ -32,6 +32,6 @@ public class XBTArrayFloat extends XBTElement
     {
         dos.writeInt(value.length);
         for (int i = 0; i < value.length; i++)
-            dos.writeFloat(value[i]);
+            dos.writeInt(value[i]);
     }
 }
