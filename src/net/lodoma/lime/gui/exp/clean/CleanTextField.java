@@ -12,7 +12,14 @@ public class CleanTextField extends UITextField
     
     public CleanTextField(Vector2 position, Vector2 dimensions, String text)
     {
-        super(new CleanText(new Vector2(position.x + dimensions.x / 2.0f, position.y), dimensions.y, text, TrueTypeFont.ALIGN_CENTER));
+        this(position, dimensions, text, TrueTypeFont.ALIGN_CENTER);
+    }
+    
+    public CleanTextField(Vector2 position, Vector2 dimensions, String text, int alignment)
+    {
+        super(new CleanText(new Vector2(position.x + ((alignment == TrueTypeFont.ALIGN_LEFT) ?  (0) :
+                                                     ((alignment == TrueTypeFont.ALIGN_RIGHT) ? (dimensions.x) :
+                                                                                                (dimensions.x / 2.0f))), position.y), dimensions.y, text, alignment));
         this.position.set(position);
         this.dimensions.set(dimensions);
     }

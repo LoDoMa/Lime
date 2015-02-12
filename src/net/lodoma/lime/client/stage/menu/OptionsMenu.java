@@ -9,9 +9,11 @@ import net.lodoma.lime.gui.exp.clean.CleanButton;
 import net.lodoma.lime.gui.exp.clean.CleanSlider;
 import net.lodoma.lime.gui.exp.clean.CleanText;
 import net.lodoma.lime.gui.exp.clean.CleanToggle;
+import net.lodoma.lime.gui.exp.clean.CleanUI;
 import net.lodoma.lime.input.Input;
 import net.lodoma.lime.shader.Program;
 import net.lodoma.lime.shader.UniformType;
+import net.lodoma.lime.util.TrueTypeFont;
 import net.lodoma.lime.util.Vector2;
 
 public class OptionsMenu extends Stage
@@ -88,13 +90,13 @@ public class OptionsMenu extends Stage
         debugGroup = new UIGroup(new DebugListener());
         
         ui.children.add(fullscreen = new CleanButton(new Vector2(0.05f, 0.50f), new Vector2(0.4f, 0.05f), Window.fullscreen ? "Fullscreen" : "Windowed", new FullscreenListener()));
-        ui.children.add(new CleanText(new Vector2(0.05f, 0.44f), 0.05f, "VSync:"));
+        ui.children.add(new CleanText(new Vector2(0.05f, 0.44f), 0.05f, "VSync:", CleanUI.TEXT_COLOR, TrueTypeFont.ALIGN_LEFT));
         ui.children.add(vsyncOn = new CleanToggle(new Vector2(0.25f, 0.44f), new Vector2(0.1f, 0.05f), "on", vsyncGroup));
         ui.children.add(vsyncOff = new CleanToggle(new Vector2(0.35f, 0.44f), new Vector2(0.1f, 0.05f), "off", vsyncGroup));
-        ui.children.add(new CleanText(new Vector2(0.05f, 0.38f), 0.05f, "Debug:"));
+        ui.children.add(new CleanText(new Vector2(0.05f, 0.38f), 0.05f, "Debug:", CleanUI.TEXT_COLOR, TrueTypeFont.ALIGN_LEFT));
         ui.children.add(debugOn = new CleanToggle(new Vector2(0.25f, 0.38f), new Vector2(0.1f, 0.05f), "on", debugGroup));
         ui.children.add(debugOff = new CleanToggle(new Vector2(0.35f, 0.38f), new Vector2(0.1f, 0.05f), "off", debugGroup));
-        ui.children.add(new CleanText(new Vector2(0.05f, 0.32f), 0.05f, "Sound: "));
+        ui.children.add(new CleanText(new Vector2(0.05f, 0.32f), 0.05f, "Sound: ", CleanUI.TEXT_COLOR, TrueTypeFont.ALIGN_LEFT));
         ui.children.add(sound = new CleanSlider(new Vector2(0.25f, 0.32f), new Vector2(0.4f, 0.05f), new SoundListener()));
         ui.children.add(new CleanButton(new Vector2(0.3f, 0.26f), new Vector2(0.4f, 0.05f), "Back", new BackListener()));
 

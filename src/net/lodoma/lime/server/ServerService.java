@@ -9,7 +9,6 @@ public class ServerService implements Runnable
     private Thread thread;
     private boolean running;
     
-    private int port;
     private ServerSocket serviceSocket;
     
     private Server server;
@@ -19,16 +18,11 @@ public class ServerService implements Runnable
         this.server = server;
     }
     
-    public void setPort(int port)
-    {
-        this.port = port;
-    }
-    
     private void openService()
     {
         try
         {
-            serviceSocket = new ServerSocket(port);
+            serviceSocket = new ServerSocket(NetSettings.PORT);
         }
         catch (IOException e)
         {

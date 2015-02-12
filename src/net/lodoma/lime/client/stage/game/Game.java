@@ -25,7 +25,7 @@ public class Game extends Stage
         
         try
         {
-            client.open(19424, host);
+            client.open(host);
         }
         catch(ClientConnectionException e)
         {

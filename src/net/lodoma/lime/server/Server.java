@@ -13,8 +13,9 @@ public final class Server
 {
     private boolean isRunning = false;
     private String closeMessage;
-    
+
     private ServerService service;
+    private ServerBroadcastService broadcast;
     
     public ServerLogicPool logicPool;
     
@@ -27,7 +28,7 @@ public final class Server
     public PhysicsWorld physicsWorld;
     public SnapshotManager snapshotManager;
     
-    public void open(int port)
+    public void open()
     {
         if (isRunning) return;
         
@@ -46,8 +47,10 @@ public final class Server
         isRunning = true;
         
         service = new ServerService(this);
-        service.setPort(port);
         service.start();
+        
+        broadcast = new ServerBroadcastService(this);
+        broadcast.start();
         
         logicPool.start();
     }
@@ -60,6 +63,7 @@ public final class Server
             System.err.println("close message: " + closeMessage);
         
         logicPool.stop();
+        broadcast.stop();
         service.stop();
         
         isRunning = false;

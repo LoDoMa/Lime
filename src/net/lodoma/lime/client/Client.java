@@ -9,6 +9,7 @@ import java.net.Socket;
 
 import net.lodoma.lime.client.logic.CLWorld;
 import net.lodoma.lime.client.logic.ClientLogicPool;
+import net.lodoma.lime.server.NetSettings;
 import net.lodoma.lime.util.IdentityPool;
 import net.lodoma.lime.util.Pipe;
 import net.lodoma.lime.world.World;
@@ -64,13 +65,13 @@ public class Client
      * @param host - server host
      * @throws ClientConnectionException is establishing connection fails.
      */
-    public final void open(int port, String host) throws ClientConnectionException
+    public final void open(String host) throws ClientConnectionException
     {
         if(isRunning) return;
         
         try
         {
-            socket = new Socket(host, port);
+            socket = new Socket(host, NetSettings.PORT);
 
             pipe = new Pipe();
             socketInputStream = socket.getInputStream();
