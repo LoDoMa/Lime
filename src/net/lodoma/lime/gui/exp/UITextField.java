@@ -11,18 +11,17 @@ public class UITextField extends UISelectable
     public UITextField(UIText text)
     {
         this.text = text;
-        
-        children.add(text);
+        addChild(text);
     }
     
     @Override
-    public boolean onSelect(int button)
+    public boolean isSelect(int button)
     {
         return button == Input.MOUSE_BUTTON_1;
     }
     
     @Override
-    public boolean onDeselect(int button)
+    public boolean isDeselect(int button)
     {
         return button == Input.MOUSE_BUTTON_1;
     }

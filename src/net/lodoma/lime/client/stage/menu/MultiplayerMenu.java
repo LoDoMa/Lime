@@ -1,6 +1,5 @@
 package net.lodoma.lime.client.stage.menu;
 
-import net.lodoma.lime.client.ClientBroadcast;
 import net.lodoma.lime.client.stage.Stage;
 import net.lodoma.lime.gui.exp.UICallback;
 import net.lodoma.lime.gui.exp.clean.CleanButton;
@@ -14,6 +13,17 @@ import net.lodoma.lime.util.Vector2;
 
 public class MultiplayerMenu extends Stage
 {
+    private class ConnectListener implements UICallback
+    {
+        @Override
+        public void call()
+        {
+            if (selectedServer == null)
+                return;
+            manager.push(new MultiplayerDirectConnectMenu());
+        }
+    }
+    
     private class DirectConnectListener implements UICallback
     {
         @Override
@@ -28,7 +38,7 @@ public class MultiplayerMenu extends Stage
         @Override
         public void call()
         {
-            new ClientBroadcast();
+            
         }
     }
 
@@ -67,16 +77,19 @@ public class MultiplayerMenu extends Stage
             manager.pop();
         }
     }
+
+    private String selectedServer;
     
     public MultiplayerMenu()
     {
-        ui.children.add(new CleanText(new Vector2(0.05f, 0.8f), 0.06f, "Multiplayer", CleanUI.FOCUS_TEXT_COLOR, TrueTypeFont.ALIGN_LEFT));
-        ui.children.add(new CleanButton(new Vector2(0.05f, 0.20f), new Vector2(0.4f, 0.05f), "Direct connect", new DirectConnectListener()));
-        ui.children.add(new CleanButton(new Vector2(0.50f, 0.20f), new Vector2(0.4f, 0.05f), "Search LAN", new SearchLANListener()));
-        ui.children.add(new CleanButton(new Vector2(0.05f, 0.14f), new Vector2(0.25f, 0.05f), "Add", new AddServerListener()));
-        ui.children.add(new CleanButton(new Vector2(0.35f, 0.14f), new Vector2(0.25f, 0.05f), "Modify", new ModifyServerListener()));
-        ui.children.add(new CleanButton(new Vector2(0.65f, 0.14f), new Vector2(0.25f, 0.05f), "Remove", new RemoveServerListener()));
-        ui.children.add(new CleanButton(new Vector2(0.05f, 0.08f), new Vector2(0.8f, 0.05f), "Back", new BackListener()));
+        ui.addChild(new CleanText(new Vector2(0.05f, 0.83f), 0.06f, "Multiplayer", CleanUI.FOCUS_TEXT_COLOR, TrueTypeFont.ALIGN_LEFT));
+        ui.addChild(new CleanButton(new Vector2(0.05f, 0.20f), new Vector2(0.25f, 0.05f), "Connect", TrueTypeFont.ALIGN_CENTER, new ConnectListener()));
+        ui.addChild(new CleanButton(new Vector2(0.35f, 0.20f), new Vector2(0.25f, 0.05f), "Direct", TrueTypeFont.ALIGN_CENTER, new DirectConnectListener()));
+        ui.addChild(new CleanButton(new Vector2(0.65f, 0.20f), new Vector2(0.25f, 0.05f), "Search LAN", TrueTypeFont.ALIGN_CENTER, new SearchLANListener()));
+        ui.addChild(new CleanButton(new Vector2(0.05f, 0.14f), new Vector2(0.25f, 0.05f), "Add", TrueTypeFont.ALIGN_CENTER, new AddServerListener()));
+        ui.addChild(new CleanButton(new Vector2(0.35f, 0.14f), new Vector2(0.25f, 0.05f), "Modify", TrueTypeFont.ALIGN_CENTER, new ModifyServerListener()));
+        ui.addChild(new CleanButton(new Vector2(0.65f, 0.14f), new Vector2(0.25f, 0.05f), "Remove", TrueTypeFont.ALIGN_CENTER, new RemoveServerListener()));
+        ui.addChild(new CleanButton(new Vector2(0.05f, 0.08f), new Vector2(0.8f, 0.05f), "Back", TrueTypeFont.ALIGN_CENTER, new BackListener()));
     }
     
     @Override

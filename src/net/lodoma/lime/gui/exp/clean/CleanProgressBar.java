@@ -15,8 +15,8 @@ public class CleanProgressBar extends UIObject
     {
         super();
         
-        this.position.set(position);
-        this.dimensions.set(dimensions);
+        getLocalPosition().set(position);
+        getLocalDimensions().set(dimensions);
         
         progressValue = 0.0f;
         progressVisual = progressValue;
@@ -34,7 +34,11 @@ public class CleanProgressBar extends UIObject
     public void render()
     {
         glPushMatrix();
+        
+        Vector2 position = getLocalPosition();
         glTranslatef(position.x, position.y, 0.0f);
+
+        Vector2 dimensions = getLocalDimensions();
         
         Texture.NO_TEXTURE.bind();
         

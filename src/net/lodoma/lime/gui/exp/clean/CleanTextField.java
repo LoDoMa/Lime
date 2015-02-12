@@ -2,7 +2,6 @@ package net.lodoma.lime.gui.exp.clean;
 
 import net.lodoma.lime.gui.exp.UITextField;
 import net.lodoma.lime.texture.Texture;
-import net.lodoma.lime.util.TrueTypeFont;
 import net.lodoma.lime.util.Vector2;
 import static org.lwjgl.opengl.GL11.*;
 
@@ -10,18 +9,11 @@ public class CleanTextField extends UITextField
 {
     private float transparency;
     
-    public CleanTextField(Vector2 position, Vector2 dimensions, String text)
-    {
-        this(position, dimensions, text, TrueTypeFont.ALIGN_CENTER);
-    }
-    
     public CleanTextField(Vector2 position, Vector2 dimensions, String text, int alignment)
     {
-        super(new CleanText(new Vector2(position.x + ((alignment == TrueTypeFont.ALIGN_LEFT) ?  (0) :
-                                                     ((alignment == TrueTypeFont.ALIGN_RIGHT) ? (dimensions.x) :
-                                                                                                (dimensions.x / 2.0f))), position.y), dimensions.y, text, alignment));
-        this.position.set(position);
-        this.dimensions.set(dimensions);
+        super(new CleanText(dimensions.y, text, CleanUI.FOCUS_TEXT_COLOR, alignment));
+        getLocalPosition().set(position);
+        getLocalDimensions().set(dimensions);
     }
     
     @Override
@@ -55,7 +47,11 @@ public class CleanTextField extends UITextField
         if(transparency != 0.0f || selected)
         {
             glPushMatrix();
+            
+            Vector2 position = getLocalPosition();
             glTranslatef(position.x, position.y, 0.0f);
+            
+            Vector2 dimensions = getLocalDimensions();
 
             Texture.NO_TEXTURE.bind();
             
@@ -85,8 +81,6 @@ public class CleanTextField extends UITextField
             
             glPopMatrix();
         }
-        
-        CleanUI.FOCUS_TEXT_COLOR.setGL();
         
         super.render();
     }

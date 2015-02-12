@@ -11,6 +11,7 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.function.Consumer;
 
 import net.lodoma.lime.server.NetSettings;
 
@@ -18,19 +19,25 @@ public class ClientBroadcast
 {
     private DatagramSocket socket;
     
-    public ClientBroadcast()
+    public ClientBroadcast(Consumer<InetAddress> findCallback)
     {
-        try
+        new Thread(new Runnable()
         {
-            broadcast();
-        }
-        catch(IOException e)
-        {
-            e.printStackTrace();
-        }
+            public void run()
+            {
+                try
+                {
+                    broadcast(findCallback);
+                }
+                catch(IOException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
     
-    private void broadcast() throws IOException
+    private void broadcast(Consumer<InetAddress> findCallback) throws IOException
     {
         socket = new DatagramSocket();
         socket.setBroadcast(true);
@@ -85,7 +92,7 @@ public class ClientBroadcast
             }
             
             if (Arrays.equals(Arrays.copyOfRange(receiveBuffer, 0, acknowledge.length), acknowledge))
-                System.out.println("Broadcast response from " + packet.getAddress().getHostAddress());
+                findCallback.accept(packet.getAddress());
         }
         
         socket.close();

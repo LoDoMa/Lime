@@ -13,6 +13,12 @@ public class UIClickable extends UIObject
         Vector2 pos = Input.getMousePosition();
         
         boolean currentHover = false;
+
+        /* NOTE: We must clone the position because we getDimensions right after.
+                 It might be possible to avoid that. */
+        
+        Vector2 position = getPosition().clone();
+        Vector2 dimensions = getDimensions();
         if (pos.x >= position.x && pos.x <= position.x + dimensions.x &&
             pos.y >= position.y && pos.y <= position.y + dimensions.y)
             currentHover = true;
@@ -24,13 +30,9 @@ public class UIClickable extends UIObject
         }
         
         if (mouseHovering)
-        {
             for (int button = Input.MOUSE_BUTTON_1; button <= Input.MOUSE_BUTTON_8; button++)
-            {
                 if (Input.getMouseDown(button)) onMousePress(button, true);
-                if (Input.getMouseUp(button)) onMousePress(button, false);
-            }
-        }
+                else if (Input.getMouseUp(button)) onMousePress(button, false);
         
         super.update(timeDelta);
     }

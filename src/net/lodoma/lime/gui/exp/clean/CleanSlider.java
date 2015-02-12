@@ -18,8 +18,8 @@ public class CleanSlider extends UIAbstractButton
     public CleanSlider(Vector2 position, Vector2 dimensions, UICallback slideCallback)
     {
         super(null);
-        this.position.set(position);
-        this.dimensions.set(dimensions);
+        getLocalPosition().set(position);
+        getLocalDimensions().set(dimensions);
         
         onSlide = slideCallback;
         
@@ -68,7 +68,11 @@ public class CleanSlider extends UIAbstractButton
     public void render()
     {
         glPushMatrix();
+        
+        Vector2 position = getLocalPosition();
         glTranslatef(position.x, position.y, 0.0f);
+
+        Vector2 dimensions = getLocalDimensions();
         
         Texture.NO_TEXTURE.bind();
         

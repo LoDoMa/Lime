@@ -9,16 +9,20 @@ import net.lodoma.lime.util.Vector2;
 
 public class CleanText extends UIText
 {
-    public Color color;
-
-    public CleanText(Vector2 position, float size, String text, int alignment)
+    private final Color color;
+    
+    public CleanText(float size, String text, Color color, int alignment)
     {
-        this(position, size, text, null, alignment);
+        this(new Vector2(0.0f), size, text, color, alignment);
     }
     
     public CleanText(Vector2 position, float size, String text, Color color, int alignment)
     {
-        super(position, new Vector2(size * 0.6f, size * 0.75f), text, new UIFont("My type of font", 42, Font.PLAIN, alignment));
+        super(text, new UIFont("My type of font", 42, Font.PLAIN, alignment), new Vector2(size * 0.6f, size * 0.75f));
+        /* NOTE: we set the local position directly,
+                 because we can't use getLocalPosition to do it,
+                 UIText overrides it. */
+        localPosition.set(position);
         this.color = color;
     }
     

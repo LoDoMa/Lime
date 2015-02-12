@@ -225,6 +225,11 @@ public class TrueTypeFont
         GL11.glVertex2f(drawX + DrawWidth, drawY);
     }
     
+    public Font getFont()
+    {
+        return font;
+    }
+    
     public int getWidth(String whatchars)
     {
         int totalwidth = 0;

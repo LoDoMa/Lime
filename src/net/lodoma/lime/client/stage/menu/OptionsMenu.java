@@ -89,16 +89,16 @@ public class OptionsMenu extends Stage
         vsyncGroup = new UIGroup(new VSyncListener());
         debugGroup = new UIGroup(new DebugListener());
         
-        ui.children.add(fullscreen = new CleanButton(new Vector2(0.05f, 0.50f), new Vector2(0.4f, 0.05f), Window.fullscreen ? "Fullscreen" : "Windowed", new FullscreenListener()));
-        ui.children.add(new CleanText(new Vector2(0.05f, 0.44f), 0.05f, "VSync:", CleanUI.TEXT_COLOR, TrueTypeFont.ALIGN_LEFT));
-        ui.children.add(vsyncOn = new CleanToggle(new Vector2(0.25f, 0.44f), new Vector2(0.1f, 0.05f), "on", vsyncGroup));
-        ui.children.add(vsyncOff = new CleanToggle(new Vector2(0.35f, 0.44f), new Vector2(0.1f, 0.05f), "off", vsyncGroup));
-        ui.children.add(new CleanText(new Vector2(0.05f, 0.38f), 0.05f, "Debug:", CleanUI.TEXT_COLOR, TrueTypeFont.ALIGN_LEFT));
-        ui.children.add(debugOn = new CleanToggle(new Vector2(0.25f, 0.38f), new Vector2(0.1f, 0.05f), "on", debugGroup));
-        ui.children.add(debugOff = new CleanToggle(new Vector2(0.35f, 0.38f), new Vector2(0.1f, 0.05f), "off", debugGroup));
-        ui.children.add(new CleanText(new Vector2(0.05f, 0.32f), 0.05f, "Sound: ", CleanUI.TEXT_COLOR, TrueTypeFont.ALIGN_LEFT));
-        ui.children.add(sound = new CleanSlider(new Vector2(0.25f, 0.32f), new Vector2(0.4f, 0.05f), new SoundListener()));
-        ui.children.add(new CleanButton(new Vector2(0.3f, 0.26f), new Vector2(0.4f, 0.05f), "Back", new BackListener()));
+        ui.addChild(fullscreen = new CleanButton(new Vector2(0.05f, 0.50f), new Vector2(0.4f, 0.05f), Window.fullscreen ? "Fullscreen" : "Windowed", TrueTypeFont.ALIGN_CENTER, new FullscreenListener()));
+        ui.addChild(new CleanText(new Vector2(0.05f, 0.465f), 0.05f, "VSync:", CleanUI.TEXT_COLOR, TrueTypeFont.ALIGN_LEFT));
+        ui.addChild(vsyncOn = new CleanToggle(new Vector2(0.25f, 0.44f), new Vector2(0.1f, 0.05f), "on", vsyncGroup, TrueTypeFont.ALIGN_CENTER));
+        ui.addChild(vsyncOff = new CleanToggle(new Vector2(0.35f, 0.44f), new Vector2(0.1f, 0.05f), "off", vsyncGroup, TrueTypeFont.ALIGN_CENTER));
+        ui.addChild(new CleanText(new Vector2(0.05f, 0.405f), 0.05f, "Debug:", CleanUI.TEXT_COLOR, TrueTypeFont.ALIGN_LEFT));
+        ui.addChild(debugOn = new CleanToggle(new Vector2(0.25f, 0.38f), new Vector2(0.1f, 0.05f), "on", debugGroup, TrueTypeFont.ALIGN_CENTER));
+        ui.addChild(debugOff = new CleanToggle(new Vector2(0.35f, 0.38f), new Vector2(0.1f, 0.05f), "off", debugGroup, TrueTypeFont.ALIGN_CENTER));
+        ui.addChild(new CleanText(new Vector2(0.05f, 0.346f), 0.05f, "Sound: ", CleanUI.TEXT_COLOR, TrueTypeFont.ALIGN_LEFT));
+        ui.addChild(sound = new CleanSlider(new Vector2(0.25f, 0.32f), new Vector2(0.4f, 0.05f), new SoundListener()));
+        ui.addChild(new CleanButton(new Vector2(0.3f, 0.26f), new Vector2(0.4f, 0.05f), "Back", TrueTypeFont.ALIGN_CENTER, new BackListener()));
 
         vsyncGroup.select(Window.vsync ? vsyncOn : vsyncOff);
         debugGroup.select(Window.debugEnabled ? debugOn : debugOff);

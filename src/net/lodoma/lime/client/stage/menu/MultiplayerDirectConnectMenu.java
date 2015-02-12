@@ -39,11 +39,11 @@ public class MultiplayerDirectConnectMenu extends Stage
     
     public MultiplayerDirectConnectMenu()
     {
-        ui.children.add(new CleanText(new Vector2(0.05f, 0.6f), 0.06f, "Direct connect", CleanUI.FOCUS_TEXT_COLOR, TrueTypeFont.ALIGN_LEFT));
-        ui.children.add(new CleanText(new Vector2(0.05f, 0.44f), 0.05f, "Host:", CleanUI.TEXT_COLOR, TrueTypeFont.ALIGN_LEFT));
-        ui.children.add(hostField = new CleanTextField(new Vector2(0.15f, 0.44f), new Vector2(0.8f, 0.05f), "localhost", TrueTypeFont.ALIGN_LEFT));
-        ui.children.add(new CleanButton(new Vector2(0.05f, 0.34f), new Vector2(0.4f, 0.05f), "Join", new JoinListener()));
-        ui.children.add(new CleanButton(new Vector2(0.05f, 0.26f), new Vector2(0.4f, 0.05f), "Back", new BackListener()));
+        ui.addChild(new CleanText(new Vector2(0.05f, 0.6f), 0.06f, "Direct connect", CleanUI.FOCUS_TEXT_COLOR, TrueTypeFont.ALIGN_LEFT));
+        ui.addChild(new CleanText(new Vector2(0.05f, 0.465f), 0.05f, "Host:", CleanUI.TEXT_COLOR, TrueTypeFont.ALIGN_LEFT));
+        ui.addChild(hostField = new CleanTextField(new Vector2(0.15f, 0.44f), new Vector2(0.8f, 0.05f), "localhost", TrueTypeFont.ALIGN_LEFT));
+        ui.addChild(new CleanButton(new Vector2(0.05f, 0.34f), new Vector2(0.4f, 0.05f), "Join", TrueTypeFont.ALIGN_CENTER, new JoinListener()));
+        ui.addChild(new CleanButton(new Vector2(0.05f, 0.26f), new Vector2(0.4f, 0.05f), "Back", TrueTypeFont.ALIGN_CENTER, new BackListener()));
     }
     
     @Override

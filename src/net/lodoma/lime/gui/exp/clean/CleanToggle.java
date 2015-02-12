@@ -1,28 +1,32 @@
 package net.lodoma.lime.gui.exp.clean;
 
 import net.lodoma.lime.gui.exp.UIGroup;
-import net.lodoma.lime.gui.exp.UIToggle;
+import net.lodoma.lime.gui.exp.UIGroupMember;
 import net.lodoma.lime.texture.Texture;
-import net.lodoma.lime.util.TrueTypeFont;
 import net.lodoma.lime.util.Vector2;
 import static org.lwjgl.opengl.GL11.*;
 
-public class CleanToggle extends UIToggle
+public class CleanToggle extends UIGroupMember
 {
     private float transparency;
     
     private CleanText text;
     
-    public CleanToggle(Vector2 position, Vector2 dimensions, String text, UIGroup group)
+    public CleanToggle(Vector2 position, Vector2 dimensions, String text, UIGroup group, int alignment)
     {
         super(group);
         
-        this.position.set(position);
-        this.dimensions.set(dimensions);
+        getLocalPosition().set(position);
+        getLocalDimensions().set(dimensions);
         
-        children.add(this.text = new CleanText(new Vector2(position.x + dimensions.x / 2.0f, position.y), dimensions.y, text, TrueTypeFont.ALIGN_CENTER));
+        addChild(this.text = new CleanText(dimensions.y, text, CleanUI.TEXT_COLOR, alignment));
         
         transparency = 0.0f;
+    }
+    
+    public String getText()
+    {
+        return text.text;
     }
     
     public void setText(String text)
@@ -61,7 +65,11 @@ public class CleanToggle extends UIToggle
         if(transparency != 0.0f || selected)
         {
             glPushMatrix();
+            
+            Vector2 position = getLocalPosition();
             glTranslatef(position.x, position.y, 0.0f);
+            
+            Vector2 dimensions = getLocalDimensions();
 
             Texture.NO_TEXTURE.bind();
             

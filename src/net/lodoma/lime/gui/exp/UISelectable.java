@@ -4,7 +4,7 @@ import net.lodoma.lime.input.Input;
 
 public class UISelectable extends UIClickable
 {
-    public boolean selected = false;
+    public boolean selected;
     
     @Override
     public void update(double timeDelta)
@@ -15,15 +15,15 @@ public class UISelectable extends UIClickable
             if (Input.getMouseDown(button))
                 if (mouseHovering)
                 {
-                    if (!selected) selected = onSelect(button);
+                    if (!selected) selected = isSelect(button);
                 }
                 else
                 {
-                    if (selected) selected = !onDeselect(button);
+                    if (selected) selected = !isDeselect(button);
                 }
     }
     
-    public boolean onSelect(int button) { return false; }
+    public boolean isSelect(int button) { return false; }
     
-    public boolean onDeselect(int button) { return false; }
+    public boolean isDeselect(int button) { return false; }
 }

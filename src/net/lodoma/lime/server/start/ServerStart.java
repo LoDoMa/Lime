@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import net.lodoma.lime.server.NetSettings;
 import net.lodoma.lime.server.Server;
 
 public class ServerStart

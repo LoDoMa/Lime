@@ -3,7 +3,6 @@ package net.lodoma.lime.gui.exp.clean;
 import net.lodoma.lime.gui.exp.UIAbstractButton;
 import net.lodoma.lime.gui.exp.UICallback;
 import net.lodoma.lime.texture.Texture;
-import net.lodoma.lime.util.TrueTypeFont;
 import net.lodoma.lime.util.Vector2;
 import static org.lwjgl.opengl.GL11.*;
 
@@ -13,13 +12,13 @@ public class CleanButton extends UIAbstractButton
     
     private CleanText text;
     
-    public CleanButton(Vector2 position, Vector2 dimensions, String text, UICallback onClick)
+    public CleanButton(Vector2 position, Vector2 dimensions, String text, int alignment, UICallback onClick)
     {
         super(onClick);
-        this.position.set(position);
-        this.dimensions.set(dimensions);
+        getLocalPosition().set(position);
+        getLocalDimensions().set(dimensions);
         
-        children.add(this.text = new CleanText(new Vector2(position.x + dimensions.x / 2.0f, position.y), dimensions.y, text, TrueTypeFont.ALIGN_CENTER));
+        addChild(this.text = new CleanText(dimensions.y, text, CleanUI.TEXT_COLOR, alignment));
         
         transparency = 0.0f;
     }
@@ -60,7 +59,11 @@ public class CleanButton extends UIAbstractButton
         if(transparency != 0.0f)
         {
             glPushMatrix();
+            
+            Vector2 position = getLocalPosition();
             glTranslatef(position.x, position.y, 0.0f);
+            
+            Vector2 dimensions = getLocalDimensions();
             
             Texture.NO_TEXTURE.bind();
             
@@ -90,8 +93,6 @@ public class CleanButton extends UIAbstractButton
             
             glPopMatrix();
         }
-        
-        CleanUI.TEXT_COLOR.setGL();
         
         super.render();
     }
