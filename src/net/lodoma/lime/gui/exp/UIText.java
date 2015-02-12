@@ -17,7 +17,7 @@ public class UIText extends UIObject
         this.font = font;
         
         this.size.set(size);
-        fontSize = font.ttf.getFont().getSize();
+        fontSize = font.ttf.getFont().getSize() + 3;
     }
     
     /* A lot of Vector2 objects are instantiated during execution.
