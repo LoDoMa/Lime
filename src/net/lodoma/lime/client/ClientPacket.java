@@ -3,6 +3,7 @@ package net.lodoma.lime.client;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import net.lodoma.lime.Lime;
 import net.lodoma.lime.util.Identifiable;
 
 /**
@@ -15,8 +16,6 @@ import net.lodoma.lime.util.Identifiable;
  */
 public abstract class ClientPacket implements Identifiable<Integer>
 {
-    private static final String FAILURE_CLOSE_MESSAGE = "Server closed (output exception)";
-    
     protected Client client;                    // the client that uses this output
     protected DataOutputStream outputStream;    // output stream to server
     
@@ -82,8 +81,9 @@ public abstract class ClientPacket implements Identifiable<Integer>
         }
         catch (IOException e)
         {
-            client.setCloseMessage(FAILURE_CLOSE_MESSAGE);
-            client.closeInThread();
+            Lime.LOGGER.C("IO exception while sending a packet");
+            Lime.LOGGER.log(e);
+            Lime.forceExit();
         }
     }
 }

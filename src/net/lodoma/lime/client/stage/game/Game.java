@@ -2,6 +2,7 @@ package net.lodoma.lime.client.stage.game;
 
 import java.net.InetAddress;
 
+import net.lodoma.lime.Lime;
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.client.ClientConnectionException;
 import net.lodoma.lime.client.stage.Stage;
@@ -31,6 +32,8 @@ public class Game extends Stage
         }
         catch(ClientConnectionException e)
         {
+            Lime.LOGGER.W("Client failed to connect");
+            
             Throwable cause = e.getCause();
             manager.pop();
             manager.push(new GameMessage(cause.getClass().getSimpleName() + ": " + cause.getMessage()));
@@ -47,9 +50,6 @@ public class Game extends Stage
             client.worldRenderer.clean();
             client.close();
         }
-        
-        if(client.getCloseMessage() != null)
-            manager.push(new GameMessage(client.getCloseMessage()));
     }
     
     @Override

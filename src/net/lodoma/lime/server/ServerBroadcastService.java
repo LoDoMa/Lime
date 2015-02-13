@@ -8,6 +8,8 @@ import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
+import net.lodoma.lime.Lime;
+
 public class ServerBroadcastService implements Runnable
 {
     private Thread thread;
@@ -15,11 +17,9 @@ public class ServerBroadcastService implements Runnable
     
     private DatagramSocket socket;
     
-    private Server server;
-    
     public ServerBroadcastService(Server server)
     {
-        this.server = server;
+        
     }
     
     private void openService()
@@ -28,11 +28,13 @@ public class ServerBroadcastService implements Runnable
         {
             socket = new DatagramSocket(NetSettings.PORT, InetAddress.getByName("0.0.0.0"));
             socket.setBroadcast(true);
+            Lime.LOGGER.F("Opened socket; port = " + NetSettings.PORT + ", address = 0.0.0.0, broadcast");
         }
         catch (IOException e)
         {
-            server.setCloseMessage("Service failed to open");
-            server.closeInThread();
+            Lime.LOGGER.C("Failed to open broadcast service");
+            Lime.LOGGER.log(e);
+            Lime.forceExit();
         }
     }
     
@@ -49,6 +51,7 @@ public class ServerBroadcastService implements Runnable
         openService();
         thread = new Thread(this, "ServerBroadcastThread");
         thread.start();
+        Lime.LOGGER.F("Broadcast service started");
     }
     
     public void stop()
@@ -56,6 +59,7 @@ public class ServerBroadcastService implements Runnable
         if(!running) return;
         running = false;
         closeService();
+        Lime.LOGGER.F("Broadcast service closed");
     }
     
     @Override
@@ -83,9 +87,11 @@ public class ServerBroadcastService implements Runnable
 
                 if (Arrays.equals(Arrays.copyOfRange(data, 0, enquiry.length), enquiry))
                 {
-                    DatagramPacket sendPacket = new DatagramPacket(acknowledge, acknowledge.length, packet.getAddress(), packet.getPort());
+                    InetAddress address = packet.getAddress();
+                    int port = packet.getPort();
+                    Lime.LOGGER.I("Enquiry from " + address + ":" + port);
+                    DatagramPacket sendPacket = new DatagramPacket(acknowledge, acknowledge.length, address, port);
                     socket.send(sendPacket);
-                    System.out.println("Responded to broadcast enquiry from " + packet.getAddress().getHostAddress());
                 }
             }
         }
@@ -93,16 +99,18 @@ public class ServerBroadcastService implements Runnable
         {
             if (!e.getMessage().equals("Socket closed") && running)
             {
-                server.setCloseMessage("Broadcast service exception");
-                server.closeInThread();
+                Lime.LOGGER.C("Socket exception in broadcast service");
+                Lime.LOGGER.log(e);
+                Lime.forceExit();
             }
         }
         catch (Exception e)
         {
             if (running)
             {
-                server.setCloseMessage("Broadcast service exception");
-                server.closeInThread();
+                Lime.LOGGER.C("Unexpected exception in broadcast service");
+                Lime.LOGGER.log(e);
+                Lime.forceExit();
             }
         }
     }

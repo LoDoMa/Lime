@@ -13,6 +13,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.function.Consumer;
 
+import net.lodoma.lime.Lime;
 import net.lodoma.lime.server.NetSettings;
 
 public class ClientBroadcast
@@ -25,14 +26,18 @@ public class ClientBroadcast
         {
             public void run()
             {
+                Lime.LOGGER.I("UDP broadcast thread started");
                 try
                 {
                     broadcast(findCallback);
                 }
                 catch(IOException e)
                 {
-                    e.printStackTrace();
+                    Lime.LOGGER.C("IO exception while broadcasting");
+                    Lime.LOGGER.log(e);
+                    Lime.forceExit();
                 }
+                Lime.LOGGER.I("UDP broadcast finished");
             }
         }).start();
     }
@@ -43,6 +48,8 @@ public class ClientBroadcast
         socket.setBroadcast(true);
         socket.setSoTimeout(NetSettings.BROADCAST_TIMEOUT);
         
+        Lime.LOGGER.F("Opened socket; broadcast, timeout = " + NetSettings.BROADCAST_TIMEOUT);
+        
         int port = NetSettings.PORT;
         
         ByteBuffer enquiryBuffer = ByteBuffer.allocate(Long.BYTES);
@@ -52,6 +59,7 @@ public class ClientBroadcast
         
         DatagramPacket packet255 = new DatagramPacket(enquiry, enquiry.length, InetAddress.getByName("255.255.255.255"), port);
         socket.send(packet255);
+        Lime.LOGGER.F("Sent enquiry packet; port = " + port + ", address = /255.255.255.255");
         
         Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
         while (interfaces.hasMoreElements())
@@ -69,6 +77,7 @@ public class ClientBroadcast
                 
                 DatagramPacket packet = new DatagramPacket(enquiry, enquiry.length, broadcast, port);
                 socket.send(packet);
+                Lime.LOGGER.F("Sent enquiry packet; port = " + port + ", address = " + broadcast);
             }
         }
         
@@ -84,17 +93,24 @@ public class ClientBroadcast
             
             try
             {
+                Lime.LOGGER.F("Waiting for acknowledge");
                 socket.receive(packet);
             }
             catch (SocketTimeoutException e)
             {
+                Lime.LOGGER.F("Timeout!");
                 break;
             }
             
             if (Arrays.equals(Arrays.copyOfRange(receiveBuffer, 0, acknowledge.length), acknowledge))
-                findCallback.accept(packet.getAddress());
+            {
+                InetAddress address = packet.getAddress();
+                Lime.LOGGER.I("Acknowledge from " + address);
+                findCallback.accept(address);
+            }
         }
         
         socket.close();
+        Lime.LOGGER.F("Socked closed");
     }
 }

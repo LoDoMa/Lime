@@ -3,6 +3,7 @@ package net.lodoma.lime.client.start;
 import java.awt.Font;
 import java.io.File;
 
+import net.lodoma.lime.Lime;
 import net.lodoma.lime.client.stage.StageManager;
 import net.lodoma.lime.client.stage.menu.MainMenu;
 import net.lodoma.lime.client.window.Window;
@@ -38,8 +39,9 @@ public class VisualInstance
         }
         catch(WindowException e)
         {
-            e.printStackTrace();
-            System.exit(1);
+            Lime.LOGGER.C("Failed to create the window");
+            Lime.LOGGER.log(e);
+            Lime.forceExit();
         }
         
         FontHelper.registerFont(new File(OsHelper.JARPATH + "fonts/mytype.ttf"));

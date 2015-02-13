@@ -1,5 +1,6 @@
 package net.lodoma.lime.client.stage.menu;
 
+import net.lodoma.lime.Lime;
 import net.lodoma.lime.client.stage.Stage;
 import net.lodoma.lime.client.window.Window;
 import net.lodoma.lime.client.window.WindowException;
@@ -32,7 +33,9 @@ public class OptionsMenu extends Stage
             }
             catch(WindowException e)
             {
-                e.printStackTrace();
+                Lime.LOGGER.C("Failed to recreate the window");
+                Lime.LOGGER.log(e);
+                Lime.forceExit();
             }
         }
     }

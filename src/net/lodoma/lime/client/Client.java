@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 
+import net.lodoma.lime.Lime;
 import net.lodoma.lime.client.logic.CLWorld;
 import net.lodoma.lime.client.logic.ClientLogicPool;
 import net.lodoma.lime.server.NetSettings;
@@ -30,7 +31,6 @@ import net.lodoma.lime.world.gfx.WorldRenderer;
 public class Client
 {
     private boolean isRunning = false;
-    private String closeMessage;
     
     private Socket socket;
     
@@ -82,6 +82,7 @@ public class Client
         }
         catch (IOException e)
         {
+            Lime.LOGGER.W("Client failed to connect, throwing a ClientConnectionException");
             throw new ClientConnectionException(e);
         }
         
@@ -99,7 +100,6 @@ public class Client
         reader.start();
         logicPool.start();
         
-        closeMessage = null;
         isRunning = true;
     }
     
@@ -125,7 +125,8 @@ public class Client
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+            Lime.LOGGER.W("Failed to close socked and pipe");
+            Lime.LOGGER.log(e);
         }
         
         isRunning = false;
@@ -137,44 +138,9 @@ public class Client
         }
         catch(InterruptedException e)
         {
-            e.printStackTrace();
+            Lime.LOGGER.W("Failed to stop logic pool and reader");
+            Lime.LOGGER.log(e);
         }
-    }
-    
-    /**
-     * Creates a new thread and starts it.
-     * That thread then closes the server.
-     * The created thread is named "ClientCloseThread".
-     */
-    public void closeInThread()
-    {
-        if(!isRunning) return;
-        
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                close();
-            }
-        }, "ClientCloseThread").start();
-    }
-    
-    /**
-     * @return the close message.
-     */
-    public String getCloseMessage()
-    {
-        return closeMessage;
-    }
-    
-    /**
-     * Sets the close message.
-     * @param closeMessage - new close message
-     */
-    public void setCloseMessage(String closeMessage)
-    {
-        this.closeMessage = closeMessage;
     }
     
     /**

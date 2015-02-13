@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import net.lodoma.lime.Lime;
+
 /**
  * ClientReader is a thread that handles input from the server.
  * Generally, it reads from an InputStream and writes data to
@@ -18,8 +20,6 @@ public class ClientReader implements Runnable
 {   
     private Thread thread;
     private boolean running;
-    
-    private Client client;
 
     private InputStream inputStream;
     private OutputStream outputStream;
@@ -32,8 +32,6 @@ public class ClientReader implements Runnable
      */
     public ClientReader(Client client, InputStream inputStream, OutputStream outputStream)
     {
-        this.client = client;
-        
         this.inputStream = inputStream;
         this.outputStream = outputStream;
     }
@@ -87,10 +85,10 @@ public class ClientReader implements Runnable
             catch(IOException | InterruptedException e)
             {
                 if(!running) break;
-                e.printStackTrace();
-                client.setCloseMessage("Server closed (reader exception)");
-                client.closeInThread();
-                break;
+                
+                Lime.LOGGER.C("Unexpected exception in client reader");
+                Lime.LOGGER.log(e);
+                Lime.forceExit();
             }
         }
     }

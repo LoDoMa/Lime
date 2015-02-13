@@ -2,6 +2,7 @@ package net.lodoma.lime.client.window;
 
 import java.nio.ByteBuffer;
 
+import net.lodoma.lime.Lime;
 import net.lodoma.lime.input.Input;
 import net.lodoma.lime.input.InputData;
 import net.lodoma.lime.shader.Program;
@@ -50,7 +51,11 @@ public class Window
     public static void create() throws WindowException
     {
         if (glfwInit() != GL_TRUE)
+        {
+            Lime.LOGGER.C("Init failed; glfwInit() != GL_TRUE");
             throw new WindowException("Failed to init GLFW");
+        }
+        Lime.LOGGER.F("GLFW initialized");
         
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VERSION_MAJOR, 2);
@@ -60,7 +65,11 @@ public class Window
         
         windowHandle = glfwCreateWindow((int) size.x, (int) size.y, title, fullscreen ? glfwGetPrimaryMonitor() : NULL, NULL);
         if (windowHandle == NULL)
+        {
+            Lime.LOGGER.C("Failed to craete window; windowHandle == null");
             throw new WindowException("Failed to create GLFW window");
+        }
+        Lime.LOGGER.F("Created the window");
         
         Input.inputData = new InputData();
         
@@ -69,11 +78,13 @@ public class Window
         ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
         fullsize.setX(GLFWvidmode.width(vidmode));
         fullsize.setY(GLFWvidmode.height(vidmode));
-        glfwSetWindowPos(windowHandle, (int) ((fullsize.x - size.x) / 2.0), (int) ((fullsize.y - size.y) / 2.0));
+        int winposx = (int) ((fullsize.x - size.x) / 2.0);
+        int winposy = (int) ((fullsize.y - size.y) / 2.0);
+        glfwSetWindowPos(windowHandle, winposx, winposy);
+        Lime.LOGGER.F("Set window position to " + winposx + ":" + winposy);
         
         glfwMakeContextCurrent(windowHandle);
-        glfwSwapInterval(vsync ? 1 : 0);
-        
+        updateSyncInterval();
         glfwShowWindow(windowHandle);
         
         initGL();
@@ -83,11 +94,15 @@ public class Window
     
     public static void initGL()
     {
+        Lime.LOGGER.F("Checking GL context capabilities");
         GLContext context = GLContext.createFromCurrent();
         ContextCapabilities capabilities = context.getCapabilities();
 
         if (!capabilities.GL_EXT_framebuffer_object)
+        {
+            Lime.LOGGER.C("GL_XBT_framebuffer_object not supported");
             throw new IllegalStateException("GL context not capable: GL_XBT_framebuffer_object");
+        }
 
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
@@ -102,28 +117,41 @@ public class Window
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         
         updateViewport();
+        
+        Lime.LOGGER.F("GL initialized");
     }
     
     public static void recreate() throws WindowException
     {
+        Lime.LOGGER.F("Recreating window");
+        
         glfwMakeContextCurrent(windowHandle);
         
         glfwDefaultWindowHints();
+        glfwWindowHint(GLFW_VERSION_MAJOR, 2);
+        glfwWindowHint(GLFW_VERSION_MINOR, 0);
         glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, resizable ? GL_TRUE : GL_FALSE);
 
         accsize.set(fullscreen ? fullsize : size);
         
         long newWindowHandle = glfwCreateWindow((int) accsize.x, (int) accsize.y, title, fullscreen ? glfwGetPrimaryMonitor() : NULL, windowHandle);glfwSetWindowPos(windowHandle, 0, 0);
+        Lime.LOGGER.F("New window created");
+        
         releaseCallbacks();
         glfwDestroyWindow(windowHandle);
+        Lime.LOGGER.F("Old window destroyed");
+        
         windowHandle = newWindowHandle;
         setCallbacks();
-        
-        glfwSetWindowPos(windowHandle, (int) ((fullsize.x - size.x) / 2.0), (int) ((fullsize.y - size.y) / 2.0));
+
+        int winposx = (int) ((fullsize.x - size.x) / 2.0);
+        int winposy = (int) ((fullsize.y - size.y) / 2.0);
+        glfwSetWindowPos(windowHandle, winposx, winposy);
+        Lime.LOGGER.F("Set window position to " + winposx + ":" + winposy);
         
         glfwMakeContextCurrent(windowHandle);
-        glfwSwapInterval(vsync ? 1 : 0);
+        updateSyncInterval();
         glfwShowWindow(windowHandle);
         
         initGL();
@@ -132,6 +160,7 @@ public class Window
     public static void updateSyncInterval()
     {
         glfwSwapInterval(vsync ? 1 : 0);
+        Lime.LOGGER.F("Updated sync interval; vsync = " + vsync + ", swap interval = " + (vsync ? 1 : 0));
     }
     
     public static void updateViewport()
@@ -177,15 +206,6 @@ public class Window
         glfwSwapBuffers(windowHandle);
         glfwPollEvents();
         
-        try
-        {
-            Thread.sleep(10);
-        }
-        catch(InterruptedException e)
-        {
-            e.printStackTrace();
-        }
-        
         if (!closeRequested)
             closeRequested = glfwWindowShouldClose(windowHandle) == GL_TRUE;
     }
@@ -198,10 +218,12 @@ public class Window
         {
             releaseCallbacks();
             glfwDestroyWindow(windowHandle);
+            Lime.LOGGER.F("Window destroyed");
         }
         finally
         {
             glfwTerminate();
+            Lime.LOGGER.F("GLFW terminated");
         }
     }
     
@@ -223,20 +245,24 @@ public class Window
                 }
             }
         };
-        
+
+        Lime.LOGGER.F("Setting callbacks");
         glfwSetKeyCallback(windowHandle, keyCallback);
         glfwSetCharCallback(windowHandle, charCallback);
         glfwSetMouseButtonCallback(windowHandle, mouseCallback);
         glfwSetCursorPosCallback(windowHandle, motionCallback);
         glfwSetWindowSizeCallback(windowHandle, resizeCallback);
+        Lime.LOGGER.F("Callbacks set");
     }
     
     public static void releaseCallbacks()
     {
+        Lime.LOGGER.F("Releasing callbacks");
         keyCallback.release();
         charCallback.release();
         mouseCallback.release();
         motionCallback.release();
         resizeCallback.release();
+        Lime.LOGGER.F("Callbacks released");
     }
 }

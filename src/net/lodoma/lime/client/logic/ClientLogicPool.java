@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.lodoma.lime.Lime;
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.client.ClientPacketHandler;
 import net.lodoma.lime.util.Timer;
@@ -83,9 +84,9 @@ public class ClientLogicPool implements Runnable
             }
             catch (IOException e)
             {
-                e.printStackTrace();
-                client.setCloseMessage("CPH handling exception");
-                client.close();
+                Lime.LOGGER.C("IO exception in CPH handling");
+                Lime.LOGGER.log(e);
+                Lime.forceExit();
             }
             
             for(ClientLogic logic : logicSet)
@@ -105,8 +106,9 @@ public class ClientLogicPool implements Runnable
                 }
                 catch(InterruptedException e)
                 {
-                    client.setCloseMessage("Logic pool failed to sleep");
-                    client.closeInThread();
+                    Lime.LOGGER.C("Unexpected interrupt in logic pool");
+                    Lime.LOGGER.log(e);
+                    Lime.forceExit();
                 }
         }
         

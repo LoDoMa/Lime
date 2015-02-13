@@ -2,6 +2,7 @@ package net.lodoma.lime.script.library;
 
 import java.lang.reflect.Field;
 
+import net.lodoma.lime.Lime;
 import net.lodoma.lime.input.Input;
 import net.lodoma.lime.server.logic.UserManager;
 
@@ -39,7 +40,9 @@ public class InputFunctions
         }
         catch (IllegalAccessException e)
         {
-            e.printStackTrace();
+            Lime.LOGGER.C("Unexpected illegal access exception while getting constants from Input");
+            Lime.LOGGER.log(e);
+            Lime.forceExit();
         }
     }
     

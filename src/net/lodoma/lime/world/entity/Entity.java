@@ -6,6 +6,7 @@ import java.io.IOException;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaValue;
 
+import net.lodoma.lime.Lime;
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.util.Identifiable;
@@ -50,23 +51,25 @@ public class Entity implements Identifiable<Integer>
     
     public void assignScript(Server server, String scriptName)
     {
+        File scriptFile = new File(OsHelper.JARPATH + "script/entity/" + scriptName + ".lua");
         try
         {
-            world.luaInstance.load(new File(OsHelper.JARPATH + "script/entity/" + scriptName + ".lua"));
-            
-            scriptInit = world.luaInstance.globals.get("Lime_Init").checkfunction();
-            scriptUpdate = world.luaInstance.globals.get("Lime_Update").checkfunction();
-            scriptClean = world.luaInstance.globals.get("Lime_Clean").checkfunction();
-            
-            world.luaInstance.globals.set("Lime_Init", LuaValue.NIL);
-            world.luaInstance.globals.set("Lime_Update", LuaValue.NIL);
-            world.luaInstance.globals.set("Lime_Clean", LuaValue.NIL);
+            world.luaInstance.load(scriptFile);
         }
         catch (IOException e)
         {
-            // TODO: handle this
-            e.printStackTrace();
+            Lime.LOGGER.C("Failed to load the gamemode from file " + scriptFile);
+            Lime.LOGGER.log(e);
+            Lime.forceExit();
         }
+        
+        scriptInit = world.luaInstance.globals.get("Lime_Init").checkfunction();
+        scriptUpdate = world.luaInstance.globals.get("Lime_Update").checkfunction();
+        scriptClean = world.luaInstance.globals.get("Lime_Clean").checkfunction();
+        
+        world.luaInstance.globals.set("Lime_Init", LuaValue.NIL);
+        world.luaInstance.globals.set("Lime_Update", LuaValue.NIL);
+        world.luaInstance.globals.set("Lime_Clean", LuaValue.NIL);
         
         init();
     }

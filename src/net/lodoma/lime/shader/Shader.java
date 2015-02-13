@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+import net.lodoma.lime.Lime;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
@@ -37,7 +39,9 @@ public class Shader
         }
         catch(IOException e)
         {
-            e.printStackTrace();
+            Lime.LOGGER.C("Failed to load shader source from file " + sourceFile);
+            Lime.LOGGER.log(e);
+            Lime.forceExit();
         }
         return builder.toString();
     }

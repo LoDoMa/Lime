@@ -3,8 +3,10 @@ package net.lodoma.lime.client.stage.menu;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import net.lodoma.lime.Lime;
 import net.lodoma.lime.client.stage.Stage;
 import net.lodoma.lime.client.stage.game.Game;
+import net.lodoma.lime.client.stage.game.GameMessage;
 import net.lodoma.lime.gui.exp.UICallback;
 import net.lodoma.lime.gui.exp.UITextField;
 import net.lodoma.lime.gui.exp.clean.CleanButton;
@@ -31,7 +33,9 @@ public class MultiplayerDirectConnectMenu extends Stage
             }
             catch(UnknownHostException e)
             {
-                e.printStackTrace();
+                Lime.LOGGER.W("Invalid direct connect address; unknown host");
+                
+                manager.push(new GameMessage(e.getClass().getSimpleName() + ": " + e.getMessage()));
             }
         }
     }

@@ -12,7 +12,6 @@ import net.lodoma.lime.world.physics.PhysicsWorld;
 public final class Server
 {
     private boolean isRunning = false;
-    private String closeMessage;
 
     private ServerService service;
     private ServerBroadcastService broadcast;
@@ -59,9 +58,6 @@ public final class Server
     {
         if (!isRunning) return;
         
-        if(closeMessage != null)
-            System.err.println("close message: " + closeMessage);
-        
         logicPool.stop();
         broadcast.stop();
         service.stop();
@@ -77,29 +73,5 @@ public final class Server
         {
             e.printStackTrace();
         }
-    }
-     
-    public void closeInThread()
-    {
-        if(!isRunning) return;
-        
-        new Thread(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                close();
-            }
-        }, "ServerCloseThread").start();
-    }
-    
-    public String getCloseMessage()
-    {
-        return closeMessage;
-    }
-    
-    public void setCloseMessage(String closeMessage)
-    {
-        this.closeMessage = closeMessage;
     }
 }

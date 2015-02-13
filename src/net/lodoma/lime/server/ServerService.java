@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import net.lodoma.lime.Lime;
+
 public class ServerService implements Runnable
 {
     private Thread thread;
@@ -23,11 +25,13 @@ public class ServerService implements Runnable
         try
         {
             serviceSocket = new ServerSocket(NetSettings.PORT);
+            Lime.LOGGER.F("Opened socket; port = " + NetSettings.PORT + "");
         }
         catch (IOException e)
         {
-            server.setCloseMessage("Service failed to open");
-            server.closeInThread();
+            Lime.LOGGER.C("Failed to open server service");
+            Lime.LOGGER.log(e);
+            Lime.forceExit();
         }
     }
     
@@ -40,7 +44,9 @@ public class ServerService implements Runnable
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+            Lime.LOGGER.C("Failed to close server service");
+            Lime.LOGGER.log(e);
+            Lime.forceExit();
         }
     }
     
@@ -51,6 +57,7 @@ public class ServerService implements Runnable
         openService();
         thread = new Thread(this, "ServerServiceThread");
         thread.start();
+        Lime.LOGGER.F("Server service started");
     }
     
     public void stop()
@@ -58,6 +65,7 @@ public class ServerService implements Runnable
         if(!running) return;
         running = false;
         closeService();
+        Lime.LOGGER.F("Server service closed");
     }
     
     public boolean isRunning()
@@ -82,9 +90,9 @@ public class ServerService implements Runnable
             {
                 if(running)
                 {
-                    // TODO: log exception
-                    server.setCloseMessage("Service exception");
-                    server.closeInThread();
+                    Lime.LOGGER.C("Unexpected exception in server service");
+                    Lime.LOGGER.log(e);
+                    Lime.forceExit();
                 }
             }
         }
