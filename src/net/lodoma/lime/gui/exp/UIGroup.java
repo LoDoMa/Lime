@@ -1,16 +1,16 @@
 package net.lodoma.lime.gui.exp;
 
-public class UIGroup
+public class UIGroup<T extends UIGroupMember>
 {
     public UICallback onChange;
-    public UIGroupMember selected;
+    public T selected;
     
     public UIGroup(UICallback onChange)
     {
         this.onChange = onChange;
     }
     
-    public void select(UIGroupMember newSelected)
+    public void select(T newSelected)
     {
         if (selected == newSelected)
             return;
@@ -18,6 +18,7 @@ public class UIGroup
             selected.deselect();
         selected = newSelected;
         selected.select();
-        onChange.call();
+        if (onChange != null)
+            onChange.call();
     }
 }

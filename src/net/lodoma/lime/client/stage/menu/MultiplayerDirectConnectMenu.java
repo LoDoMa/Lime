@@ -1,5 +1,8 @@
 package net.lodoma.lime.client.stage.menu;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 import net.lodoma.lime.client.stage.Stage;
 import net.lodoma.lime.client.stage.game.Game;
 import net.lodoma.lime.gui.exp.UICallback;
@@ -22,7 +25,14 @@ public class MultiplayerDirectConnectMenu extends Stage
         public void call()
         {
             manager.pop();
-            manager.push(new Game(hostField.text.text));
+            try
+            {
+                manager.push(new Game(InetAddress.getByName(hostField.text.text)));
+            }
+            catch(UnknownHostException e)
+            {
+                e.printStackTrace();
+            }
         }
     }
     

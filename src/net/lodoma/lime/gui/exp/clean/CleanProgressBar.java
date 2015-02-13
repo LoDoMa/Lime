@@ -35,10 +35,10 @@ public class CleanProgressBar extends UIObject
     {
         glPushMatrix();
         
-        Vector2 position = getLocalPosition();
+        Vector2 position = getPosition();
         glTranslatef(position.x, position.y, 0.0f);
 
-        Vector2 dimensions = getLocalDimensions();
+        Vector2 dimensions = getDimensions();
         
         Texture.NO_TEXTURE.bind();
         

@@ -13,6 +13,7 @@ import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
 import org.lwjgl.glfw.GLFWvidmode;
+import org.lwjgl.opengl.ContextCapabilities;
 import org.lwjgl.opengl.GLContext;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -52,6 +53,8 @@ public class Window
             throw new WindowException("Failed to init GLFW");
         
         glfwDefaultWindowHints();
+        glfwWindowHint(GLFW_VERSION_MAJOR, 2);
+        glfwWindowHint(GLFW_VERSION_MINOR, 0);
         glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, resizable ? GL_TRUE : GL_FALSE);
         
@@ -74,14 +77,18 @@ public class Window
         glfwShowWindow(windowHandle);
         
         initGL();
-        
+
         Program.createAll();
     }
     
     public static void initGL()
     {
-        GLContext.createFromCurrent();
-        
+        GLContext context = GLContext.createFromCurrent();
+        ContextCapabilities capabilities = context.getCapabilities();
+
+        if (!capabilities.GL_EXT_framebuffer_object)
+            throw new IllegalStateException("GL context not capable: GL_XBT_framebuffer_object");
+
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         glOrtho(0.0f, 1.0f, 0.0f, 1.0f, -1.0f, 1.0f);

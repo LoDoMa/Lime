@@ -74,8 +74,8 @@ public class OptionsMenu extends Stage
         }
     }
 
-    private UIGroup vsyncGroup;
-    private UIGroup debugGroup;
+    private UIGroup<CleanToggle> vsyncGroup;
+    private UIGroup<CleanToggle> debugGroup;
     
     private CleanButton fullscreen;
     private CleanToggle vsyncOn;
@@ -86,8 +86,8 @@ public class OptionsMenu extends Stage
     
     public OptionsMenu()
     {
-        vsyncGroup = new UIGroup(new VSyncListener());
-        debugGroup = new UIGroup(new DebugListener());
+        vsyncGroup = new UIGroup<CleanToggle>(new VSyncListener());
+        debugGroup = new UIGroup<CleanToggle>(new DebugListener());
         
         ui.addChild(fullscreen = new CleanButton(new Vector2(0.05f, 0.50f), new Vector2(0.4f, 0.05f), Window.fullscreen ? "Fullscreen" : "Windowed", TrueTypeFont.ALIGN_CENTER, new FullscreenListener()));
         ui.addChild(new CleanText(new Vector2(0.05f, 0.465f), 0.05f, "VSync:", CleanUI.TEXT_COLOR, TrueTypeFont.ALIGN_LEFT));

@@ -2,7 +2,7 @@
 local firstUpdate = true
 
 function Lime_WorldInit()
-	lime.setWorldGravity(0.0, -16.0)
+	lime.setWorldGravity(0.0, 0.0)
 end
 
 local playerIDs = {}

@@ -33,7 +33,7 @@ function Lime_Init(entityID)
 	lime.setLinearVelocity(vel.x, vel.y)
 	lime.setLinearDamping(0.1);
 	lime.setAngularDamping(0.1);
-	lime.setAngleLocked(true);
+	lime.setAngleLocked(false);
 	lime.setUsingCCD(false);
 
 	lime.setCameraScale(lime.getAttribute(entityID, "master"), 32, 18);

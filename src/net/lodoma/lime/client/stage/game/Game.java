@@ -1,5 +1,7 @@
 package net.lodoma.lime.client.stage.game;
 
+import java.net.InetAddress;
+
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.client.ClientConnectionException;
 import net.lodoma.lime.client.stage.Stage;
@@ -9,11 +11,11 @@ public class Game extends Stage
 {
     private Client client;
     
-    private String host;
+    private InetAddress address;
     
-    public Game(String host)
+    public Game(InetAddress address)
     {
-        this.host = host;
+        this.address = address;
     }
     
     @Override
@@ -25,7 +27,7 @@ public class Game extends Stage
         
         try
         {
-            client.open(host);
+            client.open(address);
         }
         catch(ClientConnectionException e)
         {

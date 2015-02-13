@@ -12,6 +12,7 @@ public class CleanToggle extends UIGroupMember
     
     private CleanText text;
     
+    @SuppressWarnings("rawtypes")
     public CleanToggle(Vector2 position, Vector2 dimensions, String text, UIGroup group, int alignment)
     {
         super(group);
@@ -66,10 +67,10 @@ public class CleanToggle extends UIGroupMember
         {
             glPushMatrix();
             
-            Vector2 position = getLocalPosition();
+            Vector2 position = getPosition();
             glTranslatef(position.x, position.y, 0.0f);
             
-            Vector2 dimensions = getLocalDimensions();
+            Vector2 dimensions = getDimensions();
 
             Texture.NO_TEXTURE.bind();
             

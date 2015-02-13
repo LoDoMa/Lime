@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetAddress;
 import java.net.Socket;
 
 import net.lodoma.lime.client.logic.CLWorld;
@@ -65,13 +66,13 @@ public class Client
      * @param host - server host
      * @throws ClientConnectionException is establishing connection fails.
      */
-    public final void open(String host) throws ClientConnectionException
+    public final void open(InetAddress address) throws ClientConnectionException
     {
         if(isRunning) return;
         
         try
         {
-            socket = new Socket(host, NetSettings.PORT);
+            socket = new Socket(address, NetSettings.PORT);
 
             pipe = new Pipe();
             socketInputStream = socket.getInputStream();

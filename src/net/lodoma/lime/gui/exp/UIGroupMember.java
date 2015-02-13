@@ -4,14 +4,17 @@ import net.lodoma.lime.input.Input;
 
 public abstract class UIGroupMember extends UIClickable
 {
+    @SuppressWarnings("rawtypes")
     public UIGroup group;
     public boolean selected;
     
+    @SuppressWarnings("rawtypes")
     public UIGroupMember(UIGroup group)
     {
         this.group = group;
     }
     
+    @SuppressWarnings("unchecked")
     @Override
     public void onMousePress(int button, boolean state)
     {
