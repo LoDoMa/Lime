@@ -3,6 +3,7 @@ package net.lodoma.lime.shader;
 import java.io.File;
 import java.nio.FloatBuffer;
 
+import net.lodoma.lime.Lime;
 import net.lodoma.lime.util.OsHelper;
 
 import org.lwjgl.opengl.GL20;
@@ -31,6 +32,8 @@ public class Program
     
     public static void createAll()
     {
+        Lime.LOGGER.F("About to create shaders and programs");
+        
         menuVS = new Shader(new File(OsHelper.JARPATH + "shader/menu.vs"), ShaderType.VERTEX);
         menuFS = new Shader(new File(OsHelper.JARPATH + "shader/menu.fs"), ShaderType.FRAGMENT);
         menuProgram = new Program(menuVS, menuFS);
@@ -66,6 +69,7 @@ public class Program
     
     public static void destroyAll()
     {
+        Lime.LOGGER.F("About to delete programs");
         menuProgram.deleteProgram();
         lightProgram.deleteProgram();
         worldProgram.deleteProgram();
@@ -75,6 +79,7 @@ public class Program
         renderLightProgram.deleteProgram();
         brightnessProgram.deleteProgram();
 
+        Lime.LOGGER.F("About to delete shaders");
         menuVS.deleteShader();
         menuFS.deleteShader();
         lightVS.deleteShader();
@@ -98,6 +103,7 @@ public class Program
     public Program(Shader... shaders)
     {
         createProgram();
+        
         for(Shader shader : shaders)
             attachShader(shader);
         linkProgram();
@@ -107,20 +113,24 @@ public class Program
     private void createProgram()
     {
         program = GL20.glCreateProgram();
+        Lime.LOGGER.I("Created program " + program);
     }
     
     private void attachShader(Shader shader)
     {
+        Lime.LOGGER.F("Attaching shader " + shader.shader + " to program " + program);
         GL20.glAttachShader(program, shader.shader);
     }
     
     private void linkProgram()
     {
+        Lime.LOGGER.F("Linking program " + program);
         GL20.glLinkProgram(program);
     }
     
     private void validateProgram()
     {
+        Lime.LOGGER.F("Validating program " + program);
         GL20.glValidateProgram(program);
     }
     
@@ -131,6 +141,7 @@ public class Program
     
     public void deleteProgram()
     {
+        Lime.LOGGER.I("Deleting program " + program);
         GL20.glDeleteProgram(program);
     }
     

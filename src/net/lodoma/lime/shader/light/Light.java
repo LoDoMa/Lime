@@ -2,6 +2,7 @@ package net.lodoma.lime.shader.light;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.*;
+import net.lodoma.lime.Lime;
 import net.lodoma.lime.client.window.Window;
 import net.lodoma.lime.shader.Program;
 import net.lodoma.lime.shader.UniformType;
@@ -40,6 +41,9 @@ public class Light implements Identifiable<Integer>
     
     public void destroy()
     {
+        if (occlusionLocal != null || shadowMap != null)
+            Lime.LOGGER.I("Added light " + identifier + " FBOs to the destruction list");
+        
         synchronized (FBO.destroyList)
         {
             if (occlusionLocal != null) FBO.destroyList.add(occlusionLocal);

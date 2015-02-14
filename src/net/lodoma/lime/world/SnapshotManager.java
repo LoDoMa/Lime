@@ -1,5 +1,6 @@
 package net.lodoma.lime.world;
 
+import net.lodoma.lime.Lime;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.server.ServerPacket;
 import net.lodoma.lime.server.ServerUser;
@@ -31,7 +32,10 @@ public class SnapshotManager
             user.lastSnapshot = snapshot;
             
             if (lastSnapshot == null)
+            {
+                Lime.LOGGER.I("Will send full snapshot to user " + user.identifier);
                 lastSnapshot = new Snapshot();
+            }
             
             SnapshotSegment segment = new SnapshotSegment(snapshot, lastSnapshot);
             snapshotPacket.write(user, segment);

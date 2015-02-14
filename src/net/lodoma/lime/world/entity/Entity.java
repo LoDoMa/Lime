@@ -70,12 +70,15 @@ public class Entity implements Identifiable<Integer>
         world.luaInstance.globals.set("Lime_Init", LuaValue.NIL);
         world.luaInstance.globals.set("Lime_Update", LuaValue.NIL);
         world.luaInstance.globals.set("Lime_Clean", LuaValue.NIL);
+
+        Lime.LOGGER.I("Assigned script \"" + scriptName + "\" to entity " + identifier);
         
         init();
     }
     
     public void init()
     {
+        Lime.LOGGER.I("Initializing script for entity " + identifier);
         world.luaInstance.call(scriptInit, new Object[] { identifier });
     }
     
@@ -86,6 +89,7 @@ public class Entity implements Identifiable<Integer>
     
     public void destroy()
     {
+        Lime.LOGGER.I("Destroying script for entity " + identifier);
         world.luaInstance.call(scriptClean, new Object[] { identifier });
     }
 }

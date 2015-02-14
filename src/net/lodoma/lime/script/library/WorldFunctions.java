@@ -1,5 +1,6 @@
 package net.lodoma.lime.script.library;
 
+import net.lodoma.lime.Lime;
 import net.lodoma.lime.world.World;
 import net.lodoma.lime.world.entity.Entity;
 
@@ -60,6 +61,7 @@ public class WorldFunctions
             {
                 Entity entity = new Entity(world, library.server);
                 int entityID = world.entityPool.add(entity);
+                Lime.LOGGER.I("Created new entity " + entityID);
                 return LuaValue.valueOf(entityID);
             }
             case REMOVE_ENTITY:
@@ -67,6 +69,7 @@ public class WorldFunctions
                 int entityID = args.arg(1).checkint();
                 world.entityPool.get(entityID).destroy();
                 world.entityPool.remove(entityID);
+                Lime.LOGGER.I("Removed entity " + entityID);
                 break;
             }
             case ASSIGN_SCRIPT:

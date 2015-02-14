@@ -20,6 +20,8 @@ public class Shader
         this.type = type;
         
         createShader();
+        Lime.LOGGER.I("Created shader " + shader + "; type = " + type.name() + ", file = " + sourceFile.getPath());
+
         String source = loadSource(sourceFile);
         setShaderSource(source);
         compileShader();
@@ -39,10 +41,11 @@ public class Shader
         }
         catch(IOException e)
         {
-            Lime.LOGGER.C("Failed to load shader source from file " + sourceFile);
+            Lime.LOGGER.C("Failed to load shader " + shader + " source; file = " + sourceFile.getPath());
             Lime.LOGGER.log(e);
             Lime.forceExit();
         }
+        
         return builder.toString();
     }
     
@@ -62,13 +65,16 @@ public class Shader
         if(GL20.glGetShaderi(shader, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE)
         {
             String infoLog = GL20.glGetShaderInfoLog(shader, 1024);
-            System.err.println(infoLog);
-            throw new ShaderCompilerError(infoLog);
+
+            Lime.LOGGER.C("Failed to compile shader " + shader + "\n" + infoLog);
+            Lime.forceExit();
         }
+        Lime.LOGGER.F("Compiled shader " + shader);
     }
     
     public void deleteShader()
     {
         GL20.glDeleteShader(shader);
+        Lime.LOGGER.I("Deleted shader " + shader);
     }
 }

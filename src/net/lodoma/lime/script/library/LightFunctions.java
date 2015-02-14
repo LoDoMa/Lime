@@ -1,5 +1,6 @@
 package net.lodoma.lime.script.library;
 
+import net.lodoma.lime.Lime;
 import net.lodoma.lime.shader.light.Light;
 import net.lodoma.lime.world.World;
 
@@ -53,6 +54,7 @@ public class LightFunctions
             {
                 Light light = new Light(world);
                 int lightID = world.lightPool.add(light);
+                Lime.LOGGER.I("Created light " + lightID);
                 return LuaValue.valueOf(lightID);
             }
             case SET_POSITION:

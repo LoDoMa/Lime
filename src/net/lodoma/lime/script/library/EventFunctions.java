@@ -57,7 +57,7 @@ public class EventFunctions
                 String eventName = args.arg(1).checkstring().tojstring();
                 LuaFunction callback = args.arg(2).checkfunction();
                 int hash = HashHelper.hash32(eventName);
-                int listenerID = emanPool.get(hash).listeners.add(new LuaEventListener(callback));
+                int listenerID = emanPool.get(hash).addListener(new LuaEventListener(callback));
                 return LuaValue.valueOf(listenerID);
             }
             case REMOVE_EVENT_LISTENER:

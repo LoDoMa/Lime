@@ -1,5 +1,6 @@
 package net.lodoma.lime.script.library;
 
+import net.lodoma.lime.Lime;
 import net.lodoma.lime.script.LuaContactListener;
 import net.lodoma.lime.util.Vector2;
 import net.lodoma.lime.world.physics.InvalidPhysicsComponentException;
@@ -93,6 +94,7 @@ public class PhysicsFunctions
                 compoDefinition = null;
                 
                 int compoID = library.server.world.componentPool.add(newCompo);
+                Lime.LOGGER.I("Created physics component " + compoID);
                 return LuaValue.valueOf(compoID);
             }
             case REMOVE_COMPONENT:
@@ -100,6 +102,7 @@ public class PhysicsFunctions
                 int compoID = args.arg(1).checkint();
                 library.server.world.componentPool.get(compoID).destroy();
                 library.server.world.componentPool.remove(compoID);
+                Lime.LOGGER.I("Removed physics component " + compoID);
                 break;
             }
             case SET_INITIAL_POSITION:
@@ -248,6 +251,7 @@ public class PhysicsFunctions
                 jointDefinition = null;
                 
                 int jointID = library.server.world.jointPool.add(newJoint);
+                Lime.LOGGER.I("Created physics joint " + jointID);
                 return LuaValue.valueOf(jointID);
             }
             case REMOVE_JOINT:
@@ -255,6 +259,7 @@ public class PhysicsFunctions
                 int jointID = args.arg(1).checkint();
                 library.server.world.jointPool.get(jointID).destroy();
                 library.server.world.jointPool.remove(jointID);
+                Lime.LOGGER.I("Removed physics joint " + jointID);
                 break;
             }
             case SET_JOINT_COMPONENT_A:
@@ -587,6 +592,8 @@ public class PhysicsFunctions
                 else if (filterLevel == 2) listener = new LuaContactListener(bodyA, bodyB, preSolve, postSolve);
                 
                 int listenerID = library.server.physicsWorld.contactManager.listeners.add(listener);
+                Lime.LOGGER.I("Added contact listener " + listenerID + ", listening to " +
+                        ((filterLevel == 0) ? "everything" : ((filterLevel == 1) ? ("collisions with " + bodyA) : ("collisions between " + bodyA + " and " + bodyB))));
                 return LuaValue.valueOf(listenerID);
             }
             case REMOVE_CONTACT_LISTENER:
