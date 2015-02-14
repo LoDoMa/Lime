@@ -1,3 +1,4 @@
+#version 120
 
 uniform sampler2D occlusion;
 uniform sampler2D brightness;
@@ -11,7 +12,7 @@ void main()
 	vec4 brightnessColor = texture2D(brightness, texCoord).rgba;
 	vec4 lightColor = texture2D(light, texCoord).rgba;
 
-	if (occlusionColor.a > 0)
+	if (occlusionColor.a > 0.0)
 		gl_FragColor = occlusionColor * brightnessColor;
 	else
 		gl_FragColor = lightColor;

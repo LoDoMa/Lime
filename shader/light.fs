@@ -1,3 +1,5 @@
+#version 120
+
 varying vec2 pos;
 
 uniform vec4 color;
@@ -12,6 +14,6 @@ void main()
 	if (dist <= radius)
 	{
 		float mul = dist / radius;
-		gl_FragColor = vec4(color.rgb, color.a * (1 - mul));
+		gl_FragColor = vec4(color.rgb, color.a * (1.0 - mul));
 	}
 }

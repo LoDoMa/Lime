@@ -1,3 +1,5 @@
+#version 120
+
 precision highp float;
 
 #define PI 3.14

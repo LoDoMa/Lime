@@ -1,3 +1,5 @@
+#version 120
+
 precision highp float;
 
 uniform sampler2D occlusionMap;
