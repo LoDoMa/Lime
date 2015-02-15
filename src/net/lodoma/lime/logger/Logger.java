@@ -3,10 +3,17 @@ package net.lodoma.lime.logger;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Calendar;
+import java.util.LinkedList;
 
 public class Logger
 {
     private int minimum = LogLevel.FINEST.ordinal();
+    private LinkedList<String> list = new LinkedList<String>();
+    
+    public synchronized LinkedList<String> getList()
+    {
+        return list;
+    }
     
     public synchronized void setMinimumLevel(LogLevel minimum)
     {
@@ -74,7 +81,13 @@ public class Logger
         String caller = String.format("%s", ste.getClassName() + "." + ste.getMethodName() + "()");
         String head = String.format("%-8s %s %s", level.name(), timeAndDate, caller);
         
-        System.err.printf("%s\n         %s\n", head, message);
+        String finalString = String.format("%s\n         %s\n", head, message);
+        
+        list.addLast(finalString);
+        while (list.size() > 30)
+            list.removeFirst();
+        
+        System.err.printf("%s", finalString);
     }
     
     private StackTraceElement getStackTraceElement(int off)
