@@ -2,8 +2,8 @@ package net.lodoma.lime.client.stage.menu;
 
 import net.lodoma.lime.client.stage.Stage;
 import net.lodoma.lime.client.window.Window;
-import net.lodoma.lime.gui.exp.UICallback;
-import net.lodoma.lime.gui.exp.clean.CleanButton;
+import net.lodoma.lime.gui.UICallback;
+import net.lodoma.lime.gui.clean.CleanButton;
 import net.lodoma.lime.input.Input;
 import net.lodoma.lime.shader.Program;
 import net.lodoma.lime.shader.UniformType;

@@ -1,6 +1,6 @@
 package net.lodoma.lime.client.stage;
 
-import net.lodoma.lime.gui.exp.UIObject;
+import net.lodoma.lime.gui.UIObject;
 
 public class Stage
 {

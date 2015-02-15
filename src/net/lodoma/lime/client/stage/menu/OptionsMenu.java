@@ -4,13 +4,13 @@ import net.lodoma.lime.Lime;
 import net.lodoma.lime.client.stage.Stage;
 import net.lodoma.lime.client.window.Window;
 import net.lodoma.lime.client.window.WindowException;
-import net.lodoma.lime.gui.exp.UICallback;
-import net.lodoma.lime.gui.exp.UIGroup;
-import net.lodoma.lime.gui.exp.clean.CleanButton;
-import net.lodoma.lime.gui.exp.clean.CleanSlider;
-import net.lodoma.lime.gui.exp.clean.CleanText;
-import net.lodoma.lime.gui.exp.clean.CleanToggle;
-import net.lodoma.lime.gui.exp.clean.CleanUI;
+import net.lodoma.lime.gui.UICallback;
+import net.lodoma.lime.gui.UIGroup;
+import net.lodoma.lime.gui.clean.CleanButton;
+import net.lodoma.lime.gui.clean.CleanSlider;
+import net.lodoma.lime.gui.clean.CleanText;
+import net.lodoma.lime.gui.clean.CleanToggle;
+import net.lodoma.lime.gui.clean.CleanUI;
 import net.lodoma.lime.input.Input;
 import net.lodoma.lime.shader.Program;
 import net.lodoma.lime.shader.UniformType;
@@ -45,8 +45,12 @@ public class OptionsMenu extends Stage
         @Override
         public void call()
         {
-            Window.vsync = vsyncGroup.selected == vsyncOn;
-            Window.updateSyncInterval();
+            boolean newVsync = vsyncGroup.selected == vsyncOn;
+            if (Window.vsync != newVsync)
+            {
+                Window.vsync = newVsync;
+                Window.updateSyncInterval();
+            }
         }
     }
     
@@ -55,7 +59,12 @@ public class OptionsMenu extends Stage
         @Override
         public void call()
         {
-            Window.debugEnabled = debugGroup.selected == debugOn;
+            boolean newDebug = debugGroup.selected == debugOn;
+            if (Window.debugEnabled = newDebug)
+            {
+                Window.debugEnabled = newDebug;
+                Lime.LOGGER.F("debug = " + Window.debugEnabled);
+            }
         }
     }
     

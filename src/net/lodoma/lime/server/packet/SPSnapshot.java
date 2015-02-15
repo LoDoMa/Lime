@@ -93,10 +93,11 @@ public class SPSnapshot extends ServerPacket
             if ((data & SnapshotSegment.MODIFIED_SHAPE) != 0)
             {
                 user.outputStream.writeFloat(light.radius);
-                user.outputStream.writeFloat(light.color.getR());
-                user.outputStream.writeFloat(light.color.getG());
-                user.outputStream.writeFloat(light.color.getB());
-                user.outputStream.writeFloat(light.color.getA());
+                
+                user.outputStream.writeFloat(light.color.r);
+                user.outputStream.writeFloat(light.color.g);
+                user.outputStream.writeFloat(light.color.b);
+                user.outputStream.writeFloat(light.color.a);
             }
         }
     }

@@ -1,10 +1,10 @@
 package net.lodoma.lime.client.stage.game;
 
 import net.lodoma.lime.client.stage.Stage;
-import net.lodoma.lime.gui.exp.UICallback;
-import net.lodoma.lime.gui.exp.clean.CleanButton;
-import net.lodoma.lime.gui.exp.clean.CleanText;
-import net.lodoma.lime.gui.exp.clean.CleanUI;
+import net.lodoma.lime.gui.UICallback;
+import net.lodoma.lime.gui.clean.CleanButton;
+import net.lodoma.lime.gui.clean.CleanText;
+import net.lodoma.lime.gui.clean.CleanUI;
 import net.lodoma.lime.input.Input;
 import net.lodoma.lime.util.TrueTypeFont;
 import net.lodoma.lime.util.Vector2;

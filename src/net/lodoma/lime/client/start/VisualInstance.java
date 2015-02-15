@@ -1,6 +1,5 @@
 package net.lodoma.lime.client.start;
 
-import java.awt.Font;
 import java.io.File;
 
 import net.lodoma.lime.Lime;
@@ -8,8 +7,8 @@ import net.lodoma.lime.client.stage.StageManager;
 import net.lodoma.lime.client.stage.menu.MainMenu;
 import net.lodoma.lime.client.window.Window;
 import net.lodoma.lime.client.window.WindowException;
-import net.lodoma.lime.gui.Color;
-import net.lodoma.lime.gui.Text;
+import net.lodoma.lime.gui.clean.CleanText;
+import net.lodoma.lime.gui.clean.CleanUI;
 import net.lodoma.lime.shader.Program;
 import net.lodoma.lime.shader.UniformType;
 import net.lodoma.lime.util.FontHelper;
@@ -55,7 +54,7 @@ public class VisualInstance
 
         Timer timer = new Timer();
 
-        Text debugText = new Text(0.0f, 0.96f, 0.03f, 0.03f, "", new Color(1.0f, 1.0f, 1.0f), "My type of font", Font.PLAIN, TrueTypeFont.ALIGN_LEFT);
+        CleanText debugText = new CleanText(new Vector2(0.0f, 0.96f), 0.04f, "Multiplayer", CleanUI.FOCUS_TEXT_COLOR, TrueTypeFont.ALIGN_LEFT);
         Timer fpsTimer = new Timer();
         double fpsSeconds = 0.0f;
         int frames = 0;
@@ -81,7 +80,7 @@ public class VisualInstance
                 Program.basicProgram.useProgram();
                 Program.basicProgram.setUniform("uTexture", UniformType.INT1, 0);
                 
-                debugText.setText("fps " + fps);
+                debugText.text = "fps " + fps;
                 debugText.render();
             }
             

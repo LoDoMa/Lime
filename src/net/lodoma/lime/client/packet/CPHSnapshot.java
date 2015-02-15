@@ -4,8 +4,8 @@ import java.io.IOException;
 
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.client.ClientPacketHandler;
-import net.lodoma.lime.gui.Color;
 import net.lodoma.lime.shader.light.LightModifications;
+import net.lodoma.lime.util.Color;
 import net.lodoma.lime.util.HashHelper;
 import net.lodoma.lime.util.Vector2;
 import net.lodoma.lime.world.SnapshotSegment;

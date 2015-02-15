@@ -2,6 +2,7 @@ package net.lodoma.lime.script.library;
 
 import net.lodoma.lime.Lime;
 import net.lodoma.lime.shader.light.Light;
+import net.lodoma.lime.util.Color;
 import net.lodoma.lime.world.World;
 
 import org.luaj.vm2.LuaError;
@@ -79,7 +80,11 @@ public class LightFunctions
                 float colorG = args.arg(3).checknumber().tofloat();
                 float colorB = args.arg(4).checknumber().tofloat();
                 float colorA = args.arg(5).checknumber().tofloat();
-                world.lightPool.get(lightID).data.color.set(colorR, colorG, colorB, colorA);
+                Color color = world.lightPool.get(lightID).data.color;
+                color.r = colorR;
+                color.g = colorG;
+                color.b = colorB;
+                color.a = colorA;
                 break;
             }
             }
