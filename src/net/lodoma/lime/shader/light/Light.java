@@ -114,7 +114,7 @@ public class Light implements Identifiable<Integer>
         glBindTexture(GL_TEXTURE_2D, occlusionMap.textureID);
         
         Program.occlusionCopyProgram.useProgram();
-        Program.occlusionCopyProgram.setUniform("occlusionMap", UniformType.INT1, 0);
+        Program.occlusionCopyProgram.setUniform("uOcclusionMap", UniformType.INT1, 0);
         
         float occlusionLX = (data.position.x - data.radius - camera.translation.x) / camera.scale.x;
         float occlusionHX = (data.position.x + data.radius - camera.translation.x) / camera.scale.x;
@@ -140,8 +140,8 @@ public class Light implements Identifiable<Integer>
         glBindTexture(GL_TEXTURE_2D, occlusionLocal.textureID);
         
         Program.shadowMapProgram.useProgram();
-        Program.shadowMapProgram.setUniform("texture", UniformType.INT1, 0);
-        Program.shadowMapProgram.setUniform("resolution", UniformType.FLOAT2, lightFW, lightFH);
+        Program.shadowMapProgram.setUniform("uTexture", UniformType.INT1, 0);
+        Program.shadowMapProgram.setUniform("uResolution", UniformType.FLOAT1, lightFW);
         
         data.color.setGL();
         
@@ -164,8 +164,8 @@ public class Light implements Identifiable<Integer>
         glBindTexture(GL_TEXTURE_2D, shadowMap.textureID);
         
         Program.renderLightProgram.useProgram();
-        Program.renderLightProgram.setUniform("texture", UniformType.INT1, 0);
-        Program.renderLightProgram.setUniform("resolution", UniformType.FLOAT2, lightFW, lightFH);
+        Program.renderLightProgram.setUniform("uTexture", UniformType.INT1, 0);
+        Program.renderLightProgram.setUniform("uResolution", UniformType.FLOAT1, lightFW);
         
         glPushMatrix();
         camera.transform();

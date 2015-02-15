@@ -58,8 +58,8 @@ public class MainMenu extends Stage
     @Override
     public void render()
     {
-        Program.menuProgram.useProgram();
-        Program.menuProgram.setUniform("texture", UniformType.INT1, 0);
+        Program.basicProgram.useProgram();
+        Program.basicProgram.setUniform("uTexture", UniformType.INT1, 0);
         
         super.render();
     }

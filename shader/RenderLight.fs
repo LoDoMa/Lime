@@ -7,12 +7,12 @@ precision highp float;
 varying vec2 vTexCoord;
 varying vec4 vColor;
 
-uniform sampler2D texture;
-uniform vec2 resolution;
+uniform sampler2D uTexture;
+uniform float uResolution;
 
 float sample(vec2 coord, float r)
 {
-    return step(r, texture2D(texture, coord).r + 0.003);
+    return step(r, texture2D(uTexture, coord).r + 0.003);
 }
 
 float smoothstep(float edge0, float edge1, float x)
@@ -31,7 +31,7 @@ void main(void)
     vec2 tc = vec2(coord, 0.0);
 
     float center = sample(tc, r);
-    float blur = (1.0 / resolution.x) * smoothstep(0.0, 1.0, r);
+    float blur = (1.0 / uResolution) * smoothstep(0.0, 1.0, r);
 
     float sum = 0.0;
 

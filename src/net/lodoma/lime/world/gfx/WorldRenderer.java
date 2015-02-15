@@ -4,6 +4,7 @@ import net.lodoma.lime.client.window.Window;
 import net.lodoma.lime.shader.Program;
 import net.lodoma.lime.shader.UniformType;
 import net.lodoma.lime.shader.light.Light;
+import net.lodoma.lime.texture.Texture;
 import net.lodoma.lime.world.World;
 import net.lodoma.lime.world.physics.PhysicsComponentSnapshot;
 import static org.lwjgl.opengl.GL11.*;
@@ -43,8 +44,11 @@ public class WorldRenderer
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         camera.transform();
         camera.scale();
+
+        Program.basicProgram.useProgram();
+        Program.basicProgram.setUniform("uTexture", UniformType.INT1, 0);
+        Texture.NO_TEXTURE.bind(0);
         
-        Program.worldProgram.useProgram();
         synchronized (world.lock)
         {
             world.compoSnapshotPool.foreach((PhysicsComponentSnapshot compoSnapshot) -> compoSnapshot.debugRender());

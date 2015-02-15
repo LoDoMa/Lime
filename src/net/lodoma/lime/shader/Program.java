@@ -10,21 +10,17 @@ import org.lwjgl.opengl.GL20;
 
 public class Program
 {
-    public static Shader menuVS, menuFS;
-    public static Shader lightVS, lightFS;
-    public static Shader worldVS, worldFS;
     public static Shader copyVS, copyFS;
-    
+
+    public static Shader basicVS, basicFS;
     public static Shader occlusionCopyVS, occlusionCopyFS;
     public static Shader shadowMapVS, shadowMapFS;
     public static Shader renderLightVS, renderLightFS;
     public static Shader brightnessVS, brightnessFS;
     
-    public static Program menuProgram;
-    public static Program lightProgram;
-    public static Program worldProgram;
     public static Program copyProgram;
-    
+
+    public static Program basicProgram;
     public static Program occlusionCopyProgram;
     public static Program shadowMapProgram;
     public static Program renderLightProgram;
@@ -33,22 +29,14 @@ public class Program
     public static void createAll()
     {
         Lime.LOGGER.F("About to create shaders and programs");
-        
-        menuVS = new Shader(new File(OsHelper.JARPATH + "shader/menu.vs"), ShaderType.VERTEX);
-        menuFS = new Shader(new File(OsHelper.JARPATH + "shader/menu.fs"), ShaderType.FRAGMENT);
-        menuProgram = new Program(menuVS, menuFS);
-        
-        lightVS = new Shader(new File(OsHelper.JARPATH + "shader/light.vs"), ShaderType.VERTEX);
-        lightFS = new Shader(new File(OsHelper.JARPATH + "shader/light.fs"), ShaderType.FRAGMENT);
-        lightProgram = new Program(lightVS, lightFS);
-        
-        worldVS = new Shader(new File(OsHelper.JARPATH + "shader/world.vs"), ShaderType.VERTEX);
-        worldFS = new Shader(new File(OsHelper.JARPATH + "shader/world.fs"), ShaderType.FRAGMENT);
-        worldProgram = new Program(worldVS, worldFS);
 
         copyVS = new Shader(new File(OsHelper.JARPATH + "shader/copy.vs"), ShaderType.VERTEX);
         copyFS = new Shader(new File(OsHelper.JARPATH + "shader/copy.fs"), ShaderType.FRAGMENT);
         copyProgram = new Program(copyVS, copyFS);
+
+        basicVS = new Shader(new File(OsHelper.JARPATH + "shader/Basic.vs"), ShaderType.VERTEX);
+        basicFS = new Shader(new File(OsHelper.JARPATH + "shader/Basic.fs"), ShaderType.FRAGMENT);
+        basicProgram = new Program(basicVS, basicFS);
         
         occlusionCopyVS = new Shader(new File(OsHelper.JARPATH + "shader/OcclusionCopy.vs"), ShaderType.VERTEX);
         occlusionCopyFS = new Shader(new File(OsHelper.JARPATH + "shader/OcclusionCopy.fs"), ShaderType.FRAGMENT);
@@ -70,24 +58,18 @@ public class Program
     public static void destroyAll()
     {
         Lime.LOGGER.F("About to delete programs");
-        menuProgram.deleteProgram();
-        lightProgram.deleteProgram();
-        worldProgram.deleteProgram();
         copyProgram.deleteProgram();
+        basicProgram.deleteProgram();
         occlusionCopyProgram.deleteProgram();
         shadowMapProgram.deleteProgram();
         renderLightProgram.deleteProgram();
         brightnessProgram.deleteProgram();
 
         Lime.LOGGER.F("About to delete shaders");
-        menuVS.deleteShader();
-        menuFS.deleteShader();
-        lightVS.deleteShader();
-        lightFS.deleteShader();
-        worldVS.deleteShader();
-        worldFS.deleteShader();
         copyVS.deleteShader();
         copyFS.deleteShader();
+        basicVS.deleteShader();
+        basicFS.deleteShader();
         occlusionCopyVS.deleteShader();
         occlusionCopyFS.deleteShader();
         shadowMapVS.deleteShader();

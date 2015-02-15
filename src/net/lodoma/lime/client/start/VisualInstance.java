@@ -78,8 +78,8 @@ public class VisualInstance
             
             if(Window.debugEnabled)
             {
-                Program.menuProgram.useProgram();
-                Program.menuProgram.setUniform("texture", UniformType.INT1, 0);
+                Program.basicProgram.useProgram();
+                Program.basicProgram.setUniform("uTexture", UniformType.INT1, 0);
                 
                 debugText.setText("fps " + fps);
                 debugText.render();
