@@ -15,10 +15,29 @@ public class Lime
 {
     public static final Logger LOGGER = new Logger();
     
+    public static void init()
+    {
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler()
+        {
+            @Override
+            public void uncaughtException(Thread thread, Throwable throwable)
+            {
+                forceExit();
+            }
+        });
+    }
+    
     public static void forceExit()
     {
         System.err.printf("Lime is about to forcefully exit.\nBut first; an error report.\n");
         
+        createCrashlog();
+        
+        System.exit(1);
+    }
+    
+    public static void createCrashlog()
+    {
         File file = null;
         PrintStream crashlogStream = System.err;
         long time = System.nanoTime();
@@ -40,8 +59,6 @@ public class Lime
             System.err.printf("Error report at file " + file.getPath() + "\n");
         
         crashlogStream.close();
-        
-        System.exit(1);
     }
     
     private static void writeCrashlogHeader(PrintStream crashlogStream, long time)

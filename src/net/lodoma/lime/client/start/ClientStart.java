@@ -10,6 +10,7 @@ public class ClientStart
 {
     public static void main(String[] args)
     {
+        Lime.init();
         Lime.LOGGER.setMinimumLevel(LogLevel.INFO);
         for (String arg : args)
             if (arg.equals("/F"))
