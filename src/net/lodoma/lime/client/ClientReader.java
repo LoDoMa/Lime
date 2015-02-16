@@ -88,7 +88,7 @@ public class ClientReader implements Runnable
                 
                 Lime.LOGGER.C("Unexpected exception in client reader");
                 Lime.LOGGER.log(e);
-                Lime.forceExit();
+                Lime.forceExit(e);
             }
         }
     }

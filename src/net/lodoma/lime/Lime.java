@@ -22,21 +22,21 @@ public class Lime
             @Override
             public void uncaughtException(Thread thread, Throwable throwable)
             {
-                forceExit();
+                forceExit(throwable);
             }
         });
     }
     
-    public static void forceExit()
+    public static void forceExit(Throwable cause)
     {
         System.err.printf("Lime is about to forcefully exit.\nBut first; an error report.\n");
         
-        createCrashlog();
+        createCrashlog(cause);
         
         System.exit(1);
     }
     
-    public static void createCrashlog()
+    public static void createCrashlog(Throwable cause)
     {
         File file = null;
         PrintStream crashlogStream = System.err;
@@ -50,8 +50,10 @@ public class Lime
         {
             
         }
-
+        
         writeCrashlogHeader(crashlogStream, time);
+        if (cause != null)
+            writeCrashlogCause(crashlogStream, cause);
         writeCrashlogStacktrace(crashlogStream);
         writeCrashlogLogger(crashlogStream);
         
@@ -73,6 +75,13 @@ public class Lime
         writeCrashlogLine("", crashlogStream);
         writeCrashlogLine("", crashlogStream);
         writeCrashlogLine("  --- Lime error report " + time + " --- ", crashlogStream);
+    }
+    
+    private static void writeCrashlogCause(PrintStream crashlogStream, Throwable cause)
+    {
+        writeCrashlogLine("", crashlogStream);
+        writeCrashlogLine("Cause:", crashlogStream);
+        cause.printStackTrace(crashlogStream);
     }
     
     private static void writeCrashlogStacktrace(PrintStream crashlogStream)

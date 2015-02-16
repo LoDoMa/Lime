@@ -35,7 +35,7 @@ public class ClientBroadcast
                 {
                     Lime.LOGGER.C("IO exception while broadcasting");
                     Lime.LOGGER.log(e);
-                    Lime.forceExit();
+                    Lime.forceExit(e);
                 }
                 Lime.LOGGER.I("UDP broadcast finished");
             }

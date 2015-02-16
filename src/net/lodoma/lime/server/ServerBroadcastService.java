@@ -34,7 +34,7 @@ public class ServerBroadcastService implements Runnable
         {
             Lime.LOGGER.C("Failed to open broadcast service");
             Lime.LOGGER.log(e);
-            Lime.forceExit();
+            Lime.forceExit(e);
         }
     }
     
@@ -101,7 +101,7 @@ public class ServerBroadcastService implements Runnable
             {
                 Lime.LOGGER.C("Socket exception in broadcast service");
                 Lime.LOGGER.log(e);
-                Lime.forceExit();
+                Lime.forceExit(e);
             }
         }
         catch (Exception e)
@@ -110,7 +110,7 @@ public class ServerBroadcastService implements Runnable
             {
                 Lime.LOGGER.C("Unexpected exception in broadcast service");
                 Lime.LOGGER.log(e);
-                Lime.forceExit();
+                Lime.forceExit(e);
             }
         }
     }

@@ -1,7 +1,7 @@
 package net.lodoma.lime.server;
 
 import java.io.IOException;
-import java.util.Set;
+import java.util.List;
 
 import net.lodoma.lime.util.Identifiable;
 
@@ -56,7 +56,7 @@ public abstract class ServerPacket implements Identifiable<Integer>
     
     public final void handleAll(Object... args)
     {
-        Set<ServerUser> users = server.userManager.getUserSet();
+        List<ServerUser> users = server.userManager.getUserSet();
         for(ServerUser user : users)
             write(user, args);
     }

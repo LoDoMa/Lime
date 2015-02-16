@@ -66,9 +66,6 @@ public class Logger
     
     private void log(LogLevel level, String message, StackTraceElement ste)
     {
-        if (level.ordinal() < minimum)
-            return;
-        
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
@@ -86,6 +83,9 @@ public class Logger
         list.addLast(finalString);
         while (list.size() > 30)
             list.removeFirst();
+
+        if (level.ordinal() < minimum)
+            return;
         
         System.err.printf("%s", finalString);
     }

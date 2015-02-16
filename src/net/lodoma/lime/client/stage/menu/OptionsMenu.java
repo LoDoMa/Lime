@@ -35,7 +35,7 @@ public class OptionsMenu extends Stage
             {
                 Lime.LOGGER.C("Failed to recreate the window");
                 Lime.LOGGER.log(e);
-                Lime.forceExit();
+                Lime.forceExit(e);
             }
         }
     }

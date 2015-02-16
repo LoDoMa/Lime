@@ -66,7 +66,7 @@ public abstract class ClientPacketHandler implements Identifiable<Integer>
         {
             Lime.LOGGER.C("IO exception while handling a packet");
             Lime.LOGGER.log(e);
-            Lime.forceExit();
+            Lime.forceExit(e);
         }
     }
 }

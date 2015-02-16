@@ -86,7 +86,7 @@ public class ClientLogicPool implements Runnable
             {
                 Lime.LOGGER.C("IO exception in CPH handling");
                 Lime.LOGGER.log(e);
-                Lime.forceExit();
+                Lime.forceExit(e);
             }
             
             for(ClientLogic logic : logicSet)
@@ -108,7 +108,7 @@ public class ClientLogicPool implements Runnable
                 {
                     Lime.LOGGER.C("Unexpected interrupt in logic pool");
                     Lime.LOGGER.log(e);
-                    Lime.forceExit();
+                    Lime.forceExit(e);
                 }
         }
         

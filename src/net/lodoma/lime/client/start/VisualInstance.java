@@ -40,7 +40,7 @@ public class VisualInstance
         {
             Lime.LOGGER.C("Failed to create the window");
             Lime.LOGGER.log(e);
-            Lime.forceExit();
+            Lime.forceExit(e);
         }
         
         FontHelper.registerFont(new File(OsHelper.JARPATH + "fonts/mytype.ttf"));

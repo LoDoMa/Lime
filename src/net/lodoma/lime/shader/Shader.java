@@ -43,7 +43,7 @@ public class Shader
         {
             Lime.LOGGER.C("Failed to load shader " + shader + " source; file = " + sourceFile.getPath());
             Lime.LOGGER.log(e);
-            Lime.forceExit();
+            Lime.forceExit(e);
         }
         
         return builder.toString();
@@ -67,7 +67,7 @@ public class Shader
             String infoLog = GL20.glGetShaderInfoLog(shader, 1024);
 
             Lime.LOGGER.C("Failed to compile shader " + shader + "\n" + infoLog);
-            Lime.forceExit();
+            Lime.forceExit(null);
         }
         Lime.LOGGER.F("Compiled shader " + shader);
     }

@@ -60,7 +60,7 @@ public class Entity implements Identifiable<Integer>
         {
             Lime.LOGGER.C("Failed to load the gamemode from file " + scriptFile);
             Lime.LOGGER.log(e);
-            Lime.forceExit();
+            Lime.forceExit(e);
         }
         
         scriptInit = world.luaInstance.globals.get("Lime_Init").checkfunction();

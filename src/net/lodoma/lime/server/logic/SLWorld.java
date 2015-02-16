@@ -66,6 +66,8 @@ public class SLWorld implements ServerLogic
         if(timer == null) timer = new Timer();
         timer.update();
         double timeDelta = timer.getDelta();
+
+        EventManager.runEvents();
         
         updateTime -= timeDelta;
         if (updateTime <= 0.0)
@@ -77,7 +79,6 @@ public class SLWorld implements ServerLogic
             server.world.updateGamemode(UPDATE_MAXTIME);
             server.world.updateEntities(UPDATE_MAXTIME);
             server.physicsWorld.update((float) UPDATE_MAXTIME);
-            EventManager.runEvents();
         }
         
         while (updateTime <= 0.0)

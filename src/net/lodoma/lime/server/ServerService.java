@@ -31,7 +31,7 @@ public class ServerService implements Runnable
         {
             Lime.LOGGER.C("Failed to open server service");
             Lime.LOGGER.log(e);
-            Lime.forceExit();
+            Lime.forceExit(e);
         }
     }
     
@@ -46,7 +46,7 @@ public class ServerService implements Runnable
         {
             Lime.LOGGER.C("Failed to close server service");
             Lime.LOGGER.log(e);
-            Lime.forceExit();
+            Lime.forceExit(e);
         }
     }
     
@@ -92,7 +92,7 @@ public class ServerService implements Runnable
                 {
                     Lime.LOGGER.C("Unexpected exception in server service");
                     Lime.LOGGER.log(e);
-                    Lime.forceExit();
+                    Lime.forceExit(e);
                 }
             }
         }

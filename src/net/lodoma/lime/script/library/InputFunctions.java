@@ -42,7 +42,7 @@ public class InputFunctions
         {
             Lime.LOGGER.C("Unexpected illegal access exception while getting constants from Input");
             Lime.LOGGER.log(e);
-            Lime.forceExit();
+            Lime.forceExit(e);
         }
     }
     

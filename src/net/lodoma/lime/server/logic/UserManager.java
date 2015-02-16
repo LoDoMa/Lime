@@ -1,33 +1,25 @@
 package net.lodoma.lime.server.logic;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.function.Consumer;
 
+import net.lodoma.lime.Lime;
 import net.lodoma.lime.script.event.EMOnJoin;
 import net.lodoma.lime.script.event.EMOnLeave;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.server.ServerUser;
+import net.lodoma.lime.util.IdentityPool;
 
 public class UserManager implements ServerLogic
 {
     private Server server;
     
-    private int idCounter;
-    private Set<ServerUser> userSet;
-    private Map<Integer, ServerUser> users;
+    private IdentityPool<ServerUser> userPool;
     
     public UserManager()
     {
-        idCounter = 0;
-        userSet = Collections.synchronizedSet(new HashSet<ServerUser>());
-        users = Collections.synchronizedMap(new HashMap<Integer, ServerUser>());
+        userPool = new IdentityPool<ServerUser>(false);
     }
     
     @Override
@@ -42,38 +34,37 @@ public class UserManager implements ServerLogic
     @Override
     public void clean()
     {
-        for(ServerUser user : userSet)
-            user.stop();
-        userSet.clear();
-        users.clear();
+        userPool.foreach((ServerUser user) -> user.stop());
+        userPool.clear();
     }
     
     public boolean addUser(ServerUser user)
     {
-        user.setIdentifier(idCounter++);
-        users.put(user.getIdentifier(), user);
-        userSet.add(user);
-
+        userPool.add(user);
+        
         server.emanPool.get(EMOnJoin.HASH).newEvent(user.getIdentifier());
         return true;
     }
     
     public ServerUser getUser(int id)
     {
-        return users.get(id);
+        return userPool.get(id);
     }
     
-    public Set<ServerUser> getUserSet()
+    public int getUserCount()
     {
-        return userSet;
+        return userPool.size();
+    }
+    
+    public List<ServerUser> getUserSet()
+    {
+        return userPool.getObjectList();
     }
     
     @Override
     public void logic()
     {
-        List<ServerUser> toRemove = new ArrayList<ServerUser>();
-        for(ServerUser user : userSet)
-        {
+        userPool.foreach((ServerUser user) -> {
             try
             {
                 user.handleInput();
@@ -81,27 +72,26 @@ public class UserManager implements ServerLogic
             catch (IOException e)
             {
                 user.stop();
-                toRemove.add(user);
-                continue;
+                userPool.remove(user);
+                
+                Lime.LOGGER.W("Removed user " + user.identifier + " from user pool; failed to handle input");
+                server.emanPool.get(EMOnLeave.HASH).newEvent(user.identifier);
+                return;
             }
             
             if(user.closed)
             {
                 user.stop();
-                toRemove.add(user);
+                userPool.remove(user);
+                
+                Lime.LOGGER.I("Removed user " + user.identifier + " from user pool; closed");
+                server.emanPool.get(EMOnLeave.HASH).newEvent(user.identifier);
             }
-        }
-        users.remove(toRemove);
-        userSet.removeAll(toRemove);
-        for (ServerUser user : toRemove)
-            server.emanPool.get(EMOnLeave.HASH).newEvent(user.getIdentifier());
+        });
     }
     
     public void foreach(Consumer<ServerUser> consumer)
     {
-        // We create a new set, so that the consumer can remove elements
-        Set<ServerUser> userSet = new HashSet<ServerUser>(this.userSet);
-        for (ServerUser user : userSet)
-            consumer.accept(user);
+        userPool.foreach(consumer);
     }
 }
