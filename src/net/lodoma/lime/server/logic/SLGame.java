@@ -39,14 +39,16 @@ public class SLGame extends ServerLogic
         
         snapshotPacket = server.spPool.get(SPSnapshot.HASH);
         
+        String gamemodeName = "test";
         try
         {
-            server.world.load("test", server);
+            server.world.load(gamemodeName, server);
         }
         catch(IOException e)
         {
-            // TODO: handle me!
-            e.printStackTrace();
+            Lime.LOGGER.C("Failed to load gamemode " + gamemodeName);
+            Lime.LOGGER.log(e);
+            Lime.forceExit(e);
         }
         
         server.world.init();
