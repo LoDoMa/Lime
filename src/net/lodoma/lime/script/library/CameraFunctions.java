@@ -1,6 +1,7 @@
 package net.lodoma.lime.script.library;
 
-import net.lodoma.lime.server.logic.UserManager;
+import net.lodoma.lime.server.UserManager;
+
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;

@@ -1,9 +1,9 @@
 package net.lodoma.lime.server;
 
 import net.lodoma.lime.script.event.EventManager;
-import net.lodoma.lime.server.logic.SLWorld;
-import net.lodoma.lime.server.logic.ServerLogicPool;
-import net.lodoma.lime.server.logic.UserManager;
+import net.lodoma.lime.server.logic.SLGame;
+import net.lodoma.lime.server.logic.ServerLogic;
+import net.lodoma.lime.server.logic.ServerLogicThread;
 import net.lodoma.lime.util.IdentityPool;
 import net.lodoma.lime.world.SnapshotManager;
 import net.lodoma.lime.world.World;
@@ -16,7 +16,8 @@ public final class Server
     private ServerService service;
     private ServerBroadcastService broadcast;
     
-    public ServerLogicPool logicPool;
+    public ServerLogic logic;
+    public ServerLogicThread logicThread;
     
     public UserManager userManager;
     public IdentityPool<ServerPacket> spPool;
@@ -31,17 +32,10 @@ public final class Server
     {
         if (isRunning) return;
         
-        logicPool = new ServerLogicPool(this);
-        
         userManager = new UserManager();
         sphPool = new IdentityPool<ServerPacketHandler>(true);
         spPool = new IdentityPool<ServerPacket>(true);
         emanPool = new IdentityPool<EventManager>(true);
-        
-        logicPool.addLogic(new SLWorld());
-        logicPool.addLogic(userManager);
-        
-        logicPool.init();
         
         isRunning = true;
         
@@ -50,15 +44,18 @@ public final class Server
         
         broadcast = new ServerBroadcastService(this);
         broadcast.start();
+
+        logicThread = new ServerLogicThread(this, 60);
+        logicThread.start();
         
-        logicPool.start();
+        logic = new SLGame(this);
     }
     
     public void close()
     {
         if (!isRunning) return;
         
-        logicPool.stop();
+        logicThread.stop();
         broadcast.stop();
         service.stop();
         
@@ -66,7 +63,8 @@ public final class Server
         
         try
         {
-            while(logicPool.isRunning()) Thread.sleep(1);
+            while(logicThread.isRunning()) Thread.sleep(1);
+            while(broadcast.isRunning()) Thread.sleep(1);
             while(service.isRunning()) Thread.sleep(1);
         }
         catch(InterruptedException e)

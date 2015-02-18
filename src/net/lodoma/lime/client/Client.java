@@ -9,25 +9,15 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 import net.lodoma.lime.Lime;
-import net.lodoma.lime.client.logic.CLWorld;
-import net.lodoma.lime.client.logic.ClientLogicPool;
+import net.lodoma.lime.client.logic.CLGame;
+import net.lodoma.lime.client.logic.ClientLogic;
+import net.lodoma.lime.client.logic.ClientLogicThread;
 import net.lodoma.lime.server.NetSettings;
 import net.lodoma.lime.util.IdentityPool;
 import net.lodoma.lime.util.Pipe;
 import net.lodoma.lime.world.World;
 import net.lodoma.lime.world.gfx.WorldRenderer;
 
-/**
- * Client holds all data for communication with the server.
- * The cilent tries to establish a connection with the server
- * when it is opened, and has to be closed for this connection
- * to properly end.
- * 
- * When opened, ClientReader and ClientLogicPool threads are
- * started.
- * 
- * @author Lovro Kalinovčić
- */
 public class Client
 {
     private boolean isRunning = false;
@@ -40,7 +30,8 @@ public class Client
     private DataInputStream publicInputStream;
     private DataOutputStream publicOutputStream;
     
-    public ClientLogicPool logicPool;
+    public ClientLogic logic;
+    public ClientLogicThread logicThread;
     public ClientReader reader;
     
     public IdentityPool<ClientPacket> cpPool;
@@ -49,23 +40,6 @@ public class Client
     public World world;
     public WorldRenderer worldRenderer;
     
-    /**
-     * Opens the client if not running.
-     * First tries to establish a connection with the server,
-     * then initializes the client before starting its logic.
-     * 
-     * A ClientLogicPool is created, with UPS set to 60.
-     * The property pool is created.
-     * The following properties are set:
-     *     logicPool, reader, credentials,
-     *     cphPool, cpPool, emanPool
-     * 
-     * ClientLogicPool and ClientReader threads are started.
-     * 
-     * @param port - server port
-     * @param host - server host
-     * @throws ClientConnectionException is establishing connection fails.
-     */
     public final void open(InetAddress address) throws ClientConnectionException
     {
         if(isRunning) return;
@@ -86,36 +60,25 @@ public class Client
             throw new ClientConnectionException(e);
         }
         
-        logicPool = new ClientLogicPool(this, 60.0);
-        reader = new ClientReader(this, socketInputStream, pipe.getOutputStream());
-        
         cphPool = new IdentityPool<ClientPacketHandler>(true);
         cpPool = new IdentityPool<ClientPacket>(true);
-        // emanPool = new HashPool32<EventManager>();
-        
-        logicPool.addLogic(new CLWorld());
-        
-        logicPool.init();
-        
+
+        reader = new ClientReader(this, socketInputStream, pipe.getOutputStream());
         reader.start();
-        logicPool.start();
+
+        logicThread = new ClientLogicThread(this, 60);
+        logicThread.start();
+        
+        logic = new CLGame(this);
         
         isRunning = true;
     }
     
-    /**
-     * Closes the client is running.
-     * First stops ClientLogicPool and ClientReader threads,
-     * then tries to close the client socket.
-     * 
-     * This method will wait until both ClientLogicPool
-     * and ClientReader threads have stopped.
-     */
     public final void close()
     {
         if(!isRunning) return;
 
-        logicPool.stop();
+        logicThread.stop();
         reader.stop();
         
         try
@@ -133,7 +96,7 @@ public class Client
         
         try
         {
-            while(logicPool.isRunning()) Thread.sleep(1);
+            while(logicThread.isRunning()) Thread.sleep(1);
             while(reader.isRunning()) Thread.sleep(1);
         }
         catch(InterruptedException e)
@@ -143,32 +106,16 @@ public class Client
         }
     }
     
-    /**
-     * Returns the input stream.
-     * This stream is not the socket input stream,
-     * but piped output from ClientReader.
-     * 
-     * @return input stream
-     */
     public DataInputStream getInputStream()
     {
         return publicInputStream;
     }
     
-    /**
-     * Returns the output stream.
-     * This stream is the socket output stream.
-     * 
-     * @return output stream.
-     */
     public DataOutputStream getOutputStream()
     {
         return publicOutputStream;
     }
     
-    /**
-     * @return is the client running
-     */
     public boolean isRunning()
     {
         return isRunning;

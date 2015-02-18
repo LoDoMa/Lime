@@ -1,12 +1,23 @@
 package net.lodoma.lime.client.logic;
 
+import java.io.DataInputStream;
+
 import net.lodoma.lime.client.Client;
 
-public interface ClientLogic
+public abstract class ClientLogic
 {
-    public void init(Client client);
+    protected Client client;
     
-    public void clean();
+    public ClientLogic(Client client)
+    {
+        this.client = client;
+    }
+
+    public abstract void init();
+    public abstract void destroy();
+
+    public abstract void update();
+    public abstract void render();
     
-    public void logic();
+    public abstract void handleSnapshot(DataInputStream inputStream);
 }

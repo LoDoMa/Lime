@@ -1,4 +1,4 @@
-package net.lodoma.lime.server.logic;
+package net.lodoma.lime.server;
 
 import java.io.IOException;
 import java.util.List;
@@ -7,11 +7,9 @@ import java.util.function.Consumer;
 import net.lodoma.lime.Lime;
 import net.lodoma.lime.script.event.EMOnJoin;
 import net.lodoma.lime.script.event.EMOnLeave;
-import net.lodoma.lime.server.Server;
-import net.lodoma.lime.server.ServerUser;
 import net.lodoma.lime.util.IdentityPool;
 
-public class UserManager implements ServerLogic
+public class UserManager
 {
     private Server server;
     
@@ -22,7 +20,6 @@ public class UserManager implements ServerLogic
         userPool = new IdentityPool<ServerUser>(false);
     }
     
-    @Override
     public void init(Server server)
     {
         this.server = server;
@@ -31,7 +28,6 @@ public class UserManager implements ServerLogic
         server.emanPool.add(new EMOnLeave());
     }
     
-    @Override
     public void clean()
     {
         userPool.foreach((ServerUser user) -> user.stop());
@@ -40,10 +36,14 @@ public class UserManager implements ServerLogic
     
     public boolean addUser(ServerUser user)
     {
-        userPool.add(user);
-        
-        server.emanPool.get(EMOnJoin.HASH).newEvent(user.getIdentifier());
-        return true;
+        if (server.logic.acceptUser(user))
+        {
+            userPool.add(user);
+            
+            server.emanPool.get(EMOnJoin.HASH).newEvent(user.getIdentifier());
+            return true;
+        }
+        return false;
     }
     
     public ServerUser getUser(int id)
@@ -61,8 +61,7 @@ public class UserManager implements ServerLogic
         return userPool.getObjectList();
     }
     
-    @Override
-    public void logic()
+    public void update()
     {
         userPool.foreach((ServerUser user) -> {
             try

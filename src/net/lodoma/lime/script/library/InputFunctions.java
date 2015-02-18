@@ -4,7 +4,7 @@ import java.lang.reflect.Field;
 
 import net.lodoma.lime.Lime;
 import net.lodoma.lime.input.Input;
-import net.lodoma.lime.server.logic.UserManager;
+import net.lodoma.lime.server.UserManager;
 
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaValue;

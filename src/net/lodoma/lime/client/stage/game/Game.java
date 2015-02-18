@@ -66,7 +66,6 @@ public class Game extends Stage
     public void render()
     {
         if(client.isRunning())
-            if(client.worldRenderer != null)
-                client.worldRenderer.render();
+            client.logic.render();
     }
 }

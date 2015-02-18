@@ -1,5 +1,6 @@
 package net.lodoma.lime.client.logic;
 
+import java.io.DataInputStream;
 import java.nio.ByteBuffer;
 
 import net.lodoma.lime.client.Client;
@@ -11,22 +12,24 @@ import net.lodoma.lime.util.Timer;
 import net.lodoma.lime.world.World;
 import net.lodoma.lime.world.gfx.WorldRenderer;
 
-public class CLWorld implements ClientLogic
+public class CLGame extends ClientLogic
 {
     public static final double INPUT_PS = 20;
     public static final double INPUT_MAXTIME = 1.0 / INPUT_PS;
     public double inputTime = INPUT_MAXTIME;
     
-    private Client client;
-    
     private Timer timer;
     
     public ClientPacket inputStatePacket;
     
-    @Override
-    public void init(Client client)
+    public CLGame(Client client)
     {
-        this.client = client;
+        super(client);
+    }
+    
+    @Override
+    public void init()
+    {
         client.world = new World();
         client.worldRenderer = new WorldRenderer(client.world);
         
@@ -37,15 +40,15 @@ public class CLWorld implements ClientLogic
     }
     
     @Override
-    public void clean()
+    public void destroy()
     {
         client.world.clean();
     }
     
     @Override
-    public void logic()
+    public void update()
     {
-        if(timer == null) timer = new Timer();
+        if (timer == null) timer = new Timer();
         timer.update();
         double timeDelta = timer.getDelta();
         
@@ -58,5 +61,18 @@ public class CLWorld implements ClientLogic
         }
         while (inputTime <= 0.0)
             inputTime += INPUT_MAXTIME;
+    }
+    
+    @Override
+    public void render()
+    {
+        if(client.worldRenderer != null)
+            client.worldRenderer.render();
+    }
+    
+    @Override
+    public void handleSnapshot(DataInputStream inputStream)
+    {
+        
     }
 }

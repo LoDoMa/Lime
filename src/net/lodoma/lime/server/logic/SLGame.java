@@ -1,5 +1,6 @@
 package net.lodoma.lime.server.logic;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 
 import net.lodoma.lime.script.event.EventManager;
@@ -12,7 +13,7 @@ import net.lodoma.lime.world.SnapshotManager;
 import net.lodoma.lime.world.World;
 import net.lodoma.lime.world.physics.PhysicsWorld;
 
-public class SLWorld implements ServerLogic
+public class SLGame extends ServerLogic
 {
     public static final double UPDATE_PS = 33;
     public static final double UPDATE_MAXTIME = 1.0 / UPDATE_PS;
@@ -22,14 +23,16 @@ public class SLWorld implements ServerLogic
     public static final double SNAPSHOT_MAXTIME = 1.0 / SNAPSHOT_PS;
     public double snapshotTime = SNAPSHOT_MAXTIME;
     
-    private Server server;
-    
     private Timer timer;
     
-    @Override
-    public void init(Server server)
+    public SLGame(Server server)
     {
-        this.server = server;
+        super(server);
+    }
+    
+    @Override
+    public void init()
+    {
         server.world = new World();
         server.physicsWorld = new PhysicsWorld();
         server.snapshotManager = new SnapshotManager(server);
@@ -54,14 +57,14 @@ public class SLWorld implements ServerLogic
     }
     
     @Override
-    public void clean()
+    public void destroy()
     {
         server.physicsWorld.destroy();
         server.world.clean();
     }
     
     @Override
-    public void logic()
+    public void update()
     {
         if(timer == null) timer = new Timer();
         timer.update();
@@ -91,5 +94,23 @@ public class SLWorld implements ServerLogic
         }
         while (snapshotTime <= 0.0)
             snapshotTime += SNAPSHOT_MAXTIME;
+    }
+    
+    @Override
+    public boolean acceptUser(ServerUser user)
+    {
+        return true;
+    }
+    
+    @Override
+    public boolean respondBroadcast()
+    {
+        return true;
+    }
+    
+    @Override
+    public void sendSnapshot(DataOutputStream outputStream)
+    {
+        
     }
 }

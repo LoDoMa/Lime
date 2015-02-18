@@ -14,12 +14,13 @@ public class ServerBroadcastService implements Runnable
 {
     private Thread thread;
     private boolean running;
-    
+
+    private Server server;    
     private DatagramSocket socket;
     
     public ServerBroadcastService(Server server)
     {
-        
+        this.server = server;
     }
     
     private void openService()
@@ -61,6 +62,11 @@ public class ServerBroadcastService implements Runnable
         closeService();
         Lime.LOGGER.F("Broadcast service closed");
     }
+
+    public boolean isRunning()
+    {
+        return thread.isAlive();
+    }
     
     @Override
     public void run()
@@ -84,14 +90,22 @@ public class ServerBroadcastService implements Runnable
                 socket.receive(packet);
                 
                 byte[] data = packet.getData();
-
+                
                 if (Arrays.equals(Arrays.copyOfRange(data, 0, enquiry.length), enquiry))
                 {
                     InetAddress address = packet.getAddress();
                     int port = packet.getPort();
-                    Lime.LOGGER.I("Enquiry from " + address + ":" + port);
-                    DatagramPacket sendPacket = new DatagramPacket(acknowledge, acknowledge.length, address, port);
-                    socket.send(sendPacket);
+                    
+                    if (server.logic != null && server.logic.respondBroadcast())
+                    {
+                        Lime.LOGGER.I("Responding to enquiry from " + address + ":" + port);
+                        DatagramPacket sendPacket = new DatagramPacket(acknowledge, acknowledge.length, address, port);
+                        socket.send(sendPacket);
+                    }
+                    else
+                    {
+                        Lime.LOGGER.I("Ignored enquiry from " + address + ":" + port);
+                    }
                 }
             }
         }

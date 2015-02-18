@@ -1,12 +1,25 @@
 package net.lodoma.lime.server.logic;
 
-import net.lodoma.lime.server.Server;
+import java.io.DataOutputStream;
 
-public interface ServerLogic
+import net.lodoma.lime.server.Server;
+import net.lodoma.lime.server.ServerUser;
+
+public abstract class ServerLogic
 {
-    public void init(Server server);
+    protected Server server;
     
-    public void clean();
-    
-    public void logic();
+    public ServerLogic(Server server)
+    {
+        this.server = server;
+    }
+
+    public abstract void init();
+    public abstract void destroy();
+
+    public abstract void update();
+
+    public abstract boolean acceptUser(ServerUser user);
+    public abstract boolean respondBroadcast();
+    public abstract void sendSnapshot(DataOutputStream outputStream);
 }
