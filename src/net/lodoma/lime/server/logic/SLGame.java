@@ -1,33 +1,34 @@
 package net.lodoma.lime.server.logic;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 
+import net.lodoma.lime.Lime;
 import net.lodoma.lime.script.event.EventManager;
 import net.lodoma.lime.server.Server;
+import net.lodoma.lime.server.ServerPacket;
 import net.lodoma.lime.server.ServerUser;
-import net.lodoma.lime.server.packet.SPHInputState;
 import net.lodoma.lime.server.packet.SPSnapshot;
-import net.lodoma.lime.util.Timer;
-import net.lodoma.lime.world.SnapshotManager;
+import net.lodoma.lime.snapshot.Snapshot;
+import net.lodoma.lime.util.HashHelper;
+import net.lodoma.lime.world.WorldSnapshot;
+import net.lodoma.lime.world.WorldSnapshotSegment;
 import net.lodoma.lime.world.World;
 import net.lodoma.lime.world.physics.PhysicsWorld;
 
 public class SLGame extends ServerLogic
 {
+    public static final String NAME = "Lime::Game";
+    public static final int HASH = HashHelper.hash32(NAME);
+    
     public static final double UPDATE_PS = 33;
     public static final double UPDATE_MAXTIME = 1.0 / UPDATE_PS;
     public double updateTime = UPDATE_MAXTIME;
-    
-    public static final double SNAPSHOT_PS = 20;
-    public static final double SNAPSHOT_MAXTIME = 1.0 / SNAPSHOT_PS;
-    public double snapshotTime = SNAPSHOT_MAXTIME;
-    
-    private Timer timer;
+
+    public ServerPacket snapshotPacket;
     
     public SLGame(Server server)
     {
-        super(server);
+        super(server, HASH);
     }
     
     @Override
@@ -35,12 +36,8 @@ public class SLGame extends ServerLogic
     {
         server.world = new World();
         server.physicsWorld = new PhysicsWorld();
-        server.snapshotManager = new SnapshotManager(server);
         
-        server.spPool.add(new SPSnapshot(server));
-        server.sphPool.add(new SPHInputState(server));
-        
-        server.snapshotManager.snapshotPacket = server.spPool.get(SPSnapshot.HASH);
+        snapshotPacket = server.spPool.get(SPSnapshot.HASH);
         
         try
         {
@@ -64,20 +61,14 @@ public class SLGame extends ServerLogic
     }
     
     @Override
-    public void update()
+    public void update(double timeDelta)
     {
-        if(timer == null) timer = new Timer();
-        timer.update();
-        double timeDelta = timer.getDelta();
-
         EventManager.runEvents();
         
         updateTime -= timeDelta;
         if (updateTime <= 0.0)
         {
-            server.userManager.foreach((ServerUser user) -> {
-                user.inputData.update();
-            });
+            server.userManager.foreach((ServerUser user) -> user.inputData.update());
             
             server.world.updateGamemode(UPDATE_MAXTIME);
             server.world.updateEntities(UPDATE_MAXTIME);
@@ -86,14 +77,6 @@ public class SLGame extends ServerLogic
         
         while (updateTime <= 0.0)
             updateTime += UPDATE_MAXTIME;
-        
-        snapshotTime -= timeDelta;
-        if (snapshotTime <= 0.0)
-        {
-            server.snapshotManager.send();
-        }
-        while (snapshotTime <= 0.0)
-            snapshotTime += SNAPSHOT_MAXTIME;
     }
     
     @Override
@@ -109,8 +92,25 @@ public class SLGame extends ServerLogic
     }
     
     @Override
-    public void sendSnapshot(DataOutputStream outputStream)
+    public void sendSnapshots()
     {
+        if (snapshotPacket == null)
+            snapshotPacket = server.spPool.get(SPSnapshot.HASH);
         
+        WorldSnapshot snapshot = new WorldSnapshot(server);
+        
+        server.userManager.foreach((ServerUser user) -> {
+            WorldSnapshot lastSnapshot = user.lastSnapshot;
+            user.lastSnapshot = snapshot;
+            
+            if (lastSnapshot == null)
+            {
+                Lime.LOGGER.I("Will send full snapshot to user " + user.identifier);
+                lastSnapshot = new WorldSnapshot();
+            }
+            
+            WorldSnapshotSegment segment = new WorldSnapshotSegment(snapshot, lastSnapshot);
+            snapshotPacket.write(user, new Snapshot(this, 0, segment));
+        });
     }
 }

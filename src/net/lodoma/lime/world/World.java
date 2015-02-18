@@ -103,7 +103,7 @@ public class World
         entityPool.foreach((Entity entity) -> { entity.update(timeDelta); });
     }
     
-    public void applySnapshot(SnapshotSegment segment, Client client)
+    public void applySnapshot(WorldSnapshotSegment segment, Client client)
     {
         synchronized (lock)
         {

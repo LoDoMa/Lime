@@ -1,16 +1,18 @@
 package net.lodoma.lime.client.logic;
 
-import java.io.DataInputStream;
-
 import net.lodoma.lime.client.Client;
+import net.lodoma.lime.snapshot.Snapshot;
+import net.lodoma.lime.snapshot.SnapshotData;
 
 public abstract class ClientLogic
 {
     protected Client client;
+    public final int hash;
     
-    public ClientLogic(Client client)
+    public ClientLogic(Client client, int hash)
     {
         this.client = client;
+        this.hash = hash;
     }
 
     public abstract void init();
@@ -19,5 +21,6 @@ public abstract class ClientLogic
     public abstract void update();
     public abstract void render();
     
-    public abstract void handleSnapshot(DataInputStream inputStream);
+    public abstract SnapshotData createSnapshotData();
+    public abstract void handleSnapshot(Snapshot snapshot);
 }

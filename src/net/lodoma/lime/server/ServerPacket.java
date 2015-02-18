@@ -40,8 +40,8 @@ public abstract class ServerPacket implements Identifiable<Integer>
             
             if(expected.length != args.length)
                 throw new IllegalArgumentException();
-            for(int i = 0; i < expected.length; i++)
-                if(!expected[i].isInstance(args[i]))
+            for (int i = 0; i < expected.length; i++)
+                if (!expected[i].isInstance(args[i]))
                     throw new IllegalArgumentException();
             
             localWrite(user, args);

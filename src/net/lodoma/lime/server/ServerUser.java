@@ -10,7 +10,7 @@ import java.net.Socket;
 
 import net.lodoma.lime.input.InputData;
 import net.lodoma.lime.util.Identifiable;
-import net.lodoma.lime.world.Snapshot;
+import net.lodoma.lime.world.WorldSnapshot;
 import net.lodoma.lime.world.gfx.Camera;
 
 // NOTE: This class requires more neatness!
@@ -33,7 +33,7 @@ public final class ServerUser implements Runnable, Identifiable<Integer>
     
     public int identifier;
     
-    public Snapshot lastSnapshot;
+    public WorldSnapshot lastSnapshot;
     public Camera camera;
     public InputData inputData;
     

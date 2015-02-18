@@ -14,11 +14,17 @@ public class Stage
     
     public void update(double timeDelta)
     {
-        ui.update(timeDelta);
+        synchronized (ui)
+        {
+            ui.update(timeDelta);
+        }
     }
     
     public void render()
     {
-        ui.render();
+        synchronized (ui)
+        {
+            ui.render();
+        }
     }
 }

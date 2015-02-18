@@ -65,7 +65,7 @@ public class Game extends Stage
     @Override
     public void render()
     {
-        if(client.isRunning())
+        if(client.isRunning() && client.logic != null)
             client.logic.render();
     }
 }

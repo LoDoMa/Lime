@@ -1,19 +1,24 @@
 package net.lodoma.lime.client.logic;
 
-import java.io.DataInputStream;
 import java.nio.ByteBuffer;
 
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.client.ClientPacket;
-import net.lodoma.lime.client.packet.CPHSnapshot;
 import net.lodoma.lime.client.packet.CPInputState;
 import net.lodoma.lime.input.Input;
+import net.lodoma.lime.snapshot.Snapshot;
+import net.lodoma.lime.snapshot.SnapshotData;
+import net.lodoma.lime.util.HashHelper;
 import net.lodoma.lime.util.Timer;
 import net.lodoma.lime.world.World;
+import net.lodoma.lime.world.WorldSnapshotSegment;
 import net.lodoma.lime.world.gfx.WorldRenderer;
 
 public class CLGame extends ClientLogic
 {
+    public static final String NAME = "Lime::Game";
+    public static final int HASH = HashHelper.hash32(NAME);
+    
     public static final double INPUT_PS = 20;
     public static final double INPUT_MAXTIME = 1.0 / INPUT_PS;
     public double inputTime = INPUT_MAXTIME;
@@ -24,7 +29,7 @@ public class CLGame extends ClientLogic
     
     public CLGame(Client client)
     {
-        super(client);
+        super(client, HASH);
     }
     
     @Override
@@ -32,9 +37,6 @@ public class CLGame extends ClientLogic
     {
         client.world = new World();
         client.worldRenderer = new WorldRenderer(client.world);
-        
-        client.cpPool.add(new CPInputState(client));
-        client.cphPool.add(new CPHSnapshot(client));
         
         inputStatePacket = client.cpPool.get(CPInputState.HASH);
     }
@@ -71,8 +73,14 @@ public class CLGame extends ClientLogic
     }
     
     @Override
-    public void handleSnapshot(DataInputStream inputStream)
+    public SnapshotData createSnapshotData()
     {
-        
+        return new WorldSnapshotSegment();
+    }
+    
+    @Override
+    public void handleSnapshot(Snapshot snapshot)
+    {
+        client.world.applySnapshot((WorldSnapshotSegment) snapshot.data, client);
     }
 }

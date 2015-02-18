@@ -9,18 +9,18 @@ import net.lodoma.lime.shader.light.LightData;
 import net.lodoma.lime.world.physics.PhysicsComponent;
 import net.lodoma.lime.world.physics.PhysicsComponentSnapshot;
 
-public class Snapshot
+public class WorldSnapshot
 {
     public Map<Integer, PhysicsComponentSnapshot> componentData;
     public Map<Integer, LightData> lightData;
     
-    public Snapshot()
+    public WorldSnapshot()
     {
         componentData = new HashMap<Integer, PhysicsComponentSnapshot>();
         lightData = new HashMap<Integer, LightData>();
     }
     
-    public Snapshot(Server server)
+    public WorldSnapshot(Server server)
     {
         this();
         

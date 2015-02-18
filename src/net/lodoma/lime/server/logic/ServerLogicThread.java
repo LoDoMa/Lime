@@ -2,10 +2,16 @@ package net.lodoma.lime.server.logic;
 
 import net.lodoma.lime.Lime;
 import net.lodoma.lime.server.Server;
+import net.lodoma.lime.server.packet.SPHInputState;
+import net.lodoma.lime.server.packet.SPSnapshot;
 import net.lodoma.lime.util.Timer;
 
 public class ServerLogicThread implements Runnable
 {
+    public static final double SNAPSHOT_PS = 20;
+    public static final double SNAPSHOT_MAXTIME = 1.0 / SNAPSHOT_PS;
+    public double snapshotTime = SNAPSHOT_MAXTIME;
+    
     private Server server;
     private boolean running = false;
     private Thread thread;
@@ -43,12 +49,17 @@ public class ServerLogicThread implements Runnable
     @Override
     public void run()
     {
-        server.userManager.init(server);
-        
-        Timer timer = new Timer();
+        commonInit();
+
+        Timer deltaTimer = new Timer();
+        Timer sleepTimer = new Timer();
         while (running)
         {
-            timer.update();
+            sleepTimer.update();
+            deltaTimer.update();
+
+            double timeDelta = deltaTimer.getDelta();
+            commonUpdate(timeDelta);
             
             if (server.logic != null)
             {
@@ -59,14 +70,15 @@ public class ServerLogicThread implements Runnable
                     initialized = server.logic;
                     initialized.init();
                 }
-                
-                commonUpdate();
-                server.logic.update();
+
+                server.logic.update(timeDelta);
             }
             
-            timer.update();
+            commonPostUpdate(timeDelta);
             
-            double delta = timer.getDelta();
+            sleepTimer.update();
+            
+            double delta = sleepTimer.getDelta();
             double required = 1.0f / ups;
             double freetime = required - delta;
             int millis = (int) (freetime * 1000);
@@ -88,11 +100,34 @@ public class ServerLogicThread implements Runnable
         if (initialized != null)
             initialized.destroy();
         
+        commonDestroy();
+    }
+    
+    private void commonInit()
+    {
+        server.spPool.add(new SPSnapshot(server));
+        server.sphPool.add(new SPHInputState(server));
+        
+        server.userManager.init(server);
+    }
+    
+    private void commonDestroy()
+    {
         server.userManager.clean();
     }
     
-    private void commonUpdate()
+    private void commonUpdate(double timeDelta)
     {
         server.userManager.update();
+    }
+    
+    private void commonPostUpdate(double timeDelta)
+    {
+        snapshotTime -= timeDelta;
+        if (snapshotTime <= 0.0)
+            server.logic.sendSnapshots();
+        
+        while (snapshotTime <= 0.0)
+            snapshotTime += SNAPSHOT_MAXTIME;
     }
 }

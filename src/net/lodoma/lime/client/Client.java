@@ -9,7 +9,6 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 import net.lodoma.lime.Lime;
-import net.lodoma.lime.client.logic.CLGame;
 import net.lodoma.lime.client.logic.ClientLogic;
 import net.lodoma.lime.client.logic.ClientLogicThread;
 import net.lodoma.lime.server.NetSettings;
@@ -68,8 +67,6 @@ public class Client
 
         logicThread = new ClientLogicThread(this, 60);
         logicThread.start();
-        
-        logic = new CLGame(this);
         
         isRunning = true;
     }

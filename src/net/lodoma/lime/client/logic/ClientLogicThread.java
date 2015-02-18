@@ -6,6 +6,8 @@ import java.io.IOException;
 import net.lodoma.lime.Lime;
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.client.ClientPacketHandler;
+import net.lodoma.lime.client.packet.CPHSnapshot;
+import net.lodoma.lime.client.packet.CPInputState;
 import net.lodoma.lime.util.Timer;
 
 public class ClientLogicThread implements Runnable
@@ -15,8 +17,6 @@ public class ClientLogicThread implements Runnable
     private Thread thread;
     
     private int ups;
-    
-    private ClientLogic initialized;
     
     public ClientLogicThread(Client client, int ups)
     {
@@ -47,24 +47,17 @@ public class ClientLogicThread implements Runnable
     @Override
     public void run()
     {
+        commonInit();
+        
         Timer timer = new Timer();
         while (running)
         {
             timer.update();
+
+            commonUpdate();
             
             if (client.logic != null)
-            {
-                if (client.logic != initialized)
-                {
-                    if (initialized != null)
-                        initialized.destroy();
-                    initialized = client.logic;
-                    initialized.init();
-                }
-                
-                commonUpdate();
                 client.logic.update();
-            }
             
             timer.update();
             
@@ -87,8 +80,21 @@ public class ClientLogicThread implements Runnable
                 }
         }
         
-        if (initialized != null)
-            initialized.destroy();
+        if (client.logic != null)
+            client.logic.destroy();
+        
+        commonDestroy();
+    }
+    
+    private void commonInit()
+    {
+        client.cpPool.add(new CPInputState(client));
+        client.cphPool.add(new CPHSnapshot(client));
+    }
+    
+    private void commonDestroy()
+    {
+        
     }
     
     private void commonUpdate()

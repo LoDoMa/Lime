@@ -15,7 +15,6 @@ pre-pre-alpha
 - Windows
 - OS X
 - Linux
-- Solaris
 
 #### Possible future targets
 
@@ -34,3 +33,6 @@ Languages:
 Libraries:
 - LWJGL 3
 - JBox2D 2.2.1.1
+- SLF4J 1.6.3
+- LuaJ JSE 3.0
+- LZ4 1.3.0
