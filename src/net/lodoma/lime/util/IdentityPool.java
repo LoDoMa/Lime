@@ -3,6 +3,7 @@ package net.lodoma.lime.util;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -101,9 +102,12 @@ public class IdentityPool<T extends Identifiable<Integer>>
     
     public void foreach(Consumer<T> consumer)
     {
-        List<T> objects = getObjectList();
-        for (T object : objects)
-            consumer.accept(object);
+        Iterator<Map.Entry<Integer, T>> iterator = objects.entrySet().iterator();
+        while (iterator.hasNext())
+        {
+            Map.Entry<Integer, T> entry = iterator.next();
+            consumer.accept(entry.getValue());
+        }
     }
     
     private int nextID()
