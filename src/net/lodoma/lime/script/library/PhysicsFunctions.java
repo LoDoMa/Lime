@@ -102,6 +102,7 @@ public class PhysicsFunctions
                 int compoID = args.arg(1).checkint();
                 library.server.world.componentPool.get(compoID).destroy();
                 library.server.world.componentPool.remove(compoID);
+                
                 Lime.LOGGER.I("Removed physics component " + compoID);
                 break;
             }
@@ -571,35 +572,21 @@ public class PhysicsFunctions
                     throw new LuaError("too many arguments to \"" + data.name + "\"");
                 LuaFunction preSolve = args.arg(1).checkfunction();
                 LuaFunction postSolve = args.arg(2).checkfunction();
+
+                Integer bodyA = args.arg(3).isnil() ? null : args.arg(3).checkint();
+                Integer bodyB = args.arg(4).isnil() ? null : args.arg(4).checkint();
                 
-                int filterLevel = 0;
-                int bodyA = 0;
-                int bodyB = 0;
-                if (args.narg() > 3)
-                {
-                    filterLevel++;
-                    bodyA = args.arg(3).checkint();
-                }
-                if (args.narg() == 4)
-                {
-                    filterLevel++;
-                    bodyB = args.arg(4).checkint();
-                }
+                LuaContactListener listener = new LuaContactListener(library.server, bodyA, bodyB, preSolve, postSolve);
                 
-                LuaContactListener listener = null;
-                if (filterLevel == 0) listener = new LuaContactListener(preSolve, postSolve);
-                else if (filterLevel == 1) listener = new LuaContactListener(bodyA, preSolve, postSolve);
-                else if (filterLevel == 2) listener = new LuaContactListener(bodyA, bodyB, preSolve, postSolve);
-                
-                int listenerID = library.server.physicsWorld.contactManager.listeners.add(listener);
-                Lime.LOGGER.I("Added contact listener " + listenerID + ", listening to " +
-                        ((filterLevel == 0) ? "everything" : ((filterLevel == 1) ? ("collisions with " + bodyA) : ("collisions between " + bodyA + " and " + bodyB))));
+                int listenerID = library.server.physicsWorld.contactManager.contactListeners.add(listener);
+                Lime.LOGGER.I("Added contact listener " + listenerID);
                 return LuaValue.valueOf(listenerID);
             }
             case REMOVE_CONTACT_LISTENER:
             {
                 int listenerID = args.arg(1).checkint();
-                library.server.physicsWorld.contactManager.listeners.remove(listenerID);
+                library.server.physicsWorld.contactManager.contactListeners.get(listenerID).destroy();
+                library.server.physicsWorld.contactManager.contactListeners.remove(listenerID);
                 break;
             }
             }
@@ -660,7 +647,7 @@ public class PhysicsFunctions
         SET_REVOLUTE_MOTOR_SPEED(1, true, "setRevoluteMotorSpeed"),
         SET_REVOLUTE_MAX_MOTOR_TORQUE(1, true, "setRevoluteMaxMotorTorque"),
         
-        ADD_CONTACT_LISTENER(2, false, "addContactListener"),
+        ADD_CONTACT_LISTENER(4, true, "addContactListener"),
         REMOVE_CONTACT_LISTENER(1, true, "removeContactListener");
         
         public int argc;

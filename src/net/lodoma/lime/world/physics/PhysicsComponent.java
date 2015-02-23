@@ -1,5 +1,9 @@
 package net.lodoma.lime.world.physics;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.ShapeType;
@@ -18,6 +22,10 @@ public class PhysicsComponent implements Identifiable<Integer>
     
     public Body engineBody;
     public Fixture engineFixture;
+    
+    /* A set of related contact listeners. These are destroyed when the component is destroyed.
+       It's a set so that elements can be quickly removed. */
+    public Set<PhysicsContactListener> contactListeners = new HashSet<PhysicsContactListener>();
     
     public PhysicsComponent(PhysicsComponentDefinition definition, PhysicsWorld world)
     {
@@ -44,6 +52,13 @@ public class PhysicsComponent implements Identifiable<Integer>
     
     public void destroy()
     {
+        Iterator<PhysicsContactListener> iterator = contactListeners.iterator();
+        while (iterator.hasNext())
+        {
+            PhysicsContactListener contactListener = iterator.next();
+            contactListener.destroy();
+        }
+        
         engineBody.destroyFixture(engineFixture);
         world.engineWorld.destroyBody(engineBody);
     }

@@ -29,6 +29,6 @@ public class PhysicsWorld
     
     public void destroy()
     {
-        
+        contactManager.contactListeners.foreach((PhysicsContactListener contactListener) -> contactListener.destroy());
     }
 }

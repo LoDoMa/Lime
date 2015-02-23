@@ -9,11 +9,11 @@ import org.jbox2d.dynamics.contacts.Contact;
 
 public class PhysicsContactManager implements ContactListener
 {
-    public IdentityPool<PhysicsContactListener> listeners;
+    public IdentityPool<PhysicsContactListener> contactListeners;
     
     public PhysicsContactManager()
     {
-        listeners = new IdentityPool<PhysicsContactListener>(false);
+        contactListeners = new IdentityPool<PhysicsContactListener>(false);
     }
     
     @Override
@@ -21,13 +21,7 @@ public class PhysicsContactManager implements ContactListener
     {
         int bodyA = (Integer) contact.m_fixtureA.m_body.m_userData;
         int bodyB = (Integer) contact.m_fixtureB.m_body.m_userData;
-        listeners.foreach((PhysicsContactListener listener) -> {
-            if ((listener.filterLevel == 0) ||
-                (listener.filterLevel == 1 && (bodyA == listener.bodyA || bodyB == listener.bodyA)) ||
-                (listener.filterLevel == 2 && ((bodyA == listener.bodyA && bodyB == listener.bodyB) ||
-                                               (bodyB == listener.bodyA && bodyA == listener.bodyB))))
-                listener.preSolve(bodyA, bodyB, contact);
-        });
+        contactListeners.foreach((PhysicsContactListener listener) -> listener.tryPreSolve(bodyA, bodyB, contact));
     }
     
     @Override
@@ -35,13 +29,7 @@ public class PhysicsContactManager implements ContactListener
     {
         int bodyA = (Integer) contact.m_fixtureA.m_body.m_userData;
         int bodyB = (Integer) contact.m_fixtureB.m_body.m_userData;
-        listeners.foreach((PhysicsContactListener listener) -> {
-            if ((listener.filterLevel == 0) ||
-                (listener.filterLevel == 1 && (bodyA == listener.bodyA || bodyB == listener.bodyA)) ||
-                (listener.filterLevel == 2 && ((bodyA == listener.bodyA && bodyB == listener.bodyB) ||
-                                               (bodyB == listener.bodyA && bodyA == listener.bodyB))))
-                listener.postSolve(bodyA, bodyB, contact);
-        });
+        contactListeners.foreach((PhysicsContactListener listener) -> listener.tryPostSolve(bodyA, bodyB, contact));
     }
     
     @Override

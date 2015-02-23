@@ -2,7 +2,7 @@ local firstInit = true
 local compoID = {}
 
 local function preSolve(bodyA, bodyB)
-
+	print("poof")
 end
 
 local function postSolve(bodyA, bodyB)
@@ -38,7 +38,7 @@ function Lime_Init(entityID)
 
 	lime.setCameraScale(lime.getAttribute(entityID, "master"), 32, 18);
 
-	lime.addContactListener(preSolve, postSolve)
+	lime.addContactListener(preSolve, postSolve, compoID[entityID], nil)
 end
 
 function Lime_Update(entityID, timeDelta)

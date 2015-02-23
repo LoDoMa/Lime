@@ -4,6 +4,7 @@ import org.jbox2d.dynamics.contacts.Contact;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaValue;
 
+import net.lodoma.lime.server.Server;
 import net.lodoma.lime.world.physics.PhysicsContactListener;
 
 public class LuaContactListener extends PhysicsContactListener
@@ -11,23 +12,9 @@ public class LuaContactListener extends PhysicsContactListener
     private LuaFunction preSolve;
     private LuaFunction postSolve;
     
-    public LuaContactListener(LuaFunction preSolve, LuaFunction postSolve)
+    public LuaContactListener(Server server, Integer bodyA, Integer bodyB, LuaFunction preSolve, LuaFunction postSolve)
     {
-        super();
-        this.preSolve = preSolve;
-        this.postSolve = postSolve;
-    }
-    
-    public LuaContactListener(int bodyA, LuaFunction preSolve, LuaFunction postSolve)
-    {
-        super(bodyA);
-        this.preSolve = preSolve;
-        this.postSolve = postSolve;
-    }
-    
-    public LuaContactListener(int bodyA, int bodyB, LuaFunction preSolve, LuaFunction postSolve)
-    {
-        super(bodyA, bodyB);
+        super(server, bodyA, bodyB);
         this.preSolve = preSolve;
         this.postSolve = postSolve;
     }
