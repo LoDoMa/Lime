@@ -1,11 +1,11 @@
 local firstInit = true
 local compoID = {}
 
-local function preSolve(bodyA, bodyB)
-	print("poof")
+local function preSolve(bodyA, bodyB, contact)
+	contact.setEnabled(false)
 end
 
-local function postSolve(bodyA, bodyB)
+local function postSolve(bodyA, bodyB, contact)
 
 end
 
