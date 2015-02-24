@@ -84,12 +84,12 @@ public class Entity implements Identifiable<Integer>
     
     public void update(double timeDelta)
     {
-        world.luaInstance.call(scriptUpdate, new Object[] { identifier, timeDelta });
+        world.luaInstance.call(scriptUpdate, new Object[] { timeDelta });
     }
     
     public void destroy()
     {
         Lime.LOGGER.I("Destroying script for entity " + identifier);
-        world.luaInstance.call(scriptClean, new Object[] { identifier });
+        world.luaInstance.call(scriptClean, null);
     }
 }
