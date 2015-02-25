@@ -13,7 +13,8 @@ public class PhysicsComponentSnapshot implements Identifiable<Integer>
     public Vector2 position;
     public float angle;
     
-    public PhysicsComponentShapeType type;
+    public PhysicsComponentType type;
+    public PhysicsComponentShapeType shapeType;
     public float radius;
     public Vector2[] vertices;
     
@@ -31,7 +32,7 @@ public class PhysicsComponentSnapshot implements Identifiable<Integer>
     
     public void debugRender()
     {
-        switch(type)
+        switch(shapeType)
         {
         case CIRCLE:
         {

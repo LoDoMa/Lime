@@ -18,13 +18,15 @@ import net.lodoma.lime.util.Vector2;
 import net.lodoma.lime.world.physics.PhysicsComponentModifications;
 import net.lodoma.lime.world.physics.PhysicsComponentShapeType;
 import net.lodoma.lime.world.physics.PhysicsComponentSnapshot;
+import net.lodoma.lime.world.physics.PhysicsComponentType;
 
 public class WorldSnapshotSegment implements SnapshotData
 {
     public static final long MODIFIED_ALL              = 0xFFFFFFFFl << 32;
-    public static final long MODIFIED_POSITION         = 0x80000000l << 32;
-    public static final long MODIFIED_ROTATION         = 0x40000000l << 32;
-    public static final long MODIFIED_SHAPE            = 0x20000000l << 32;
+    public static final long MODIFIED_POSITION         = 0x1l << 32;
+    public static final long MODIFIED_ROTATION         = 0x2l << 32;
+    public static final long MODIFIED_SHAPE            = 0x4l << 32;
+    public static final long MODIFIED_PHYSICS_DATA     = 0x8l << 32;
     
     public int[] createdComponents;
     public int[] removedComponents;
@@ -75,9 +77,9 @@ public class WorldSnapshotSegment implements SnapshotData
                 if (currentCompo.angle != previousCompo.angle)
                     modified |= MODIFIED_ROTATION;
                 
-                if (!currentCompo.type.equals(previousCompo.type))
+                if (!currentCompo.shapeType.equals(previousCompo.shapeType))
                     modified |= MODIFIED_SHAPE;
-                else switch (currentCompo.type)
+                else switch (currentCompo.shapeType)
                 {
                 case CIRCLE:
                     if (currentCompo.radius != previousCompo.radius)
@@ -88,6 +90,9 @@ public class WorldSnapshotSegment implements SnapshotData
                         modified |= MODIFIED_SHAPE;
                     break;
                 }
+                
+                if (currentCompo.type != previousCompo.type)
+                    modified |= MODIFIED_PHYSICS_DATA;
                 
                 if (modified != 0)
                     modifiedComponentsList.add(modified | key);
@@ -216,7 +221,7 @@ public class WorldSnapshotSegment implements SnapshotData
                 PhysicsComponentShapeType type = PhysicsComponentShapeType.values()[typeOrdinal];
 
                 modifications.shapeModified = true;
-                modifications.data.type = type;
+                modifications.data.shapeType = type;
                 
                 switch (type)
                 {
@@ -235,6 +240,14 @@ public class WorldSnapshotSegment implements SnapshotData
                     }
                     break;
                 }
+            }
+            
+            if ((data & WorldSnapshotSegment.MODIFIED_PHYSICS_DATA) != 0)
+            {
+                int typeOrdinal = in.readInt();
+                
+                modifications.physicsDataModified = true;
+                modifications.data.type = PhysicsComponentType.values()[typeOrdinal];
             }
         }
 
@@ -310,8 +323,8 @@ public class WorldSnapshotSegment implements SnapshotData
             
             if ((data & WorldSnapshotSegment.MODIFIED_SHAPE) != 0)
             {
-                user.outputStream.writeInt(compo.type.ordinal());
-                switch (compo.type)
+                user.outputStream.writeInt(compo.shapeType.ordinal());
+                switch (compo.shapeType)
                 {
                 case CIRCLE:
                     user.outputStream.writeFloat(compo.radius);
@@ -326,6 +339,9 @@ public class WorldSnapshotSegment implements SnapshotData
                     break;
                 }
             }
+            
+            if ((data & WorldSnapshotSegment.MODIFIED_PHYSICS_DATA) != 0)
+                user.outputStream.writeInt(compo.type.ordinal());
         }
 
         for (int key : createdLights) user.outputStream.writeInt(key);

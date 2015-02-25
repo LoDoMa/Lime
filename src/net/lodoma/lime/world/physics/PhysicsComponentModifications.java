@@ -5,6 +5,7 @@ public class PhysicsComponentModifications
     public boolean positionModified;
     public boolean rotationModified;
     public boolean shapeModified;
+    public boolean physicsDataModified;
     
     public PhysicsComponentSnapshot data;
     
@@ -25,7 +26,7 @@ public class PhysicsComponentModifications
         
         if (shapeModified)
         {
-            compo.type = data.type;
+            compo.shapeType = data.shapeType;
             compo.radius = data.radius;
             compo.vertices = data.vertices;
         }

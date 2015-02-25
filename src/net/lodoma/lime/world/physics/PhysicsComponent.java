@@ -9,6 +9,7 @@ import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.ShapeType;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
+import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.Fixture;
 
 import net.lodoma.lime.util.Identifiable;
@@ -69,12 +70,19 @@ public class PhysicsComponent implements Identifiable<Integer>
         snapshot.position = new Vector2(engineBody.getPosition().x, engineBody.getPosition().y);
         snapshot.angle = engineBody.getAngle();
 
-        if (engineFixture.m_shape.m_type == ShapeType.CIRCLE)
-            snapshot.type = PhysicsComponentShapeType.CIRCLE;
-        if (engineFixture.m_shape.m_type == ShapeType.POLYGON)
-            snapshot.type = PhysicsComponentShapeType.POLYGON;
+        if (engineBody.m_type == BodyType.DYNAMIC)
+            snapshot.type = PhysicsComponentType.DYNAMIC;
+        else if (engineBody.m_type == BodyType.KINEMATIC)
+            snapshot.type = PhysicsComponentType.KINEMATIC;
+        else if (engineBody.m_type == BodyType.STATIC)
+            snapshot.type = PhysicsComponentType.STATIC;
         
-        switch (snapshot.type)
+        if (engineFixture.m_shape.m_type == ShapeType.CIRCLE)
+            snapshot.shapeType = PhysicsComponentShapeType.CIRCLE;
+        else if (engineFixture.m_shape.m_type == ShapeType.POLYGON)
+            snapshot.shapeType = PhysicsComponentShapeType.POLYGON;
+        
+        switch (snapshot.shapeType)
         {
         case CIRCLE:
         {
