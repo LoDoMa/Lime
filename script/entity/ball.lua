@@ -13,9 +13,9 @@ local function postSolve(bodyA, bodyB, contact)
 end
 
 local function createBody()
-	local pos = lime.getAttribute(entityID, "pos")
-	local vel = lime.getAttribute(entityID, "vel")
-	local radius = lime.getAttribute(entityID, "radius")
+	local pos = lime.getAndClearAttribute(entityID, "pos")
+	local vel = lime.getAndClearAttribute(entityID, "vel")
+	local radius = lime.getAndClearAttribute(entityID, "radius")
 
 	lime.startComponent()
 	lime.setInitialPosition(pos.x, pos.y)
@@ -40,7 +40,7 @@ end
 
 function Lime_Init(eID)
 	entityID = eID
-	masterID = lime.getAttribute(entityID, "master")
+	masterID = lime.getAndClearAttribute(entityID, "master")
 
 	createBody()
 	lime.addContactListener(preSolve, postSolve, bodyCompo, nil)
@@ -71,7 +71,6 @@ end
 
 function Lime_Clean()
 	for i = 1, #compoList do
-		print(i)
 		lime.removeComponent(compoList[i])
 	end
 end

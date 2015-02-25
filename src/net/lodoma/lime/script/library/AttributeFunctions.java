@@ -1,6 +1,7 @@
 package net.lodoma.lime.script.library;
 
 import net.lodoma.lime.world.World;
+import net.lodoma.lime.world.entity.AttributeMap;
 
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaValue;
@@ -55,6 +56,15 @@ public class AttributeFunctions
                 String attribName = args.arg(2).checkstring().tojstring();
                 return CoerceJavaToLua.coerce(world.entityPool.get(entityID).attributes.values.get(attribName));
             }
+            case GET_AND_CLEAR_ATTRIBUTE:
+            {
+                int entityID = args.arg(1).checkint();
+                String attribName = args.arg(2).checkstring().tojstring();
+                AttributeMap attributes = world.entityPool.get(entityID).attributes;
+                LuaValue value = CoerceJavaToLua.coerce(attributes.values.get(attribName));
+                attributes.values.remove(attribName);
+                return value;
+            }
             case SET_ATTRIBUTE:
             {
                 int entityID = args.arg(1).checkint();
@@ -74,6 +84,7 @@ public class AttributeFunctions
     private static enum FuncData
     {
         GET_ATTRIBUTE(2, true, "getAttribute"),
+        GET_AND_CLEAR_ATTRIBUTE(2,  true, "getAndClearAttribute"),
         SET_ATTRIBUTE(3, true, "setAttribute");
         
         public int argc;
