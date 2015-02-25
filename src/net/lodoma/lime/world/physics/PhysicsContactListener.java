@@ -3,27 +3,27 @@ package net.lodoma.lime.world.physics;
 import org.jbox2d.dynamics.contacts.Contact;
 
 import net.lodoma.lime.Lime;
-import net.lodoma.lime.server.Server;
 import net.lodoma.lime.util.Identifiable;
+import net.lodoma.lime.world.World;
 
 public abstract class PhysicsContactListener implements Identifiable<Integer>
 {
     public int identifier;
     
-    public Server server;
+    public World world;
     
     /* Objects so that they can have the null value. */
     public Integer bodyA;
     public Integer bodyB;
     
-    public PhysicsContactListener(Server server, Integer bodyA, Integer bodyB)
+    public PhysicsContactListener(World world, Integer bodyA, Integer bodyB)
     {
-        this.server = server;
+        this.world = world;
         this.bodyA = bodyA;
         this.bodyB = bodyB;
 
-        if (bodyA != null) server.world.componentPool.get(bodyA).contactListeners.add(this);
-        if (bodyB != null) server.world.componentPool.get(bodyB).contactListeners.add(this);
+        if (bodyA != null) world.componentPool.get(bodyA).contactListeners.add(this);
+        if (bodyB != null) world.componentPool.get(bodyB).contactListeners.add(this);
     }
     
     @Override
@@ -40,9 +40,9 @@ public abstract class PhysicsContactListener implements Identifiable<Integer>
     
     public void destroy()
     {
-        if (bodyA != null) server.world.componentPool.get(bodyA).contactListeners.remove(this);
-        if (bodyB != null) server.world.componentPool.get(bodyB).contactListeners.remove(this);
-        server.physicsWorld.contactManager.contactListeners.remove(this);
+        if (bodyA != null) world.componentPool.get(bodyA).contactListeners.remove(this);
+        if (bodyB != null) world.componentPool.get(bodyB).contactListeners.remove(this);
+        world.physicsWorld.contactManager.contactListeners.remove(this);
         
         Lime.LOGGER.I("Destroyed contact listener " + identifier);
     }

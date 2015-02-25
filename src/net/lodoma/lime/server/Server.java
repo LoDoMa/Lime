@@ -6,7 +6,6 @@ import net.lodoma.lime.server.logic.ServerLogic;
 import net.lodoma.lime.server.logic.ServerLogicThread;
 import net.lodoma.lime.util.IdentityPool;
 import net.lodoma.lime.world.World;
-import net.lodoma.lime.world.physics.PhysicsWorld;
 
 public final class Server
 {
@@ -24,7 +23,6 @@ public final class Server
     public IdentityPool<EventManager> emanPool;
     
     public World world;
-    public PhysicsWorld physicsWorld;
     
     public void open()
     {

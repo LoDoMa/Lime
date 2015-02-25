@@ -54,7 +54,7 @@ public class WorldFunctions
             {
                 float gravityX = args.arg(1).checknumber().tofloat();
                 float gravityY = args.arg(2).checknumber().tofloat();
-                library.server.physicsWorld.definition.gravity.set(gravityX, gravityY);
+                library.server.world.physicsWorld.definition.gravity.set(gravityX, gravityY);
                 break;
             }
             case NEW_ENTITY:

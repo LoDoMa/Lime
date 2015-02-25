@@ -13,7 +13,6 @@ import net.lodoma.lime.util.HashHelper;
 import net.lodoma.lime.world.WorldSnapshot;
 import net.lodoma.lime.world.WorldSnapshotSegment;
 import net.lodoma.lime.world.World;
-import net.lodoma.lime.world.physics.PhysicsWorld;
 
 public class SLGame extends ServerLogic
 {
@@ -35,7 +34,6 @@ public class SLGame extends ServerLogic
     public void init()
     {
         server.world = new World();
-        server.physicsWorld = new PhysicsWorld();
         
         snapshotPacket = server.spPool.get(SPSnapshot.HASH);
         
@@ -52,13 +50,11 @@ public class SLGame extends ServerLogic
         }
         
         server.world.init();
-        server.physicsWorld.create();
     }
     
     @Override
     public void destroy()
     {
-        server.physicsWorld.destroy();
         server.world.clean();
     }
     
@@ -74,7 +70,7 @@ public class SLGame extends ServerLogic
             
             server.world.updateGamemode(UPDATE_MAXTIME);
             server.world.updateEntities(UPDATE_MAXTIME);
-            server.physicsWorld.update((float) UPDATE_MAXTIME);
+            server.world.physicsWorld.update((float) UPDATE_MAXTIME);
         }
         
         while (updateTime <= 0.0)

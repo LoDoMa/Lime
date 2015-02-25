@@ -25,9 +25,12 @@ import net.lodoma.lime.world.entity.Entity;
 import net.lodoma.lime.world.physics.PhysicsComponent;
 import net.lodoma.lime.world.physics.PhysicsComponentSnapshot;
 import net.lodoma.lime.world.physics.PhysicsJoint;
+import net.lodoma.lime.world.physics.PhysicsWorld;
 
 public class World
 {
+    public PhysicsWorld physicsWorld;
+    
     public LuaScript luaInstance;
     public LuaFunction gamemodeWorldInit;
     public LuaFunction gamemodeUpdate;
@@ -41,19 +44,20 @@ public class World
     
     public World()
     {
+        physicsWorld = new PhysicsWorld();
+        
         entityPool = new IdentityPool<Entity>(false);
         componentPool = new IdentityPool<PhysicsComponent>(false);
         compoSnapshotPool = new IdentityPool<PhysicsComponentSnapshot>(false);
         jointPool = new IdentityPool<PhysicsJoint>(false);
         lightPool = new IdentityPool<Light>(false);
+        
+        physicsWorld.create();
     }
     
     public void clean()
     {
-        entityPool.foreach((Entity entity) -> {
-            entity.destroy();
-            entityPool.remove(entity);
-        });
+        entityPool.foreach((Entity entity) -> entity.destroy());
         entityPool.clear();
         
         componentPool.foreach((PhysicsComponent component) -> component.destroy());
@@ -64,6 +68,8 @@ public class World
         
         lightPool.foreach((Light light) -> light.destroy());
         lightPool.clear();
+        
+        physicsWorld.destroy();
     }
     
     public void load(String filepath, Server server) throws IOException
@@ -100,7 +106,7 @@ public class World
     
     public void updateEntities(double timeDelta)
     {
-        entityPool.foreach((Entity entity) -> { entity.update(timeDelta); });
+        entityPool.foreach((Entity entity) -> entity.update(timeDelta));
     }
     
     public void applySnapshot(WorldSnapshotSegment segment, Client client)

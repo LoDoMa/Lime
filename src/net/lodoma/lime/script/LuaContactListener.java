@@ -5,7 +5,7 @@ import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaValue;
 
 import net.lodoma.lime.script.library.ContactTable;
-import net.lodoma.lime.server.Server;
+import net.lodoma.lime.world.World;
 import net.lodoma.lime.world.physics.PhysicsContactListener;
 
 public class LuaContactListener extends PhysicsContactListener
@@ -13,9 +13,9 @@ public class LuaContactListener extends PhysicsContactListener
     private LuaFunction preSolve;
     private LuaFunction postSolve;
     
-    public LuaContactListener(Server server, Integer bodyA, Integer bodyB, LuaFunction preSolve, LuaFunction postSolve)
+    public LuaContactListener(World world, Integer bodyA, Integer bodyB, LuaFunction preSolve, LuaFunction postSolve)
     {
-        super(server, bodyA, bodyB);
+        super(world, bodyA, bodyB);
         this.preSolve = preSolve;
         this.postSolve = postSolve;
     }

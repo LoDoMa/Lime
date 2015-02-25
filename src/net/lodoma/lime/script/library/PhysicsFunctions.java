@@ -3,6 +3,7 @@ package net.lodoma.lime.script.library;
 import net.lodoma.lime.Lime;
 import net.lodoma.lime.script.LuaContactListener;
 import net.lodoma.lime.util.Vector2;
+import net.lodoma.lime.world.World;
 import net.lodoma.lime.world.physics.InvalidPhysicsComponentException;
 import net.lodoma.lime.world.physics.InvalidPhysicsJointException;
 import net.lodoma.lime.world.physics.PhysicsComponent;
@@ -34,6 +35,7 @@ public class PhysicsFunctions
     }
     
     public LimeLibrary library;
+    public World world;
 
     private PhysicsComponent compo;
     private PhysicsComponentDefinition compoDefinition;
@@ -43,6 +45,7 @@ public class PhysicsFunctions
     private PhysicsFunctions(LimeLibrary library)
     {
         this.library = library;
+        world = library.server.world;
         
         for (FuncData func : FuncData.values())
             new LimeFunc(func).addToLibrary();
@@ -90,18 +93,18 @@ public class PhysicsFunctions
                 }
                 
                 compoDefinition.create();
-                PhysicsComponent newCompo = new PhysicsComponent(compoDefinition, library.server.physicsWorld);
+                PhysicsComponent newCompo = new PhysicsComponent(compoDefinition, world.physicsWorld);
                 compoDefinition = null;
                 
-                int compoID = library.server.world.componentPool.add(newCompo);
+                int compoID = world.componentPool.add(newCompo);
                 Lime.LOGGER.I("Created physics component " + compoID);
                 return LuaValue.valueOf(compoID);
             }
             case REMOVE_COMPONENT:
             {
                 int compoID = args.arg(1).checkint();
-                library.server.world.componentPool.get(compoID).destroy();
-                library.server.world.componentPool.remove(compoID);
+                world.componentPool.get(compoID).destroy();
+                world.componentPool.remove(compoID);
                 
                 Lime.LOGGER.I("Removed physics component " + compoID);
                 break;
@@ -248,18 +251,18 @@ public class PhysicsFunctions
                 }
                 
                 jointDefinition.create();
-                PhysicsJoint newJoint = new PhysicsJoint(jointDefinition, library.server.physicsWorld);
+                PhysicsJoint newJoint = new PhysicsJoint(jointDefinition, world.physicsWorld);
                 jointDefinition = null;
                 
-                int jointID = library.server.world.jointPool.add(newJoint);
+                int jointID = world.jointPool.add(newJoint);
                 Lime.LOGGER.I("Created physics joint " + jointID);
                 return LuaValue.valueOf(jointID);
             }
             case REMOVE_JOINT:
             {
                 int jointID = args.arg(1).checkint();
-                library.server.world.jointPool.get(jointID).destroy();
-                library.server.world.jointPool.remove(jointID);
+                world.jointPool.get(jointID).destroy();
+                world.jointPool.remove(jointID);
                 Lime.LOGGER.I("Removed physics joint " + jointID);
                 break;
             }
@@ -269,9 +272,9 @@ public class PhysicsFunctions
                 if (jointDefinition == null)
                     throw new LuaError("modifying nonexistent joint");
                 
-                if (!library.server.world.componentPool.has(compoID))
+                if (!world.componentPool.has(compoID))
                     throw new LuaError("joint component A set to nonexistent component");
-                jointDefinition.componentA = library.server.world.componentPool.get(compoID);
+                jointDefinition.componentA = world.componentPool.get(compoID);
                 break;
             }
             case SET_JOINT_COMPONENT_B:
@@ -280,9 +283,9 @@ public class PhysicsFunctions
                 if (jointDefinition == null)
                     throw new LuaError("modifying nonexistent joint");
                 
-                if (!library.server.world.componentPool.has(compoID))
+                if (!world.componentPool.has(compoID))
                     throw new LuaError("joint component B set to nonexistent component");
-                jointDefinition.componentB = library.server.world.componentPool.get(compoID);
+                jointDefinition.componentB = world.componentPool.get(compoID);
                 break;
             }
             case ENABLE_JOINT_COLLISION:
@@ -348,7 +351,7 @@ public class PhysicsFunctions
             case SELECT_COMPONENT:
             {
                 int compoID = args.arg(1).checkint();
-                compo = library.server.world.componentPool.get(compoID);
+                compo = world.componentPool.get(compoID);
                 break;
             }
             case GET_POSITION:
@@ -507,7 +510,7 @@ public class PhysicsFunctions
             case SELECT_JOINT:
             {
                 int jointID = args.arg(1).checkint();
-                joint = library.server.world.jointPool.get(jointID);
+                joint = world.jointPool.get(jointID);
                 break;
             }
             case ENABLE_REVOLUTE_ANGLE_LIMIT:
@@ -576,17 +579,17 @@ public class PhysicsFunctions
                 Integer bodyA = args.arg(3).isnil() ? null : args.arg(3).checkint();
                 Integer bodyB = args.arg(4).isnil() ? null : args.arg(4).checkint();
                 
-                LuaContactListener listener = new LuaContactListener(library.server, bodyA, bodyB, preSolve, postSolve);
+                LuaContactListener listener = new LuaContactListener(world, bodyA, bodyB, preSolve, postSolve);
                 
-                int listenerID = library.server.physicsWorld.contactManager.contactListeners.add(listener);
+                int listenerID = world.physicsWorld.contactManager.contactListeners.add(listener);
                 Lime.LOGGER.I("Added contact listener " + listenerID);
                 return LuaValue.valueOf(listenerID);
             }
             case REMOVE_CONTACT_LISTENER:
             {
                 int listenerID = args.arg(1).checkint();
-                library.server.physicsWorld.contactManager.contactListeners.get(listenerID).destroy();
-                library.server.physicsWorld.contactManager.contactListeners.remove(listenerID);
+                world.physicsWorld.contactManager.contactListeners.get(listenerID).destroy();
+                world.physicsWorld.contactManager.contactListeners.remove(listenerID);
                 break;
             }
             }
