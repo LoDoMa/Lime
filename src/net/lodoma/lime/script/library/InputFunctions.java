@@ -119,7 +119,7 @@ public class InputFunctions
         GET_KEY_STATE(1, true, "getKeyState"),
         GET_KEY_PRESS(1, true, "getKeyPress"),
         GET_KEY_RELEASE(1, true, "getKeyRelease"),
-        GET_MOUSE_POSITION(1, true, "getMousePosition"),
+        GET_MOUSE_POSITION(0, true, "getMousePosition"),
         GET_MOUSE_STATE(1, true, "getMouseState"),
         GET_MOUSE_PRESS(1, true, "getMousePress"),
         GET_MOUSE_RELEASE(1, true, "getMouseRelease");
