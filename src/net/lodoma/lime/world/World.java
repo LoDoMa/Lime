@@ -33,7 +33,9 @@ public class World
     
     public LuaScript luaInstance;
     public LuaFunction gamemodeWorldInit;
+    public LuaFunction gamemodeInit;
     public LuaFunction gamemodeUpdate;
+    public LuaFunction gamemodeClean;
     
     public Object lock = new Object();
     public IdentityPool<Entity> entityPool;
@@ -57,6 +59,9 @@ public class World
     
     public void clean()
     {
+        if (luaInstance != null)
+            luaInstance.call(gamemodeClean, null);
+        
         entityPool.foreach((Entity entity) -> entity.destroy());
         entityPool.clear();
         
@@ -86,17 +91,22 @@ public class World
         luaInstance = new LuaScript(library);
         
         luaInstance.load(new File(OsHelper.JARPATH + "script/world/" + filepath + ".lua"));
-        
+
         gamemodeWorldInit = luaInstance.globals.get("Lime_WorldInit").checkfunction();
+        gamemodeInit = luaInstance.globals.get("Lime_Init").checkfunction();
         gamemodeUpdate = luaInstance.globals.get("Lime_Update").checkfunction();
+        gamemodeClean = luaInstance.globals.get("Lime_Clean").checkfunction();
 
         luaInstance.globals.set("Lime_WorldInit", LuaValue.NIL);
+        luaInstance.globals.set("Lime_Init", LuaValue.NIL);
         luaInstance.globals.set("Lime_Update", LuaValue.NIL);
+        luaInstance.globals.set("Lime_Clean", LuaValue.NIL);
     }
     
     public void init()
     {
         luaInstance.call(gamemodeWorldInit, null);
+        luaInstance.call(gamemodeInit, null);
     }
     
     public void updateGamemode(double timeDelta)

@@ -1,6 +1,4 @@
 
-local firstUpdate = true
-
 function Lime_WorldInit()
 	lime.setWorldGravity(0.0, 0.0)
 end
@@ -41,7 +39,7 @@ local function addBox(x, y, w, h)
 	local compoID = lime.endComponent()
 end
 
-local function init()
+function Lime_Init()
 	for i = 1, 5, 1 do
 		local posx, posy = (math.random() - 0.0) * 20, (math.random() - 0.0) * 20
 		local radius = 5 + math.random() * 20
@@ -76,9 +74,9 @@ local function init()
 end
 
 function Lime_Update(timeDelta)
-	if firstUpdate == true then
-		init()
 
-		firstUpdate = false
-	end
+end
+
+function Lime_Clean()
+
 end
