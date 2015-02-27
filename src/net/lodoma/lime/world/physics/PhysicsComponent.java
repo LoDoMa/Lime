@@ -33,6 +33,9 @@ public class PhysicsComponent implements Identifiable<Integer>
         
         engineBody = world.engineWorld.createBody(definition.engineBodyDefinition);
         engineFixture = engineBody.createFixture(definition.engineFixtureDefinition);
+        
+        // UserData for PhysicsComponents is the PhysicsComponent itself.
+        engineBody.m_userData = this;
     }
     
     public PhysicsComponent(PhysicsComponentSnapshot snapshot, PhysicsWorld world)
@@ -50,9 +53,6 @@ public class PhysicsComponent implements Identifiable<Integer>
     public void setIdentifier(Integer identifier)
     {
         this.identifier = identifier;
-        
-        // UserData for PhysicsComponents is the PhysicsComponent itself.
-        engineBody.m_userData = this;
     }
     
     public void destroy()

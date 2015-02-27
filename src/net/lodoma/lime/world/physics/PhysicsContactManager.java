@@ -22,7 +22,9 @@ public class PhysicsContactManager implements ContactListener
         Object userdataA = contact.m_fixtureA.m_body.m_userData;
         Object userdataB = contact.m_fixtureB.m_body.m_userData;
         if ((userdataA instanceof PhysicsParticle) && (userdataB instanceof PhysicsParticle))
+        {
             contact.setEnabled(false);
+        }
         else if ((userdataA instanceof PhysicsParticle) && (userdataB instanceof PhysicsComponent))
         {
             if (((PhysicsParticle) userdataA).destroyOnCollision)

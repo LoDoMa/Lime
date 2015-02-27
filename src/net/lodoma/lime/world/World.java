@@ -224,7 +224,9 @@ public class World
             // Create particles
             
             for (PhysicsParticleDefinition physicsDef : segment.createdParticles)
+            {
                 particleList.add(new PhysicsParticle(physicsDef, physicsWorld));
+            }
         }
     }
 }

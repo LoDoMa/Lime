@@ -5,13 +5,10 @@ import org.jbox2d.dynamics.Fixture;
 import org.lwjgl.opengl.GL11;
 
 import net.lodoma.lime.texture.Texture;
-import net.lodoma.lime.util.Identifiable;
 import net.lodoma.lime.util.Vector2;
 
-public class PhysicsParticle implements Identifiable<Integer>
+public class PhysicsParticle
 {
-    public int identifier;
-    
     public PhysicsWorld world;
     
     public Body engineBody;
@@ -36,23 +33,11 @@ public class PhysicsParticle implements Identifiable<Integer>
         destroyOnCollision = definition.destroyOnCollision;
         
         destroyed = false;
-    }
-    
-    @Override
-    public Integer getIdentifier()
-    {
-        return identifier;
-    }
-    
-    @Override
-    public void setIdentifier(Integer identifier)
-    {
-        this.identifier = identifier;
         
         // UserData for PhysicsParticles is the PhysicsParticle itself.
         engineBody.m_userData = this;
     }
-
+    
     public void destroy()
     {
         engineBody.destroyFixture(engineFixture);
