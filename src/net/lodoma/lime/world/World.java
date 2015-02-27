@@ -6,6 +6,7 @@ import java.io.IOException;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaValue;
 
+import net.lodoma.lime.Lime;
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.script.LuaScript;
 import net.lodoma.lime.script.library.AttributeFunctions;
@@ -24,6 +25,7 @@ import net.lodoma.lime.util.OsHelper;
 import net.lodoma.lime.world.entity.Entity;
 import net.lodoma.lime.world.physics.PhysicsComponent;
 import net.lodoma.lime.world.physics.PhysicsComponentSnapshot;
+import net.lodoma.lime.world.physics.PhysicsComponentType;
 import net.lodoma.lime.world.physics.PhysicsJoint;
 import net.lodoma.lime.world.physics.PhysicsWorld;
 
@@ -127,6 +129,13 @@ public class World
             
             for (int key : segment.removedComponents)
             {
+                if (compoSnapshotPool.get(key).type == PhysicsComponentType.STATIC)
+                {
+                    componentPool.get(key).destroy();
+                    componentPool.remove(key);
+                    
+                    Lime.LOGGER.I("Removed physics component " + key);
+                }
                 compoSnapshotPool.remove(key);
             }
             
@@ -140,9 +149,9 @@ public class World
             
             for (int key : segment.createdComponents)
             {
-                PhysicsComponentSnapshot compo = new PhysicsComponentSnapshot();
-                compo.identifier = key;
-                compoSnapshotPool.addManaged(compo);
+                PhysicsComponentSnapshot compoSnapshot = new PhysicsComponentSnapshot();
+                compoSnapshot.identifier = key;
+                compoSnapshotPool.addManaged(compoSnapshot);
             }
             
             for (int key : segment.createdLights)
@@ -157,7 +166,23 @@ public class World
             for (int i = 0; i < segment.modifiedComponents.length; i++)
             {
                 int key = (int) (segment.modifiedComponents[i] & 0xFFFFFFFF);
-                segment.productComponents[i].apply(compoSnapshotPool.get(key));
+                PhysicsComponentSnapshot compoSnapshot = compoSnapshotPool.get(key);
+                segment.productComponents[i].apply(compoSnapshot);
+                
+                if (compoSnapshot.type == PhysicsComponentType.STATIC)
+                {
+                    if (componentPool.has(key))
+                    {
+                        componentPool.get(key).destroy();
+                        componentPool.remove(key);
+                    }
+                    
+                    PhysicsComponent compo = new PhysicsComponent(compoSnapshot, physicsWorld);
+                    compo.identifier = key;
+                    componentPool.addManaged(compo);
+                    
+                    Lime.LOGGER.I("Created physics component " + key);
+                }
             }
             
             for (int i = 0; i < segment.modifiedLights.length; i++)

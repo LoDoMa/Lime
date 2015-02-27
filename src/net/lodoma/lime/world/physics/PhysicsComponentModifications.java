@@ -30,5 +30,10 @@ public class PhysicsComponentModifications
             compo.radius = data.radius;
             compo.vertices = data.vertices;
         }
+        
+        if (physicsDataModified)
+        {
+            compo.type = data.type;
+        }
     }
 }
