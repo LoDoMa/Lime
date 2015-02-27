@@ -18,6 +18,7 @@ import net.lodoma.lime.script.library.EventFunctions;
 import net.lodoma.lime.script.library.InputFunctions;
 import net.lodoma.lime.script.library.LightFunctions;
 import net.lodoma.lime.script.library.LimeLibrary;
+import net.lodoma.lime.script.library.ParticleFunctions;
 import net.lodoma.lime.script.library.PhysicsFunctions;
 import net.lodoma.lime.script.library.UtilFunctions;
 import net.lodoma.lime.script.library.WorldFunctions;
@@ -100,6 +101,7 @@ public class World
         EventFunctions.addToLibrary(library);
         InputFunctions.addToLibrary(library);
         LightFunctions.addToLibrary(library);
+        ParticleFunctions.addToLibrary(library);
         PhysicsFunctions.addToLibrary(library);
         UtilFunctions.addToLibrary(library);
         WorldFunctions.addToLibrary(library);

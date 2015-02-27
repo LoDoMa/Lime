@@ -81,8 +81,9 @@ public abstract class ClientPacket implements Identifiable<Integer>
         }
         catch (IOException e)
         {
-            Lime.LOGGER.W("IO exception while sending a packet");
+            Lime.LOGGER.C("IO exception while sending a packet");
             Lime.LOGGER.log(e);
+            Lime.forceExit(e);
         }
     }
 }

@@ -5,7 +5,24 @@ local bodyCompo
 local compoList = {}
 
 local function preSolve(bodyA, bodyB, contact)
-	contact.setEnabled(false)
+	lime.selectComponent(bodyCompo)
+	local posx, posy = lime.getComponentPosition()
+	local velx, vely = lime.getLinearVelocity();
+
+	if math.random() > 0.5 then
+		lime.startParticle()
+		lime.setParticlePosition(posx, posy)
+		lime.setParticleAngle(0)
+		lime.setParticleAngularVelocity(0.0)
+		lime.setParticleLinearVelocity(velx * 2, vely * 2)
+		lime.setParticleSize(0.1)
+		lime.setParticleDensity(1.0)
+		lime.setParticleRestitution(1.0)
+		lime.setParticleAngularDamping(0.0)
+		lime.setParticleLinearDamping(0.0)
+		lime.setParticleLifetime(5.0)
+		lime.endParticle()
+	end
 end
 
 local function postSolve(bodyA, bodyB, contact)
