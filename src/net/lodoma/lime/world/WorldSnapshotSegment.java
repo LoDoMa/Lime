@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import net.lodoma.lime.Lime;
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.server.ServerUser;
@@ -15,10 +16,12 @@ import net.lodoma.lime.shader.light.LightModifications;
 import net.lodoma.lime.snapshot.SnapshotData;
 import net.lodoma.lime.util.Color;
 import net.lodoma.lime.util.Vector2;
+import net.lodoma.lime.world.physics.InvalidPhysicsParticleException;
 import net.lodoma.lime.world.physics.PhysicsComponentModifications;
 import net.lodoma.lime.world.physics.PhysicsComponentShapeType;
 import net.lodoma.lime.world.physics.PhysicsComponentSnapshot;
 import net.lodoma.lime.world.physics.PhysicsComponentType;
+import net.lodoma.lime.world.physics.PhysicsParticleDefinition;
 
 public class WorldSnapshotSegment implements SnapshotData
 {
@@ -37,6 +40,8 @@ public class WorldSnapshotSegment implements SnapshotData
     public int[] removedLights;
     public long[] modifiedLights;
     public LightModifications[] productLights;
+    
+    public PhysicsParticleDefinition[] createdParticles;
     
     public WorldSnapshot full;
     
@@ -153,6 +158,11 @@ public class WorldSnapshotSegment implements SnapshotData
             removedLights[i] = removedLightsList.get(i);
         for (int i = 0; i < modifiedLights.length; i++)
             modifiedLights[i] = modifiedLightsList.get(i);
+
+        createdParticles = new PhysicsParticleDefinition[current.particleData.size()];
+        
+        for (int i = 0; i < createdParticles.length; i++)
+            createdParticles[i] = current.particleData.get(i);
     }
     
     @Override
@@ -176,6 +186,8 @@ public class WorldSnapshotSegment implements SnapshotData
         int removedLightsAmount = in.readInt();
         int modifiedLightsAmount = in.readInt();
         
+        int createdParticlesAmount = in.readInt();
+        
         createdComponents = new int[createdComponentsAmount];
         removedComponents = new int[removedComponentsAmount];
         modifiedComponents = new long[modifiedComponentsAmount];
@@ -185,6 +197,8 @@ public class WorldSnapshotSegment implements SnapshotData
         removedLights = new int[removedLightsAmount];
         modifiedLights = new long[modifiedLightsAmount];
         productLights = new LightModifications[modifiedLightsAmount];
+        
+        createdParticles = new PhysicsParticleDefinition[createdParticlesAmount];
 
         for(int i = 0; i < createdComponentsAmount; i++)
             createdComponents[i] = in.readInt();
@@ -285,6 +299,57 @@ public class WorldSnapshotSegment implements SnapshotData
                 modifications.data.color = new Color(colorR, colorG, colorB, colorA);
             }
         }
+        
+        for(int i = 0; i < createdParticlesAmount; i++)
+        {
+            float positionX = in.readFloat();
+            float positionY = in.readFloat();
+            float angle = in.readFloat();
+            float angularVelocity = in.readFloat();
+            float linearVelocityX = in.readFloat();
+            float linearVelocityY = in.readFloat();
+
+            float size = in.readFloat();
+            float density = in.readFloat();
+            float restitution = in.readFloat();
+
+            float angularDamping = in.readFloat();
+            float linearDamping = in.readFloat();
+
+            float lifetime = in.readFloat();
+            boolean destroyOnCollision = in.readBoolean();
+            
+            PhysicsParticleDefinition particleDef = new PhysicsParticleDefinition();
+            particleDef.position.set(positionX, positionY);
+            particleDef.angle = angle;
+            particleDef.angularVelocity = angularVelocity;
+            particleDef.linearVelocity.set(linearVelocityX, linearVelocityY);
+
+            particleDef.size = size;
+            particleDef.density = density;
+            particleDef.restitution = restitution;
+            
+            particleDef.angularDamping = angularDamping;
+            particleDef.linearDamping = linearDamping;
+            
+            particleDef.lifetime = lifetime;
+            particleDef.destroyOnCollision = destroyOnCollision;
+            
+            try
+            {
+                particleDef.validate();
+            }
+            catch(InvalidPhysicsParticleException e)
+            {
+                Lime.LOGGER.C("Validation failed for world particle definition");
+                Lime.LOGGER.log(e);
+                Lime.forceExit(e);
+            }
+            
+            particleDef.create();
+            
+            createdParticles[i] = particleDef;
+        }
     }
     
     @Override
@@ -303,6 +368,8 @@ public class WorldSnapshotSegment implements SnapshotData
         user.outputStream.writeInt(createdLights.length);
         user.outputStream.writeInt(removedLights.length);
         user.outputStream.writeInt(modifiedLights.length);
+        
+        user.outputStream.writeInt(createdParticles.length);
 
         for (int key : createdComponents) user.outputStream.writeInt(key);
         for (int key : removedComponents) user.outputStream.writeInt(key);
@@ -367,6 +434,26 @@ public class WorldSnapshotSegment implements SnapshotData
                 user.outputStream.writeFloat(light.color.b);
                 user.outputStream.writeFloat(light.color.a);
             }
+        }
+        
+        for (PhysicsParticleDefinition particleDef : createdParticles)
+        {
+            user.outputStream.writeFloat(particleDef.position.x);
+            user.outputStream.writeFloat(particleDef.position.y);
+            user.outputStream.writeFloat(particleDef.angle);
+            user.outputStream.writeFloat(particleDef.angularVelocity);
+            user.outputStream.writeFloat(particleDef.linearVelocity.x);
+            user.outputStream.writeFloat(particleDef.linearVelocity.y);
+
+            user.outputStream.writeFloat(particleDef.size);
+            user.outputStream.writeFloat(particleDef.density);
+            user.outputStream.writeFloat(particleDef.restitution);
+
+            user.outputStream.writeFloat(particleDef.angularDamping);
+            user.outputStream.writeFloat(particleDef.linearDamping);
+
+            user.outputStream.writeFloat(particleDef.lifetime);
+            user.outputStream.writeBoolean(particleDef.destroyOnCollision);
         }
     }
 }

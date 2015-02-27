@@ -6,6 +6,7 @@ import org.luaj.vm2.LuaValue;
 
 import net.lodoma.lime.script.library.ContactTable;
 import net.lodoma.lime.world.World;
+import net.lodoma.lime.world.physics.PhysicsComponent;
 import net.lodoma.lime.world.physics.PhysicsContactListener;
 
 public class LuaContactListener extends PhysicsContactListener
@@ -21,14 +22,14 @@ public class LuaContactListener extends PhysicsContactListener
     }
     
     @Override
-    public void preSolve(int bodyA, int bodyB, Contact contact)
+    public void preSolve(PhysicsComponent bodyA, PhysicsComponent bodyB, Contact contact)
     {
-        preSolve.invoke(new LuaValue[] { LuaValue.valueOf(bodyA), LuaValue.valueOf(bodyB), ContactTable.create(contact) });
+        preSolve.invoke(new LuaValue[] { LuaValue.valueOf(bodyA.identifier), LuaValue.valueOf(bodyB.identifier), ContactTable.create(contact) });
     }
 
     @Override
-    public void postSolve(int bodyA, int bodyB, Contact contact)
+    public void postSolve(PhysicsComponent bodyA, PhysicsComponent bodyB, Contact contact)
     {
-        postSolve.invoke(new LuaValue[] { LuaValue.valueOf(bodyA), LuaValue.valueOf(bodyB), ContactTable.create(contact) });
+        postSolve.invoke(new LuaValue[] { LuaValue.valueOf(bodyA.identifier), LuaValue.valueOf(bodyB.identifier), ContactTable.create(contact) });
     }
 }

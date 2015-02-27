@@ -7,6 +7,7 @@ import net.lodoma.lime.shader.light.Light;
 import net.lodoma.lime.texture.Texture;
 import net.lodoma.lime.world.World;
 import net.lodoma.lime.world.physics.PhysicsComponentSnapshot;
+import net.lodoma.lime.world.physics.PhysicsParticle;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.*;
 
@@ -52,6 +53,7 @@ public class WorldRenderer
         synchronized (world.lock)
         {
             world.compoSnapshotPool.foreach((PhysicsComponentSnapshot compoSnapshot) -> compoSnapshot.debugRender());
+            world.particleList.forEach((PhysicsParticle particle) -> particle.debugRender());
         }
         
         occlusionMap.unbind();

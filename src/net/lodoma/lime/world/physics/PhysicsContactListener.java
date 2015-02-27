@@ -47,9 +47,9 @@ public abstract class PhysicsContactListener implements Identifiable<Integer>
         Lime.LOGGER.I("Destroyed contact listener " + identifier);
     }
     
-    public void tryPreSolve(int bodyA, int bodyB, Contact contact)
+    public void tryPreSolve(PhysicsComponent bodyA, PhysicsComponent bodyB, Contact contact)
     {
-        int match = matches(bodyA, bodyB);
+        int match = matches(bodyA.identifier, bodyB.identifier);
         
         if (match == 0) return;
         else if (match == 1) preSolve(bodyA, bodyB, contact);
@@ -57,9 +57,9 @@ public abstract class PhysicsContactListener implements Identifiable<Integer>
         else throw new IllegalStateException();
     }
     
-    public void tryPostSolve(int bodyA, int bodyB, Contact contact)
+    public void tryPostSolve(PhysicsComponent bodyA, PhysicsComponent bodyB, Contact contact)
     {
-        int match = matches(bodyA, bodyB);
+        int match = matches(bodyA.identifier, bodyB.identifier);
         
         if (match == 0) return;
         else if (match == 1) postSolve(bodyA, bodyB, contact);
@@ -70,8 +70,8 @@ public abstract class PhysicsContactListener implements Identifiable<Integer>
     /* For preSolve() and postSolve(), if the field bodyA is not null, the bodyA argument
        must be equal to it. The same is true for bodyB. */
     
-    public abstract void preSolve(int bodyA, int bodyB, Contact contact);
-    public abstract void postSolve(int bodyA, int bodyB, Contact contact);
+    public abstract void preSolve(PhysicsComponent bodyA, PhysicsComponent bodyB, Contact contact);
+    public abstract void postSolve(PhysicsComponent bodyA, PhysicsComponent bodyB, Contact contact);
     
     /* Returns 0 if the bodies don't match this listener's filter, 1 if they match
        perfectly, or 2 if the bodies need to be swapped. */

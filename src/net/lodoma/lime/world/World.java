@@ -2,6 +2,9 @@ package net.lodoma.lime.world;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaValue;
@@ -27,6 +30,8 @@ import net.lodoma.lime.world.physics.PhysicsComponent;
 import net.lodoma.lime.world.physics.PhysicsComponentSnapshot;
 import net.lodoma.lime.world.physics.PhysicsComponentType;
 import net.lodoma.lime.world.physics.PhysicsJoint;
+import net.lodoma.lime.world.physics.PhysicsParticle;
+import net.lodoma.lime.world.physics.PhysicsParticleDefinition;
 import net.lodoma.lime.world.physics.PhysicsWorld;
 
 public class World
@@ -44,6 +49,8 @@ public class World
     public IdentityPool<PhysicsComponent> componentPool;
     public IdentityPool<PhysicsComponentSnapshot> compoSnapshotPool;
     public IdentityPool<PhysicsJoint> jointPool;
+    public List<PhysicsParticle> particleList;
+    public List<PhysicsParticleDefinition> particleDefinitionList;
     public IdentityPool<Light> lightPool;
     
     public World()
@@ -54,6 +61,8 @@ public class World
         componentPool = new IdentityPool<PhysicsComponent>(false);
         compoSnapshotPool = new IdentityPool<PhysicsComponentSnapshot>(false);
         jointPool = new IdentityPool<PhysicsJoint>(false);
+        particleList = new ArrayList<PhysicsParticle>();
+        particleDefinitionList = new ArrayList<PhysicsParticleDefinition>();
         lightPool = new IdentityPool<Light>(false);
         
         physicsWorld.create();
@@ -72,6 +81,10 @@ public class World
         
         jointPool.foreach((PhysicsJoint joint) -> joint.destroy());
         jointPool.clear();
+        
+        particleList.forEach((PhysicsParticle particle) -> particle.destroy());
+        particleList.clear();
+        particleDefinitionList.clear();
         
         lightPool.foreach((Light light) -> light.destroy());
         lightPool.clear();
@@ -119,6 +132,21 @@ public class World
     public void updateEntities(double timeDelta)
     {
         entityPool.foreach((Entity entity) -> entity.update(timeDelta));
+    }
+    
+    public void updateParticles(double timeDelta)
+    {
+        synchronized (lock)
+        {
+            Iterator<PhysicsParticle> it = particleList.iterator();
+            while (it.hasNext())
+            {
+                PhysicsParticle particle = it.next();
+                particle.update(timeDelta);
+                if (particle.destroyed)
+                    it.remove();
+            }
+        }
     }
     
     public void applySnapshot(WorldSnapshotSegment segment, Client client)
@@ -190,6 +218,11 @@ public class World
                 int key = (int) (segment.modifiedLights[i] & 0xFFFFFFFF);
                 segment.productLights[i].apply(lightPool.get(key).data);
             }
+
+            // Create particles
+            
+            for (PhysicsParticleDefinition physicsDef : segment.createdParticles)
+                particleList.add(new PhysicsParticle(physicsDef, physicsWorld));
         }
     }
 }

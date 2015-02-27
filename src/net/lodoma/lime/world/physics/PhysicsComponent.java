@@ -51,8 +51,8 @@ public class PhysicsComponent implements Identifiable<Integer>
     {
         this.identifier = identifier;
         
-        // UserData for JBox2D bodies is the PhysicsComponent ID.
-        engineBody.m_userData = identifier;
+        // UserData for PhysicsComponents is the PhysicsComponent itself.
+        engineBody.m_userData = this;
     }
     
     public void destroy()

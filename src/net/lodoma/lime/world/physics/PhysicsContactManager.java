@@ -19,17 +19,47 @@ public class PhysicsContactManager implements ContactListener
     @Override
     public void preSolve(Contact contact, Manifold oldManifold)
     {
-        int bodyA = (Integer) contact.m_fixtureA.m_body.m_userData;
-        int bodyB = (Integer) contact.m_fixtureB.m_body.m_userData;
-        contactListeners.foreach((PhysicsContactListener listener) -> listener.tryPreSolve(bodyA, bodyB, contact));
+        Object userdataA = contact.m_fixtureA.m_body.m_userData;
+        Object userdataB = contact.m_fixtureB.m_body.m_userData;
+        if ((userdataA instanceof PhysicsParticle) && (userdataB instanceof PhysicsParticle))
+            contact.setEnabled(false);
+        else if ((userdataA instanceof PhysicsParticle) && (userdataB instanceof PhysicsComponent))
+        {
+            if (((PhysicsParticle) userdataA).destroyOnCollision)
+                ((PhysicsParticle) userdataA).destroy();
+        }
+        else if ((userdataA instanceof PhysicsComponent) && (userdataB instanceof PhysicsParticle))
+        {
+            if (((PhysicsParticle) userdataB).destroyOnCollision)
+                ((PhysicsParticle) userdataB).destroy();
+        }
+        else if ((userdataA instanceof PhysicsComponent) && (userdataB instanceof PhysicsComponent))
+        {
+            contactListeners.foreach((PhysicsContactListener listener) -> listener.tryPreSolve((PhysicsComponent) userdataA, (PhysicsComponent) userdataB, contact));
+        }
     }
     
     @Override
     public void postSolve(Contact contact, ContactImpulse impulse)
     {
-        int bodyA = (Integer) contact.m_fixtureA.m_body.m_userData;
-        int bodyB = (Integer) contact.m_fixtureB.m_body.m_userData;
-        contactListeners.foreach((PhysicsContactListener listener) -> listener.tryPostSolve(bodyA, bodyB, contact));
+        Object userdataA = contact.m_fixtureA.m_body.m_userData;
+        Object userdataB = contact.m_fixtureB.m_body.m_userData;
+        if ((userdataA instanceof PhysicsParticle) && (userdataB instanceof PhysicsParticle));
+            // particle - particle collision, do nothing
+        else if ((userdataA instanceof PhysicsParticle) && (userdataB instanceof PhysicsComponent))
+        {
+            if (((PhysicsParticle) userdataA).destroyOnCollision)
+                ((PhysicsParticle) userdataA).destroy();
+        }
+        else if ((userdataA instanceof PhysicsComponent) && (userdataB instanceof PhysicsParticle))
+        {
+            if (((PhysicsParticle) userdataB).destroyOnCollision)
+                ((PhysicsParticle) userdataB).destroy();
+        }
+        else if ((userdataA instanceof PhysicsComponent) && (userdataB instanceof PhysicsComponent))
+        {
+            contactListeners.foreach((PhysicsContactListener listener) -> listener.tryPostSolve((PhysicsComponent) userdataA, (PhysicsComponent) userdataB, contact));
+        }
     }
     
     @Override

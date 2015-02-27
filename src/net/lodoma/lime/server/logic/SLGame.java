@@ -96,6 +96,7 @@ public class SLGame extends ServerLogic
             snapshotPacket = server.spPool.get(SPSnapshot.HASH);
         
         WorldSnapshot snapshot = new WorldSnapshot(server);
+        server.world.particleDefinitionList.clear();
         
         server.userManager.foreach((ServerUser user) -> {
             WorldSnapshot lastSnapshot = user.lastSnapshot;

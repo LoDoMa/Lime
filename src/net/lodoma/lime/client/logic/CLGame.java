@@ -18,6 +18,10 @@ public class CLGame extends ClientLogic
 {
     public static final String NAME = "Lime::Game";
     public static final int HASH = HashHelper.hash32(NAME);
+
+    public static final double UPDATE_PS = 33;
+    public static final double UPDATE_MAXTIME = 1.0 / UPDATE_PS;
+    public double updateTime = UPDATE_MAXTIME;
     
     public static final double INPUT_PS = 20;
     public static final double INPUT_MAXTIME = 1.0 / INPUT_PS;
@@ -53,6 +57,15 @@ public class CLGame extends ClientLogic
         if (timer == null) timer = new Timer();
         timer.update();
         double timeDelta = timer.getDelta();
+        
+        updateTime -= timeDelta;
+        if (updateTime <= 0.0)
+        {
+            client.world.updateParticles(UPDATE_MAXTIME);
+            client.world.physicsWorld.update((float) UPDATE_MAXTIME);
+        }
+        while (updateTime <= 0.0)
+            updateTime += UPDATE_MAXTIME;
         
         inputTime -= timeDelta;
         if (inputTime <= 0.0)
