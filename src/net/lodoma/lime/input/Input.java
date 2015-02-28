@@ -230,7 +230,7 @@ public class Input
         JOYSTICK_16         = 0xF,
         SIZE_JOYSTICK       = JOYSTICK_16;
     
-    public static final int STATE_SIZE          = (int) Math.ceil((SIZE_KEYBOARD + 1) / 8.0) * 2 + (int) Math.ceil((SIZE_MOUSE + 1) / 8.0);
+    public static final int STATE_SIZE          = (int) Math.ceil((SIZE_KEYBOARD + 1) / 8.0) * 2 + (int) Math.ceil((SIZE_MOUSE + 1) / 8.0) + 8;
 
     public static InputData inputData;
     public static List<Character> liveCharacters;

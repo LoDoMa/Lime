@@ -69,6 +69,7 @@ public final class ServerUser implements Runnable, Identifiable<Integer>
     public void setIdentifier(Integer identifier)
     {
         this.identifier = identifier;
+        inputData.userID = identifier;
     }
     
     public void start()

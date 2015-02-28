@@ -5,6 +5,8 @@ import java.lang.reflect.Field;
 import net.lodoma.lime.Lime;
 import net.lodoma.lime.input.Input;
 import net.lodoma.lime.server.UserManager;
+import net.lodoma.lime.util.Vector2;
+import net.lodoma.lime.world.gfx.Camera;
 
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaValue;
@@ -91,7 +93,11 @@ public class InputFunctions
             }
             case GET_MOUSE_POSITION:
             {
-                return LuaValue.varargsOf(new LuaValue[] { LuaValue.valueOf(Input.getMousePosition().x), LuaValue.valueOf(Input.getMousePosition().y) });
+                Vector2 pos = Input.getMousePosition();
+                Camera camera = userManager.getUser(Input.inputData.userID).camera;
+                pos.mulLocal(camera.scale);
+                pos.addLocal(camera.translation);
+                return LuaValue.varargsOf(new LuaValue[] { LuaValue.valueOf(pos.x), LuaValue.valueOf(pos.y) });
             }
             case GET_MOUSE_STATE:
             {

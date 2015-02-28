@@ -6,6 +6,8 @@ import net.lodoma.lime.util.Vector2;
 
 public class InputData
 {
+    public int userID;
+    
     // Input state that is not taken in consideration yet
     public ByteBuffer liveKeyboard;
     public ByteBuffer liveKeyboardRepeated;
@@ -101,6 +103,9 @@ public class InputData
         decompress(liveKeyboard, state, 0);
         decompress(liveKeyboardRepeated, state, liveKeyboard.capacity());
         decompress(liveMouse, state, liveKeyboard.capacity() + liveKeyboardRepeated.capacity());
+        state.position((int) Math.ceil((liveKeyboard.capacity() + liveKeyboardRepeated.capacity() + liveMouse.capacity()) / 8.0));
+        liveMousePosition.x = state.getFloat();
+        liveMousePosition.y = state.getFloat();
     }
     
     private ByteBuffer compress(ByteBuffer source)
