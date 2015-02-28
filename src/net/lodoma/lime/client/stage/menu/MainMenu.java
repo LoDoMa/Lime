@@ -1,6 +1,7 @@
 package net.lodoma.lime.client.stage.menu;
 
 import net.lodoma.lime.client.stage.Stage;
+import net.lodoma.lime.client.stage.editor.Editor;
 import net.lodoma.lime.client.window.Window;
 import net.lodoma.lime.gui.UICallback;
 import net.lodoma.lime.gui.clean.CleanButton;
@@ -18,6 +19,15 @@ public class MainMenu extends Stage
         public void call()
         {
             manager.push(new MultiplayerMenu());
+        }
+    }
+    
+    private class EditorListener implements UICallback
+    {
+        @Override
+        public void call()
+        {
+            manager.push(new Editor());
         }
     }
     
@@ -41,11 +51,10 @@ public class MainMenu extends Stage
     
     public MainMenu()
     {
-        ui.addChild(new CleanButton(new Vector2(0.05f, 0.50f), new Vector2(0.4f, 0.05f), "Campaign", TrueTypeFont.ALIGN_CENTER, null));
-        ui.addChild(new CleanButton(new Vector2(0.05f, 0.44f), new Vector2(0.4f, 0.05f), "Multiplayer", TrueTypeFont.ALIGN_CENTER, new MultiplayerListener()));
-        ui.addChild(new CleanButton(new Vector2(0.05f, 0.38f), new Vector2(0.4f, 0.05f), "Arcade", TrueTypeFont.ALIGN_CENTER, null));
-        ui.addChild(new CleanButton(new Vector2(0.05f, 0.32f), new Vector2(0.4f, 0.05f), "Options", TrueTypeFont.ALIGN_CENTER, new OptionsListener()));
-        ui.addChild(new CleanButton(new Vector2(0.05f, 0.26f), new Vector2(0.4f, 0.05f), "Exit", TrueTypeFont.ALIGN_CENTER, new ExitListener()));
+        ui.addChild(new CleanButton(new Vector2(0.05f, 0.50f), new Vector2(0.4f, 0.05f), "Multiplayer", TrueTypeFont.ALIGN_CENTER, new MultiplayerListener()));
+        ui.addChild(new CleanButton(new Vector2(0.05f, 0.44f), new Vector2(0.4f, 0.05f), "Editor", TrueTypeFont.ALIGN_CENTER, new EditorListener()));
+        ui.addChild(new CleanButton(new Vector2(0.05f, 0.38f), new Vector2(0.4f, 0.05f), "Options", TrueTypeFont.ALIGN_CENTER, new OptionsListener()));
+        ui.addChild(new CleanButton(new Vector2(0.05f, 0.32f), new Vector2(0.4f, 0.05f), "Exit", TrueTypeFont.ALIGN_CENTER, new ExitListener()));
     }
     
     @Override
