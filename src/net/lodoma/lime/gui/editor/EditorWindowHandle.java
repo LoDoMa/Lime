@@ -1,8 +1,16 @@
 package net.lodoma.lime.gui.editor;
 
+import static org.lwjgl.opengl.GL11.GL_QUADS;
+import static org.lwjgl.opengl.GL11.glBegin;
+import static org.lwjgl.opengl.GL11.glEnd;
+import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.glPushMatrix;
+import static org.lwjgl.opengl.GL11.glTranslatef;
+import static org.lwjgl.opengl.GL11.glVertex2f;
 import net.lodoma.lime.gui.UICallback;
 import net.lodoma.lime.gui.UIObject;
 import net.lodoma.lime.input.Input;
+import net.lodoma.lime.texture.Texture;
 import net.lodoma.lime.util.Vector2;
 
 class EditorWindowHandle extends UIObject
@@ -11,16 +19,18 @@ class EditorWindowHandle extends UIObject
     
     private boolean mousePress;
     private int pressID;
+    private boolean visible;
     
     public Vector2 lastPress;
     public Vector2 currentPress;
     
-    public EditorWindowHandle(Vector2 position, Vector2 dimensions, UICallback callback)
+    public EditorWindowHandle(Vector2 position, Vector2 dimensions, boolean visible, UICallback callback)
     {
         super();
         getLocalPosition().set(position);
         getLocalDimensions().set(dimensions);
         
+        this.visible = visible;
         this.callback = callback;
     }
     
@@ -56,5 +66,35 @@ class EditorWindowHandle extends UIObject
         lastPress = currentPress;
         
         super.update(timeDelta);
+    }
+    
+    @Override
+    public void render()
+    {
+        if (visible)
+        {
+            glPushMatrix();
+            
+            Vector2 position = getPosition();
+            glTranslatef(position.x, position.y, 0.0f);
+            
+            Vector2 dimensions = getDimensions();
+            
+            Texture.NO_TEXTURE.bind();
+            
+            glBegin(GL_QUADS);
+            {
+                EditorUI.BACKGROUND.setGL();
+                glVertex2f(0.0f, 0.0f);
+                glVertex2f(dimensions.x, 0.0f);
+                glVertex2f(dimensions.x, dimensions.y);
+                glVertex2f(0.0f, dimensions.y);
+            }
+            glEnd();
+            
+            glPopMatrix();
+        }
+        
+        super.render();
     }
 }
