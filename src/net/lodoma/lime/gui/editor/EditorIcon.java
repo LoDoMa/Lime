@@ -3,26 +3,30 @@ package net.lodoma.lime.gui.editor;
 import net.lodoma.lime.gui.UIAbstractButton;
 import net.lodoma.lime.gui.UICallback;
 import net.lodoma.lime.texture.Texture;
+import net.lodoma.lime.texture.TexturePool;
 import net.lodoma.lime.util.Vector2;
-
 import static org.lwjgl.opengl.GL11.*;
 
 public class EditorIcon extends UIAbstractButton
 {
     private Texture texture;
+    private String textureName;
     
-    public EditorIcon(Vector2 position, Vector2 dimensions, Texture texture, UICallback callback)
+    public EditorIcon(Vector2 position, Vector2 dimensions, String textureName, UICallback callback)
     {
         super(callback);
         getLocalPosition().set(position);
         getLocalDimensions().set(dimensions);
         
-        this.texture = texture;
+        this.textureName = textureName;
     }
     
     @Override
     public void render()
     {
+        if (texture == null)
+            texture = TexturePool.get(textureName);
+        
         glPushMatrix();
         
         Vector2 position = getPosition();

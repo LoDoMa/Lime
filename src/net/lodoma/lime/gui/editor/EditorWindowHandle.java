@@ -10,6 +10,7 @@ class EditorWindowHandle extends UIObject
     private UICallback callback;
     
     private boolean mousePress;
+    private int pressID;
     
     public Vector2 lastPress;
     public Vector2 currentPress;
@@ -39,15 +40,15 @@ class EditorWindowHandle extends UIObject
             currentPress.y >= position.y && currentPress.y <= position.y + dimensions.y)
             currentHover = true;
         
-        if (currentHover)
-            for (int button = Input.MOUSE_BUTTON_1; button <= Input.MOUSE_BUTTON_8; button++)
-                if (Input.getMouseDown(button))
-                {
-                    mousePress = true;
-                    lastPress = currentPress;
-                }
-                else if (Input.getMouseUp(button))
-                    mousePress = false;
+        for (int button = Input.MOUSE_BUTTON_1; button <= Input.MOUSE_BUTTON_8; button++)
+            if (Input.getMouseDown(button) && currentHover)
+            {
+                mousePress = true;
+                lastPress = currentPress;
+                pressID = button;
+            }
+            else if (Input.getMouseUp(button) && button == pressID)
+                mousePress = false;
         
         if (mousePress)
             callback.call();

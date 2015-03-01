@@ -1,6 +1,7 @@
 package net.lodoma.lime.gui;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.BiFunction;
 
@@ -16,6 +17,10 @@ public class UIObject
     /* If an object's parent has a layout, the object's local position
        and dimensions are set by it. */
     private UILayout layout;
+    
+    /* If a child attempts to remove itself while iterating, use this
+       to remove it. */
+    private Iterator<UIObject> iterator;
     
     protected final Vector2 localPosition = new Vector2(0.0f, 0.0f);
     protected final Vector2 localDimensions = new Vector2(0.0f, 0.0f);
@@ -102,7 +107,11 @@ public class UIObject
              the object we are removing. */
     public final void removeChild(UIObject object)
     {
-        children.remove(object);
+        if (iterator != null)
+            // If removing while iterating, remove the current object
+            iterator.remove();
+        else
+            children.remove(object);
         
         // The removed object doesn't have a parent anymore.
         object.parent = null;
@@ -123,15 +132,19 @@ public class UIObject
        super.update(timeDelta) should be called last. */
     public void update(double timeDelta)
     {
-        for (UIObject object : children)
-            object.update(timeDelta);
+        iterator = children.iterator();
+        while (iterator.hasNext())
+            iterator.next().update(timeDelta);
+        iterator = null;
     }
 
     /* Render all children. Children should be rendered after the parent.
        super.render() should be called last. */
     public void render()
     {
-        for (UIObject object : children)
-            object.render();
+        iterator = children.iterator();
+        while (iterator.hasNext())
+            iterator.next().render();
+        iterator = null;
     }
 }

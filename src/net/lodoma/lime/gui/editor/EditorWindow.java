@@ -14,6 +14,7 @@ public class EditorWindow extends UIObject
     public EditorPanel panel;
     public EditorContentPane contentPane;
     private EditorWindowHandle handle;
+    private boolean shade;
     
     public EditorWindow(Vector2 position, Vector2 dimensions, String title)
     {
@@ -29,9 +30,36 @@ public class EditorWindow extends UIObject
             public void call()
             {
                 Vector2 diff = handle.currentPress.sub(handle.lastPress);
-                getLocalPosition().addLocal(diff);
+                Vector2 position = getLocalPosition();
+                Vector2 dimensions = getLocalDimensions();
+                
+                position.addLocal(diff);
+                if (position.x < 0.0f) position.x = 0.0f;
+                if (position.y < 0.0f) position.y = 0.0f;
+                if ((position.x + dimensions.x) > 1.0f) position.x = 1.0f - dimensions.x;
+                if ((position.y + dimensions.y) > 1.0f) position.y = 1.0f - dimensions.y;
             }
         });
+        
+        final EditorWindow thisWindow = this;
+        panel.addChild(new EditorIcon(new Vector2(), new Vector2(9.0f / 16.0f, 1.0f), "editor/window_close", new UICallback()
+        {
+            @Override
+            public void call()
+            {
+                UIObject parent = getParent();
+                if (parent != null)
+                    parent.removeChild(thisWindow);
+            }
+        }));
+        panel.addChild(new EditorIcon(new Vector2(), new Vector2(9.0f / 16.0f, 1.0f), "editor/window_shade", new UICallback()
+        {
+            @Override
+            public void call()
+            {
+                shade = !shade;
+            }
+        }));
         
         panel.addChild(new CleanText(0.025f, " " + title, new Color(1.0f, 1.0f, 1.0f, 1.0f), TrueTypeFont.ALIGN_LEFT));
         
@@ -43,7 +71,11 @@ public class EditorWindow extends UIObject
     @Override
     public void render()
     {
-        super.render();
+        // We render children manually.
+        // super.render();
+        if (!shade)
+            contentPane.render();
+        panel.render();
         
         glPushMatrix();
         
@@ -55,18 +87,36 @@ public class EditorWindow extends UIObject
         Texture.NO_TEXTURE.bind(0);
         EditorUI.BACKGROUND_FOCUS.setGL();
         
-        glBegin(GL_LINES);
+        if (shade)
         {
-            glVertex2f(0.0f, 0.0f);
-            glVertex2f(dimensions.x, 0.0f);
-            glVertex2f(dimensions.x, 0.0f);
-            glVertex2f(dimensions.x, dimensions.y);
-            glVertex2f(dimensions.x, dimensions.y);
-            glVertex2f(0.0f, dimensions.y);
-            glVertex2f(0.0f, dimensions.y);
-            glVertex2f(0.0f, 0.0f);
+            glBegin(GL_LINES);
+            {
+                glVertex2f(0.0f, dimensions.y - 0.03f);
+                glVertex2f(dimensions.x, dimensions.y - 0.03f);
+                glVertex2f(dimensions.x, dimensions.y - 0.03f);
+                glVertex2f(dimensions.x, dimensions.y);
+                glVertex2f(dimensions.x, dimensions.y);
+                glVertex2f(0.0f, dimensions.y);
+                glVertex2f(0.0f, dimensions.y);
+                glVertex2f(0.0f, dimensions.y - 0.03f);
+            }
+            glEnd();
         }
-        glEnd();
+        else
+        {
+            glBegin(GL_LINES);
+            {
+                glVertex2f(0.0f, 0.0f);
+                glVertex2f(dimensions.x, 0.0f);
+                glVertex2f(dimensions.x, 0.0f);
+                glVertex2f(dimensions.x, dimensions.y);
+                glVertex2f(dimensions.x, dimensions.y);
+                glVertex2f(0.0f, dimensions.y);
+                glVertex2f(0.0f, dimensions.y);
+                glVertex2f(0.0f, 0.0f);
+            }
+            glEnd();
+        }
         
         glPopMatrix();
     }

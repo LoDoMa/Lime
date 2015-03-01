@@ -19,8 +19,8 @@ public class StageManager
     
     public void pop()
     {
-        leaf = leaf.parent;
         leaf.onInactive();
+        leaf = leaf.parent;
         if (leaf.parent != null)
             leaf.parent.onActive();
         reupdate = true;

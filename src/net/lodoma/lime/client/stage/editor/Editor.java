@@ -5,6 +5,7 @@ import net.lodoma.lime.gui.editor.EditorWindow;
 import net.lodoma.lime.input.Input;
 import net.lodoma.lime.shader.Program;
 import net.lodoma.lime.shader.UniformType;
+import net.lodoma.lime.texture.TexturePool;
 import net.lodoma.lime.util.Vector2;
 
 public class Editor extends Stage
@@ -21,12 +22,17 @@ public class Editor extends Stage
     public void onActive()
     {
         super.onActive();
+
+        TexturePool.add("editor/window_close");
+        TexturePool.add("editor/window_shade");
     }
     
     @Override
     public void onInactive()
     {
         super.onInactive();
+        
+        TexturePool.clear();
     }
     
     @Override
