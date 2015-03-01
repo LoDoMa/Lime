@@ -7,19 +7,38 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class EditorContentPane extends UIObject
 {
-    private final Vector2 translation = new Vector2();
-    private final Vector2 scale = new Vector2();
-    
-    public EditorContentPane(Vector2 translation, Vector2 scale)
+    public EditorContentPane(Vector2 position, Vector2 dimensions)
     {
         super();
-        this.translation.set(translation);
-        this.scale.set(scale);
-        
-        /* The position is set to (0, 0) and dimensions are set to (0, 0) so that the pane's children
-           behave like the content pane covers the entire window. */
-        getLocalPosition().set(0, 0);
-        getLocalDimensions().set(1, 1);
+        getLocalPosition().set(position);
+        getLocalDimensions().set(dimensions);
+    }
+
+    /* A lot of Vector2 objects are instantiated during execution.
+       This helps lower that number down. It doesn't help thread
+       safety. UI isn't thread safe. */
+    private final Vector2 cacheVector = new Vector2();
+    
+    @Override
+    public Vector2 getPosition()
+    {
+        cacheVector.set(0.0f, 0.0f);
+        return cacheVector;
+    }
+    
+    @Override
+    public Vector2 getDimensions()
+    {
+        cacheVector.set(1.0f, 1.0f);
+        return cacheVector;
+    }
+    
+    private Vector2 getParentPosition()
+    {
+        cacheVector.set(0.0f, 0.0f);
+        if (getParent() != null)
+            cacheVector.addLocal(getParent().getPosition());
+        return cacheVector;
     }
     
     @Override
@@ -27,8 +46,10 @@ public class EditorContentPane extends UIObject
     {
         /* The mouse position is modified to fit the content pane. */
         Vector2 originalMousePosition = Input.inputData.currentMousePosition.clone();
-        Input.inputData.currentMousePosition.subLocal(translation);
-        Input.inputData.currentMousePosition.divLocal(scale);
+        
+        Vector2 position = getParentPosition();
+        Input.inputData.currentMousePosition.subLocal(position);
+        Input.inputData.currentMousePosition.divLocal(getLocalDimensions());
         
         super.update(timeDelta);
 
@@ -40,7 +61,9 @@ public class EditorContentPane extends UIObject
     public void render()
     {
         glPushMatrix();
-        glTranslatef(translation.x, translation.y, 0.0f);
+        Vector2 position = getParentPosition();
+        glTranslatef(position.x, position.y, 0.0f);
+        Vector2 scale = getLocalDimensions();
         glScalef(scale.x, scale.y, 0.0f);
         
         super.render();

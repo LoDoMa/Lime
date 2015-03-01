@@ -49,7 +49,7 @@ public class UIObject
     
     /* Note that this always returns exactly the same Vector2 instance.
        If you need to store this somewhere, clone it. */
-    public final Vector2 getPosition()
+    public Vector2 getPosition()
     {
         cacheVector.set(getLocalPosition());
         
@@ -61,7 +61,7 @@ public class UIObject
 
     /* Note that this always returns exactly the same Vector2 instance.
        If you need to store this somewhere, clone it. */
-    public final Vector2 getDimensions()
+    public Vector2 getDimensions()
     {
         cacheVector.set(getLocalDimensions());
         
