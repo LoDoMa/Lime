@@ -23,7 +23,7 @@ public class EditorPanelHorizontalLayout extends UILayout
         float targetHeight = objectDimensions.y - offset.y * 2;
         
         total = offset.x;
-        if (offset.x < 0)
+        if (total < 0)
             total += objectDimensions.x;
         
         object.foreachChild((UIObject child, Integer index) -> {

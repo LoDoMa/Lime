@@ -4,7 +4,6 @@ import net.lodoma.lime.gui.UIObject;
 import net.lodoma.lime.gui.editor.layout.EditorPanelHorizontalLayout;
 import net.lodoma.lime.texture.Texture;
 import net.lodoma.lime.util.Vector2;
-
 import static org.lwjgl.opengl.GL11.*;
 
 public class EditorPanel extends UIObject
@@ -15,7 +14,7 @@ public class EditorPanel extends UIObject
         getLocalPosition().set(position);
         getLocalDimensions().set(dimensions);
         
-        setLayout(new EditorPanelHorizontalLayout(new Vector2(0.005f, 0.005f)));
+        setLayout(new EditorPanelHorizontalLayout(new Vector2(9.0f / 16.0f * 0.005f, 0.005f)));
     }
     
     @Override

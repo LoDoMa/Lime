@@ -46,7 +46,7 @@ public class UIObject
         layout.setObject(this);
         layout.rebuild();
     }
-
+    
     /* A lot of Vector2 objects are instantiated during execution.
        This helps lower that number down. It doesn't help thread
        safety. UI isn't thread safe. */
