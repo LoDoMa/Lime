@@ -15,36 +15,18 @@ public class UIText extends UIObject
     {
         this.text = text;
         this.font = font;
-        
         this.size.set(size);
+        
         fontSize = font.ttf.getFont().getSize() + 3;
     }
     
-    /* A lot of Vector2 objects are instantiated during execution.
-       This helps lower that number down. It doesn't help thread
-       safety. UI isn't thread safe. */
-    private final Vector2 cacheVector = new Vector2();
-    
     @Override
-    public Vector2 getLocalPosition()
+    public void update(double timeDelta)
     {
-        cacheVector.set(localPosition);
+        if (getParent() == null)
+            throw new IllegalStateException("UIText must have a parent");
         
-        if (hasParent())
-        {
-            Vector2 parentDimensions = getParent().getLocalDimensions();
-            
-            float alignmentMultiplier = 0.0f;
-            if (font.alignment == TrueTypeFont.ALIGN_CENTER)
-                alignmentMultiplier = 0.5f;
-            else if (font.alignment == TrueTypeFont.ALIGN_RIGHT)
-                alignmentMultiplier = 1.0f;
-            
-            cacheVector.addLocalX(parentDimensions.x * alignmentMultiplier);
-            cacheVector.addLocalY((parentDimensions.y - size.y) / 2.0f);
-        }
-        
-        return cacheVector;
+        super.update(timeDelta);
     }
     
     @Override
@@ -52,11 +34,29 @@ public class UIText extends UIObject
     {
         float scaleX = size.x / fontSize;
         float scaleY = size.y / fontSize;
+
+        Vector2 dimensions = getDimensions();
         
-        // Note that color and shader aren't set in this class.
+        float horMul = 0.0f;
+        if (font.horizontalAlignment == TrueTypeFont.ALIGN_CENTER)
+            horMul = 0.5f;
+        else if (font.horizontalAlignment == TrueTypeFont.ALIGN_RIGHT)
+            horMul = 1.0f;
+        
+        float verMul = 0.0f;
+        if (font.verticalAlignment == TrueTypeFont.ALIGN_CENTER)
+            verMul = 0.5f;
+        else if (font.verticalAlignment == TrueTypeFont.ALIGN_RIGHT)
+            verMul = 1.0f;
+
+        float horOffset = horMul * dimensions.x;
+        float verOffset = verMul * dimensions.y - verMul * fontSize * scaleY;
         
         Vector2 position = getPosition();
-        font.ttf.drawString(position.x, position.y, text, scaleX, scaleY, font.alignment);
+
+        // Note that color and shader aren't set in this class.
+        
+        font.ttf.drawString(position.x + horOffset, position.y + verOffset, text, scaleX, scaleY, font.horizontalAlignment);
         
         super.render();
     }

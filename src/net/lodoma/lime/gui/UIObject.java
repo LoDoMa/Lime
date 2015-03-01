@@ -22,8 +22,8 @@ public class UIObject
        to remove it. */
     private Iterator<UIObject> iterator;
     
-    protected final Vector2 localPosition = new Vector2(0.0f, 0.0f);
-    protected final Vector2 localDimensions = new Vector2(0.0f, 0.0f);
+    private final Vector2 localPosition = new Vector2(0.0f, 0.0f);
+    private final Vector2 localDimensions = new Vector2(0.0f, 0.0f);
     
     /* MEMORY: Each UI object also functions as a container.
        Kind of a waste, but there shouldn't ever be enough UI objects
@@ -75,14 +75,14 @@ public class UIObject
     
     /* Returns a reference to the local position. Use this
        to either get or set the position offset. */
-    public Vector2 getLocalPosition()
+    public final Vector2 getLocalPosition()
     {
         return localPosition;
     }
 
     /* Returns a reference to the local dimensions. Use this
        to either get or set the position offset. */
-    public Vector2 getLocalDimensions()
+    public final Vector2 getLocalDimensions()
     {
         return localDimensions;
     }

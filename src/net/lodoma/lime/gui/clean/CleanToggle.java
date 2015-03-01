@@ -20,7 +20,7 @@ public class CleanToggle extends UIGroupMember
         getLocalPosition().set(position);
         getLocalDimensions().set(dimensions);
         
-        addChild(this.text = new CleanText(dimensions.y, text, CleanUI.TEXT_COLOR, alignment));
+        addChild(this.text = new CleanText(dimensions, text, CleanUI.TEXT_COLOR, alignment));
         
         transparency = 0.0f;
     }

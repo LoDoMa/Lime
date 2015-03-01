@@ -11,7 +11,7 @@ public class CleanTextField extends UITextField
     
     public CleanTextField(Vector2 position, Vector2 dimensions, String text, int alignment)
     {
-        super(new CleanText(dimensions.y, text, CleanUI.FOCUS_TEXT_COLOR, alignment));
+        super(new CleanText(dimensions, text, CleanUI.FOCUS_TEXT_COLOR, alignment));
         getLocalPosition().set(position);
         getLocalDimensions().set(dimensions);
     }

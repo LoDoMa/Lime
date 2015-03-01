@@ -68,7 +68,7 @@ public class EditorWindow extends UIObject
         }));
         panel.addChild(new EditorIcon(new Vector2(), new Vector2(9.0f / 16.0f, 1.0f), "editor/window_shade", () -> shade = !shade));
         
-        panel.addChild(new CleanText(0.025f, "      " + title, new Color(1.0f, 1.0f, 1.0f, 1.0f), TrueTypeFont.ALIGN_LEFT));
+        panel.addChild(new CleanText(new Vector2(), 0.025f, title, new Color(1.0f, 1.0f, 1.0f, 1.0f), TrueTypeFont.ALIGN_LEFT));
         
         addChild(panel);
         addChild(contentPane);

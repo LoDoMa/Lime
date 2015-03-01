@@ -11,9 +11,10 @@ public class UIFont
     private static Map<String, Map<Integer, Map<Integer, TrueTypeFont>>> ttfs = new HashMap<String, Map<Integer, Map<Integer, TrueTypeFont>>>();
 
     public TrueTypeFont ttf;
-    public int alignment;
+    public int horizontalAlignment;
+    public int verticalAlignment;
     
-    public UIFont(String fontName, int size, int style, int alignment)
+    public UIFont(String fontName, int size, int style, int horizontalAlignment, int verticalAlignment)
     {
         if (!ttfs.containsKey(fontName))
             ttfs.put(fontName, new HashMap<Integer, Map<Integer, TrueTypeFont>>());
@@ -36,7 +37,8 @@ public class UIFont
         {
             ttf = ttfs3.get(style);
         }
-        
-        this.alignment = alignment;
+
+        this.horizontalAlignment = horizontalAlignment;
+        this.verticalAlignment = verticalAlignment;
     }
 }

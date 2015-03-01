@@ -5,24 +5,38 @@ import java.awt.Font;
 import net.lodoma.lime.gui.UIFont;
 import net.lodoma.lime.gui.UIText;
 import net.lodoma.lime.util.Color;
+import net.lodoma.lime.util.TrueTypeFont;
 import net.lodoma.lime.util.Vector2;
 
 public class CleanText extends UIText
 {
     private final Color color;
     
-    public CleanText(float size, String text, Color color, int alignment)
+    public CleanText(Vector2 dimensions, String text, Color color, int alignment)
     {
-        this(new Vector2(0.0f), size, text, color, alignment);
+        this(new Vector2(0.0f), dimensions, text, color, alignment);
     }
     
-    public CleanText(Vector2 position, float size, String text, Color color, int alignment)
+    public CleanText(Vector2 position, Vector2 dimensions, String text, Color color, int alignment)
     {
-        super(text, new UIFont("My type of font", 42, Font.PLAIN, alignment), new Vector2(size * 0.6f, size * 0.75f));
-        /* NOTE: we set the local position directly,
-                 because we can't use getLocalPosition to do it,
-                 UIText overrides it. */
-        localPosition.set(position);
+        super(text, new UIFont("My type of font", 42, Font.PLAIN, alignment, TrueTypeFont.ALIGN_CENTER), new Vector2(dimensions.y * 0.6f, dimensions.y * 0.75f));
+        
+        getLocalPosition().set(position);
+        getLocalDimensions().set(dimensions);
+        this.color = color;
+    }
+    
+    public CleanText(Vector2 position, float height, String text, Color color, int alignment)
+    {
+        this(position, height, text, color, alignment, new UIFont("My type of font", 42, Font.PLAIN, alignment, TrueTypeFont.ALIGN_CENTER));
+    }
+    
+    private CleanText(Vector2 position, float height, String text, Color color, int alignement, UIFont font)
+    {
+        super(text, font, new Vector2(height * 0.6f, height * 0.75f));
+
+        getLocalPosition().set(position);
+        getLocalDimensions().set(font.ttf.getTotalWidth(text), height);
         this.color = color;
     }
     
