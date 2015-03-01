@@ -29,25 +29,14 @@ public class EditorIcon extends UIAbstractButton
         glTranslatef(position.x, position.y, 0.0f);
         
         Vector2 dimensions = getDimensions();
-
-        // Draw body
-        
-        Texture.NO_TEXTURE.bind(0);
-        EditorUI.BACKGROUND_FOCUS.setGL();
-        
-        glBegin(GL_QUADS);
-        {
-            glVertex2f(0.0f, 0.0f);
-            glVertex2f(dimensions.x, 0.0f);
-            glVertex2f(dimensions.x, dimensions.y);
-            glVertex2f(0.0f, dimensions.y);
-        }
-        glEnd();
         
         // Draw picture
         
         texture.bind(0);
-        glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+        if (mouseHovering)
+            glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
+        else
+            glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
         glBegin(GL_QUADS);
         {
@@ -58,23 +47,6 @@ public class EditorIcon extends UIAbstractButton
         }
         glEnd();
         
-        // Draw selection overlay
-        
-        if (mouseHovering)
-        {
-            Texture.NO_TEXTURE.bind(0);
-            EditorUI.BACKGROUND_SELETED.setGL();
-            
-            glBegin(GL_QUADS);
-            {
-                glVertex2f(0.0f, 0.0f);
-                glVertex2f(dimensions.x, 0.0f);
-                glVertex2f(dimensions.x, dimensions.y);
-                glVertex2f(0.0f, dimensions.y);
-            }
-            glEnd();
-        }
-            
         glPopMatrix();
         
         super.render(); // Does nothing
