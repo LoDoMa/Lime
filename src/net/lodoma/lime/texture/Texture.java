@@ -15,7 +15,9 @@ import static org.lwjgl.opengl.GL13.*;
 public class Texture
 {
     public static Texture NO_TEXTURE = new Texture(new int[] { 0xFFFFFFFF }, 1, 1, true);
-    
+
+    private int width;
+    private int height;
     private int texture;
     
     public Texture(InputStream is) throws IOException
@@ -25,14 +27,18 @@ public class Texture
     
     public Texture(InputStream is, int offx, int offy, int width, int height) throws IOException
     {
-        ByteBuffer bytes = loadTexture(is, offx, offy, width, height);
-        texture = createTexture(bytes, width, height);
+        this.width = width;
+        this.height = height;
+        ByteBuffer bytes = loadTexture(is, offx, offy);
+        texture = createTexture(bytes);
     }
     
     public Texture(int[] pixels, int width, int height, boolean hasAlpha)
     {
-        ByteBuffer bytes = createByteBuffer(pixels, width, height, hasAlpha);
-        texture = createTexture(bytes, width, height);
+        this.width = width;
+        this.height = height;
+        ByteBuffer bytes = createByteBuffer(pixels, hasAlpha);
+        texture = createTexture(bytes);
     }
     
     public void bind()
@@ -51,7 +57,7 @@ public class Texture
         glDeleteTextures(texture);
     }
     
-    private ByteBuffer loadTexture(InputStream is, int offx, int offy, int width, int height) throws IOException
+    private ByteBuffer loadTexture(InputStream is, int offx, int offy) throws IOException
     {
         BufferedImage image = ImageIO.read(is);
         if (width == -1) width = image.getWidth();
@@ -59,10 +65,10 @@ public class Texture
         int[] pixels = image.getRGB(offx, offy, width, height, null, 0, width);
         boolean hasAlpha = image.getColorModel().hasAlpha();
         
-        return createByteBuffer(pixels, width, height, hasAlpha);
+        return createByteBuffer(pixels, hasAlpha);
     }
     
-    private ByteBuffer createByteBuffer(int[] pixels, int width, int height, boolean hasAlpha)
+    private ByteBuffer createByteBuffer(int[] pixels, boolean hasAlpha)
     {
         ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * 4);
         
@@ -84,7 +90,7 @@ public class Texture
         return buffer;
     }
     
-    private int createTexture(ByteBuffer bytes, int width, int height)
+    private int createTexture(ByteBuffer bytes)
     {
         int texture = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, texture);

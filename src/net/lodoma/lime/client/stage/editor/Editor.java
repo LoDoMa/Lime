@@ -2,6 +2,8 @@ package net.lodoma.lime.client.stage.editor;
 
 import net.lodoma.lime.client.stage.Stage;
 import net.lodoma.lime.input.Input;
+import net.lodoma.lime.shader.Program;
+import net.lodoma.lime.shader.UniformType;
 
 public class Editor extends Stage
 {
@@ -35,6 +37,9 @@ public class Editor extends Stage
     @Override
     public void render()
     {
+        Program.basicProgram.useProgram();
+        Program.basicProgram.setUniform("uTexture", UniformType.INT1, 0);
+        
         super.render();
     }
 }
