@@ -54,7 +54,10 @@ public class VisualInstance
 
         Timer timer = new Timer();
 
-        CleanText debugText = new CleanText(new Vector2(0.0f, 0.96f), 0.04f, "Multiplayer", CleanUI.FOCUS_TEXT_COLOR, TrueTypeFont.ALIGN_LEFT);
+        CleanText[] debugLines = new CleanText[2];
+        for (int i = 0; i < debugLines.length; i++)
+        	debugLines[i] = new CleanText(new Vector2(0.0f, 0.96f - i * 0.04f), 0.04f, "", CleanUI.FOCUS_TEXT_COLOR, TrueTypeFont.ALIGN_LEFT);
+        
         Timer fpsTimer = new Timer();
         double fpsSeconds = 0.0f;
         int frames = 0;
@@ -80,8 +83,16 @@ public class VisualInstance
                 Program.basicProgram.useProgram();
                 Program.basicProgram.setUniform("uTexture", UniformType.INT1, 0);
                 
-                debugText.text = "fps " + fps;
-                debugText.render();
+                Runtime runtime = Runtime.getRuntime();
+                long maxMemory = Math.round(runtime.maxMemory() / (1024.0 * 1024.0));
+                long allocatedMemory = Math.round((runtime.totalMemory() - runtime.freeMemory()) / (1024.0 * 1024.0));
+                double usage = (long) (allocatedMemory / (double) maxMemory * 1000) / 10.0;
+                
+                debugLines[0].text = "fps: " + fps;
+                debugLines[1].text = "memory: " + allocatedMemory + "/" + maxMemory + " MB, " + usage + "%";
+                
+                for (int i = 0; i < debugLines.length; i++)
+                	debugLines[i].render();
             }
             
             Window.update();
