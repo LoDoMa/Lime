@@ -22,6 +22,7 @@ public class Lime
             @Override
             public void uncaughtException(Thread thread, Throwable throwable)
             {
+                Lime.LOGGER.log(throwable);
                 forceExit(throwable);
             }
         });

@@ -101,33 +101,6 @@ public class Light implements Identifiable<Integer>
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         }
-        
-        /*
-         * Copy a section from the occlusion map FBO to the local occlusion FBO
-         * NOTE: this can probably be skipped
-         */
-        
-        occlusionLocal.bind();
-        occlusionLocal.clear();
-
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, occlusionMap.textureID);
-        
-        Program.occlusionCopyProgram.useProgram();
-        Program.occlusionCopyProgram.setUniform("uOcclusionMap", UniformType.INT1, 0);
-        
-        float occlusionLX = (data.position.x - data.radius - camera.translation.x) / camera.scale.x;
-        float occlusionHX = (data.position.x + data.radius - camera.translation.x) / camera.scale.x;
-        float occlusionLY = (data.position.y - data.radius - camera.translation.y) / camera.scale.y;
-        float occlusionHY = (data.position.y + data.radius - camera.translation.y) / camera.scale.y;
-        
-        glBegin(GL_QUADS);
-        glTexCoord2f(occlusionLX, occlusionLY); glVertex2f(0.0f, 0.0f);
-        glTexCoord2f(occlusionHX, occlusionLY); glVertex2f(1.0f, 0.0f);
-        glTexCoord2f(occlusionHX, occlusionHY); glVertex2f(1.0f, 1.0f);
-        glTexCoord2f(occlusionLX, occlusionHY); glVertex2f(0.0f, 1.0f);
-        glEnd();
-        occlusionLocal.unbind();
 
         /*
          * Create a 1D shadow map
@@ -137,11 +110,16 @@ public class Light implements Identifiable<Integer>
         shadowMap.clear();
         
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, occlusionLocal.textureID);
+        glBindTexture(GL_TEXTURE_2D, occlusionMap.textureID);
         
         Program.shadowMapProgram.useProgram();
         Program.shadowMapProgram.setUniform("uTexture", UniformType.INT1, 0);
         Program.shadowMapProgram.setUniform("uResolution", UniformType.FLOAT1, lightFW);
+
+        Program.shadowMapProgram.setUniform("uLightPosition", UniformType.FLOAT2, data.position.x, data.position.y);
+        Program.shadowMapProgram.setUniform("uLightRadius", UniformType.FLOAT1, data.radius);
+        Program.shadowMapProgram.setUniform("uCamScale", UniformType.FLOAT2, camera.scale.x, camera.scale.y);
+        Program.shadowMapProgram.setUniform("uCamTranslation", UniformType.FLOAT2, camera.translation.x, camera.translation.y);
         
         data.color.setGL();
         

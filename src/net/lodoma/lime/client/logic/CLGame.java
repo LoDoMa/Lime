@@ -40,6 +40,8 @@ public class CLGame extends ClientLogic
     public void init()
     {
         client.world = new World();
+        client.world.physicsWorld.create();
+        
         client.worldRenderer = new WorldRenderer(client.world);
         
         inputStatePacket = client.cpPool.get(CPInputState.HASH);

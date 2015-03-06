@@ -13,7 +13,6 @@ public class Program
     public static Shader copyVS, copyFS;
 
     public static Shader basicVS, basicFS;
-    public static Shader occlusionCopyVS, occlusionCopyFS;
     public static Shader shadowMapVS, shadowMapFS;
     public static Shader renderLightVS, renderLightFS;
     public static Shader brightnessVS, brightnessFS;
@@ -21,7 +20,6 @@ public class Program
     public static Program copyProgram;
 
     public static Program basicProgram;
-    public static Program occlusionCopyProgram;
     public static Program shadowMapProgram;
     public static Program renderLightProgram;
     public static Program brightnessProgram;
@@ -37,10 +35,6 @@ public class Program
         basicVS = new Shader(new File(OsHelper.JARPATH + "shader/Basic.vs"), ShaderType.VERTEX);
         basicFS = new Shader(new File(OsHelper.JARPATH + "shader/Basic.fs"), ShaderType.FRAGMENT);
         basicProgram = new Program(basicVS, basicFS);
-        
-        occlusionCopyVS = new Shader(new File(OsHelper.JARPATH + "shader/OcclusionCopy.vs"), ShaderType.VERTEX);
-        occlusionCopyFS = new Shader(new File(OsHelper.JARPATH + "shader/OcclusionCopy.fs"), ShaderType.FRAGMENT);
-        occlusionCopyProgram = new Program(occlusionCopyVS, occlusionCopyFS);
         
         shadowMapVS = new Shader(new File(OsHelper.JARPATH + "shader/ShadowMap.vs"), ShaderType.VERTEX);
         shadowMapFS = new Shader(new File(OsHelper.JARPATH + "shader/ShadowMap.fs"), ShaderType.FRAGMENT);
@@ -60,7 +54,6 @@ public class Program
         Lime.LOGGER.F("About to delete programs");
         copyProgram.deleteProgram();
         basicProgram.deleteProgram();
-        occlusionCopyProgram.deleteProgram();
         shadowMapProgram.deleteProgram();
         renderLightProgram.deleteProgram();
         brightnessProgram.deleteProgram();
@@ -70,8 +63,6 @@ public class Program
         copyFS.deleteShader();
         basicVS.deleteShader();
         basicFS.deleteShader();
-        occlusionCopyVS.deleteShader();
-        occlusionCopyFS.deleteShader();
         shadowMapVS.deleteShader();
         shadowMapFS.deleteShader();
         renderLightVS.deleteShader();
