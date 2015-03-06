@@ -65,8 +65,6 @@ public class World
         particleList = new ArrayList<PhysicsParticle>();
         particleDefinitionList = new ArrayList<PhysicsParticleDefinition>();
         lightPool = new IdentityPool<Light>(false);
-        
-        physicsWorld.create();
     }
     
     public void clean()
@@ -123,6 +121,8 @@ public class World
     public void init()
     {
         luaInstance.call(gamemodeWorldInit, null);
+        physicsWorld.create();
+        
         luaInstance.call(gamemodeInit, null);
     }
     
