@@ -1,5 +1,7 @@
 package net.lodoma.lime.client.stage;
 
+import net.lodoma.lime.Lime;
+
 public class StageManager
 {
     public Stage leaf;
@@ -12,17 +14,25 @@ public class StageManager
         leaf.parent = this.leaf;
         this.leaf = leaf;
         if (leaf.parent != null)
+        {
             leaf.parent.onInactive();
+            Lime.LOGGER.I("Stage " + leaf.parent + " inactive");
+        }
         this.leaf.onActive();
+        Lime.LOGGER.I("Stage " + this.leaf + " active");
         reupdate = true;
     }
     
     public void pop()
     {
         leaf.onInactive();
+        Lime.LOGGER.I("Stage " + leaf + " inactive");
         leaf = leaf.parent;
-        if (leaf.parent != null)
-            leaf.parent.onActive();
+        if (leaf != null)
+        {
+            leaf.onActive();
+            Lime.LOGGER.I("Stage " + leaf + " active");
+        }
         reupdate = true;
     }
     

@@ -114,6 +114,9 @@ public class VisualInstance
     
     private void clean()
     {
+        while (!stageManager.empty())
+            stageManager.pop();
+        
         Window.close();
     }
     
