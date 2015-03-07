@@ -19,7 +19,7 @@ public class Editor extends Stage
         mainPanel.addChild(new EditorIcon(new Vector2(), new Vector2(9.0f / 16.0f, 1.0f), "editor/save", null));
         ui.addChild(mainPanel);
         
-        ui.addChild(new EditorWindow(new Vector2(0.2f, 0.2f), new Vector2(0.5f, 0.5f), "Test window"));
+        ui.addChild(new EditorWindow(new Vector2(0.2f, 0.2f), new Vector2(0.5f, 0.5f), ColorPickerPopulator.INSTANCE));
     }
     
     @Override

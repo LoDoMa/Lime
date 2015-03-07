@@ -19,7 +19,7 @@ public class EditorWindow extends UIObject
     private EditorWindowHandle scaleHandle;
     private boolean shade;
     
-    public EditorWindow(Vector2 position, Vector2 dimensions, String title)
+    public EditorWindow(Vector2 position, Vector2 dimensions, EditorWindowPopulator populator)
     {
         super();
         getLocalPosition().set(position);
@@ -68,12 +68,14 @@ public class EditorWindow extends UIObject
         }));
         panel.addChild(new EditorIcon(new Vector2(), new Vector2(9.0f / 16.0f, 1.0f), "editor/window_shade", () -> shade = !shade));
         
-        panel.addChild(new CleanText(new Vector2(), 0.025f, title, new Color(1.0f, 1.0f, 1.0f, 1.0f), TrueTypeFont.ALIGN_LEFT));
+        panel.addChild(new CleanText(new Vector2(), 0.025f, populator.getTitle(), new Color(1.0f, 1.0f, 1.0f, 1.0f), TrueTypeFont.ALIGN_LEFT));
         
         addChild(panel);
         addChild(contentPane);
         addChild(moveHandle);
         addChild(scaleHandle);
+        
+        populator.apply(this);
     }
     
     @Override
