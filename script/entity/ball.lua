@@ -5,6 +5,8 @@ local bodyCompo
 local compoList = {}
 
 local function preSolve(bodyA, bodyB, contact)
+
+--[[
 	lime.selectComponent(bodyCompo)
 	local posx, posy = lime.getComponentPosition()
 	local velx, vely = lime.getLinearVelocity();
@@ -22,7 +24,7 @@ local function preSolve(bodyA, bodyB, contact)
 		lime.setParticleLinearDamping(0.0)
 		lime.setParticleLifetime(5.0)
 		lime.endParticle()
-	end
+	end]]
 end
 
 local function postSolve(bodyA, bodyB, contact)
@@ -38,18 +40,18 @@ local function createBody()
 	lime.setInitialPosition(pos.x, pos.y)
 	lime.setInitialAngle(0.0)
 	lime.setComponentType("dynamic")
-	lime.setShapeType("circle")
-	lime.setShapeRadius(radius)
+	lime.setShapeType("polygon")
+	lime.setShapeVertices(-radius, -radius, radius, -radius, radius, radius, -radius, radius)
 	lime.setComponentDensity(2.3)
 	lime.setComponentFriction(0.3)
-	lime.setComponentRestitution(0.3)
+	lime.setComponentRestitution(0.0)
 	bodyCompo = lime.endComponent()
 
 	lime.selectComponent(bodyCompo)
 	lime.setLinearVelocity(vel.x, vel.y)
 	lime.setLinearDamping(0.1)
 	lime.setAngularDamping(0.1)
-	lime.setAngleLocked(false)
+	lime.setAngleLocked(true)
 	lime.setUsingCCD(false)
 
 	table.insert(compoList, bodyCompo)
@@ -68,17 +70,10 @@ function Lime_Update(timeDelta)
 	lime.setInputData(masterID)
 
 	lime.selectComponent(bodyCompo)
-	if lime.getKeyState(lime.KEY_LEFT_SHIFT) then
-		if lime.getKeyState(lime.KEY_W) then lime.applyLinearImpulseToCenter(0.0, 1.0) end
-		if lime.getKeyState(lime.KEY_A) then lime.applyLinearImpulseToCenter(-1.0, 0.0) end
-		if lime.getKeyState(lime.KEY_S) then lime.applyLinearImpulseToCenter(0.0, -1.0) end
-		if lime.getKeyState(lime.KEY_D) then lime.applyLinearImpulseToCenter(1.0, 0.0) end
-	else
-		if lime.getKeyState(lime.KEY_W) then lime.applyForceToCenter(0.0, 4.0) end
-		if lime.getKeyState(lime.KEY_A) then lime.applyForceToCenter(-4.0, 0.0) end
-		if lime.getKeyState(lime.KEY_S) then lime.applyForceToCenter(0.0, -4.0) end
-		if lime.getKeyState(lime.KEY_D) then lime.applyForceToCenter(4.0, 0.0) end
-	end
+
+	if lime.getKeyPress(lime.KEY_W) then lime.applyLinearImpulseToCenter(0.0, 10.0) end
+	if lime.getKeyState(lime.KEY_A) then lime.applyForceToCenter(-80.0, 0.0) end
+	if lime.getKeyState(lime.KEY_D) then lime.applyForceToCenter(80.0, 0.0) end
 
 	local transX, transY = lime.getComponentPosition()
 	transX = transX - 16

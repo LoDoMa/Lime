@@ -87,6 +87,11 @@ public class VisualInstance
                 long maxMemory = Math.round(runtime.maxMemory() / (1024.0 * 1024.0));
                 long allocatedMemory = Math.round((runtime.totalMemory() - runtime.freeMemory()) / (1024.0 * 1024.0));
                 double usage = (long) (allocatedMemory / (double) maxMemory * 1000) / 10.0;
+                if (usage > 33)
+                {
+                    Lime.LOGGER.I("Memory usage over 33%, suggesting GC");
+                    System.gc();
+                }
                 
                 debugLines[0].text = "fps: " + fps;
                 debugLines[1].text = "memory: " + allocatedMemory + "/" + maxMemory + " MB, " + usage + "%";

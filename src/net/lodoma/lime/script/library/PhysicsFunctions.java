@@ -645,7 +645,7 @@ public class PhysicsFunctions
         
         SELECT_JOINT(1, true, "selectJoint"),
         ENABLE_REVOLUTE_ANGLE_LIMIT(1, true, "enableRevoluteAngleLimit"),
-        SET_REVOLUTE_ANGLE_LIMIT(1, true, "setRevoluteAngleLimit"),
+        SET_REVOLUTE_ANGLE_LIMIT(2, true, "setRevoluteAngleLimit"),
         ENABLE_REVOLUTE_MOTOR(1, true, "enableRevoluteMotor"),
         SET_REVOLUTE_MOTOR_SPEED(1, true, "setRevoluteMotorSpeed"),
         SET_REVOLUTE_MAX_MOTOR_TORQUE(1, true, "setRevoluteMaxMotorTorque"),

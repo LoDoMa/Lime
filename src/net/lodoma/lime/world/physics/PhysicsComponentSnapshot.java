@@ -87,8 +87,21 @@ public class PhysicsComponentSnapshot implements Identifiable<Integer>
             GL11.glVertex2f(0.0f, 0.0f);
             for (int i = 0; i <= 10; i++)
             {
-               float angle = (float) Math.toRadians(i * 360.0 / 10.0);
-               GL11.glVertex2f((float) Math.cos(angle), (float) Math.sin(angle));
+                float angle = (float) Math.toRadians(i * 360.0 / 10.0);
+                GL11.glVertex2f((float) Math.cos(angle), (float) Math.sin(angle));
+            }
+          
+            GL11.glEnd();
+
+            GL11.glColor3f(0.3f, 0.3f, 0.3f);
+            GL11.glBegin(GL11.GL_LINES);
+
+            for (int i = 0; i <= 10; i++)
+            {
+                float angle = (float) Math.toRadians(i * 360.0 / 10.0);
+                GL11.glVertex2f((float) Math.cos(angle), (float) Math.sin(angle));
+                float angle2 = (float) Math.toRadians((i + 1) * 360.0 / 10.0);
+                GL11.glVertex2f((float) Math.cos(angle2), (float) Math.sin(angle2));
             }
           
             GL11.glEnd();
@@ -108,9 +121,21 @@ public class PhysicsComponentSnapshot implements Identifiable<Integer>
             GL11.glBegin(GL11.GL_POLYGON);
 
             for (int i = 0; i < vertices.length; i++)
-               GL11.glVertex2f(vertices[i].x, vertices[i].y);
+                GL11.glVertex2f(vertices[i].x, vertices[i].y);
           
             GL11.glEnd();
+
+            GL11.glColor3f(0.3f, 0.3f, 0.3f);
+            GL11.glBegin(GL11.GL_LINES);
+
+            for (int i = 0; i < vertices.length; i++)
+            {
+                GL11.glVertex2f(vertices[i].x, vertices[i].y);
+                GL11.glVertex2f(vertices[(i + 1) % vertices.length].x, vertices[(i + 1) % vertices.length].y);
+            }
+          
+            GL11.glEnd();
+            GL11.glLineWidth(1.0f);
             
             GL11.glPopMatrix();
             break;

@@ -1,8 +1,15 @@
 package net.lodoma.lime.script.library;
 
+import java.io.File;
+import java.io.IOException;
+
+import net.lodoma.lime.Lime;
+import net.lodoma.lime.script.LuaScript;
 import net.lodoma.lime.util.HashHelper;
+import net.lodoma.lime.util.OsHelper;
 
 import org.luaj.vm2.LuaError;
+import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.VarArgFunction;
@@ -56,6 +63,37 @@ public class UtilFunctions
                 String string = args.arg(1).checkstring().toString();
                 return LuaValue.valueOf(HashHelper.hash64(string));
             }
+            case INCLUDE:
+            {
+                String filepath = args.arg(1).checkstring().toString();
+                LuaScript luaInstance = library.server.world.luaInstance;
+                
+                LuaTable includeTable;
+                if (luaInstance.globals.get("__LIME_INCLUDE__").isnil())
+                {
+                    includeTable = LuaTable.tableOf();
+                    luaInstance.globals.set("__LIME_INCLUDE__", includeTable);
+                }
+                else includeTable = luaInstance.globals.get("__LIME_INCLUDE__").checktable();
+                
+                if (includeTable.get(filepath).isnil())
+                {
+                    try
+                    {
+                        luaInstance.load(new File(OsHelper.JARPATH + "script/include/" + filepath + ".lua"));
+                    }
+                    catch(IOException e)
+                    {
+                        Lime.LOGGER.C("Failed to include Lua file " + OsHelper.JARPATH + "script/include/" + filepath + ".lua");
+                        Lime.LOGGER.log(e);
+                        Lime.forceExit(e);
+                    }
+                    
+                    includeTable.set(filepath, LuaValue.valueOf(true));
+                }
+                
+                break;
+            }
             }
             return LuaValue.NONE;
         }
@@ -64,7 +102,8 @@ public class UtilFunctions
     private static enum FuncData
     {
         HASH32(1, true, "hash32"),
-        HASH64(1, true, "hash64");
+        HASH64(1, true, "hash64"),
+        INCLUDE(1, true, "include");
         
         public int argc;
         public boolean argcexact;
