@@ -1,6 +1,9 @@
 package net.lodoma.lime.client.start;
 
 import java.io.File;
+import java.lang.management.ManagementFactory;
+
+import com.sun.management.OperatingSystemMXBean;
 
 import net.lodoma.lime.Lime;
 import net.lodoma.lime.client.stage.StageManager;
@@ -54,7 +57,7 @@ public class VisualInstance
 
         Timer timer = new Timer();
 
-        CleanText[] debugLines = new CleanText[2];
+        CleanText[] debugLines = new CleanText[3];
         for (int i = 0; i < debugLines.length; i++)
         	debugLines[i] = new CleanText(new Vector2(0.0f, 0.96f - i * 0.04f), 0.04f, "", CleanUI.FOCUS_TEXT_COLOR, TrueTypeFont.ALIGN_LEFT);
         
@@ -62,6 +65,10 @@ public class VisualInstance
         double fpsSeconds = 0.0f;
         int frames = 0;
         int fps = 0;
+        
+        double maxCpuLoad = -1.0f;
+        double cpuLoadAver = -1.0f;
+        int cpuLoadAverCnt = 0;
         
         while(!Window.closeRequested)
         {
@@ -93,8 +100,22 @@ public class VisualInstance
                     System.gc();
                 }
                 
+                OperatingSystemMXBean osBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
+                double cpuLoad = osBean.getProcessCpuLoad();
+                if (cpuLoad > maxCpuLoad)
+                    maxCpuLoad = cpuLoad;
+                
+                cpuLoadAver = (cpuLoadAver * cpuLoadAverCnt + cpuLoad) / (cpuLoadAverCnt + 1);
+                cpuLoadAverCnt++;
+
+                String cpuStr = String.format("%.2f", cpuLoadAver);
+                String maxStr = String.format("%.2f", maxCpuLoad);
+                String arch = osBean.getArch();
+                int pcnt = osBean.getAvailableProcessors();
+                
                 debugLines[0].text = "fps: " + fps;
-                debugLines[1].text = "memory: " + allocatedMemory + "/" + maxMemory + " MB, " + usage + "%";
+                debugLines[1].text = "cpu: " + cpuStr + ", max: " + maxStr + ", arch: " + arch + ", pcnt: " + pcnt;
+                debugLines[2].text = "memory: " + allocatedMemory + "/" + maxMemory + " MB, " + usage + "%";
                 
                 for (int i = 0; i < debugLines.length; i++)
                 	debugLines[i].render();
@@ -112,7 +133,11 @@ public class VisualInstance
                     fpsSeconds -= 1.0;
                     fps = frames;
                     frames = 0;
+                    maxCpuLoad = -1.0f;
                 }
+                
+                if (cpuLoadAverCnt >= 200)
+                    cpuLoadAverCnt = 0;
             }
         }
     }
