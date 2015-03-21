@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import net.lodoma.lime.Lime;
+import net.lodoma.lime.logger.LogLevel;
 import net.lodoma.lime.script.LuaScript;
 import net.lodoma.lime.util.HashHelper;
 import net.lodoma.lime.util.OsHelper;
@@ -29,6 +30,10 @@ public class UtilFunctions
         
         for (FuncData func : FuncData.values())
             new LimeFunc(func).addToLibrary();
+        
+        LogLevel[] levels = LogLevel.values();
+        for (LogLevel level : levels)
+            library.table.set("LOG_" + level.name(), LuaValue.valueOf(level.ordinal()));
     }
     
     private class LimeFunc extends VarArgFunction
@@ -94,6 +99,19 @@ public class UtilFunctions
                 
                 break;
             }
+            case LOG:
+            {
+                int level = args.arg(1).checkint();
+                String message = args.arg(2).checkstring().tojstring();
+                
+                Lime.LOGGER.log(LogLevel.values()[level], message);
+                break;
+            }
+            case CRASH:
+            {
+                Lime.forceExit(null);
+                break;
+            }
             }
             return LuaValue.NONE;
         }
@@ -103,7 +121,9 @@ public class UtilFunctions
     {
         HASH32(1, true, "hash32"),
         HASH64(1, true, "hash64"),
-        INCLUDE(1, true, "include");
+        INCLUDE(1, true, "include"),
+        LOG(2, true, "log"),
+        CRASH(0, true, "crash");
         
         public int argc;
         public boolean argcexact;
