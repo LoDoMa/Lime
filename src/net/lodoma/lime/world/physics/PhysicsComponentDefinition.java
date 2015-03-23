@@ -2,6 +2,7 @@ package net.lodoma.lime.world.physics;
 
 import net.lodoma.lime.util.Vector2;
 
+import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.FixtureDef;
 
@@ -17,7 +18,7 @@ public class PhysicsComponentDefinition
     public float restitution;
     
     public BodyDef engineBodyDefinition;
-    public FixtureDef engineFixtureDefinition;
+    public FixtureDef[] engineFixtureDefinitions;
     
     public void validate() throws InvalidPhysicsComponentException
     {
@@ -39,10 +40,16 @@ public class PhysicsComponentDefinition
         engineBodyDefinition.angle = angle;
         engineBodyDefinition.type = type.engineType;
         
-        engineFixtureDefinition = new FixtureDef();
-        engineFixtureDefinition.shape = shape.newEngineInstance();
-        engineFixtureDefinition.density = density;
-        engineFixtureDefinition.friction = friction;
-        engineFixtureDefinition.restitution = restitution;
+        Shape[] engineShapes = shape.newEngineInstances();
+        engineFixtureDefinitions = new FixtureDef[engineShapes.length];
+        
+        for (int i = 0; i < engineFixtureDefinitions.length; i++)
+        {
+            engineFixtureDefinitions[i] = new FixtureDef();
+            engineFixtureDefinitions[i].shape = engineShapes[i];
+            engineFixtureDefinitions[i].density = density;
+            engineFixtureDefinitions[i].friction = friction;
+            engineFixtureDefinitions[i].restitution = restitution;
+        }
     }
 }

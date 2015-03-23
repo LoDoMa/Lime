@@ -43,7 +43,7 @@ public class PhysicsComponentSnapshot implements Identifiable<Integer>
         case CIRCLE:
             ((PhysicsComponentCircleShape) compoDefinition.shape).radius = radius;
             break;
-        case POLYGON:
+        case POLYGON: case TRIANGLE_GROUP:
             ((PhysicsComponentPolygonShape) compoDefinition.shape).vertices = vertices;
             break;
         }
@@ -132,6 +132,41 @@ public class PhysicsComponentSnapshot implements Identifiable<Integer>
             {
                 GL11.glVertex2f(vertices[i].x, vertices[i].y);
                 GL11.glVertex2f(vertices[(i + 1) % vertices.length].x, vertices[(i + 1) % vertices.length].y);
+            }
+          
+            GL11.glEnd();
+            GL11.glLineWidth(1.0f);
+            
+            GL11.glPopMatrix();
+            break;
+        }
+        case TRIANGLE_GROUP:
+        {
+            GL11.glPushMatrix();
+            GL11.glTranslatef(position.x, position.y, 0.0f);
+            GL11.glRotatef((float) Math.toDegrees(angle), 0.0f, 0.0f, 1.0f);
+
+            Texture.NO_TEXTURE.bind();
+
+            GL11.glColor3f(0.7f, 0.7f, 0.7f);
+            GL11.glBegin(GL11.GL_TRIANGLES);
+
+            for (int i = 0; i < vertices.length; i++)
+                GL11.glVertex2f(vertices[i].x, vertices[i].y);
+          
+            GL11.glEnd();
+
+            GL11.glColor3f(0.3f, 0.3f, 0.3f);
+            GL11.glBegin(GL11.GL_LINES);
+
+            for (int i = 0; i < vertices.length / 3; i++)
+            {
+                GL11.glVertex2f(vertices[i * 3 + 0].x, vertices[i * 3 + 0].y);
+                GL11.glVertex2f(vertices[i * 3 + 1].x, vertices[i * 3 + 1].y);
+                GL11.glVertex2f(vertices[i * 3 + 1].x, vertices[i * 3 + 1].y);
+                GL11.glVertex2f(vertices[i * 3 + 2].x, vertices[i * 3 + 2].y);
+                GL11.glVertex2f(vertices[i * 3 + 2].x, vertices[i * 3 + 2].y);
+                GL11.glVertex2f(vertices[i * 3 + 0].x, vertices[i * 3 + 0].y);
             }
           
             GL11.glEnd();

@@ -11,6 +11,8 @@ import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.Fixture;
+import org.jbox2d.dynamics.FixtureDef;
+
 import net.lodoma.lime.util.Identifiable;
 import net.lodoma.lime.util.Vector2;
 
@@ -21,7 +23,7 @@ public class PhysicsComponent implements Identifiable<Integer>
     public PhysicsWorld world;
     
     public Body engineBody;
-    public Fixture engineFixture;
+    public Fixture[] engineFixtures;
     
     /* A set of related contact listeners. These are destroyed when the component is destroyed.
        It's a set so that elements can be quickly removed. */
@@ -32,7 +34,11 @@ public class PhysicsComponent implements Identifiable<Integer>
         this.world = world;
         
         engineBody = world.engineWorld.createBody(definition.engineBodyDefinition);
-        engineFixture = engineBody.createFixture(definition.engineFixtureDefinition);
+        
+        FixtureDef fixtureDefs[] = definition.engineFixtureDefinitions;
+        engineFixtures = new Fixture[fixtureDefs.length];
+        for (int i = 0; i < fixtureDefs.length; i++)
+            engineFixtures[i] = engineBody.createFixture(fixtureDefs[i]);
         
         // UserData for PhysicsComponents is the PhysicsComponent itself.
         engineBody.m_userData = this;
@@ -64,7 +70,8 @@ public class PhysicsComponent implements Identifiable<Integer>
             contactListener.destroy();
         }
         
-        engineBody.destroyFixture(engineFixture);
+        for (int i = 0; i < engineFixtures.length; i++)
+            engineBody.destroyFixture(engineFixtures[i]);
         world.engineWorld.destroyBody(engineBody);
     }
     
@@ -81,24 +88,35 @@ public class PhysicsComponent implements Identifiable<Integer>
         else if (engineBody.m_type == BodyType.STATIC)
             snapshot.type = PhysicsComponentType.STATIC;
         
-        if (engineFixture.m_shape.m_type == ShapeType.CIRCLE)
+        if (engineFixtures[0].m_shape.m_type == ShapeType.CIRCLE)
             snapshot.shapeType = PhysicsComponentShapeType.CIRCLE;
-        else if (engineFixture.m_shape.m_type == ShapeType.POLYGON)
-            snapshot.shapeType = PhysicsComponentShapeType.POLYGON;
+        else if (engineFixtures[0].m_shape.m_type == ShapeType.POLYGON)
+            if (engineFixtures.length == 1)
+                snapshot.shapeType = PhysicsComponentShapeType.POLYGON;
+            else
+                snapshot.shapeType = PhysicsComponentShapeType.TRIANGLE_GROUP;
         
         switch (snapshot.shapeType)
         {
         case CIRCLE:
         {
-            snapshot.radius = ((CircleShape) engineFixture.m_shape).m_radius;
+            snapshot.radius = ((CircleShape) engineFixtures[0].m_shape).m_radius;
             break;
         }
         case POLYGON:
         {
-            Vec2[] engineVertices = ((PolygonShape) engineFixture.m_shape).m_vertices;
-            snapshot.vertices = new Vector2[((PolygonShape) engineFixture.m_shape).m_count];
+            Vec2[] engineVertices = ((PolygonShape) engineFixtures[0].m_shape).m_vertices;
+            snapshot.vertices = new Vector2[((PolygonShape) engineFixtures[0].m_shape).m_count];
             for (int i = 0; i < snapshot.vertices.length; i++)
                 snapshot.vertices[i] = new Vector2(engineVertices[i].x, engineVertices[i].y);
+            break;
+        }
+        case TRIANGLE_GROUP:
+        {
+            snapshot.vertices = new Vector2[engineFixtures.length * 3];
+            for (int i = 0; i < engineFixtures.length; i++)
+                for (int j = 0; j < 3; j++)
+                    snapshot.vertices[i * 3 + j] = new Vector2(((PolygonShape) engineFixtures[i].m_shape).m_vertices[j]);
             break;
         }
         }

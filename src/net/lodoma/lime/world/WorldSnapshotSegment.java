@@ -90,7 +90,7 @@ public class WorldSnapshotSegment implements SnapshotData
                     if (currentCompo.radius != previousCompo.radius)
                         modified |= MODIFIED_SHAPE;
                     break;
-                case POLYGON:
+                case POLYGON: case TRIANGLE_GROUP:
                     if (!Arrays.equals(currentCompo.vertices, previousCompo.vertices))
                         modified |= MODIFIED_SHAPE;
                     break;
@@ -253,6 +253,16 @@ public class WorldSnapshotSegment implements SnapshotData
                         modifications.data.vertices[j] = new Vector2(vertexX, vertexY);
                     }
                     break;
+                case TRIANGLE_GROUP:
+                    int triangleN = in.readInt();
+                    modifications.data.vertices = new Vector2[triangleN * 3];
+                    for (int j = 0; j < triangleN * 3; j++)
+                    {
+                        float vertexX = in.readFloat();
+                        float vertexY = in.readFloat();
+                        modifications.data.vertices[j] = new Vector2(vertexX, vertexY);
+                    }
+                    break;
                 }
             }
             
@@ -398,6 +408,14 @@ public class WorldSnapshotSegment implements SnapshotData
                     break;
                 case POLYGON:
                     user.outputStream.writeInt(compo.vertices.length);
+                    for (int i = 0; i < compo.vertices.length; i++)
+                    {
+                        user.outputStream.writeFloat(compo.vertices[i].x);
+                        user.outputStream.writeFloat(compo.vertices[i].y);
+                    }
+                    break;
+                case TRIANGLE_GROUP:
+                    user.outputStream.writeInt(compo.vertices.length / 3);
                     for (int i = 0; i < compo.vertices.length; i++)
                     {
                         user.outputStream.writeFloat(compo.vertices[i].x);

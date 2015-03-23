@@ -5,7 +5,8 @@ import java.util.function.Supplier;
 public enum PhysicsComponentShapeType
 {
     CIRCLE(() -> new PhysicsComponentCircleShape()),
-    POLYGON(() -> new PhysicsComponentPolygonShape());
+    POLYGON(() -> new PhysicsComponentPolygonShape()),
+    TRIANGLE_GROUP(() -> new PhysicsComponentTriangleGroupShape());
     
     public Supplier<PhysicsComponentShape> factory;
     

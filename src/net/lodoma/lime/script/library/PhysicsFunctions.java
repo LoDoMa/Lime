@@ -11,6 +11,7 @@ import net.lodoma.lime.world.physics.PhysicsComponentCircleShape;
 import net.lodoma.lime.world.physics.PhysicsComponentPolygonShape;
 import net.lodoma.lime.world.physics.PhysicsComponentDefinition;
 import net.lodoma.lime.world.physics.PhysicsComponentShape;
+import net.lodoma.lime.world.physics.PhysicsComponentTriangleGroupShape;
 import net.lodoma.lime.world.physics.PhysicsComponentType;
 import net.lodoma.lime.world.physics.PhysicsJoint;
 import net.lodoma.lime.world.physics.PhysicsJointDefinition;
@@ -163,6 +164,9 @@ public class PhysicsFunctions
                 case "polygon":
                     shape = new PhysicsComponentPolygonShape();
                     break;
+                case "triangle-group":
+                    shape = new PhysicsComponentTriangleGroupShape();
+                    break;
                 default:
                     throw new LuaError("invalid physics component shape typename");
                 }
@@ -202,6 +206,32 @@ public class PhysicsFunctions
                 shape.vertices = new Vector2[args.narg() / 2];
                 for (int i = 0; i < args.narg() / 2; i++)
                     shape.vertices[i] = new Vector2(args.arg(i * 2 + 1).checknumber().tofloat(), args.arg(i * 2 + 2).checknumber().tofloat());
+                break;
+            }
+            case ADD_SHAPE_TRIANGLE:
+            {
+                Vector2[] triangle = new Vector2[3];
+                for (int i = 0; i < 3; i++)
+                    triangle[i] = new Vector2(args.checknumber(i * 2 + 1).tofloat(), args.checknumber(i * 2 + 2).tofloat());
+                
+                float ccw = triangle[0].x * (triangle[1].y - triangle[2].y)
+                          + triangle[1].x * (triangle[2].y - triangle[0].y)
+                          + triangle[2].x * (triangle[0].y - triangle[1].y);
+                if (ccw < 0)
+                {
+                    Vector2 swap = triangle[0];
+                    triangle[0] = triangle[2];
+                    triangle[2] = swap;
+                }
+
+                if (compoDefinition == null)
+                    throw new LuaError("modifying nonexistent body component");
+                if (compoDefinition.shape == null)
+                    throw new LuaError("adding triangle to nonexistent shape");
+                if (!(compoDefinition.shape instanceof PhysicsComponentTriangleGroupShape))
+                    throw new LuaError("adding triangle to non-group shape");
+                
+                ((PhysicsComponentTriangleGroupShape) compoDefinition.shape).triangles.add(triangle);
                 break;
             }
             case SET_COMPONENT_DENSITY:
@@ -608,6 +638,7 @@ public class PhysicsFunctions
         SET_SHAPE_TYPE(1, true, "setShapeType"),
         SET_SHAPE_RADIUS(1, true, "setShapeRadius"),
         SET_SHAPE_VERTICES(0, false, "setShapeVertices"),
+        ADD_SHAPE_TRIANGLE(6, true, "addShapeTriangle"),
         SET_COMPONENT_DENSITY(1, true, "setComponentDensity"),
         SET_COMPONENT_FRICTION(1, true, "setComponentFriction"),
         SET_COMPONENT_RESTITUTION(1, true, "setComponentRestitution"),

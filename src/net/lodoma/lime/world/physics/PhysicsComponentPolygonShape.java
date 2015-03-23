@@ -21,13 +21,13 @@ public class PhysicsComponentPolygonShape extends PhysicsComponentShape
     }
     
     @Override
-    public Shape newEngineInstance()
+    public Shape[] newEngineInstances()
     {
         PolygonShape shape = new PolygonShape();
         Vec2[] engineVertices = new Vec2[vertices.length];
         for (int i = 0; i < vertices.length; i++)
             engineVertices[i] = new Vec2(vertices[i].x, vertices[i].y);
         shape.set(engineVertices, engineVertices.length);
-        return shape;
+        return new Shape[] { shape };
     }
 }

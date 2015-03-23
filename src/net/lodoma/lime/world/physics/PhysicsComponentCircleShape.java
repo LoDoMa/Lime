@@ -14,10 +14,10 @@ public class PhysicsComponentCircleShape extends PhysicsComponentShape
     }
     
     @Override
-    public Shape newEngineInstance()
+    public Shape[] newEngineInstances()
     {
         CircleShape shape = new CircleShape();
         shape.m_radius = radius;
-        return shape;
+        return new Shape[] { shape };
     }
 }
