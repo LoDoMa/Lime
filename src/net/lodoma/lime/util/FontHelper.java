@@ -6,6 +6,8 @@ import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
 
+import net.lodoma.lime.Lime;
+
 public class FontHelper
 {
     public static String registerFont(File fontFile)
@@ -15,7 +17,9 @@ public class FontHelper
             Font font = Font.createFont(Font.TRUETYPE_FONT, fontFile);
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(font);
-            return font.getName();
+            String name = font.getName();
+            Lime.LOGGER.F("Registered font \"" + name + "\"");
+            return name;
         }
         catch(FontFormatException | IOException e)
         {

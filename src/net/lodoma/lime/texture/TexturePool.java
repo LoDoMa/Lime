@@ -16,7 +16,7 @@ public class TexturePool
     {
         try
         {
-            mappedTextures.put(name, new Texture(new FileInputStream(OsHelper.JARPATH + "res/" + name + ".png")));
+            mappedTextures.put(name, new Texture(new FileInputStream(OsHelper.JARPATH + "res/textures/" + name + ".png")));
             Lime.LOGGER.I("Created texture " + name);
         }
         catch(IOException e)

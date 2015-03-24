@@ -16,7 +16,7 @@ public class ClientStart
             if (arg.equals("/F"))
                 Lime.LOGGER.setMinimumLevel(LogLevel.FINEST);
         
-        String nativePath = OsHelper.JARPATH + "native/";
+        String nativePath = OsHelper.JARPATH + "libs/native/";
              if (OsHelper.isWindows()) nativePath += "windows/";
         else if (OsHelper.isMac())     nativePath += "macosx/";
         else if (OsHelper.isLinux())   nativePath += "linux/";

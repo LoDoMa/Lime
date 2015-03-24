@@ -30,16 +30,16 @@ public class Program
     {
         Lime.LOGGER.D("About to create shaders");
         
-        copyVS = new Shader(new File(OsHelper.JARPATH + "shader/copy.vs"), ShaderType.VERTEX);
-        copyFS = new Shader(new File(OsHelper.JARPATH + "shader/copy.fs"), ShaderType.FRAGMENT);
-        basicVS = new Shader(new File(OsHelper.JARPATH + "shader/Basic.vs"), ShaderType.VERTEX);
-        basicFS = new Shader(new File(OsHelper.JARPATH + "shader/Basic.fs"), ShaderType.FRAGMENT);
-        shadowMapVS = new Shader(new File(OsHelper.JARPATH + "shader/ShadowMap.vs"), ShaderType.VERTEX);
-        shadowMapFS = new Shader(new File(OsHelper.JARPATH + "shader/ShadowMap.fs"), ShaderType.FRAGMENT);
-        renderLightVS = new Shader(new File(OsHelper.JARPATH + "shader/RenderLight.vs"), ShaderType.VERTEX);
-        renderLightFS = new Shader(new File(OsHelper.JARPATH + "shader/RenderLight.fs"), ShaderType.FRAGMENT);
-        brightnessVS = new Shader(new File(OsHelper.JARPATH + "shader/Brightness.vs"), ShaderType.VERTEX);
-        brightnessFS = new Shader(new File(OsHelper.JARPATH + "shader/Brightness.fs"), ShaderType.FRAGMENT);
+        copyVS = new Shader(new File(OsHelper.JARPATH + "res/shader/copy.vs"), ShaderType.VERTEX);
+        copyFS = new Shader(new File(OsHelper.JARPATH + "res/shader/copy.fs"), ShaderType.FRAGMENT);
+        basicVS = new Shader(new File(OsHelper.JARPATH + "res/shader/Basic.vs"), ShaderType.VERTEX);
+        basicFS = new Shader(new File(OsHelper.JARPATH + "res/shader/Basic.fs"), ShaderType.FRAGMENT);
+        shadowMapVS = new Shader(new File(OsHelper.JARPATH + "res/shader/ShadowMap.vs"), ShaderType.VERTEX);
+        shadowMapFS = new Shader(new File(OsHelper.JARPATH + "res/shader/ShadowMap.fs"), ShaderType.FRAGMENT);
+        renderLightVS = new Shader(new File(OsHelper.JARPATH + "res/shader/RenderLight.vs"), ShaderType.VERTEX);
+        renderLightFS = new Shader(new File(OsHelper.JARPATH + "res/shader/RenderLight.fs"), ShaderType.FRAGMENT);
+        brightnessVS = new Shader(new File(OsHelper.JARPATH + "res/shader/Brightness.vs"), ShaderType.VERTEX);
+        brightnessFS = new Shader(new File(OsHelper.JARPATH + "res/shader/Brightness.fs"), ShaderType.FRAGMENT);
 
         Lime.LOGGER.D("About to programs shaders");
         

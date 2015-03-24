@@ -1,7 +1,5 @@
 package net.lodoma.lime.gui.clean;
 
-import java.awt.Font;
-
 import net.lodoma.lime.gui.UIFont;
 import net.lodoma.lime.gui.UIText;
 import net.lodoma.lime.util.Color;
@@ -19,7 +17,7 @@ public class CleanText extends UIText
     
     public CleanText(Vector2 position, Vector2 dimensions, String text, Color color, int alignment)
     {
-        super(text, new UIFont("My type of font", 42, Font.PLAIN, alignment, TrueTypeFont.ALIGN_CENTER), new Vector2(dimensions.y * 0.6f, dimensions.y * 0.75f));
+        super(text, new UIFont("FreeSans", alignment, TrueTypeFont.ALIGN_CENTER), new Vector2(dimensions.y * 0.6f, dimensions.y * 0.75f));
         
         getLocalPosition().set(position);
         getLocalDimensions().set(dimensions);
@@ -28,7 +26,7 @@ public class CleanText extends UIText
     
     public CleanText(Vector2 position, float height, String text, Color color, int alignment)
     {
-        this(position, height, text, color, alignment, new UIFont("My type of font", 42, Font.PLAIN, alignment, TrueTypeFont.ALIGN_CENTER));
+        this(position, height, text, color, alignment, new UIFont("FreeSans", alignment, TrueTypeFont.ALIGN_CENTER));
     }
     
     private CleanText(Vector2 position, float height, String text, Color color, int alignement, UIFont font)

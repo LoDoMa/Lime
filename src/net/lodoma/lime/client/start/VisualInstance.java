@@ -45,8 +45,19 @@ public class VisualInstance
             Lime.LOGGER.log(e);
             Lime.forceExit(e);
         }
-        
-        FontHelper.registerFont(new File(OsHelper.JARPATH + "fonts/mytype.ttf"));
+
+        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeMono.otf"));
+        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeMonoBold.otf"));
+        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeMonoBoldOblique.otf"));
+        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeMonoOblique.otf"));
+        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeSans.otf"));
+        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeSansBold.otf"));
+        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeSansBoldOblique.otf"));
+        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeSansOblique.otf"));
+        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeSerif.otf"));
+        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeSerifBold.otf"));
+        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeSerifBoldItalic.otf"));
+        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeSerifItalic.otf"));
         
         stageManager = new StageManager();
     }
