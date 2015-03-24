@@ -2,6 +2,8 @@ package net.lodoma.lime.shader;
 
 import java.io.File;
 import java.nio.FloatBuffer;
+import java.util.HashMap;
+import java.util.Map;
 
 import net.lodoma.lime.Lime;
 import net.lodoma.lime.util.OsHelper;
@@ -26,39 +28,29 @@ public class Program
     
     public static void createAll()
     {
-        Lime.LOGGER.F("About to create shaders and programs");
-
+        Lime.LOGGER.D("About to create shaders");
+        
         copyVS = new Shader(new File(OsHelper.JARPATH + "shader/copy.vs"), ShaderType.VERTEX);
         copyFS = new Shader(new File(OsHelper.JARPATH + "shader/copy.fs"), ShaderType.FRAGMENT);
-        copyProgram = new Program(copyVS, copyFS);
-
         basicVS = new Shader(new File(OsHelper.JARPATH + "shader/Basic.vs"), ShaderType.VERTEX);
         basicFS = new Shader(new File(OsHelper.JARPATH + "shader/Basic.fs"), ShaderType.FRAGMENT);
-        basicProgram = new Program(basicVS, basicFS);
-        
         shadowMapVS = new Shader(new File(OsHelper.JARPATH + "shader/ShadowMap.vs"), ShaderType.VERTEX);
         shadowMapFS = new Shader(new File(OsHelper.JARPATH + "shader/ShadowMap.fs"), ShaderType.FRAGMENT);
-        shadowMapProgram = new Program(shadowMapVS, shadowMapFS);
-        
         renderLightVS = new Shader(new File(OsHelper.JARPATH + "shader/RenderLight.vs"), ShaderType.VERTEX);
         renderLightFS = new Shader(new File(OsHelper.JARPATH + "shader/RenderLight.fs"), ShaderType.FRAGMENT);
-        renderLightProgram = new Program(renderLightVS, renderLightFS);
-        
         brightnessVS = new Shader(new File(OsHelper.JARPATH + "shader/Brightness.vs"), ShaderType.VERTEX);
         brightnessFS = new Shader(new File(OsHelper.JARPATH + "shader/Brightness.fs"), ShaderType.FRAGMENT);
-        brightnessProgram = new Program(brightnessVS, brightnessFS);
-    }
-    
-    public static void destroyAll()
-    {
-        Lime.LOGGER.F("About to delete programs");
-        copyProgram.deleteProgram();
-        basicProgram.deleteProgram();
-        shadowMapProgram.deleteProgram();
-        renderLightProgram.deleteProgram();
-        brightnessProgram.deleteProgram();
 
-        Lime.LOGGER.F("About to delete shaders");
+        Lime.LOGGER.D("About to programs shaders");
+        
+        copyProgram = new Program(copyVS, copyFS);
+        basicProgram = new Program(basicVS, basicFS);
+        shadowMapProgram = new Program(shadowMapVS, shadowMapFS);
+        renderLightProgram = new Program(renderLightVS, renderLightFS);
+        brightnessProgram = new Program(brightnessVS, brightnessFS);
+
+        Lime.LOGGER.D("About to delete shader objects");
+
         copyVS.deleteShader();
         copyFS.deleteShader();
         basicVS.deleteShader();
@@ -71,7 +63,19 @@ public class Program
         brightnessFS.deleteShader();
     }
     
+    public static void destroyAll()
+    {
+        Lime.LOGGER.D("About to delete programs");
+        
+        copyProgram.deleteProgram();
+        basicProgram.deleteProgram();
+        shadowMapProgram.deleteProgram();
+        renderLightProgram.deleteProgram();
+        brightnessProgram.deleteProgram();
+    }
+    
     private int program;
+    private Map<String, Integer> uniformLocations;
     
     public Program(Shader... shaders)
     {
@@ -81,12 +85,14 @@ public class Program
             attachShader(shader);
         linkProgram();
         validateProgram();
+        
+        uniformLocations = new HashMap<String, Integer>();
     }
     
     private void createProgram()
     {
         program = GL20.glCreateProgram();
-        Lime.LOGGER.I("Created program " + program);
+        Lime.LOGGER.F("Created program " + program);
     }
     
     private void attachShader(Shader shader)
@@ -114,10 +120,12 @@ public class Program
     
     public void deleteProgram()
     {
-        Lime.LOGGER.I("Deleting program " + program);
+        Lime.LOGGER.F("Deleting program " + program);
         GL20.glDeleteProgram(program);
     }
     
+    // NOTE: This method is slow and really doesn't have a good use. Deprecated for now.
+    @Deprecated
     public boolean hasUniform(String uniformName)
     {
         return GL20.glGetUniformLocation(program, uniformName) != -1;
@@ -125,9 +133,15 @@ public class Program
     
     public void setUniform(String uniformName, UniformType type, Object... args)
     {
-        int location = GL20.glGetUniformLocation(program, uniformName);
-        if(location == -1)
-            return;
+        Integer location = uniformLocations.get(uniformName);
+        if (location == null)
+        {
+            location = GL20.glGetUniformLocation(program, uniformName);
+            if(location == -1)
+                return;
+            uniformLocations.put(uniformName, location);
+        }
+        
         switch(type)
         {
         case INT1:

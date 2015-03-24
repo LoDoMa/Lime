@@ -20,7 +20,7 @@ public class Shader
         this.type = type;
         
         createShader();
-        Lime.LOGGER.I("Created shader " + shader + "; type = " + type.name() + ", file = " + sourceFile.getPath());
+        Lime.LOGGER.F("Created shader " + shader + "; type = " + type.name() + ", file = " + sourceFile.getPath());
 
         String source = loadSource(sourceFile);
         setShaderSource(source);
@@ -75,6 +75,6 @@ public class Shader
     public void deleteShader()
     {
         GL20.glDeleteShader(shader);
-        Lime.LOGGER.I("Deleted shader " + shader);
+        Lime.LOGGER.F("Deleted shader " + shader);
     }
 }
