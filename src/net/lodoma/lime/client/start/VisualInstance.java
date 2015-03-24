@@ -107,7 +107,7 @@ public class VisualInstance
                 double usage = (long) (allocatedMemory / (double) maxMemory * 1000) / 10.0;
                 if (usage > 33)
                 {
-                    Lime.LOGGER.I("Memory usage over 33%, suggesting GC");
+                    Lime.LOGGER.D("Memory usage over 33%, suggesting GC");
                     System.gc();
                 }
                 

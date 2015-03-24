@@ -14,4 +14,11 @@ public class LightData
         position = new Vector2(0.0f, 0.0f);
         color = new Color(0.0f, 0.0f, 0.0f, 0.0f);
     }
+    
+    public LightData(LightData data)
+    {
+        position = new Vector2(data.position);
+        radius = data.radius;
+        color = new Color(data.color);
+    }
 }

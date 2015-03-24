@@ -63,7 +63,21 @@ public class WorldRenderer
     {
         brightnessMap.bind();
         brightnessMap.clear();
+        
+        Program.basicProgram.useProgram();
+        Program.basicProgram.setUniform("uTexture", UniformType.INT1, 0);
+        Texture.NO_TEXTURE.bind(0);
 
+        world.lightAmbientColor.setGL();
+        
+        glBegin(GL_QUADS);
+        glTexCoord2f(0.0f, 0.0f); glVertex2f(0.0f, 0.0f);
+        glTexCoord2f(1.0f, 0.0f); glVertex2f(1.0f, 0.0f);
+        glTexCoord2f(1.0f, 1.0f); glVertex2f(1.0f, 1.0f);
+        glTexCoord2f(0.0f, 1.0f); glVertex2f(0.0f, 1.0f);
+        glEnd();
+        
+        
         glBlendFunc(GL_SRC_ALPHA, GL_ONE);
         
         synchronized (world.lock)
@@ -78,7 +92,20 @@ public class WorldRenderer
     {
         lightMap.bind();
         lightMap.clear();
+        
+        Program.basicProgram.useProgram();
+        Program.basicProgram.setUniform("uTexture", UniformType.INT1, 0);
+        Texture.NO_TEXTURE.bind(0);
 
+        world.lightAmbientColor.setGL();
+        
+        glBegin(GL_QUADS);
+        glTexCoord2f(0.0f, 0.0f); glVertex2f(0.0f, 0.0f);
+        glTexCoord2f(1.0f, 0.0f); glVertex2f(1.0f, 0.0f);
+        glTexCoord2f(1.0f, 1.0f); glVertex2f(1.0f, 1.0f);
+        glTexCoord2f(0.0f, 1.0f); glVertex2f(0.0f, 1.0f);
+        glEnd();
+        
         glBlendFunc(GL_SRC_ALPHA, GL_ONE);
         
         synchronized (world.lock)

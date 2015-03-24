@@ -83,6 +83,8 @@ function Lime_Init()
 			addBox(7 + x * 0.4 + y * 0.2, 7 + y * 0.4, 0.4, 0.4)
 		end
 	end
+
+	lime.setAmbientLight(0.01, 0.0, 0.1)
 end
 
 function Lime_Update(timeDelta)

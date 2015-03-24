@@ -87,6 +87,17 @@ public class LightFunctions
                 color.a = colorA;
                 break;
             }
+            case SET_AMBIENT_LIGHT:
+            {
+                float ambientR = args.arg(1).checknumber().tofloat();
+                float ambientG = args.arg(2).checknumber().tofloat();
+                float ambientB = args.arg(3).checknumber().tofloat();
+                world.lightAmbientColor.r = ambientR;
+                world.lightAmbientColor.g = ambientG;
+                world.lightAmbientColor.b = ambientB;
+                world.lightAmbientColor.a = 1.0f;
+                break;
+            }
             }
             return LuaValue.NONE;
         }
@@ -97,7 +108,8 @@ public class LightFunctions
         NEW_LIGHT(0, true, "newLight"),
         SET_POSITION(3, true, "setLightPosition"),
         SET_RADIUS(2, true, "setLightRadius"),
-        SET_COLOR(5, true, "setLightColor");
+        SET_COLOR(5, true, "setLightColor"),
+        SET_AMBIENT_LIGHT(3, true, "setAmbientLight");
         
         public int argc;
         public boolean argcexact;

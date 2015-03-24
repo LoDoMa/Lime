@@ -27,6 +27,14 @@ public class Color
         this.a = a;
     }
     
+    public Color(Color other)
+    {
+        r = other.r;
+        g = other.g;
+        b = other.b;
+        a = other.a;
+    }
+    
     public void setGL()
     {
         setGL(1.0f, 1.0f);

@@ -24,6 +24,7 @@ import net.lodoma.lime.script.library.UtilFunctions;
 import net.lodoma.lime.script.library.WorldFunctions;
 import net.lodoma.lime.server.Server;
 import net.lodoma.lime.shader.light.Light;
+import net.lodoma.lime.util.Color;
 import net.lodoma.lime.util.IdentityPool;
 import net.lodoma.lime.util.OsHelper;
 import net.lodoma.lime.world.entity.Entity;
@@ -45,14 +46,15 @@ public class World
     public LuaFunction gamemodeUpdate;
     public LuaFunction gamemodeClean;
     
-    public Object lock = new Object();
-    public IdentityPool<Entity> entityPool;
-    public IdentityPool<PhysicsComponent> componentPool;
-    public IdentityPool<PhysicsComponentSnapshot> compoSnapshotPool;
-    public IdentityPool<PhysicsJoint> jointPool;
-    public List<PhysicsParticle> particleList;
-    public List<PhysicsParticleDefinition> particleDefinitionList;
-    public IdentityPool<Light> lightPool;
+    public final Object lock = new Object();
+    public final IdentityPool<Entity> entityPool;
+    public final IdentityPool<PhysicsComponent> componentPool;
+    public final IdentityPool<PhysicsComponentSnapshot> compoSnapshotPool;
+    public final IdentityPool<PhysicsJoint> jointPool;
+    public final List<PhysicsParticle> particleList;
+    public final List<PhysicsParticleDefinition> particleDefinitionList;
+    public final IdentityPool<Light> lightPool;
+    public final Color lightAmbientColor;
     
     public World()
     {
@@ -65,6 +67,7 @@ public class World
         particleList = new ArrayList<PhysicsParticle>();
         particleDefinitionList = new ArrayList<PhysicsParticleDefinition>();
         lightPool = new IdentityPool<Light>(false);
+        lightAmbientColor = new Color(0.0f, 0.0f, 0.0f);
     }
     
     public void clean()
@@ -227,6 +230,13 @@ public class World
             {
                 particleList.add(new PhysicsParticle(physicsDef, physicsWorld));
             }
+            
+            // Set ambient light
+
+            lightAmbientColor.r = segment.lightAmbientColor.r;
+            lightAmbientColor.g = segment.lightAmbientColor.g;
+            lightAmbientColor.b = segment.lightAmbientColor.b;
+            lightAmbientColor.a = segment.lightAmbientColor.a;
         }
     }
 }

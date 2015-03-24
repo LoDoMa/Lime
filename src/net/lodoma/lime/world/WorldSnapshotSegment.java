@@ -43,6 +43,8 @@ public class WorldSnapshotSegment implements SnapshotData
     
     public PhysicsParticleDefinition[] createdParticles;
     
+    public Color lightAmbientColor;
+    
     public WorldSnapshot full;
     
     public WorldSnapshotSegment()
@@ -163,6 +165,8 @@ public class WorldSnapshotSegment implements SnapshotData
         
         for (int i = 0; i < createdParticles.length; i++)
             createdParticles[i] = current.particleData.get(i);
+        
+        lightAmbientColor = current.lightAmbientColor;
     }
     
     @Override
@@ -177,6 +181,12 @@ public class WorldSnapshotSegment implements SnapshotData
         client.worldRenderer.camera.translation.set(cameraPositionX, cameraPositionY);
         client.worldRenderer.camera.rotation = cameraRotation;
         client.worldRenderer.camera.scale.set(cameraScaleX, cameraScaleY);
+
+        float ambientR = in.readFloat();
+        float ambientG = in.readFloat();
+        float ambientB = in.readFloat();
+        float ambientA = in.readFloat();
+        lightAmbientColor = new Color(ambientR, ambientG, ambientB, ambientA);
 
         int createdComponentsAmount = in.readInt();
         int removedComponentsAmount = in.readInt();
@@ -370,6 +380,11 @@ public class WorldSnapshotSegment implements SnapshotData
         user.outputStream.writeFloat(user.camera.rotation);
         user.outputStream.writeFloat(user.camera.scale.x);
         user.outputStream.writeFloat(user.camera.scale.y);
+
+        user.outputStream.writeFloat(lightAmbientColor.r);
+        user.outputStream.writeFloat(lightAmbientColor.g);
+        user.outputStream.writeFloat(lightAmbientColor.b);
+        user.outputStream.writeFloat(lightAmbientColor.a);
         
         user.outputStream.writeInt(createdComponents.length);
         user.outputStream.writeInt(removedComponents.length);
