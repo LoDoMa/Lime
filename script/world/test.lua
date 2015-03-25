@@ -91,6 +91,10 @@ function Lime_Update(timeDelta)
 
 end
 
+function Lime_PostUpdate()
+
+end
+
 function Lime_Clean()
 
 end

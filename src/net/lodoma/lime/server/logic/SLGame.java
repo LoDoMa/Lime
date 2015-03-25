@@ -71,6 +71,8 @@ public class SLGame extends ServerLogic
             server.world.updateGamemode(UPDATE_MAXTIME);
             server.world.updateEntities(UPDATE_MAXTIME);
             server.world.physicsWorld.update((float) UPDATE_MAXTIME);
+            server.world.postUpdateGamemode();
+            server.world.postUpdateEntities();
         }
         
         while (updateTime <= 0.0)

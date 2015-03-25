@@ -74,6 +74,10 @@ function Lime_Update(timeDelta)
 	if lime.getKeyPress(lime.KEY_W) then lime.applyLinearImpulseToCenter(0.0, 10.0) end
 	if lime.getKeyState(lime.KEY_A) then lime.applyForceToCenter(-80.0, 0.0) end
 	if lime.getKeyState(lime.KEY_D) then lime.applyForceToCenter(80.0, 0.0) end
+end
+
+function Lime_PostUpdate()
+	lime.selectComponent(bodyCompo)
 
 	local transX, transY = lime.getComponentPosition()
 	transX = transX - 16

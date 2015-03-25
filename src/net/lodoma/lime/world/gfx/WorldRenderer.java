@@ -50,11 +50,8 @@ public class WorldRenderer
         Program.basicProgram.setUniform("uTexture", UniformType.INT1, 0);
         Texture.NO_TEXTURE.bind(0);
         
-        synchronized (world.lock)
-        {
-            world.compoSnapshotPool.foreach((PhysicsComponentSnapshot compoSnapshot) -> compoSnapshot.debugRender());
-            world.particleList.forEach((PhysicsParticle particle) -> particle.debugRender());
-        }
+        world.compoSnapshotPool.foreach((PhysicsComponentSnapshot compoSnapshot) -> compoSnapshot.debugRender());
+        world.particleList.forEach((PhysicsParticle particle) -> particle.debugRender());
         
         occlusionMap.unbind();
     }
@@ -80,10 +77,7 @@ public class WorldRenderer
         
         glBlendFunc(GL_SRC_ALPHA, GL_ONE);
         
-        synchronized (world.lock)
-        {
-            world.lightPool.foreach((Light light) -> light.renderBrightness(brightnessMap, camera));
-        }
+        world.lightPool.foreach((Light light) -> light.renderBrightness(brightnessMap, camera));
         
         brightnessMap.unbind();
     }
@@ -108,10 +102,7 @@ public class WorldRenderer
         
         glBlendFunc(GL_SRC_ALPHA, GL_ONE);
         
-        synchronized (world.lock)
-        {
-            world.lightPool.foreach((Light light) -> light.renderDSL(occlusionMap, lightMap, camera));
-        }
+        world.lightPool.foreach((Light light) -> light.renderDSL(occlusionMap, lightMap, camera));
         
         lightMap.unbind();
     }
@@ -152,7 +143,7 @@ public class WorldRenderer
     
     public void render()
     {
-        synchronized (camera)
+        synchronized (world.lock)
         {
             if (Window.viewportWidth != viewportWidth || Window.viewportHeight != viewportHeight)
             {

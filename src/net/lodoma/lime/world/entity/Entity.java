@@ -19,6 +19,7 @@ public class Entity implements Identifiable<Integer>
 
     public LuaFunction scriptInit;
     public LuaFunction scriptUpdate;
+    public LuaFunction scriptPostUpdate;
     public LuaFunction scriptClean;
     
     public World world;
@@ -65,10 +66,12 @@ public class Entity implements Identifiable<Integer>
         
         scriptInit = world.luaInstance.globals.get("Lime_Init").checkfunction();
         scriptUpdate = world.luaInstance.globals.get("Lime_Update").checkfunction();
+        scriptPostUpdate = world.luaInstance.globals.get("Lime_PostUpdate").checkfunction();
         scriptClean = world.luaInstance.globals.get("Lime_Clean").checkfunction();
         
         world.luaInstance.globals.set("Lime_Init", LuaValue.NIL);
         world.luaInstance.globals.set("Lime_Update", LuaValue.NIL);
+        world.luaInstance.globals.set("Lime_PostUpdate", LuaValue.NIL);
         world.luaInstance.globals.set("Lime_Clean", LuaValue.NIL);
 
         Lime.LOGGER.I("Assigned script \"" + scriptName + "\" to entity " + identifier);
@@ -85,6 +88,11 @@ public class Entity implements Identifiable<Integer>
     public void update(double timeDelta)
     {
         world.luaInstance.call(scriptUpdate, new Object[] { timeDelta });
+    }
+    
+    public void postUpdate()
+    {
+        world.luaInstance.call(scriptPostUpdate, new Object[] { });
     }
     
     public void destroy()

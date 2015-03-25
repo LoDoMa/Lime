@@ -44,6 +44,7 @@ public class World
     public LuaFunction gamemodeWorldInit;
     public LuaFunction gamemodeInit;
     public LuaFunction gamemodeUpdate;
+    public LuaFunction gamemodePostUpdate;
     public LuaFunction gamemodeClean;
     
     public final Object lock = new Object();
@@ -113,11 +114,13 @@ public class World
         gamemodeWorldInit = luaInstance.globals.get("Lime_WorldInit").checkfunction();
         gamemodeInit = luaInstance.globals.get("Lime_Init").checkfunction();
         gamemodeUpdate = luaInstance.globals.get("Lime_Update").checkfunction();
+        gamemodePostUpdate = luaInstance.globals.get("Lime_PostUpdate").checkfunction();
         gamemodeClean = luaInstance.globals.get("Lime_Clean").checkfunction();
 
         luaInstance.globals.set("Lime_WorldInit", LuaValue.NIL);
         luaInstance.globals.set("Lime_Init", LuaValue.NIL);
         luaInstance.globals.set("Lime_Update", LuaValue.NIL);
+        luaInstance.globals.set("Lime_PostUpdate", LuaValue.NIL);
         luaInstance.globals.set("Lime_Clean", LuaValue.NIL);
     }
     
@@ -139,6 +142,16 @@ public class World
         entityPool.foreach((Entity entity) -> entity.update(timeDelta));
     }
     
+    public void postUpdateGamemode()
+    {
+        luaInstance.call(gamemodePostUpdate, new Object[] { });
+    }
+    
+    public void postUpdateEntities()
+    {
+        entityPool.foreach((Entity entity) -> entity.postUpdate());
+    }
+    
     public void updateParticles(double timeDelta)
     {
         synchronized (lock)
@@ -158,6 +171,12 @@ public class World
     {
         synchronized (lock)
         {
+            // Set camera
+            
+            client.worldRenderer.camera.translation.set(segment.cameraTranslation);
+            client.worldRenderer.camera.rotation = segment.cameraRotation;
+            client.worldRenderer.camera.scale.set(segment.cameraScale);
+            
             // Remove components and lights
             
             for (int key : segment.removedComponents)

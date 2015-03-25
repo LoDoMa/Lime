@@ -42,7 +42,10 @@ public class WorldSnapshotSegment implements SnapshotData
     public LightModifications[] productLights;
     
     public PhysicsParticleDefinition[] createdParticles;
-    
+
+    public Vector2 cameraTranslation;
+    public float cameraRotation;
+    public Vector2 cameraScale;
     public Color lightAmbientColor;
     
     public WorldSnapshot full;
@@ -172,15 +175,9 @@ public class WorldSnapshotSegment implements SnapshotData
     @Override
     public void read(Client client, DataInputStream in) throws IOException
     {
-        float cameraPositionX = in.readFloat();
-        float cameraPositionY = in.readFloat();
-        float cameraRotation = in.readFloat();
-        float cameraScaleX = in.readFloat();
-        float cameraScaleY = in.readFloat();
-        
-        client.worldRenderer.camera.translation.set(cameraPositionX, cameraPositionY);
-        client.worldRenderer.camera.rotation = cameraRotation;
-        client.worldRenderer.camera.scale.set(cameraScaleX, cameraScaleY);
+        cameraTranslation = new Vector2(in.readFloat(), in.readFloat());
+        cameraRotation = in.readFloat();
+        cameraScale = new Vector2(in.readFloat(), in.readFloat());
 
         float ambientR = in.readFloat();
         float ambientG = in.readFloat();
