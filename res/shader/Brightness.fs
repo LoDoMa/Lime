@@ -2,7 +2,7 @@
 
 precision highp float;
 
-#define PI 3.14
+#define PI 3.14159265359
 
 varying vec2 vTexCoord;
 varying vec4 vColor;
