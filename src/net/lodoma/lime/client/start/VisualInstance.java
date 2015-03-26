@@ -46,18 +46,36 @@ public class VisualInstance
             Lime.forceExit(e);
         }
 
-        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeMono.otf"));
-        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeMonoBold.otf"));
-        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeMonoBoldOblique.otf"));
-        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeMonoOblique.otf"));
-        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeSans.otf"));
-        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeSansBold.otf"));
-        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeSansBoldOblique.otf"));
-        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeSansOblique.otf"));
-        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeSerif.otf"));
-        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeSerifBold.otf"));
-        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeSerifBoldItalic.otf"));
-        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeSerifItalic.otf"));
+        if (OsHelper.isWindows())
+        {
+	        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeMono.ttf"));
+	        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeMonoBold.ttf"));
+	        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeMonoBoldOblique.ttf"));
+	        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeMonoOblique.ttf"));
+	        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeSans.ttf"));
+	        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeSansBold.ttf"));
+	        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeSansBoldOblique.ttf"));
+	        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeSansOblique.ttf"));
+	        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeSerif.ttf"));
+	        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeSerifBold.ttf"));
+	        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeSerifBoldItalic.ttf"));
+	        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeSerifItalic.ttf"));
+        }
+        else
+        {
+	        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeMono.otf"));
+	        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeMonoBold.otf"));
+	        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeMonoBoldOblique.otf"));
+	        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeMonoOblique.otf"));
+	        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeSans.otf"));
+	        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeSansBold.otf"));
+	        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeSansBoldOblique.otf"));
+	        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeSansOblique.otf"));
+	        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeSerif.otf"));
+	        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeSerifBold.otf"));
+	        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeSerifBoldItalic.otf"));
+	        FontHelper.registerFont(new File(OsHelper.JARPATH + "res/fonts/FreeSerifItalic.otf"));
+        }
         
         stageManager = new StageManager();
     }
