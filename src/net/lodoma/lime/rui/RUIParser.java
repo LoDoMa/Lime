@@ -173,7 +173,6 @@ public class RUIParser
                     {
                         RUIElement newElement = createElement(definition, parent.second);
                         parent.second.addChild(definitionName, newElement);
-                        System.out.println("Created " + definitionName + ", child of " + parent.first);
                         parentList.add(new Pair<String, RUIElement>(definitionName, newElement));
                         definitions.remove(definitionName);
                     }
