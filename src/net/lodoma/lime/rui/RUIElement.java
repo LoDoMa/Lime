@@ -16,7 +16,7 @@ public class RUIElement
     public boolean visible;
     public final Vector2 position = new Vector2();
     public final Vector2 dimensions = new Vector2();
-    public RUIBorder border;
+    public RUIBorder border = new RUIBorder();
     public final Color fgColor = new Color();
     public final Color bgColor = new Color();
 
@@ -89,7 +89,7 @@ public class RUIElement
             fgColor.set(RUIParser.parseColor(definition.get("default", "foreground-color", "00000000")));
             bgColor.set(RUIParser.parseColor(definition.get("default", "background-color", "00000000")));
             
-            visible = true;
+            visible = RUIParser.parseBool(definition.get("default", "visible", "true"));
         }
     }
     

@@ -30,7 +30,6 @@ public class RUIButton extends RUIElement
         label.horalign = TrueTypeFont.ALIGN_CENTER;
         label.veralign = TrueTypeFont.ALIGN_CENTER;
         label.fontSize = 1.0f;
-        label.visible = true;
         
         addChild("$LABEL", label);
     }
@@ -53,6 +52,8 @@ public class RUIButton extends RUIElement
             label.fontSize = RUIParser.parseSize(definition.get("default", "font-size", "100%"));
             label.horalign = RUIParser.parseAlignment(definition.get("default", "horizontal-alignment", "center"));
             label.veralign = RUIParser.parseAlignment(definition.get("default", "vertical-alignment", "center"));
+            
+            label.visible = visible;
         }
     }
     

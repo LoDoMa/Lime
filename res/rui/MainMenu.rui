@@ -5,6 +5,7 @@ test ROOT button
 	- position-y 20%
 	- width 40%
 	- height 5%
+	- visible false
 
 	- background-color 0000FFFF
 	- foreground-color FFFFFFFF

@@ -207,6 +207,16 @@ public class RUIParser
         );
     }
     
+    public static boolean parseBool(String bool)
+    {
+    	if (bool.equals("true")) return true;
+    	else if (bool.equals("false")) return false;
+
+        Lime.LOGGER.C("Error while parsing RUI file - invalid boolean");
+        Lime.forceExit(null);
+        return false;
+    }
+    
     public static int parseAlignment(String align)
     {
         if (align.equals("left") || align.equals("top"))
