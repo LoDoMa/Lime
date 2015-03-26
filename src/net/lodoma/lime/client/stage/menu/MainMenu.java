@@ -49,12 +49,22 @@ public class MainMenu extends Stage
         }
     }
     
+    private class SuperFancyListener implements UICallback
+    {
+        @Override
+        public void call()
+        {
+            manager.push(new SuperFancyTest());
+        }
+    }
+    
     public MainMenu()
     {
         ui.addChild(new CleanButton(new Vector2(0.05f, 0.50f), new Vector2(0.4f, 0.05f), "Multiplayer", TrueTypeFont.ALIGN_CENTER, new MultiplayerListener()));
         ui.addChild(new CleanButton(new Vector2(0.05f, 0.44f), new Vector2(0.4f, 0.05f), "Editor", TrueTypeFont.ALIGN_CENTER, new EditorListener()));
         ui.addChild(new CleanButton(new Vector2(0.05f, 0.38f), new Vector2(0.4f, 0.05f), "Options", TrueTypeFont.ALIGN_CENTER, new OptionsListener()));
         ui.addChild(new CleanButton(new Vector2(0.05f, 0.32f), new Vector2(0.4f, 0.05f), "Exit", TrueTypeFont.ALIGN_CENTER, new ExitListener()));
+        ui.addChild(new CleanButton(new Vector2(0.05f, 0.20f), new Vector2(0.4f, 0.05f), "SuperFancy", TrueTypeFont.ALIGN_CENTER, new SuperFancyListener()));
     }
     
     @Override

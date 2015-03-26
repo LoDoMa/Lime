@@ -35,6 +35,27 @@ public class Color
         a = other.a;
     }
     
+    public void set(float r, float g, float b, float a)
+    {
+        this.r = r;
+        this.g = g;
+        this.b = b;
+        this.a = a;
+    }
+    
+    public void set(float r, float g, float b)
+    {
+        set(r, g, b, a);
+    }
+    
+    public void set(Color other)
+    {
+        r = other.r;
+        g = other.g;
+        b = other.b;
+        a = other.a;
+    }
+    
     public void setGL()
     {
         setGL(1.0f, 1.0f);
@@ -48,6 +69,19 @@ public class Color
     public void setGL(float colorMul, float alphaMul)
     {
         glColor4f(r * colorMul, g * colorMul, b * colorMul, a * alphaMul);
+    }
+    
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (!(obj instanceof Color))
+            return false;
+        Color c = (Color) obj;
+        if (r != c.r) return false;
+        if (g != c.g) return false;
+        if (b != c.b) return false;
+        if (a != c.a) return false;
+        return true;
     }
     
     @Override
