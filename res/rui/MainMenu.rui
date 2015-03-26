@@ -13,3 +13,43 @@ test ROOT button
 
 	- text "Test"
 	- font-name "FreeSans"
+	- font-size 75%
+
+	- horizontal-alignment left
+	- vertical-alignment top
+
+test2 ROOT label
+
+	- position-x 30px
+	- position-y 30%
+	- width 40%
+	- height 5%
+
+	- foreground-color FFFFFFFF
+
+	- text "Test"
+	- font-name "FreeSans"
+	- font-size 100%
+
+	- horizontal-alignment center
+	- vertical-alignment center
+
+test3 ROOT button
+
+	- position-x 10px
+	- position-y 10%
+	- width 40%
+	- height 5%
+
+	- background-color 0000FFFF
+	- foreground-color FFFFFFFF
+	- STATE hover background-color 00FFFFFF
+	- STATE hover foreground-color FF0000FF
+
+	- text "Test"
+	- font-name "FreeSans"
+	- font-size 50%
+
+	- horizontal-alignment right
+	- vertical-alignment bottom
+

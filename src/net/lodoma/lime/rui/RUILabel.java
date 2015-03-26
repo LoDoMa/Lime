@@ -1,6 +1,7 @@
 package net.lodoma.lime.rui;
 
 import net.lodoma.lime.client.window.Window;
+import net.lodoma.lime.gui.UIFont;
 import net.lodoma.lime.util.TrueTypeFont;
 
 public class RUILabel extends RUIElement
@@ -18,6 +19,22 @@ public class RUILabel extends RUIElement
     public RUILabel(RUIElement parent)
     {
         super(parent);
+    }
+    
+    @Override
+    public void loadDefinition(RUIParserDefinition definition)
+    {
+        synchronized (treeLock)
+        {
+            super.loadDefinition(definition);
+            
+            text = definition.get("default", "text", "");
+            font = new UIFont(definition.get("default", "font-name", "FreeSans"), 0, 0).ttf;
+            fontSize = RUIParser.parseSize(definition.get("default", "font-size", "0px"));
+
+            horalign = RUIParser.parseAlignment(definition.get("default", "horizontal-alignment", "left"));
+            veralign = RUIParser.parseAlignment(definition.get("default", "vertical-alignment", "top"));
+        }
     }
     
     @Override

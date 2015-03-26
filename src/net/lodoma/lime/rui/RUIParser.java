@@ -15,6 +15,7 @@ import net.lodoma.lime.Lime;
 import net.lodoma.lime.util.Color;
 import net.lodoma.lime.util.OsHelper;
 import net.lodoma.lime.util.Pair;
+import net.lodoma.lime.util.TrueTypeFont;
 
 public class RUIParser
 {
@@ -130,6 +131,9 @@ public class RUIParser
         case "button":
             element = new RUIButton(parent);
             break;
+        case "label":
+            element = new RUILabel(parent);
+            break;
         default:
             Lime.LOGGER.C("Error while parsing RUI file - invalid element type");
             Lime.forceExit(null);
@@ -201,5 +205,19 @@ public class RUIParser
             Integer.parseInt(color.substring(4, 6), 16) / 255.0f,
             Integer.parseInt(color.substring(6, 8), 16) / 255.0f
         );
+    }
+    
+    public static int parseAlignment(String align)
+    {
+        if (align.equals("left") || align.equals("top"))
+            return TrueTypeFont.ALIGN_LEFT;
+        else if (align.equals("center"))
+            return TrueTypeFont.ALIGN_CENTER;
+        else if (align.equals("right") || align.equals("bottom"))
+            return TrueTypeFont.ALIGN_RIGHT;
+
+        Lime.LOGGER.C("Error while parsing RUI file - invalid alignment");
+        Lime.forceExit(null);
+        return 0;
     }
 }

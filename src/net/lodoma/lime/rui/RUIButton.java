@@ -50,6 +50,9 @@ public class RUIButton extends RUIElement
             
             label.text = definition.get("default", "text", "");
             label.font = new UIFont(definition.get("default", "font-name", "FreeSans"), 0, 0).ttf;
+            label.fontSize = RUIParser.parseSize(definition.get("default", "font-size", "100%"));
+            label.horalign = RUIParser.parseAlignment(definition.get("default", "horizontal-alignment", "center"));
+            label.veralign = RUIParser.parseAlignment(definition.get("default", "vertical-alignment", "center"));
         }
     }
     
