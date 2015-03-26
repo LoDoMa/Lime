@@ -128,6 +128,9 @@ public class RUIParser
         RUIElement element = null;
         switch (definition.type)
         {
+        case "container":
+        	element = new RUIElement(parent);
+        	break;
         case "button":
             element = new RUIButton(parent);
             break;
@@ -170,6 +173,7 @@ public class RUIParser
                     {
                         RUIElement newElement = createElement(definition, parent.second);
                         parent.second.addChild(definitionName, newElement);
+                        System.out.println("Created " + definitionName + ", child of " + parent.first);
                         parentList.add(new Pair<String, RUIElement>(definitionName, newElement));
                         definitions.remove(definitionName);
                     }

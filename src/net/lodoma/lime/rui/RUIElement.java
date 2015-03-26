@@ -16,7 +16,7 @@ public class RUIElement
     public boolean visible;
     public final Vector2 position = new Vector2();
     public final Vector2 dimensions = new Vector2();
-    public RUIBorder border = new RUIBorder();
+    public final RUIBorder border = new RUIBorder();
     public final Color fgColor = new Color();
     public final Color bgColor = new Color();
 
@@ -90,6 +90,10 @@ public class RUIElement
             bgColor.set(RUIParser.parseColor(definition.get("default", "background-color", "00000000")));
             
             visible = RUIParser.parseBool(definition.get("default", "visible", "true"));
+
+            border.width = RUIParser.parseSize(definition.get("default", "border-width", "0px"));
+            border.radius = RUIParser.parseSize(definition.get("default", "border-radius", "0px"));
+            border.color.set(RUIParser.parseColor(definition.get("default", "border-color", "00000000")));
         }
     }
     
@@ -99,7 +103,9 @@ public class RUIElement
         {
             Vector2 position_t = new Vector2(position);
             if (position_t.x < 0) position_t.x /= -Window.viewportWidth;
+            else if (parent != null) position_t.x *= parent.dimensions_c.x;
             if (position_t.y < 0) position_t.y /= -Window.viewportHeight;
+            else if (parent != null) position_t.y *= parent.dimensions_c.y;
             if (position_c == null) position_c = position_t;
             else position_c.set(position_t);
             
@@ -118,7 +124,6 @@ public class RUIElement
             
             Vector2 originalMousePosition = Input.inputData.currentMousePosition.clone();
             Input.inputData.currentMousePosition.subLocal(position_c);
-            Input.inputData.currentMousePosition.divLocal(dimensions_c);
             
             Collection<RUIElement> childrenSet = children.values();
             for (RUIElement child : childrenSet)
