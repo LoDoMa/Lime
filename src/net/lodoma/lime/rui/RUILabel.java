@@ -75,9 +75,9 @@ public class RUILabel extends RUIElement
             String veralign_t = values.get(state, "vertical-alignment").toString();
             switch (veralign_t)
             {
-            case "top": horalign_c = TrueTypeFont.ALIGN_LEFT; break;
-            case "center": horalign_c = TrueTypeFont.ALIGN_CENTER; break;
-            case "bottom": horalign_c = TrueTypeFont.ALIGN_RIGHT; break;
+            case "top": veralign_c = TrueTypeFont.ALIGN_LEFT; break;
+            case "center": veralign_c = TrueTypeFont.ALIGN_CENTER; break;
+            case "bottom": veralign_c = TrueTypeFont.ALIGN_RIGHT; break;
             default: throw new IllegalStateException();
             }
         }
