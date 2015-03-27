@@ -26,7 +26,7 @@ public class RUILabel extends RUIElement
         values.set("default", "font-name", new RUIValue("FreeSans"));
         values.set("default", "font-size", RUIValue.SIZE_0);
         values.set("default", "horizontal-alignment", new RUIValue("left"));
-        values.set("default", "verticla-alignment", new RUIValue("top"));
+        values.set("default", "vertical-alignment", new RUIValue("top"));
     }
     
     @Override
