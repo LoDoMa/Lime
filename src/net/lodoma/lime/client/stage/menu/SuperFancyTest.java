@@ -3,6 +3,9 @@ package net.lodoma.lime.client.stage.menu;
 import net.lodoma.lime.client.stage.Stage;
 import net.lodoma.lime.input.Input;
 import net.lodoma.lime.rui.RUIElement;
+import net.lodoma.lime.rui.RUIEventData;
+import net.lodoma.lime.rui.RUIEventListener;
+import net.lodoma.lime.rui.RUIEventType;
 import net.lodoma.lime.shader.Program;
 import net.lodoma.lime.shader.UniformType;
 
@@ -22,10 +25,15 @@ public class SuperFancyTest extends Stage
         
         root = new RUIElement(null);
         root.load("MainMenu");
-        root.position.set(0.0f, 0.0f);
-        root.dimensions.set(1.0f, 1.0f);
-        root.bgColor.set(1.0f, 0.0f, 0.0f, 1.0f);
-        root.visible = true;
+        
+        root.getChildRecursive("cont1.cont2.test5").eventListener = new RUIEventListener()
+        {
+            @Override
+            public void onEvent(RUIEventType type, RUIEventData data)
+            {
+                System.out.println(type.name());
+            }
+        };
     }
     
     @Override

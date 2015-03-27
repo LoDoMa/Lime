@@ -2,6 +2,7 @@ package net.lodoma.lime.rui;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class RUIParserDefinition
 {
@@ -10,21 +11,28 @@ public class RUIParserDefinition
     
     public Map<String, Map<String, String>> values = new HashMap<String, Map<String, String>>();
     
-    public String get(String state, String category, String defaultValue)
+    private RUIValue valueToRUI(String value, RUIValueType type)
     {
-        if (!values.containsKey(state))
+        switch (type)
         {
-            if (state != "default")
-                return get("default", category, defaultValue);
-            return defaultValue;
+        case BOOLEAN: return RUIParser.parseBool(value);
+        case INTEGER: return RUIParser.parseAlignment(value);
+        case COLOR: return RUIParser.parseColor(value);
+        case SIZE: return RUIParser.parseSize(value);
+        case STRING: return new RUIValue(value);
+        default: throw new IllegalStateException();
         }
-        if (!values.get(state).containsKey(category))
+    }
+    
+    public void store(String category, RUIValueType type, RUIValueMap map)
+    {
+        Set<String> stateNames = values.keySet();
+        for (String stateName : stateNames)
         {
-            if (state != "default")
-                return get("default", category, defaultValue);
-            return defaultValue;
+            Map<String, String> stateMap = values.get(stateName);
+            if (stateMap != null && stateMap.containsKey(category))
+                map.set(stateName, category, valueToRUI(stateMap.get(category), type));
         }
-        return values.get(state).get(category);
     }
     
     public String parse(RUIParser parser)

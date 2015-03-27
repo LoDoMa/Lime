@@ -182,55 +182,55 @@ public class RUIParser
         }
     }
     
-    public static float parseSize(String size)
+    public static RUIValue parseSize(String size)
     {
         try
         {
             if (size.endsWith("%"))
-                return Float.parseFloat(size.substring(0, size.length() - 1)) / 100.0f;
+                return new RUIValue(Float.parseFloat(size.substring(0, size.length() - 1)) / 100.0f);
             else if (size.endsWith("px"))
-                return -Float.parseFloat(size.substring(0, size.length() - 2));
+                return new RUIValue(-Float.parseFloat(size.substring(0, size.length() - 2)));
             else throw new NumberFormatException();
         }
         catch (NumberFormatException e)
         {
             Lime.LOGGER.C("Error while parsing RUI file - invalid number format");
             Lime.forceExit(null);
-            return 0;
+            return new RUIValue(0.0f);
         }
     }
     
-    public static Color parseColor(String color)
+    public static RUIValue parseColor(String color)
     {
-        return new Color(
+        return new RUIValue(new Color(
             Integer.parseInt(color.substring(0, 2), 16) / 255.0f,
             Integer.parseInt(color.substring(2, 4), 16) / 255.0f,
             Integer.parseInt(color.substring(4, 6), 16) / 255.0f,
             Integer.parseInt(color.substring(6, 8), 16) / 255.0f
-        );
+        ));
     }
     
-    public static boolean parseBool(String bool)
+    public static RUIValue parseBool(String bool)
     {
-    	if (bool.equals("true")) return true;
-    	else if (bool.equals("false")) return false;
+    	if (bool.equals("true")) return RUIValue.BOOLEAN_TRUE;
+    	else if (bool.equals("false")) return RUIValue.BOOLEAN_FALSE;
 
         Lime.LOGGER.C("Error while parsing RUI file - invalid boolean");
         Lime.forceExit(null);
-        return false;
+        return RUIValue.BOOLEAN_FALSE;
     }
     
-    public static int parseAlignment(String align)
+    public static RUIValue parseAlignment(String align)
     {
         if (align.equals("left") || align.equals("top"))
-            return TrueTypeFont.ALIGN_LEFT;
+            return new RUIValue(TrueTypeFont.ALIGN_LEFT);
         else if (align.equals("center"))
-            return TrueTypeFont.ALIGN_CENTER;
+            return new RUIValue(TrueTypeFont.ALIGN_CENTER);
         else if (align.equals("right") || align.equals("bottom"))
-            return TrueTypeFont.ALIGN_RIGHT;
+            return new RUIValue(TrueTypeFont.ALIGN_RIGHT);
 
         Lime.LOGGER.C("Error while parsing RUI file - invalid alignment");
         Lime.forceExit(null);
-        return 0;
+        return new RUIValue(0);
     }
 }

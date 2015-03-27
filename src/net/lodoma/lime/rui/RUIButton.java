@@ -1,22 +1,11 @@
 package net.lodoma.lime.rui;
 
-import net.lodoma.lime.gui.UIFont;
 import net.lodoma.lime.input.Input;
-import net.lodoma.lime.util.Color;
-import net.lodoma.lime.util.TrueTypeFont;
 import net.lodoma.lime.util.Vector2;
 
 public class RUIButton extends RUIElement
 {
-    public RUIEventListener eventListener;
-    
-    public final RUILabel label;
-
-    public final Color fgColorDefault = new Color();
-    public final Color bgColorDefault = new Color();
-    public final Color fgColorHover = new Color();
-    public final Color bgColorHover = new Color();
-    
+    private final RUILabel label;
     private boolean hover;
     
     public RUIButton(RUIElement parent)
@@ -24,12 +13,7 @@ public class RUIButton extends RUIElement
         super(parent);
         
         label = new RUILabel(this);
-        label.position.set(0.0f, 0.0f);
-        label.dimensions.set(1.0f, 1.0f);
-        label.text = "";
-        label.horalign = TrueTypeFont.ALIGN_CENTER;
-        label.veralign = TrueTypeFont.ALIGN_CENTER;
-        label.fontSize = 1.0f;
+        label.values.set("default", "font-size", RUIValue.SIZE_1);
         
         addChild("$LABEL", label);
     }
@@ -40,20 +24,12 @@ public class RUIButton extends RUIElement
         synchronized (treeLock)
         {
             super.loadDefinition(definition);
-
-            fgColorDefault.set(fgColor);
-            bgColorDefault.set(bgColor);
-
-            fgColorHover.set(RUIParser.parseColor(definition.get("hover", "foreground-color", "00000000")));
-            bgColorHover.set(RUIParser.parseColor(definition.get("hover", "background-color", "00000000")));
             
-            label.text = definition.get("default", "text", "");
-            label.font = new UIFont(definition.get("default", "font-name", "FreeSans"), 0, 0).ttf;
-            label.fontSize = RUIParser.parseSize(definition.get("default", "font-size", "100%"));
-            label.horalign = RUIParser.parseAlignment(definition.get("default", "horizontal-alignment", "center"));
-            label.veralign = RUIParser.parseAlignment(definition.get("default", "vertical-alignment", "center"));
-            
-            label.visible = visible;
+            definition.store("text", RUIValueType.STRING, label.values);
+            definition.store("font-name", RUIValueType.STRING, label.values);
+            definition.store("font-size", RUIValueType.SIZE, label.values);
+            definition.store("horizontal-alignment", RUIValueType.STRING, label.values);
+            definition.store("vertical-alignment", RUIValueType.STRING, label.values);
         }
     }
     
@@ -65,7 +41,6 @@ public class RUIButton extends RUIElement
             super.update(timeDelta);
             
             boolean prevhover = hover;
-            
             Vector2 mousePos = Input.getMousePosition();
             
             hover = false;
@@ -87,18 +62,11 @@ public class RUIButton extends RUIElement
                 }
             }
             
-            if (hover)
-            {
-                fgColor.set(fgColorHover);
-                bgColor.set(bgColorHover);
-            }
-            else
-            {
-                fgColor.set(fgColorDefault);
-                bgColor.set(bgColorDefault);
-            }
-            
-            label.fgColor.set(fgColor);
+            if (hover) state = "hover";
+            else state = "default";
+
+            label.values.set(label.state, "visible", values.get(state, "visible"));
+            label.values.set(label.state, "foreground-color", values.get(state, "foreground-color"));
         }
     }
 }

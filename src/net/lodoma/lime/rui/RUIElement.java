@@ -13,16 +13,15 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class RUIElement
 {
-    public boolean visible;
-    public final Vector2 position = new Vector2();
-    public final Vector2 dimensions = new Vector2();
-    public final RUIBorder border = new RUIBorder();
-    public final Color fgColor = new Color();
-    public final Color bgColor = new Color();
-
+    public final RUIValueMap values;
+    public String state;
+    public RUIEventListener eventListener;
+    
     protected final RUIElement parent;
-    private  final Map<String, RUIElement> children;
+    private final Map<String, RUIElement> children;
     protected final Object treeLock;
+    
+    private final RUIBorder border = new RUIBorder();
 
     protected Vector2 position_c = null;
     protected Vector2 dimensions_c = null;
@@ -37,7 +36,43 @@ public class RUIElement
         else
             treeLock = new Object();
         
+        values = new RUIValueMap();
+        state = "default";
+        
         children = new HashMap<String, RUIElement>();
+        
+        loadDefaultValues();
+    }
+    
+    protected void loadDefaultValues()
+    {
+        values.set("default", "visible", RUIValue.BOOLEAN_TRUE);
+        values.set("default", "position-x", RUIValue.SIZE_0);
+        values.set("default", "position-y", RUIValue.SIZE_0);
+        values.set("default", "width", RUIValue.SIZE_1);
+        values.set("default", "height", RUIValue.SIZE_1);
+        values.set("default", "foreground-color", RUIValue.COLOR_CLEAR);
+        values.set("default", "background-color", RUIValue.COLOR_CLEAR);
+        values.set("default", "border-width", RUIValue.SIZE_0);
+        values.set("default", "border-radius", RUIValue.SIZE_0);
+        values.set("default", "border-color", RUIValue.COLOR_CLEAR);
+    }
+    
+    public void loadDefinition(RUIParserDefinition definition)
+    {
+        synchronized (treeLock)
+        {
+            definition.store("visible", RUIValueType.BOOLEAN, values);
+            definition.store("position-x", RUIValueType.SIZE, values);
+            definition.store("position-y", RUIValueType.SIZE, values);
+            definition.store("width", RUIValueType.SIZE, values);
+            definition.store("height", RUIValueType.SIZE, values);
+            definition.store("foreground-color", RUIValueType.COLOR, values);
+            definition.store("background-color", RUIValueType.COLOR, values);
+            definition.store("border-width", RUIValueType.SIZE, values);
+            definition.store("border-radius", RUIValueType.SIZE, values);
+            definition.store("border-color", RUIValueType.COLOR, values);
+        }
     }
     
     public void addChild(String name, RUIElement child)
@@ -58,6 +93,15 @@ public class RUIElement
         }
     }
     
+    public RUIElement getChildRecursive(String path)
+    {
+        String[] segms = path.split("\\.");
+        RUIElement current = this;
+        for (String segm : segms)
+            current = current.getChild(segm);
+        return current;
+    }
+    
     public void removeChild(String name)
     {
         synchronized (treeLock)
@@ -65,6 +109,15 @@ public class RUIElement
             if (!children.containsKey(name)) throw new IllegalStateException();
             children.remove(name);
         }
+    }
+    
+    public void removeChildRecursive(String path)
+    {
+        String[] segms = path.split("\\.");
+        RUIElement current = this;
+        for (int i = 0; i < segms.length - 1; i++)
+            current = current.getChild(segms[i]);
+        current.removeChild(segms[segms.length - 1]);
     }
     
     public void load(String filepath)
@@ -76,51 +129,36 @@ public class RUIElement
         }
     }
     
-    public void loadDefinition(RUIParserDefinition definition)
-    {
-        synchronized (treeLock)
-        {
-            position.x = RUIParser.parseSize(definition.get("default", "position-x", "0px"));
-            position.y = RUIParser.parseSize(definition.get("default", "position-y", "0px"));
-            
-            dimensions.x = RUIParser.parseSize(definition.get("default", "width", "100%"));
-            dimensions.y = RUIParser.parseSize(definition.get("default", "height", "100%"));
-    
-            fgColor.set(RUIParser.parseColor(definition.get("default", "foreground-color", "00000000")));
-            bgColor.set(RUIParser.parseColor(definition.get("default", "background-color", "00000000")));
-            
-            visible = RUIParser.parseBool(definition.get("default", "visible", "true"));
-
-            border.width = RUIParser.parseSize(definition.get("default", "border-width", "0px"));
-            border.radius = RUIParser.parseSize(definition.get("default", "border-radius", "0px"));
-            border.color.set(RUIParser.parseColor(definition.get("default", "border-color", "00000000")));
-        }
-    }
-    
     public void update(double timeDelta)
     {
         synchronized (treeLock)
         {
-            Vector2 position_t = new Vector2(position);
-            if (position_t.x < 0) position_t.x /= -Window.viewportWidth;
-            else if (parent != null) position_t.x *= parent.dimensions_c.x;
-            if (position_t.y < 0) position_t.y /= -Window.viewportHeight;
-            else if (parent != null) position_t.y *= parent.dimensions_c.y;
-            if (position_c == null) position_c = position_t;
-            else position_c.set(position_t);
+            float position_x = values.get(state, "position-x").toSize();
+            float position_y = values.get(state, "position-y").toSize();
+            if (position_x < 0) position_x /= -Window.viewportWidth;
+            else if (parent != null) position_x *= parent.dimensions_c.x;
+            if (position_y < 0) position_y /= -Window.viewportHeight;
+            else if (parent != null) position_y *= parent.dimensions_c.y;
+            if (position_c == null) position_c = new Vector2(position_x, position_y);
+            else position_c.set(position_x, position_y);
+
+            float dimensions_x = values.get(state, "width").toSize();
+            float dimensions_y = values.get(state, "height").toSize();
+            if (dimensions_x < 0) dimensions_x /= Window.viewportWidth;
+            else if (parent != null) dimensions_x *= parent.dimensions_c.x;
+            if (dimensions_y < 0) dimensions_y /= Window.viewportHeight;
+            else if (parent != null) dimensions_y *= parent.dimensions_c.y;
+            if (dimensions_c == null) dimensions_c = new Vector2(dimensions_x, dimensions_y);
+            else dimensions_c.set(dimensions_x, dimensions_y);
             
-            Vector2 dimensions_t = new Vector2(dimensions);
-            if (dimensions_t.x < 0) dimensions_t.x /= Window.viewportWidth;
-            else if (parent != null) dimensions_t.x *= parent.dimensions_c.x;
-            if (dimensions_t.y < 0) dimensions_t.y /= Window.viewportHeight;
-            else if (parent != null) dimensions_t.y *= parent.dimensions_c.y;
-            if (dimensions_c == null) dimensions_c = dimensions_t;
-            else dimensions_c.set(dimensions_t);
-            
-            if (fgColor_c == null) fgColor_c = new Color(fgColor);
-            else fgColor_c.set(fgColor);
-            if (bgColor_c == null) bgColor_c = new Color(bgColor);
-            else bgColor_c.set(bgColor);
+            if (fgColor_c == null) fgColor_c = new Color(values.get(state, "foreground-color").toColor());
+            else fgColor_c.set(values.get(state, "foreground-color").toColor());
+            if (bgColor_c == null) bgColor_c = new Color(values.get(state, "background-color").toColor());
+            else bgColor_c.set(values.get(state, "background-color").toColor());
+
+            border.width = values.get(state, "border-width").toSize();
+            border.radius = values.get(state, "border-radius").toSize();
+            border.color.set(values.get(state, "border-color").toColor());
             
             Vector2 originalMousePosition = Input.inputData.currentMousePosition.clone();
             Input.inputData.currentMousePosition.subLocal(position_c);
@@ -163,7 +201,7 @@ public class RUIElement
             glPushMatrix();
             glTranslatef(position_c.x, position_c.y, 0.0f);
             
-            if (visible)
+            if (values.get(state, "visible").toBoolean())
             {
                 renderBackground();
                 renderForeground();
