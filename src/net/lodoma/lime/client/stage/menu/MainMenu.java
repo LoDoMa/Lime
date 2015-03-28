@@ -55,10 +55,10 @@ public class MainMenu extends Stage
     public MainMenu()
     {
         rui.load("MainMenu");
-        rui.getChildRecursive("body.btnMultiplayer").eventListener = new MultiplayerListener();
-        rui.getChildRecursive("body.btnEditor").eventListener = new EditorListener();
-        rui.getChildRecursive("body.btnOptions").eventListener = new OptionsListener();
-        rui.getChildRecursive("body.btnExit").eventListener = new ExitListener();
+        rui.getChildRecursive("body.menu.btnMultiplayer").eventListener = new MultiplayerListener();
+        rui.getChildRecursive("body.menu.btnEditor").eventListener = new EditorListener();
+        rui.getChildRecursive("body.menu.btnOptions").eventListener = new OptionsListener();
+        rui.getChildRecursive("body.menu.btnExit").eventListener = new ExitListener();
     }
     
     @Override

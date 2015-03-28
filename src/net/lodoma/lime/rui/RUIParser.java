@@ -16,7 +16,6 @@ import net.lodoma.lime.Lime;
 import net.lodoma.lime.util.Color;
 import net.lodoma.lime.util.OsHelper;
 import net.lodoma.lime.util.Pair;
-import net.lodoma.lime.util.TrueTypeFont;
 
 public class RUIParser
 {
@@ -138,6 +137,9 @@ public class RUIParser
         case "label":
             element = new RUILabel(parent);
             break;
+        case "unordered-list":
+            element = new RUIUnorderedList(parent);
+            break;
         default:
             Lime.LOGGER.C("Error while parsing RUI file - invalid element type");
             Lime.forceExit(null);
@@ -243,17 +245,18 @@ public class RUIParser
         return RUIValue.BOOLEAN_FALSE;
     }
     
-    public static RUIValue parseAlignment(String align)
+    public static RUIValue parseInteger(String integer)
     {
-        if (align.equals("left") || align.equals("top"))
-            return new RUIValue(TrueTypeFont.ALIGN_LEFT);
-        else if (align.equals("center"))
-            return new RUIValue(TrueTypeFont.ALIGN_CENTER);
-        else if (align.equals("right") || align.equals("bottom"))
-            return new RUIValue(TrueTypeFont.ALIGN_RIGHT);
-
-        Lime.LOGGER.C("Error while parsing RUI file - invalid alignment");
-        Lime.forceExit(null);
-        return new RUIValue(0);
+        int intValue = 0;
+        try
+        {
+            intValue = Integer.parseInt(integer);
+        }
+        catch (NumberFormatException e)
+        {
+            Lime.LOGGER.C("Error while parsing RUI file - invalid number format");
+            Lime.forceExit(null);
+        }
+        return new RUIValue(intValue);
     }
 }

@@ -50,7 +50,7 @@ public class RUIParserData
         switch (type)
         {
         case BOOLEAN: return RUIParser.parseBool(value);
-        case INTEGER: return RUIParser.parseAlignment(value);
+        case INTEGER: return RUIParser.parseInteger(value);
         case COLOR: return RUIParser.parseColor(value);
         case SIZE: return RUIParser.parseSize(value);
         case STRING: return new RUIValue(value);

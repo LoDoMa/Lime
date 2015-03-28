@@ -46,6 +46,7 @@ public class RUIElement
     
     protected void loadDefaultValues()
     {
+        values.set("default", "index", new RUIValue(-1));
         values.set("default", "visible", RUIValue.BOOLEAN_TRUE);
         values.set("default", "position-x", RUIValue.SIZE_0);
         values.set("default", "position-y", RUIValue.SIZE_0);
@@ -56,12 +57,19 @@ public class RUIElement
         values.set("default", "border-width", RUIValue.SIZE_0);
         values.set("default", "border-radius", RUIValue.SIZE_0);
         values.set("default", "border-color", RUIValue.COLOR_CLEAR);
+        
+        if (parent == null)
+        {
+            // By default, root is not visible
+            values.set("default", "visible", RUIValue.BOOLEAN_FALSE);
+        }
     }
     
     public void loadData(RUIParserData data)
     {
         synchronized (treeLock)
         {
+            data.copy("index", RUIValueType.INTEGER, values);
             data.copy("visible", RUIValueType.BOOLEAN, values);
             data.copy("position-x", RUIValueType.SIZE, values);
             data.copy("position-y", RUIValueType.SIZE, values);
@@ -129,6 +137,13 @@ public class RUIElement
         }
     }
     
+    protected void updateChildren(double timeDelta)
+    {
+        Collection<RUIElement> childrenSet = children.values();
+        for (RUIElement child : childrenSet)
+            child.update(timeDelta);
+    }
+    
     public void update(double timeDelta)
     {
         synchronized (treeLock)
@@ -144,9 +159,9 @@ public class RUIElement
 
             float dimensions_x = values.get(state, "width").toSize();
             float dimensions_y = values.get(state, "height").toSize();
-            if (dimensions_x < 0) dimensions_x /= Window.viewportWidth;
+            if (dimensions_x < 0) dimensions_x /= -Window.viewportWidth;
             else if (parent != null) dimensions_x *= parent.dimensions_c.x;
-            if (dimensions_y < 0) dimensions_y /= Window.viewportHeight;
+            if (dimensions_y < 0) dimensions_y /= -Window.viewportHeight;
             else if (parent != null) dimensions_y *= parent.dimensions_c.y;
             if (dimensions_c == null) dimensions_c = new Vector2(dimensions_x, dimensions_y);
             else dimensions_c.set(dimensions_x, dimensions_y);
@@ -163,9 +178,7 @@ public class RUIElement
             Vector2 originalMousePosition = Input.inputData.currentMousePosition.clone();
             Input.inputData.currentMousePosition.subLocal(position_c);
             
-            Collection<RUIElement> childrenSet = children.values();
-            for (RUIElement child : childrenSet)
-                child.update(timeDelta);
+            updateChildren(timeDelta);
             
             Input.inputData.currentMousePosition.set(originalMousePosition);
         }
@@ -194,6 +207,13 @@ public class RUIElement
     
     protected void renderForeground() {}
     
+    protected void renderChildren()
+    {
+        Collection<RUIElement> childrenSet = children.values();
+        for (RUIElement child : childrenSet)
+            child.render();
+    }
+    
     public void render()
     {
         synchronized (treeLock)
@@ -207,9 +227,7 @@ public class RUIElement
                 renderForeground();
             }
             
-            Collection<RUIElement> childrenSet = children.values();
-            for (RUIElement child : childrenSet)
-                child.render();
+            renderChildren();
             
             glPopMatrix();
         }

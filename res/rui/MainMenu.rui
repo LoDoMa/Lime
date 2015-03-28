@@ -1,43 +1,51 @@
 
 body ROOT container
+	- visible false
+
+menu body unordered-list
+	- position-x 5%
+	- position-y 5%
+	- width 40%
+	- height 50%
+	- vertical-spacing 2%
 
 @Button
-	- background-color 00000000
-	- foreground-color 0080FFFF
-	- STATE hover background-color 33333333
+	- background-color 000080FF
+	- foreground-color FFFFFFFF
+	- STATE hover background-color 333380FF
 
 	- border-width 1px
+	- border-radius 10px
 	- border-color 00000000
 	- STATE hover border-color FFFFFFFF
 
 	- horizontal-alignment center
 	- vertical-alignment center
 
-@MenuButton
-	- position-x 5%
-	- width 40%
-	- height 5%
+@ListButton
+	- width 100%
+	- height 10%
 
-btnMultiplayer body button
+btnMultiplayer menu button
+	- index 10
 	- @Button
-	- @MenuButton
-	- position-y 50%
+	- @ListButton
 	- text "Multiplayer"
 
-btnEditor body button
+btnEditor menu button
+	- index 20
 	- @Button
-	- @MenuButton
-	- position-y 44%
+	- @ListButton
 	- text "Editor"
 
-btnOptions body button
+btnOptions menu button
+	- index 30
 	- @Button
-	- @MenuButton
-	- position-y 38%
+	- @ListButton
 	- text "Options"
 
-btnExit body button
+btnExit menu button
+	- index 40
 	- @Button
-	- @MenuButton
-	- position-y 32%
+	- @ListButton
 	- text "Exit"
