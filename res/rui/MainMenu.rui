@@ -1,114 +1,43 @@
 
+body ROOT container
+
 @Button
-	- background-color 0000FFFF
-	- foreground-color FFFFFFFF
-	- STATE hover background-color 00FFFFFF
-	- STATE hover foreground-color FF0000FF
+	- background-color 00000000
+	- foreground-color 0080FFFF
+	- STATE hover background-color 33333333
 
-test ROOT button
-
-	- position-x 20px
-	- position-y 20%
-	- width 40%
-	- height 5%
-
-	- border-width 2px
-	- border-radius 10px
-	- border-color 000000FF
-
-	- @Button
-
-	- text "Test"
-	- font-name "FreeSans"
-	- font-size 75%
-
-	- horizontal-alignment left
-	- vertical-alignment top
-
-test2 ROOT label
-
-	- position-x 30px
-	- position-y 30%
-	- width 40%
-	- height 5%
-
-	- foreground-color FFFFFFFF
-
-	- text "Test"
-	- font-name "FreeSans"
-	- font-size 100%
+	- border-width 1px
+	- border-color 00000000
+	- STATE hover border-color FFFFFFFF
 
 	- horizontal-alignment center
 	- vertical-alignment center
 
-test3 ROOT button
-
-	- position-x 10px
-	- position-y 10%
+@MenuButton
+	- position-x 5%
 	- width 40%
 	- height 5%
 
+btnMultiplayer body button
 	- @Button
-
-	- text "Test"
-	- font-name "FreeSans"
-	- font-size 50%
-
-	- horizontal-alignment right
-	- vertical-alignment bottom
-
-cont1 ROOT container
-
-	- position-x 50%
+	- @MenuButton
 	- position-y 50%
-	- width 45%
-	- height 45%
+	- text "Multiplayer"
 
-	- border-width 1px
-	- border-color 000000FF
-
-cont2 cont1 container
-
-	- position-x 2%
-	- position-y 52%
-	- width 95%
-	- height 45%
-
-	- border-width 1px
-	- border-color 000000FF
-
-test4 cont1 button
-
-	- position-x 0px
-	- position-y 0px
-	- width 100%
-	- height 50%
-
+btnEditor body button
 	- @Button
+	- @MenuButton
+	- position-y 44%
+	- text "Editor"
 
-	- text "Test"
-	- font-name "FreeSans"
-	- font-size 50%
-
-	- horizontal-alignment center
-	- vertical-alignment center
-
-test5 cont2 button
-
-	- position-x 0px
-	- position-y 0px
-	- width 100%
-	- height 100%
-
+btnOptions body button
 	- @Button
+	- @MenuButton
+	- position-y 38%
+	- text "Options"
 
-	- text "Test"
-	- font-name "FreeSans"
-	- font-size 50%
-
-	- horizontal-alignment center
-	- vertical-alignment center
-
-	- border-width 2px
-	- border-radius 30px
-	- border-color 000000FF
+btnExit body button
+	- @Button
+	- @MenuButton
+	- position-y 32%
+	- text "Exit"

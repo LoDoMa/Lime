@@ -3,68 +3,62 @@ package net.lodoma.lime.client.stage.menu;
 import net.lodoma.lime.client.stage.Stage;
 import net.lodoma.lime.client.stage.editor.Editor;
 import net.lodoma.lime.client.window.Window;
-import net.lodoma.lime.gui.UICallback;
-import net.lodoma.lime.gui.clean.CleanButton;
 import net.lodoma.lime.input.Input;
+import net.lodoma.lime.rui.RUIEventData;
+import net.lodoma.lime.rui.RUIEventListener;
+import net.lodoma.lime.rui.RUIEventType;
 import net.lodoma.lime.shader.Program;
 import net.lodoma.lime.shader.UniformType;
-import net.lodoma.lime.util.TrueTypeFont;
-import net.lodoma.lime.util.Vector2;
 
 public class MainMenu extends Stage
 {
-    private class MultiplayerListener implements UICallback
+    private class MultiplayerListener implements RUIEventListener
     {
         @Override
-        public void call()
+        public void onEvent(RUIEventType type, RUIEventData data)
         {
-            manager.push(new MultiplayerMenu());
+            if (type == RUIEventType.MOUSE_RELEASE)
+                manager.push(new MultiplayerMenu());
         }
     }
     
-    private class EditorListener implements UICallback
+    private class EditorListener implements RUIEventListener
     {
         @Override
-        public void call()
+        public void onEvent(RUIEventType type, RUIEventData data)
         {
-            manager.push(new Editor());
+            if (type == RUIEventType.MOUSE_RELEASE)
+                manager.push(new Editor());
         }
     }
     
-    private class OptionsListener implements UICallback
+    private class OptionsListener implements RUIEventListener
     {
         @Override
-        public void call()
+        public void onEvent(RUIEventType type, RUIEventData data)
         {
-            manager.push(new OptionsMenu());
+            if (type == RUIEventType.MOUSE_RELEASE)
+                manager.push(new OptionsMenu());
         }
     }
     
-    private class ExitListener implements UICallback
+    private class ExitListener implements RUIEventListener
     {
         @Override
-        public void call()
+        public void onEvent(RUIEventType type, RUIEventData data)
         {
-            Window.closeRequested = true;
-        }
-    }
-    
-    private class SuperFancyListener implements UICallback
-    {
-        @Override
-        public void call()
-        {
-            manager.push(new SuperFancyTest());
+            if (type == RUIEventType.MOUSE_RELEASE)
+                Window.closeRequested = true;
         }
     }
     
     public MainMenu()
     {
-        ui.addChild(new CleanButton(new Vector2(0.05f, 0.50f), new Vector2(0.4f, 0.05f), "Multiplayer", TrueTypeFont.ALIGN_CENTER, new MultiplayerListener()));
-        ui.addChild(new CleanButton(new Vector2(0.05f, 0.44f), new Vector2(0.4f, 0.05f), "Editor", TrueTypeFont.ALIGN_CENTER, new EditorListener()));
-        ui.addChild(new CleanButton(new Vector2(0.05f, 0.38f), new Vector2(0.4f, 0.05f), "Options", TrueTypeFont.ALIGN_CENTER, new OptionsListener()));
-        ui.addChild(new CleanButton(new Vector2(0.05f, 0.32f), new Vector2(0.4f, 0.05f), "Exit", TrueTypeFont.ALIGN_CENTER, new ExitListener()));
-        ui.addChild(new CleanButton(new Vector2(0.05f, 0.20f), new Vector2(0.4f, 0.05f), "SuperFancy", TrueTypeFont.ALIGN_CENTER, new SuperFancyListener()));
+        rui.load("MainMenu");
+        rui.getChildRecursive("body.btnMultiplayer").eventListener = new MultiplayerListener();
+        rui.getChildRecursive("body.btnEditor").eventListener = new EditorListener();
+        rui.getChildRecursive("body.btnOptions").eventListener = new OptionsListener();
+        rui.getChildRecursive("body.btnExit").eventListener = new ExitListener();
     }
     
     @Override
