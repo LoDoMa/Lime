@@ -71,9 +71,9 @@ public class AttributeFunctions
                 String attribName = args.arg(2).checkstring().tojstring();
                 LuaValue value = args.arg(3);
                 if (value.isnil())
-                	world.entityPool.get(entityID).attributes.values.remove(attribName);
+                    world.entityPool.get(entityID).attributes.values.remove(attribName);
                 else
-                	world.entityPool.get(entityID).attributes.values.put(attribName, value);
+                    world.entityPool.get(entityID).attributes.values.put(attribName, value);
                 break;
             }
             }

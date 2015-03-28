@@ -59,12 +59,12 @@ public class EventManager implements Identifiable<Integer>
     
     public void newEvent(Object... data)
     {
-    	synchronized(events)
-    	{
-    	    Event event = new Event(this, System.nanoTime(), data);
-    		events.add(event);
+        synchronized(events)
+        {
+            Event event = new Event(this, System.nanoTime(), data);
+            events.add(event);
             Lime.LOGGER.F("Event " + event.eventTime + ":" + Integer.toUnsignedLong(identifier) + " added to queue");
-    	}
+        }
     }
     
     public void runEvent(Object[] data)

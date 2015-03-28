@@ -4,6 +4,9 @@
 
 @Button
 	- background-color 000080FF
+	- gradient-color 5050A0FF
+	- gradient-source top
+
 	- foreground-color FFFFFFFF
 	- STATE hover background-color 333380FF
 

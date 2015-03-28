@@ -129,8 +129,8 @@ public class RUIParser
         switch (data.type)
         {
         case "container":
-        	element = new RUIElement(parent);
-        	break;
+            element = new RUIElement(parent);
+            break;
         case "label":
             element = new RUILabel(parent);
             break;
@@ -279,8 +279,8 @@ public class RUIParser
     
     public static RUIValue parseBool(String bool)
     {
-    	if (bool.equals("true")) return RUIValue.BOOLEAN_TRUE;
-    	else if (bool.equals("false")) return RUIValue.BOOLEAN_FALSE;
+        if (bool.equals("true")) return RUIValue.BOOLEAN_TRUE;
+        else if (bool.equals("false")) return RUIValue.BOOLEAN_FALSE;
 
         Lime.LOGGER.C("Error while parsing RUI file - invalid boolean");
         Lime.forceExit(null);

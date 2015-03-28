@@ -72,7 +72,7 @@ public class VisualInstance
 
         CleanText[] debugLines = new CleanText[3];
         for (int i = 0; i < debugLines.length; i++)
-        	debugLines[i] = new CleanText(new Vector2(0.0f, 0.96f - i * 0.04f), 0.04f, "", CleanUI.FOCUS_TEXT_COLOR, TrueTypeFont.ALIGN_LEFT);
+            debugLines[i] = new CleanText(new Vector2(0.0f, 0.96f - i * 0.04f), 0.04f, "", CleanUI.FOCUS_TEXT_COLOR, TrueTypeFont.ALIGN_LEFT);
         
         Timer fpsTimer = new Timer();
         double fpsSeconds = 0.0f;
@@ -131,7 +131,7 @@ public class VisualInstance
                 debugLines[2].text = "memory: " + allocatedMemory + "/" + maxMemory + " MB, " + usage + "%";
                 
                 for (int i = 0; i < debugLines.length; i++)
-                	debugLines[i].render();
+                    debugLines[i].render();
             }
             
             Window.update();

@@ -27,7 +27,6 @@ public class RUIElement
     protected Vector2 position_c = null;
     protected Vector2 dimensions_c = null;
     protected Color fgColor_c = null;
-    protected Color bgColor_c = null;
     
     public RUIElement(RUIElement parent)
     {
@@ -54,7 +53,6 @@ public class RUIElement
         values.set("default", "width", RUIValue.SIZE_1);
         values.set("default", "height", RUIValue.SIZE_1);
         values.set("default", "foreground-color", RUIValue.COLOR_CLEAR);
-        values.set("default", "background-color", RUIValue.COLOR_CLEAR);
         border.loadDefaultValues(values);
         
         if (parent == null)
@@ -75,7 +73,6 @@ public class RUIElement
             data.copy("width", RUIValueType.SIZE, values);
             data.copy("height", RUIValueType.SIZE, values);
             data.copy("foreground-color", RUIValueType.COLOR, values);
-            data.copy("background-color", RUIValueType.COLOR, values);
             border.loadData(data, values);
         }
     }
@@ -165,8 +162,6 @@ public class RUIElement
             
             if (fgColor_c == null) fgColor_c = new Color(values.get(state, "foreground-color").toColor());
             else fgColor_c.set(values.get(state, "foreground-color").toColor());
-            if (bgColor_c == null) bgColor_c = new Color(values.get(state, "background-color").toColor());
-            else bgColor_c.set(values.get(state, "background-color").toColor());
 
             border.update(timeDelta, this);
             
@@ -182,22 +177,9 @@ public class RUIElement
     protected void renderBackground()
     {
         Texture.NO_TEXTURE.bind(0);
-        bgColor_c.setGL();
         
-        if (border == null)
-        {
-            glBegin(GL_QUADS);
-            glVertex2f(0.0f, 0.0f);
-            glVertex2f(dimensions_c.x, 0.0f);
-            glVertex2f(dimensions_c.x, dimensions_c.y);
-            glVertex2f(0.0f, dimensions_c.y);
-            glEnd();
-        }
-        else
-        {
-            border.fillBackground(this);
-            border.renderBorder(this);
-        }
+        border.fillBackground(this);
+        border.renderBorder(this);
     }
     
     protected void renderForeground() {}

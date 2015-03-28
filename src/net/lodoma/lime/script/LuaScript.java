@@ -18,49 +18,49 @@ import org.luaj.vm2.lib.jse.JsePlatform;
 
 public class LuaScript
 {
-	public Globals globals = JsePlatform.standardGlobals();
-	
-	// Globals must be created for each thread.
-	// Since it is not static here, LuaScript is thread safe,
-	// but we might want to make it static for optimization later.
-	
-	public LuaScript(LimeLibrary library)
-	{
-		globals.set("lime", library.table);
-	}
-	
+    public Globals globals = JsePlatform.standardGlobals();
+    
+    // Globals must be created for each thread.
+    // Since it is not static here, LuaScript is thread safe,
+    // but we might want to make it static for optimization later.
+    
+    public LuaScript(LimeLibrary library)
+    {
+        globals.set("lime", library.table);
+    }
+    
     public static boolean safeType(Object object) { return true; }
-	
-	public void setGlobal(String name, Object value)
-	{
-		LuaValue luaValue = CoerceJavaToLua.coerce(value);
-		globals.set(name, luaValue);
-	}
-	
+    
+    public void setGlobal(String name, Object value)
+    {
+        LuaValue luaValue = CoerceJavaToLua.coerce(value);
+        globals.set(name, luaValue);
+    }
+    
     public void require(String file)
     {
-    	load("require \"" + file + "\"", "LuaScript.require");
+        load("require \"" + file + "\"", "LuaScript.require");
     }
     
     public void load(File file) throws IOException
     {
-    	String source = "";
-    	
-    	// Move this to some util class
-    	BufferedReader reader = new BufferedReader(new FileReader(file));
-    	String line;
-    	while ((line = reader.readLine()) != null)
-    		source += line + "\n";
-    	reader.close();
-    	
-    	load(source, file.getPath());
+        String source = "";
+        
+        // Move this to some util class
+        BufferedReader reader = new BufferedReader(new FileReader(file));
+        String line;
+        while ((line = reader.readLine()) != null)
+            source += line + "\n";
+        reader.close();
+        
+        load(source, file.getPath());
     }
     
-	public void load(String source, String chunkname)
-	{
-		LuaValue chunk = globals.load(source, chunkname);
-		chunk.call();
-	}
+    public void load(String source, String chunkname)
+    {
+        LuaValue chunk = globals.load(source, chunkname);
+        chunk.call();
+    }
     
     public void call(String functionPath, Object[] arguments)
     {
