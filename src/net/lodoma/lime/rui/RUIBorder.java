@@ -20,14 +20,14 @@ public class RUIBorder
     public final Color gradientColor_c = new Color();
     public final Color borderColor_c = new Color();
 
-    public float gradientSourceX_c;
-    public float gradientSourceY_c;
+    public final Vector2 gradientSource_c = new Vector2();
     
     public void loadDefaultValues(RUIValueMap values)
     {
         values.set("default", "background-color", RUIValue.COLOR_CLEAR);
         values.set("default", "gradient-color", RUIValue.COLOR_CLEAR);
-        values.set("default", "gradient-source", new RUIValue("top"));
+        values.set("default", "gradient-source-x", new RUIValue(Float.NaN));
+        values.set("default", "gradient-source-y", new RUIValue(Float.NaN));
         values.set("default", "border-color", RUIValue.COLOR_CLEAR);
         values.set("default", "border-width", RUIValue.SIZE_0);
         values.set("default", "border-radius-top-left", RUIValue.SIZE_0);
@@ -40,7 +40,8 @@ public class RUIBorder
     {
         data.copy("background-color", RUIValueType.COLOR, values);
         data.copy("gradient-color", RUIValueType.COLOR, values);
-        data.copy("gradient-source", RUIValueType.STRING, values);
+        data.copy("gradient-source-x", RUIValueType.SIZE, values);
+        data.copy("gradient-source-y", RUIValueType.SIZE, values);
         data.copy("border-color", RUIValueType.COLOR, values);
         data.copy("border-width", RUIValueType.SIZE, values);
         data.copy("border-radius", "border-radius-top-left", RUIValueType.SIZE, values);
@@ -58,19 +59,11 @@ public class RUIBorder
         backgroundColor_c.set(element.values.get(element.state, "background-color").toColor());
         gradientColor_c.set(element.values.get(element.state, "gradient-color").toColor());
         
-        String gradientSource_t = element.values.get(element.state, "gradient-source").toString();
-        switch (gradientSource_t)
-        {
-        case "left": gradientSourceX_c = element.dimensions_c.x * 0.0f; gradientSourceY_c = Float.NEGATIVE_INFINITY; break;
-        case "right": gradientSourceX_c = element.dimensions_c.x * 1.0f; gradientSourceY_c = Float.NEGATIVE_INFINITY; break;
-        case "top": gradientSourceX_c = Float.NEGATIVE_INFINITY; gradientSourceY_c = element.dimensions_c.y * 1.0f; break;
-        case "bottom": gradientSourceX_c = Float.NEGATIVE_INFINITY; gradientSourceY_c = element.dimensions_c.y * 0.0f; break;
-        case "top-left": gradientSourceX_c = element.dimensions_c.x * 0.0f; gradientSourceY_c = element.dimensions_c.y * 1.0f; break;
-        case "top-right": gradientSourceX_c = element.dimensions_c.x * 1.0f; gradientSourceY_c = element.dimensions_c.y * 1.0f; break;
-        case "bottom-left": gradientSourceX_c = element.dimensions_c.x * 0.0f; gradientSourceY_c = element.dimensions_c.y * 0.0f; break;
-        case "bottom-right": gradientSourceX_c = element.dimensions_c.x * 1.0f; gradientSourceY_c = element.dimensions_c.y * 0.0f; break;
-        default: throw new IllegalStateException();
-        }
+        float gradientSourceX_t = element.values.get(element.state, "gradient-source-x").toSize();
+        float gradientSourceY_t = element.values.get(element.state, "gradient-source-y").toSize();
+        gradientSourceX_t *= (gradientSourceX_t < 0) ? (-1.0f / Window.viewportWidth) : element.dimensions_c.x;
+        gradientSourceY_t *= (gradientSourceY_t < 0) ? (-1.0f / Window.viewportHeight) : element.dimensions_c.y;
+        gradientSource_c.set(gradientSourceX_t, gradientSourceY_t);
         
         borderColor_c.set(element.values.get(element.state, "border-color").toColor());
         width = element.values.get(element.state, "border-width").toSize();
@@ -98,11 +91,23 @@ public class RUIBorder
     
     private float calcGradientAlpha(float x, float y, Vector2 dimensions)
     {
-        float distx = gradientSourceX_c == Float.NEGATIVE_INFINITY ? Float.NEGATIVE_INFINITY :
-                                                                     Math.abs(gradientSourceX_c - x) / dimensions.x;
-        float disty = gradientSourceY_c == Float.NEGATIVE_INFINITY ? Float.NEGATIVE_INFINITY :
-                                                                     Math.abs(gradientSourceY_c - y) / dimensions.y;
-        return Math.max(distx, disty);
+        float deltaX = Float.isNaN(gradientSource_c.x) ? Float.NaN : ((x - gradientSource_c.x) / dimensions.x);
+        float deltaY = Float.isNaN(gradientSource_c.y) ? Float.NaN : ((y - gradientSource_c.y) / dimensions.y);
+        
+        float distance;
+        if (Float.isNaN(deltaX) && Float.isNaN(deltaY))
+            distance = Float.POSITIVE_INFINITY;
+        else if (Float.isNaN(deltaX))
+            distance = Math.abs(deltaY);
+        else if (Float.isNaN(deltaY))
+            distance = Math.abs(deltaX);
+        else
+            distance = (float) Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        
+        if (distance > 1.0f)
+            distance = 1.0f;
+        
+        return 1.0f - distance;
     }
     
     private void renderArc(Vector2 radius, Vector2 dimensions, boolean vara, boolean varx,
@@ -123,7 +128,7 @@ public class RUIBorder
             else y = dimensions.y - radius.y + (float) Math.sin(angle) * radius.y;
             
             if (gradient)
-                gradientColor_c.setGL(1.0f - calcGradientAlpha(x, y, dimensions));
+                gradientColor_c.setGL(calcGradientAlpha(x, y, dimensions));
             
             GL11.glVertex2f(x, y);
             if (dver && (!efrs || (efrs && i > 0)))
