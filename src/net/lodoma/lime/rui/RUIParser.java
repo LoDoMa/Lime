@@ -131,11 +131,14 @@ public class RUIParser
         case "container":
         	element = new RUIElement(parent);
         	break;
+        case "label":
+            element = new RUILabel(parent);
+            break;
         case "button":
             element = new RUIButton(parent);
             break;
-        case "label":
-            element = new RUILabel(parent);
+        case "toggle":
+            element = new RUIToggle(parent);
             break;
         case "unordered-list":
             element = new RUIUnorderedList(parent);
@@ -148,15 +151,44 @@ public class RUIParser
         
         return element;
     }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private void merge(Map src, Map dest)
+    {
+        Set keys = src.keySet();
+        for (Object key : keys)
+        {
+            Object value = src.get(key);
+            if ((value instanceof Map) && dest.containsKey(key))
+                merge((Map) value, (Map) dest.get(key));
+            else
+                dest.put(key, value);
+        }
+    }
     
-    public void load(RUIElement root)
+    protected Pair<Map<String, RUIParserData>, Map<String, Map<String, RUIParserData>>> parse()
     {
         Map<String, RUIParserData> valuemapMap = new HashMap<String, RUIParserData>();
         Map<String, Map<String, RUIParserData>> elementMap = new HashMap<String, Map<String, RUIParserData>>();
         
-        // Parse elements and valuemaps
         while (!lastLine())
         {
+            if (peekToken().equals("INCLUDE"))
+            {
+                nextToken();
+                String path = nextToken();
+                nextLine();
+                
+                RUIParser includeParser = new RUIParser(path);
+                Pair<Map<String, RUIParserData>, Map<String, Map<String, RUIParserData>>> parsed = includeParser.parse();
+                Map<String, RUIParserData> includedValuemapMap = parsed.first;
+                Map<String, Map<String, RUIParserData>> includedElementMap = parsed.second;
+                merge(includedValuemapMap, valuemapMap);
+                merge(includedElementMap, elementMap);
+                
+                continue;
+            }
+            
             RUIParserData data = new RUIParserData();
             data.parse(this);
             if (data.isValuemap)
@@ -171,6 +203,16 @@ public class RUIParser
             }
         }
         
+        return new Pair<Map<String, RUIParserData>, Map<String, Map<String, RUIParserData>>>(valuemapMap, elementMap);
+    }
+    
+    public void load(RUIElement root)
+    {
+        // Parse elements and valuemaps
+        Pair<Map<String, RUIParserData>, Map<String, Map<String, RUIParserData>>> parsed = parse();
+        Map<String, RUIParserData> valuemapMap = parsed.first;
+        Map<String, Map<String, RUIParserData>> elementMap = parsed.second;
+        
         // Resolve valuemap requests
         Collection<Map<String, RUIParserData>> elementMaps = elementMap.values();
         for (Map<String, RUIParserData> elementsMap : elementMaps)
@@ -180,7 +222,7 @@ public class RUIParser
                 for (String valuemapName : element.valuemapList)
                 {
                     RUIParserData valuemap = valuemapMap.get(valuemapName);
-                    valuemap.copyValuemap(element);
+                    valuemap.merge(element);
                 }
         }
         

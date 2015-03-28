@@ -1,51 +1,32 @@
 
+INCLUDE "MenuTheme"
+
 body ROOT container
-	- visible false
+	- @Body
 
 menu body unordered-list
-	- position-x 5%
-	- position-y 5%
-	- width 40%
-	- height 50%
-	- vertical-spacing 2%
-
-@Button
-	- background-color 000080FF
-	- foreground-color FFFFFFFF
-	- STATE hover background-color 333380FF
-
-	- border-width 1px
-	- border-radius 10px
-	- border-color 00000000
-	- STATE hover border-color FFFFFFFF
-
-	- horizontal-alignment center
-	- vertical-alignment center
-
-@ListButton
-	- width 100%
-	- height 10%
+	- @MenuList
 
 btnMultiplayer menu button
 	- index 10
 	- @Button
-	- @ListButton
+	- @MenuListMember
 	- text "Multiplayer"
 
 btnEditor menu button
 	- index 20
 	- @Button
-	- @ListButton
+	- @MenuListMember
 	- text "Editor"
 
 btnOptions menu button
 	- index 30
 	- @Button
-	- @ListButton
+	- @MenuListMember
 	- text "Options"
 
 btnExit menu button
 	- index 40
 	- @Button
-	- @ListButton
+	- @MenuListMember
 	- text "Exit"

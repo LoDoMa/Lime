@@ -16,6 +16,7 @@ public class RUIElement
     public final RUIValueMap values;
     public String state;
     public RUIEventListener eventListener;
+    public RUIGroup group;
     
     protected final RUIElement parent;
     private final Map<String, RUIElement> children;

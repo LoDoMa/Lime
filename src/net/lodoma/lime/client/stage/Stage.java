@@ -20,8 +20,8 @@ public class Stage
         synchronized (ui)
         {
             ui.update(timeDelta);
-            rui.update(timeDelta);
         }
+        rui.update(timeDelta);
     }
     
     public void render()
@@ -29,7 +29,7 @@ public class Stage
         synchronized (ui)
         {
             ui.render();
-            rui.render();
         }
+        rui.render();
     }
 }

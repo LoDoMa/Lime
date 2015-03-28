@@ -14,19 +14,19 @@ public class RUIValueMap
     
     public RUIValue get(String state, String category)
     {
-        if (!values.containsKey(state))
+        String[] states = (state + ":default").split(":");
+        
+        for (String tryState : states)
         {
-            if (state != "default")
-                return get("default", category);
-            throw new IllegalStateException();
+            Map<String, RUIValue> valueMap = values.get(tryState);
+            if (valueMap == null)
+                continue;
+            RUIValue value = valueMap.get(category);
+            if (value == null)
+                continue;
+            return value;
         }
-        if (!values.get(state).containsKey(category))
-        {
-            if (state != "default")
-                return get("default", category);
-            throw new IllegalStateException();
-        }
-        return values.get(state).get(category);
+        throw new IllegalStateException();
     }
     
     public void set(String state, String category, RUIValue value)

@@ -6,4 +6,6 @@ public enum RUIEventType
     MOUSE_HOVER_OFF,
     MOUSE_PRESS,
     MOUSE_RELEASE,
+    ACTIVE,
+    INACTIVE,
 }

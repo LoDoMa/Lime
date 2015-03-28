@@ -3,33 +3,24 @@ package net.lodoma.lime.rui;
 import net.lodoma.lime.input.Input;
 import net.lodoma.lime.util.Vector2;
 
-public class RUIButton extends RUIElement
+public class RUIButton extends RUILabel
 {
-    private final RUILabel label;
-    private boolean hover;
+    protected boolean hover;
     
     public RUIButton(RUIElement parent)
     {
         super(parent);
-        
-        label = new RUILabel(this);
-        label.values.set("default", "font-size", RUIValue.SIZE_1);
-        
-        addChild("$LABEL", label);
+        values.set("default", "font-size", RUIValue.SIZE_1);
     }
     
-    @Override
-    public void loadData(RUIParserData data)
+    protected void checkClick()
     {
-        synchronized (treeLock)
+        if (eventListener != null)
         {
-            super.loadData(data);
-            
-            data.copy("text", RUIValueType.STRING, label.values);
-            data.copy("font-name", RUIValueType.STRING, label.values);
-            data.copy("font-size", RUIValueType.SIZE, label.values);
-            data.copy("horizontal-alignment", RUIValueType.STRING, label.values);
-            data.copy("vertical-alignment", RUIValueType.STRING, label.values);
+            if (Input.getMouseDown(Input.MOUSE_BUTTON_LEFT))
+                eventListener.onEvent(RUIEventType.MOUSE_PRESS, null);
+            else if (Input.getMouseUp(Input.MOUSE_BUTTON_LEFT))
+                eventListener.onEvent(RUIEventType.MOUSE_RELEASE, null);
         }
     }
     
@@ -39,10 +30,10 @@ public class RUIButton extends RUIElement
         synchronized (treeLock)
         {
             super.update(timeDelta);
-            
-            boolean prevhover = hover;
+
             Vector2 mousePos = Input.getMousePosition();
             
+            boolean prevhover = hover;
             hover = false;
             if (mousePos.x >= position_c.x && mousePos.y >= position_c.y)
                 if (mousePos.x - position_c.x <= dimensions_c.x && mousePos.y - position_c.y <= dimensions_c.y)
@@ -52,21 +43,13 @@ public class RUIButton extends RUIElement
             {
                 if (hover && !prevhover) eventListener.onEvent(RUIEventType.MOUSE_HOVER_ON, null);
                 else if (!hover && prevhover) eventListener.onEvent(RUIEventType.MOUSE_HOVER_OFF, null);
-                
-                if (hover)
-                {
-                    if (Input.getMouseDown(Input.MOUSE_BUTTON_LEFT))
-                        eventListener.onEvent(RUIEventType.MOUSE_PRESS, null);
-                    else if (Input.getMouseUp(Input.MOUSE_BUTTON_LEFT))
-                        eventListener.onEvent(RUIEventType.MOUSE_RELEASE, null);
-                }
             }
+            
+            if (hover)
+                checkClick();
             
             if (hover) state = "hover";
             else state = "default";
-
-            label.values.set(label.state, "visible", values.get(state, "visible"));
-            label.values.set(label.state, "foreground-color", values.get(state, "foreground-color"));
         }
     }
 }

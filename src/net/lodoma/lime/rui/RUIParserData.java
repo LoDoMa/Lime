@@ -27,7 +27,7 @@ public class RUIParserData
         }
     }
     
-    public void copyValuemap(RUIParserData element)
+    public void merge(RUIParserData element)
     {
         Set<String> states = values.keySet();
         for (String state : states)
