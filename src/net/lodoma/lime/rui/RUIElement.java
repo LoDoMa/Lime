@@ -58,20 +58,20 @@ public class RUIElement
         values.set("default", "border-color", RUIValue.COLOR_CLEAR);
     }
     
-    public void loadDefinition(RUIParserDefinition definition)
+    public void loadData(RUIParserData data)
     {
         synchronized (treeLock)
         {
-            definition.store("visible", RUIValueType.BOOLEAN, values);
-            definition.store("position-x", RUIValueType.SIZE, values);
-            definition.store("position-y", RUIValueType.SIZE, values);
-            definition.store("width", RUIValueType.SIZE, values);
-            definition.store("height", RUIValueType.SIZE, values);
-            definition.store("foreground-color", RUIValueType.COLOR, values);
-            definition.store("background-color", RUIValueType.COLOR, values);
-            definition.store("border-width", RUIValueType.SIZE, values);
-            definition.store("border-radius", RUIValueType.SIZE, values);
-            definition.store("border-color", RUIValueType.COLOR, values);
+            data.copy("visible", RUIValueType.BOOLEAN, values);
+            data.copy("position-x", RUIValueType.SIZE, values);
+            data.copy("position-y", RUIValueType.SIZE, values);
+            data.copy("width", RUIValueType.SIZE, values);
+            data.copy("height", RUIValueType.SIZE, values);
+            data.copy("foreground-color", RUIValueType.COLOR, values);
+            data.copy("background-color", RUIValueType.COLOR, values);
+            data.copy("border-width", RUIValueType.SIZE, values);
+            data.copy("border-radius", RUIValueType.SIZE, values);
+            data.copy("border-color", RUIValueType.COLOR, values);
         }
     }
     

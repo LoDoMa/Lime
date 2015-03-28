@@ -19,17 +19,17 @@ public class RUIButton extends RUIElement
     }
     
     @Override
-    public void loadDefinition(RUIParserDefinition definition)
+    public void loadData(RUIParserData data)
     {
         synchronized (treeLock)
         {
-            super.loadDefinition(definition);
+            super.loadData(data);
             
-            definition.store("text", RUIValueType.STRING, label.values);
-            definition.store("font-name", RUIValueType.STRING, label.values);
-            definition.store("font-size", RUIValueType.SIZE, label.values);
-            definition.store("horizontal-alignment", RUIValueType.STRING, label.values);
-            definition.store("vertical-alignment", RUIValueType.STRING, label.values);
+            data.copy("text", RUIValueType.STRING, label.values);
+            data.copy("font-name", RUIValueType.STRING, label.values);
+            data.copy("font-size", RUIValueType.SIZE, label.values);
+            data.copy("horizontal-alignment", RUIValueType.STRING, label.values);
+            data.copy("vertical-alignment", RUIValueType.STRING, label.values);
         }
     }
     

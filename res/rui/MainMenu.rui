@@ -1,4 +1,10 @@
 
+@Button
+	- background-color 0000FFFF
+	- foreground-color FFFFFFFF
+	- STATE hover background-color 00FFFFFF
+	- STATE hover foreground-color FF0000FF
+
 test ROOT button
 
 	- position-x 20px
@@ -10,10 +16,7 @@ test ROOT button
 	- border-radius 10px
 	- border-color 000000FF
 
-	- background-color 0000FFFF
-	- foreground-color FFFFFFFF
-	- STATE hover background-color 00FFFFFF
-	- STATE hover foreground-color FF0000FF
+	- @Button
 
 	- text "Test"
 	- font-name "FreeSans"
@@ -45,10 +48,7 @@ test3 ROOT button
 	- width 40%
 	- height 5%
 
-	- background-color 0000FFFF
-	- foreground-color FFFFFFFF
-	- STATE hover background-color 00FFFFFF
-	- STATE hover foreground-color FF0000FF
+	- @Button
 
 	- text "Test"
 	- font-name "FreeSans"
@@ -84,10 +84,7 @@ test4 cont1 button
 	- width 100%
 	- height 50%
 
-	- background-color 0000FFFF
-	- foreground-color FFFFFFFF
-	- STATE hover background-color 00FFFFFF
-	- STATE hover foreground-color FF0000FF
+	- @Button
 
 	- text "Test"
 	- font-name "FreeSans"
@@ -103,10 +100,7 @@ test5 cont2 button
 	- width 100%
 	- height 100%
 
-	- background-color 0000FFFF
-	- foreground-color FFFFFFFF
-	- STATE hover background-color 00FFFFFF
-	- STATE hover foreground-color FF0000FF
+	- @Button
 
 	- text "Test"
 	- font-name "FreeSans"
@@ -114,3 +108,7 @@ test5 cont2 button
 
 	- horizontal-alignment center
 	- vertical-alignment center
+
+	- border-width 2px
+	- border-radius 30px
+	- border-color 000000FF

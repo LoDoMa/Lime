@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -123,10 +124,10 @@ public class RUIParser
         return tokens.get(cline).get(ctoken);
     }
     
-    private RUIElement createElement(RUIParserDefinition definition, RUIElement parent)
+    private RUIElement createElement(RUIParserData data, RUIElement parent)
     {
         RUIElement element = null;
-        switch (definition.type)
+        switch (data.type)
         {
         case "container":
         	element = new RUIElement(parent);
@@ -141,43 +142,65 @@ public class RUIParser
             Lime.LOGGER.C("Error while parsing RUI file - invalid element type");
             Lime.forceExit(null);
         }
-        element.loadDefinition(definition);
+        element.loadData(data);
         
         return element;
     }
     
     public void load(RUIElement root)
     {
-        Map<String, RUIParserDefinition> definitions = new HashMap<String, RUIParserDefinition>();
+        Map<String, RUIParserData> valuemapMap = new HashMap<String, RUIParserData>();
+        Map<String, Map<String, RUIParserData>> elementMap = new HashMap<String, Map<String, RUIParserData>>();
         
+        // Parse elements and valuemaps
         while (!lastLine())
         {
-            RUIParserDefinition definition = new RUIParserDefinition();
-            String name = definition.parse(this);
-            definitions.put(name, definition);
+            RUIParserData data = new RUIParserData();
+            data.parse(this);
+            if (data.isValuemap)
+            {
+                valuemapMap.put(data.name, data);
+            }
+            else
+            {
+                if (!elementMap.containsKey(data.parent))
+                    elementMap.put(data.parent, new HashMap<String, RUIParserData>());
+                elementMap.get(data.parent).put(data.name, data);
+            }
         }
-
+        
+        // Resolve valuemap requests
+        Collection<Map<String, RUIParserData>> elementMaps = elementMap.values();
+        for (Map<String, RUIParserData> elementsMap : elementMaps)
+        {
+            Collection<RUIParserData> elements = elementsMap.values();
+            for (RUIParserData element : elements)
+                for (String valuemapName : element.valuemapList)
+                {
+                    RUIParserData valuemap = valuemapMap.get(valuemapName);
+                    valuemap.copyValuemap(element);
+                }
+        }
+        
+        // Create elements
         Set<Pair<String, RUIElement>> parentList = new HashSet<Pair<String, RUIElement>>();
         parentList.add(new Pair<String, RUIElement>("ROOT", root));
         
-        while (!definitions.isEmpty())
+        while (!parentList.isEmpty())
         {
             Set<Pair<String, RUIElement>> parentListCopy = new HashSet<Pair<String, RUIElement>>(parentList);
             for (Pair<String, RUIElement> parent : parentListCopy)
             {
-                Set<String> definitionNames = new HashSet<String>(definitions.keySet());
-                for (String definitionName : definitionNames)
+                parentList.remove(parent);
+                if (!elementMap.containsKey(parent.first)) continue;
+                
+                Collection<RUIParserData> elements = elementMap.get(parent.first).values();
+                for (RUIParserData element : elements)
                 {
-                    RUIParserDefinition definition = definitions.get(definitionName);
-                    if (definition.parent.equals(parent.first))
-                    {
-                        RUIElement newElement = createElement(definition, parent.second);
-                        parent.second.addChild(definitionName, newElement);
-                        parentList.add(new Pair<String, RUIElement>(definitionName, newElement));
-                        definitions.remove(definitionName);
-                    }
+                    RUIElement newElement = createElement(element, parent.second);
+                    parent.second.addChild(element.name, newElement);
+                    parentList.add(new Pair<String, RUIElement>(element.name, newElement));
                 }
-                parentList.remove(parent.first);
             }
         }
     }
