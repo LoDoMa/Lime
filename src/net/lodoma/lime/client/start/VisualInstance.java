@@ -76,6 +76,7 @@ public class VisualInstance
         
         Timer fpsTimer = new Timer();
         double fpsSeconds = 0.0f;
+        double fpsCurrentApprox = 0.0f;
         int frames = 0;
         int fps = 0;
         
@@ -126,7 +127,7 @@ public class VisualInstance
                 String arch = osBean.getArch();
                 int pcnt = osBean.getAvailableProcessors();
                 
-                debugLines[0].text = "fps: " + fps;
+                debugLines[0].text = "fps: " + fps + " (" + Math.round(fpsCurrentApprox) + ")";
                 debugLines[1].text = "cpu: " + cpuStr + ", max: " + maxStr + ", arch: " + arch + ", pcnt: " + pcnt;
                 debugLines[2].text = "memory: " + allocatedMemory + "/" + maxMemory + " MB, " + usage + "%";
                 
@@ -141,6 +142,7 @@ public class VisualInstance
                 frames++;
                 fpsTimer.update();
                 fpsSeconds += timer.getDelta();
+                fpsCurrentApprox = 1.0f / timer.getDelta();
                 if(fpsSeconds >= 1.0)
                 {
                     fpsSeconds -= 1.0;
