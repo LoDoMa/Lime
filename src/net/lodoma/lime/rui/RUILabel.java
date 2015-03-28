@@ -69,18 +69,18 @@ public class RUILabel extends RUIElement
             String horalign_t = values.get(state, "horizontal-alignment").toString();
             switch (horalign_t)
             {
-            case "left": horalign_c = TrueTypeFont.ALIGN_LEFT; break;
-            case "center": horalign_c = TrueTypeFont.ALIGN_CENTER; break;
-            case "right": horalign_c = TrueTypeFont.ALIGN_RIGHT; break;
+            case "left": horalign_c = RUIAlignment.ALIGN_LEFT; break;
+            case "center": horalign_c = RUIAlignment.ALIGN_CENTER; break;
+            case "right": horalign_c = RUIAlignment.ALIGN_RIGHT; break;
             default: throw new IllegalStateException();
             }
 
             String veralign_t = values.get(state, "vertical-alignment").toString();
             switch (veralign_t)
             {
-            case "top": veralign_c = TrueTypeFont.ALIGN_LEFT; break;
-            case "center": veralign_c = TrueTypeFont.ALIGN_CENTER; break;
-            case "bottom": veralign_c = TrueTypeFont.ALIGN_RIGHT; break;
+            case "top": veralign_c = RUIAlignment.ALIGN_TOP; break;
+            case "center": veralign_c = RUIAlignment.ALIGN_CENTER; break;
+            case "bottom": veralign_c = RUIAlignment.ALIGN_BOTTOM; break;
             default: throw new IllegalStateException();
             }
         }
@@ -98,12 +98,12 @@ public class RUILabel extends RUIElement
         
         float x, y;
         
-        if (horalign_c == TrueTypeFont.ALIGN_LEFT) x = 0.0f;
-        else if (horalign_c == TrueTypeFont.ALIGN_RIGHT) x = dimensions_c.x;
+        if (horalign_c == RUIAlignment.ALIGN_LEFT) x = 0.0f;
+        else if (horalign_c == RUIAlignment.ALIGN_RIGHT) x = dimensions_c.x;
         else x = dimensions_c.x * 0.5f;
         
-        if (veralign_c == TrueTypeFont.ALIGN_LEFT) y = dimensions_c.y - fontSize_c;
-        else if (veralign_c == TrueTypeFont.ALIGN_RIGHT) y = 0.0f;
+        if (veralign_c == RUIAlignment.ALIGN_LEFT) y = dimensions_c.y - fontSize_c;
+        else if (veralign_c == RUIAlignment.ALIGN_RIGHT) y = 0.0f;
         else y = (dimensions_c.y - fontSize_c) / 2.0f;
         
         fgColor_c.setGL();

@@ -52,7 +52,7 @@ public class RUIToggle extends RUIButton implements RUIActivable
             
             if (active)
                 if (hover)
-                    state = "active:hover";
+                    state = "active-hover:active:hover";
                 else
                     state = "active";
         }
