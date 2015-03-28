@@ -8,7 +8,8 @@
 	- STATE hover background-color 333380FF
 
 	- border-width 1px
-	- border-radius 10px
+	- border-radius-top-right 10px
+	- border-radius-bottom-left 10px
 	- border-color 00000000
 	- STATE hover border-color FFFFFFFF
 
@@ -23,7 +24,8 @@
 	- STATE active-hover background-color 808000FF
 
 	- border-width 1px
-	- border-radius 10px
+	- border-radius-top-right 10px
+	- border-radius-bottom-left 10px
 	- border-color 00000000
 	- STATE hover border-color FFFFFFFF
 

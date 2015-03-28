@@ -55,9 +55,7 @@ public class RUIElement
         values.set("default", "height", RUIValue.SIZE_1);
         values.set("default", "foreground-color", RUIValue.COLOR_CLEAR);
         values.set("default", "background-color", RUIValue.COLOR_CLEAR);
-        values.set("default", "border-width", RUIValue.SIZE_0);
-        values.set("default", "border-radius", RUIValue.SIZE_0);
-        values.set("default", "border-color", RUIValue.COLOR_CLEAR);
+        border.loadDefaultValues(values);
         
         if (parent == null)
         {
@@ -78,9 +76,7 @@ public class RUIElement
             data.copy("height", RUIValueType.SIZE, values);
             data.copy("foreground-color", RUIValueType.COLOR, values);
             data.copy("background-color", RUIValueType.COLOR, values);
-            data.copy("border-width", RUIValueType.SIZE, values);
-            data.copy("border-radius", RUIValueType.SIZE, values);
-            data.copy("border-color", RUIValueType.COLOR, values);
+            border.loadData(data, values);
         }
     }
     
@@ -172,9 +168,7 @@ public class RUIElement
             if (bgColor_c == null) bgColor_c = new Color(values.get(state, "background-color").toColor());
             else bgColor_c.set(values.get(state, "background-color").toColor());
 
-            border.width = values.get(state, "border-width").toSize();
-            border.radius = values.get(state, "border-radius").toSize();
-            border.color.set(values.get(state, "border-color").toColor());
+            border.update(timeDelta, this);
             
             Vector2 originalMousePosition = Input.inputData.currentMousePosition.clone();
             Input.inputData.currentMousePosition.subLocal(position_c);
