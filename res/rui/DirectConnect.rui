@@ -1,0 +1,33 @@
+
+INCLUDE "MenuTheme"
+
+body ROOT container
+	- @Body
+
+lblTitle body label
+	- @LabelTitle
+	- position-x 5%
+	- position-y 60%
+	- text "Direct connect"
+
+lblHost body label
+	- @Label
+	- position-x 5%
+	- position-y 44%
+	- text "Host:"
+
+btnJoin body button
+	- @Button
+	- position-x 5%
+	- position-y 34%
+	- width 40%
+	- height 5%
+	- text "Join"
+
+btnBack body button
+	- @Button
+	- position-x 5%
+	- position-y 26%
+	- width 40%
+	- height 5%
+	- text "Back"
