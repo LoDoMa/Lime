@@ -9,6 +9,12 @@ public class RUIProgressBar extends RUIButton
     protected final Vector2 progressDimensions = new Vector2();
     protected RUIBorder progressBorder;
     
+    private String oldState_m;
+    private float stateTimeTotal_m;
+    private float stateTime_m;
+    private float oldProgress_m = Float.NaN;
+    private float deltaProgressDimensionsX_m;
+    
     public RUIProgressBar(RUIElement parent)
     {
         super(parent);
@@ -49,12 +55,42 @@ public class RUIProgressBar extends RUIButton
             progressBorder.update(timeDelta, this, "progress-");
             
             boolean show = values.get(state, "progress-show").toBoolean();
-            progress_c = values.get(state, "progress").toSize();
+            float progress_t = values.get(state, "progress").toSize();
             if (show)
-                values.set("default", "text", new RUIValue((int) (progress_c * 100) + "%"));
-            progress_c *= (progress_c < 0) ? (-1.0f / Window.viewportWidth) : dimensions_c.x;
+                values.set("default", "text", new RUIValue((int) (progress_t * 100) + "%"));
+            progress_t *= (progress_t < 0) ? (-1.0f / Window.viewportWidth) : dimensions_c.x;
+            progress_c = progress_t;
             
-            progressDimensions.set(progress_c, dimensions_c.y);
+            if (!Float.isNaN(oldProgress_m) && oldProgress_m != progress_c)
+            {
+                if (oldState_m != null)
+                {
+                    stateTimeTotal_m = values.get(state, "enter-state-time").toSize();
+                    if (stateTimeTotal_m < 0)
+                        throw new IllegalStateException();
+                    stateTime_m = stateTimeTotal_m;
+
+                    deltaProgressDimensionsX_m = progress_c - oldProgress_m;
+                }
+                oldState_m = state;
+            }
+            
+            oldProgress_m = progress_c;
+            
+            if (stateTime_m != 0)
+            {
+                stateTime_m -= timeDelta;
+
+                if (stateTime_m < 0)
+                    stateTime_m = 0;
+                else
+                {
+                    float fract = 1.0f - stateTime_m / stateTimeTotal_m;
+                    progress_t = (progress_t - deltaProgressDimensionsX_m) + deltaProgressDimensionsX_m * fract;
+                }
+            }
+            
+            progressDimensions.set(progress_t, dimensions_c.y);
         }
     }
     

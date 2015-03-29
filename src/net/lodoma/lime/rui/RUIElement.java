@@ -23,9 +23,16 @@ public class RUIElement
     
     protected final RUIBorder border = new RUIBorder();
 
-    protected Vector2 position_c = null;
-    protected Vector2 dimensions_c = null;
-    protected Color fgColor_c = null;
+    protected final Vector2 position_c = new Vector2();
+    protected final Vector2 dimensions_c = new Vector2();
+    protected final Color fgColor_c = new Color();
+
+    private String oldState_m;
+    private float stateTimeTotal_m;
+    private float stateTime_m;
+    private final Vector2 deltaPosition_m = new Vector2();
+    private final Vector2 deltaDimensions_m = new Vector2();
+    private final Color deltaFgColor_m = new Color();
     
     public RUIElement(RUIElement parent)
     {
@@ -45,6 +52,7 @@ public class RUIElement
     
     protected void loadDefaultValues()
     {
+        values.set("default", "enter-state-time", new RUIValue(0.1f));
         values.set("default", "index", new RUIValue(-1));
         values.set("default", "visible", RUIValue.BOOLEAN_TRUE);
         values.set("default", "position-x", RUIValue.SIZE_0);
@@ -65,6 +73,7 @@ public class RUIElement
     {
         synchronized (treeLock)
         {
+            data.copy("enter-state-time", RUIValueType.SIZE, values);
             data.copy("index", RUIValueType.INTEGER, values);
             data.copy("visible", RUIValueType.BOOLEAN, values);
             data.copy("position-x", RUIValueType.SIZE, values);
@@ -147,8 +156,6 @@ public class RUIElement
             else if (parent != null) position_x *= parent.dimensions_c.x;
             if (position_y < 0) position_y /= -Window.viewportHeight;
             else if (parent != null) position_y *= parent.dimensions_c.y;
-            if (position_c == null) position_c = new Vector2(position_x, position_y);
-            else position_c.set(position_x, position_y);
 
             float dimensions_x = values.get(state, "width").toSize();
             float dimensions_y = values.get(state, "height").toSize();
@@ -156,11 +163,48 @@ public class RUIElement
             else if (parent != null) dimensions_x *= parent.dimensions_c.x;
             if (dimensions_y < 0) dimensions_y /= -Window.viewportHeight;
             else if (parent != null) dimensions_y *= parent.dimensions_c.y;
-            if (dimensions_c == null) dimensions_c = new Vector2(dimensions_x, dimensions_y);
-            else dimensions_c.set(dimensions_x, dimensions_y);
             
-            if (fgColor_c == null) fgColor_c = new Color(values.get(state, "foreground-color").toColor());
-            else fgColor_c.set(values.get(state, "foreground-color").toColor());
+            Color fgColor_t = new Color(values.get(state, "foreground-color").toColor());
+            
+            if (oldState_m != state)
+            {
+                if (oldState_m != null)
+                {
+                    stateTimeTotal_m = values.get(state, "enter-state-time").toSize();
+                    if (stateTimeTotal_m < 0)
+                        throw new IllegalStateException();
+                    stateTime_m = stateTimeTotal_m;
+
+                    deltaPosition_m.set(position_x - position_c.x, position_y - position_c.y);
+                    deltaDimensions_m.set(dimensions_x - dimensions_c.x, dimensions_y - dimensions_c.y);
+                    deltaFgColor_m.set(fgColor_t.r - fgColor_c.r, fgColor_t.g - fgColor_c.g, fgColor_t.b - fgColor_c.b, fgColor_t.a - fgColor_c.a);
+                }
+                oldState_m = state;
+            }
+            
+            if (stateTime_m != 0)
+            {
+                stateTime_m -= timeDelta;
+
+                if (stateTime_m < 0)
+                    stateTime_m = 0;
+                else
+                {
+                    float fract = 1.0f - stateTime_m / stateTimeTotal_m;
+                    position_x = (position_x - deltaPosition_m.x) + deltaPosition_m.x * fract;
+                    position_y = (position_y - deltaPosition_m.y) + deltaPosition_m.y * fract;
+                    dimensions_x = (dimensions_x - deltaDimensions_m.x) + deltaDimensions_m.x * fract;
+                    dimensions_y = (dimensions_y - deltaDimensions_m.y) + deltaDimensions_m.y * fract;
+                    fgColor_t.r = (fgColor_t.r - deltaFgColor_m.r) + deltaFgColor_m.r * fract;
+                    fgColor_t.g = (fgColor_t.g - deltaFgColor_m.g) + deltaFgColor_m.g * fract;
+                    fgColor_t.b = (fgColor_t.b - deltaFgColor_m.b) + deltaFgColor_m.b * fract;
+                    fgColor_t.a = (fgColor_t.a - deltaFgColor_m.a) + deltaFgColor_m.a * fract;
+                }
+            }
+            
+            position_c.set(position_x, position_y);
+            dimensions_c.set(dimensions_x, dimensions_y);
+            fgColor_c.set(fgColor_t);
 
             border.update(timeDelta, this, "");
             

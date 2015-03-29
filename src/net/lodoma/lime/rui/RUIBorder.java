@@ -10,18 +10,25 @@ import net.lodoma.lime.util.Vector2;
 public class RUIBorder
 {
     private static final int ARC_QUALITY = 16;
+
+    protected final Color backgroundColor_c = new Color();
+    protected final Color gradientColor_c = new Color();
+    protected final Color borderColor_c = new Color();
+
+    protected final Vector2 gradientSource_c = new Vector2();
     
-    public float width;
-    public final Vector2 radiusTL = new Vector2();
-    public final Vector2 radiusTR = new Vector2();
-    public final Vector2 radiusBL = new Vector2();
-    public final Vector2 radiusBR = new Vector2();
-
-    public final Color backgroundColor_c = new Color();
-    public final Color gradientColor_c = new Color();
-    public final Color borderColor_c = new Color();
-
-    public final Vector2 gradientSource_c = new Vector2();
+    protected float borderWidth_c;
+    protected final Vector2 borderRadiusTL_c = new Vector2();
+    protected final Vector2 borderRadiusTR_c = new Vector2();
+    protected final Vector2 borderRadiusBL_c = new Vector2();
+    protected final Vector2 borderRadiusBR_c = new Vector2();
+    
+    private String oldState_m;
+    private float stateTimeTotal_m;
+    private float stateTime_m;
+    private final Color deltaBackgroundColor_m = new Color();
+    private final Color deltaGradientColor_m = new Color();
+    private final Color deltaBorderColor_m = new Color();
     
     public void loadDefaultValues(RUIValueMap values, String prefix)
     {
@@ -57,37 +64,92 @@ public class RUIBorder
     
     public void update(double timeDelta, RUIElement element, String prefix)
     {
-        backgroundColor_c.set(element.values.get(element.state, prefix + "background-color").toColor());
-        gradientColor_c.set(element.values.get(element.state, prefix + "gradient-color").toColor());
+        Color backgroundColor_t = new Color(element.values.get(element.state, prefix + "background-color").toColor());
+        Color gradientColor_t = new Color(element.values.get(element.state, prefix + "gradient-color").toColor());
+        Color borderColor_t = new Color(element.values.get(element.state, prefix + "border-color").toColor());
         
         float gradientSourceX_t = element.values.get(element.state, prefix + "gradient-source-x").toSize();
         float gradientSourceY_t = element.values.get(element.state, prefix + "gradient-source-y").toSize();
         gradientSourceX_t *= (gradientSourceX_t < 0) ? (-1.0f / Window.viewportWidth) : element.dimensions_c.x;
         gradientSourceY_t *= (gradientSourceY_t < 0) ? (-1.0f / Window.viewportHeight) : element.dimensions_c.y;
+        
+        float borderWidth_t = element.values.get(element.state, prefix + "border-width").toSize();
+        
+        float borderRadiusTLx_t = element.values.get(element.state, prefix + "border-radius-top-left").toSize();
+        float borderRadiusTRx_t = element.values.get(element.state, prefix + "border-radius-top-right").toSize();
+        float borderRadiusBLx_t = element.values.get(element.state, prefix + "border-radius-bottom-left").toSize();
+        float borderRadiusBRx_t = element.values.get(element.state, prefix + "border-radius-bottom-right").toSize();
+
+        float borderRadiusTLy_t = borderRadiusTLx_t * ((borderRadiusTLx_t < 0) ? (-1.0f / Window.viewportHeight) : element.dimensions_c.y);
+        float borderRadiusTRy_t = borderRadiusTRx_t * ((borderRadiusTRx_t < 0) ? (-1.0f / Window.viewportHeight) : element.dimensions_c.y);
+        float borderRadiusBLy_t = borderRadiusBLx_t * ((borderRadiusBLx_t < 0) ? (-1.0f / Window.viewportHeight) : element.dimensions_c.y);
+        float borderRadiusBRy_t = borderRadiusBRx_t * ((borderRadiusBRx_t < 0) ? (-1.0f / Window.viewportHeight) : element.dimensions_c.y);
+        
+        borderRadiusTLx_t *= (borderRadiusTLx_t < 0) ? (-1.0f / Window.viewportWidth) : element.dimensions_c.x;
+        borderRadiusTRx_t *= (borderRadiusTRx_t < 0) ? (-1.0f / Window.viewportWidth) : element.dimensions_c.x;
+        borderRadiusBLx_t *= (borderRadiusBLx_t < 0) ? (-1.0f / Window.viewportWidth) : element.dimensions_c.x;
+        borderRadiusBRx_t *= (borderRadiusBRx_t < 0) ? (-1.0f / Window.viewportWidth) : element.dimensions_c.x;
+        
+        if (oldState_m != element.state)
+        {
+            if (oldState_m != null)
+            {
+                stateTimeTotal_m = element.values.get(element.state, "enter-state-time").toSize();
+                if (stateTimeTotal_m < 0)
+                    throw new IllegalStateException();
+                stateTime_m = stateTimeTotal_m;
+                
+                deltaBackgroundColor_m.set(backgroundColor_t.r - backgroundColor_c.r,
+                                           backgroundColor_t.g - backgroundColor_c.g,
+                                           backgroundColor_t.b - backgroundColor_c.b,
+                                           backgroundColor_t.a - backgroundColor_c.a);
+                deltaGradientColor_m.set(gradientColor_t.r - gradientColor_c.r,
+                                         gradientColor_t.g - gradientColor_c.g,
+                                         gradientColor_t.b - gradientColor_c.b,
+                                         gradientColor_t.a - gradientColor_c.a);
+                deltaBorderColor_m.set(borderColor_t.r - borderColor_c.r,
+                                       borderColor_t.g - borderColor_c.g,
+                                       borderColor_t.b - borderColor_c.b,
+                                       borderColor_t.a - borderColor_c.a);
+            }
+            oldState_m = element.state;
+        }
+        
+        if (stateTime_m != 0)
+        {
+            stateTime_m -= timeDelta;
+
+            if (stateTime_m < 0)
+                stateTime_m = 0;
+            else
+            {
+                float fract = 1.0f - stateTime_m / stateTimeTotal_m;
+                backgroundColor_t.r = (backgroundColor_t.r - deltaBackgroundColor_m.r) + deltaBackgroundColor_m.r * fract;
+                backgroundColor_t.g = (backgroundColor_t.g - deltaBackgroundColor_m.g) + deltaBackgroundColor_m.g * fract;
+                backgroundColor_t.b = (backgroundColor_t.b - deltaBackgroundColor_m.b) + deltaBackgroundColor_m.b * fract;
+                backgroundColor_t.a = (backgroundColor_t.a - deltaBackgroundColor_m.a) + deltaBackgroundColor_m.a * fract;
+                gradientColor_t.r = (gradientColor_t.r - deltaGradientColor_m.r) + deltaGradientColor_m.r * fract;
+                gradientColor_t.g = (gradientColor_t.g - deltaGradientColor_m.g) + deltaGradientColor_m.g * fract;
+                gradientColor_t.b = (gradientColor_t.b - deltaGradientColor_m.b) + deltaGradientColor_m.b * fract;
+                gradientColor_t.a = (gradientColor_t.a - deltaGradientColor_m.a) + deltaGradientColor_m.a * fract;
+                borderColor_t.r = (borderColor_t.r - deltaBorderColor_m.r) + deltaBorderColor_m.r * fract;
+                borderColor_t.g = (borderColor_t.g - deltaBorderColor_m.g) + deltaBorderColor_m.g * fract;
+                borderColor_t.b = (borderColor_t.b - deltaBorderColor_m.b) + deltaBorderColor_m.b * fract;
+                borderColor_t.a = (borderColor_t.a - deltaBorderColor_m.a) + deltaBorderColor_m.a * fract;
+            }
+        }
+        
+        backgroundColor_c.set(backgroundColor_t);
+        gradientColor_c.set(gradientColor_t);
+        borderColor_c.set(borderColor_t);
+        
         gradientSource_c.set(gradientSourceX_t, gradientSourceY_t);
         
-        borderColor_c.set(element.values.get(element.state, prefix + "border-color").toColor());
-        width = element.values.get(element.state, prefix + "border-width").toSize();
-        
-        float borderRadiusTLx_c = element.values.get(element.state, prefix + "border-radius-top-left").toSize();
-        float borderRadiusTRx_c = element.values.get(element.state, prefix + "border-radius-top-right").toSize();
-        float borderRadiusBLx_c = element.values.get(element.state, prefix + "border-radius-bottom-left").toSize();
-        float borderRadiusBRx_c = element.values.get(element.state, prefix + "border-radius-bottom-right").toSize();
-
-        float borderRadiusTLy_c = borderRadiusTLx_c * ((borderRadiusTLx_c < 0) ? (-1.0f / Window.viewportHeight) : element.dimensions_c.y);
-        float borderRadiusTRy_c = borderRadiusTRx_c * ((borderRadiusTRx_c < 0) ? (-1.0f / Window.viewportHeight) : element.dimensions_c.y);
-        float borderRadiusBLy_c = borderRadiusBLx_c * ((borderRadiusBLx_c < 0) ? (-1.0f / Window.viewportHeight) : element.dimensions_c.y);
-        float borderRadiusBRy_c = borderRadiusBRx_c * ((borderRadiusBRx_c < 0) ? (-1.0f / Window.viewportHeight) : element.dimensions_c.y);
-        
-        borderRadiusTLx_c *= (borderRadiusTLx_c < 0) ? (-1.0f / Window.viewportWidth) : element.dimensions_c.x;
-        borderRadiusTRx_c *= (borderRadiusTRx_c < 0) ? (-1.0f / Window.viewportWidth) : element.dimensions_c.x;
-        borderRadiusBLx_c *= (borderRadiusBLx_c < 0) ? (-1.0f / Window.viewportWidth) : element.dimensions_c.x;
-        borderRadiusBRx_c *= (borderRadiusBRx_c < 0) ? (-1.0f / Window.viewportWidth) : element.dimensions_c.x;
-        
-        radiusTL.set(borderRadiusTLx_c, borderRadiusTLy_c);
-        radiusTR.set(borderRadiusTRx_c, borderRadiusTRy_c);
-        radiusBL.set(borderRadiusBLx_c, borderRadiusBLy_c);
-        radiusBR.set(borderRadiusBRx_c, borderRadiusBRy_c);
+        borderWidth_c = borderWidth_t;
+        borderRadiusTL_c.set(borderRadiusTLx_t, borderRadiusTLy_t);
+        borderRadiusTR_c.set(borderRadiusTRx_t, borderRadiusTRy_t);
+        borderRadiusBL_c.set(borderRadiusBLx_t, borderRadiusBLy_t);
+        borderRadiusBR_c.set(borderRadiusBRx_t, borderRadiusBRy_t);
     }
     
     private float calcGradientAlpha(float x, float y, Vector2 dimensions)
@@ -147,13 +209,13 @@ public class RUIBorder
         Texture.NO_TEXTURE.bind(0);
         borderColor_c.setGL();
         
-        GL11.glLineWidth(width);
+        GL11.glLineWidth(borderWidth_c);
         GL11.glBegin(GL11.GL_LINES);
-        renderArc(radiusBL, dimensions, true, true, true, true, true, false);
-        renderArc(radiusTL, dimensions, false, true, false, true, false, false);
-        renderArc(radiusTR, dimensions, true, false, false, true, false, false);
-        renderArc(radiusBR, dimensions, false, false, true, true, false, false);
-        GL11.glVertex2f(radiusBL.x, 0.0f);
+        renderArc(borderRadiusBL_c, dimensions, true, true, true, true, true, false);
+        renderArc(borderRadiusTL_c, dimensions, false, true, false, true, false, false);
+        renderArc(borderRadiusTR_c, dimensions, true, false, false, true, false, false);
+        renderArc(borderRadiusBR_c, dimensions, false, false, true, true, false, false);
+        GL11.glVertex2f(borderRadiusBL_c.x, 0.0f);
         GL11.glEnd();
     }
     
@@ -163,10 +225,10 @@ public class RUIBorder
         backgroundColor_c.setGL();
         
         GL11.glBegin(GL11.GL_POLYGON);
-        renderArc(radiusBL, dimensions, true, true, true, false, false, false);
-        renderArc(radiusTL, dimensions, false, true, false, false, false, false);
-        renderArc(radiusTR, dimensions, true, false, false, false, false, false);
-        renderArc(radiusBR, dimensions, false, false, true, false, false, false);
+        renderArc(borderRadiusBL_c, dimensions, true, true, true, false, false, false);
+        renderArc(borderRadiusTL_c, dimensions, false, true, false, false, false, false);
+        renderArc(borderRadiusTR_c, dimensions, true, false, false, false, false, false);
+        renderArc(borderRadiusBR_c, dimensions, false, false, true, false, false, false);
         GL11.glEnd();
     }
     
@@ -175,10 +237,10 @@ public class RUIBorder
         Texture.NO_TEXTURE.bind(0);
         
         GL11.glBegin(GL11.GL_POLYGON);
-        renderArc(radiusBL, dimensions, true, true, true, false, false, true);
-        renderArc(radiusTL, dimensions, false, true, false, false, false, true);
-        renderArc(radiusTR, dimensions, true, false, false, false, false, true);
-        renderArc(radiusBR, dimensions, false, false, true, false, false, true);
+        renderArc(borderRadiusBL_c, dimensions, true, true, true, false, false, true);
+        renderArc(borderRadiusTL_c, dimensions, false, true, false, false, false, true);
+        renderArc(borderRadiusTR_c, dimensions, true, false, false, false, false, true);
+        renderArc(borderRadiusBR_c, dimensions, false, false, true, false, false, true);
         GL11.glEnd();
     }
 }

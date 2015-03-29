@@ -139,7 +139,12 @@
 	- width 40%
 	- height 50%
 	- vertical-spacing 2%
+	- visible false
 
 @MenuListMember
-	- width 100%
+	- position-x 1%
+	- width 98%
 	- height 10%
+	- STATE hover position-x 0%
+	- STATE hover width 100%
+	- STATE hover height 11%
