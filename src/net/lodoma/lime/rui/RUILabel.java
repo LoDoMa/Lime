@@ -7,8 +7,10 @@ import net.lodoma.lime.util.TrueTypeFont;
 public class RUILabel extends RUIElement
 {
     protected String fontName_c;
-    protected TrueTypeFont font_c;    
+    protected TrueTypeFont font_c;
     protected float fontSize_c;
+    protected float fontScaleX_c;
+    protected float fontScaleY_c;
     protected int horalign_c;
     protected int veralign_c;
     
@@ -65,6 +67,11 @@ public class RUILabel extends RUIElement
             if (fontSize_t < 0) fontSize_t /= -Window.viewportHeight;
             else fontSize_t *= dimensions_c.y;
             fontSize_c = fontSize_t;
+            
+            int ttfSize = font_c.getFont().getSize() + 3;
+            float scale = fontSize_c / ttfSize;
+            fontScaleX_c = scale * 0.6f;
+            fontScaleY_c = scale * 0.75f;
 
             String horalign_t = values.get(state, "horizontal-alignment").toString();
             switch (horalign_t)
@@ -93,9 +100,6 @@ public class RUILabel extends RUIElement
         
         String text = values.get(state, "text").toString();
         
-        int ttfSize = font_c.getFont().getSize() + 3;
-        float scale = fontSize_c / ttfSize;
-        
         float x, y;
         
         if (horalign_c == RUIAlignment.ALIGN_LEFT) x = 0.0f;
@@ -107,6 +111,6 @@ public class RUILabel extends RUIElement
         else y = (dimensions_c.y - fontSize_c) / 2.0f;
         
         fgColor_c.setGL();
-        font_c.drawString(x, y, text, scale * 0.6f, scale * 0.75f, horalign_c);
+        font_c.drawString(x, y, text, fontScaleX_c, fontScaleY_c, horalign_c);
     }
 }

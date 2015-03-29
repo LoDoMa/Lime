@@ -16,6 +16,14 @@ lblHost body label
 	- position-y 44%
 	- text "Host:"
 
+tfldHost body text-field
+	- @TextField
+	- position-x 15%
+	- position-y 44%
+	- width 80%
+	- height 5%
+	- text "localhost"
+
 btnJoin body button
 	- @Button
 	- position-x 5%

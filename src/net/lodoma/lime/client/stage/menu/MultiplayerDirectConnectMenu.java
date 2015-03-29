@@ -7,20 +7,14 @@ import net.lodoma.lime.Lime;
 import net.lodoma.lime.client.stage.Stage;
 import net.lodoma.lime.client.stage.game.Game;
 import net.lodoma.lime.client.stage.game.GameMessage;
-import net.lodoma.lime.gui.UITextField;
-import net.lodoma.lime.gui.clean.CleanTextField;
 import net.lodoma.lime.input.Input;
 import net.lodoma.lime.rui.RUIEventData;
 import net.lodoma.lime.rui.RUIEventType;
 import net.lodoma.lime.shader.Program;
 import net.lodoma.lime.shader.UniformType;
-import net.lodoma.lime.util.TrueTypeFont;
-import net.lodoma.lime.util.Vector2;
 
 public class MultiplayerDirectConnectMenu extends Stage
 {
-    private UITextField hostField;
-    
     public MultiplayerDirectConnectMenu()
     {
         rui.load("DirectConnect");
@@ -31,7 +25,8 @@ public class MultiplayerDirectConnectMenu extends Stage
                 manager.pop();
                 try
                 {
-                    manager.push(new Game(InetAddress.getByName(hostField.text.text)));
+                    String host = rui.getChildRecursive("body.tfldHost").values.get("default", "text").toString();
+                    manager.push(new Game(InetAddress.getByName(host)));
                 }
                 catch(UnknownHostException e)
                 {
@@ -46,9 +41,6 @@ public class MultiplayerDirectConnectMenu extends Stage
             if (type == RUIEventType.MOUSE_RELEASE)
                 manager.pop();
         };
-
-        // TODO: replace old UI text field with new RUI alternative
-        ui.addChild(hostField = new CleanTextField(new Vector2(0.15f, 0.44f), new Vector2(0.8f, 0.05f), "localhost", TrueTypeFont.ALIGN_LEFT));
     }
     
     @Override

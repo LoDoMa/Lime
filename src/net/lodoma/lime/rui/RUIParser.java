@@ -156,6 +156,9 @@ public class RUIParser
         case "slider":
             element = new RUISlider(parent);
             break;
+        case "text-field":
+            element = new RUITextField(parent);
+            break;
         default:
             Lime.LOGGER.C("Error while parsing RUI file - invalid element type");
             Lime.forceExit(null);

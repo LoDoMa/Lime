@@ -38,7 +38,7 @@ public class RUIButton extends RUILabel
             if (mousePos.x >= position_c.x && mousePos.y >= position_c.y)
                 if (mousePos.x - position_c.x <= dimensions_c.x && mousePos.y - position_c.y <= dimensions_c.y)
                     hover = true;
-            
+
             if (eventListener != null)
             {
                 if (hover && !prevhover) eventListener.onEvent(RUIEventType.MOUSE_HOVER_ON, null);

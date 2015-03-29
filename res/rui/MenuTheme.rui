@@ -99,6 +99,25 @@
 	- position-x 60%
 	- STATE active position-x 40%
 
+@TextField
+	- foreground-color FFFFFFFF
+
+	- background-color 202020FF
+	- STATE hover background-color 333350FF
+
+	- gradient-color 505050FF
+	- gradient-source-y 100%
+	- STATE hover gradient-color 636380FF
+
+	- border-width 1px
+	- border-radius-top-right 10px
+	- border-radius-bottom-left 10px
+	- border-color 00000000
+	- STATE hover border-color FFFFFFFF
+
+	- horizontal-alignment left
+	- vertical-alignment center
+
 @ProgressBar
 	- progress-show true
 
