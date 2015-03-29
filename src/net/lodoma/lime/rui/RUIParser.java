@@ -150,6 +150,12 @@ public class RUIParser
         case "unordered-list":
             element = new RUIUnorderedList(parent);
             break;
+        case "progress-bar":
+            element = new RUIProgressBar(parent);
+            break;
+        case "slider":
+            element = new RUISlider(parent);
+            break;
         default:
             Lime.LOGGER.C("Error while parsing RUI file - invalid element type");
             Lime.forceExit(null);

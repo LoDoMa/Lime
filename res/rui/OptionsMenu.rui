@@ -83,21 +83,15 @@ lblSound body label
 	- position-y 32%
 	- text "Sound:"
 
-sldrSound body label
+sldrSound body slider
+	- @Button
+	- @ProgressBar
+
 	- position-x 25%
 	- position-y 32%
 
-	- foreground-color FFFFFFFF
-	- border-width 1px
-	- border-color FFFFFFFF
-
-	- height 5%
 	- width 40%
-
-	- horizontal-alignment center
-	- vertical-alignment center
-	- font-size 100%
-	- text "RUI slider :("
+	- height 5%
 
 btnBack body button
 	- @Button

@@ -8,4 +8,5 @@ public enum RUIEventType
     MOUSE_RELEASE,
     ACTIVE,
     INACTIVE,
+    SLIDER_VALUE_CHANGE,
 }

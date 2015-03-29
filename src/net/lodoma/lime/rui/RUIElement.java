@@ -6,7 +6,6 @@ import java.util.Map;
 
 import net.lodoma.lime.client.window.Window;
 import net.lodoma.lime.input.Input;
-import net.lodoma.lime.texture.Texture;
 import net.lodoma.lime.util.Color;
 import net.lodoma.lime.util.Vector2;
 import static org.lwjgl.opengl.GL11.*;
@@ -22,7 +21,7 @@ public class RUIElement
     private final Map<String, RUIElement> children;
     protected final Object treeLock;
     
-    private final RUIBorder border = new RUIBorder();
+    protected final RUIBorder border = new RUIBorder();
 
     protected Vector2 position_c = null;
     protected Vector2 dimensions_c = null;
@@ -53,7 +52,7 @@ public class RUIElement
         values.set("default", "width", RUIValue.SIZE_1);
         values.set("default", "height", RUIValue.SIZE_1);
         values.set("default", "foreground-color", RUIValue.COLOR_CLEAR);
-        border.loadDefaultValues(values);
+        border.loadDefaultValues(values, "");
         
         if (parent == null)
         {
@@ -73,7 +72,7 @@ public class RUIElement
             data.copy("width", RUIValueType.SIZE, values);
             data.copy("height", RUIValueType.SIZE, values);
             data.copy("foreground-color", RUIValueType.COLOR, values);
-            border.loadData(data, values);
+            border.loadData(data, values, "");
         }
     }
     
@@ -163,7 +162,7 @@ public class RUIElement
             if (fgColor_c == null) fgColor_c = new Color(values.get(state, "foreground-color").toColor());
             else fgColor_c.set(values.get(state, "foreground-color").toColor());
 
-            border.update(timeDelta, this);
+            border.update(timeDelta, this, "");
             
             Vector2 originalMousePosition = Input.inputData.currentMousePosition.clone();
             Input.inputData.currentMousePosition.subLocal(position_c);
@@ -176,10 +175,9 @@ public class RUIElement
     
     protected void renderBackground()
     {
-        Texture.NO_TEXTURE.bind(0);
-        
-        border.fillBackground(this);
-        border.renderBorder(this);
+        border.fillBackground(dimensions_c);
+        border.fillGradient(dimensions_c);
+        border.renderBorder(dimensions_c);
     }
     
     protected void renderForeground() {}
