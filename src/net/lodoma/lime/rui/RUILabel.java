@@ -1,7 +1,6 @@
 package net.lodoma.lime.rui;
 
 import net.lodoma.lime.client.window.Window;
-import net.lodoma.lime.gui.UIFont;
 import net.lodoma.lime.util.TrueTypeFont;
 
 public class RUILabel extends RUIElement
@@ -60,7 +59,7 @@ public class RUILabel extends RUIElement
             if (fontName_c == null || !fontName_c.equals(fontName))
             {
                 fontName_c = fontName;
-                font_c = new UIFont(fontName, 0, 0).ttf; // TODO: RUI alternative
+                font_c = RUI.getFont(fontName);
             }
             
             float fontSize_t = values.get(state, "font-size").toSize();
