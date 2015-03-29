@@ -1,0 +1,105 @@
+
+INCLUDE "MenuTheme"
+
+GROUP "FullscreenToggleGroup"
+GROUP "VSyncToggleGroup"
+GROUP "DebugToggleGroup"
+
+body ROOT container
+	- @Body
+
+ctnrFullscr body container
+	- position-x 5%
+	- position-y 50%
+	- width 40%
+	- height 5%
+
+toglFullscrOn ctnrFullscr toggle
+	- group "FullscreenToggleGroup"
+	- @ToggleSplit
+	- @ToggleSplitLeft
+	- text "Fullscreen"
+
+toglFullscrOff ctnrFullscr toggle
+	- group "FullscreenToggleGroup"
+	- @ToggleSplit
+	- @ToggleSplitRight
+	- text "Windowed"
+
+lblVSync body label
+	- @Label
+	- position-x 5%
+	- position-y 44%
+	- text "VSync:"
+
+ctnrVSync body container
+	- position-x 25%
+	- position-y 44%
+	- width 20%
+	- height 5%
+
+toglVSyncOn ctnrVSync toggle
+	- group "VSyncToggleGroup"
+	- @ToggleSplit
+	- @ToggleSplitLeft
+	- text "on"
+
+toglVSyncOff ctnrVSync toggle
+	- group "VSyncToggleGroup"
+	- @ToggleSplit
+	- @ToggleSplitRight
+	- text "off"
+
+lblDebug body label
+	- @Label
+	- position-x 5%
+	- position-y 38%
+	- text "Debug:"
+
+ctnrDebug body container
+	- position-x 25%
+	- position-y 38%
+	- width 20%
+	- height 5%
+
+toglDebugOn ctnrDebug toggle
+	- group "DebugToggleGroup"
+	- @ToggleSplit
+	- @ToggleSplitLeft
+	- text "on"
+
+toglDebugOff ctnrDebug toggle
+	- group "DebugToggleGroup"
+	- @ToggleSplit
+	- @ToggleSplitRight
+	- text "off"
+
+lblSound body label
+	- @Label
+	- position-x 5%
+	- position-y 32%
+	- text "Sound:"
+
+sldrSound body label
+	- position-x 25%
+	- position-y 32%
+
+	- foreground-color FFFFFFFF
+	- border-width 1px
+	- border-color FFFFFFFF
+
+	- height 5%
+	- width 40%
+
+	- horizontal-alignment center
+	- vertical-alignment center
+	- font-size 100%
+	- text "RUI slider :("
+
+btnBack body button
+	- @Button
+	- position-x 5%
+	- position-y 20%
+	- width 60%
+	- height 5%
+	- text "Back"

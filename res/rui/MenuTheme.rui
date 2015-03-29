@@ -2,6 +2,16 @@
 @Body
 	- visible false
 
+@Label
+	- foreground-color FFFFFFFF
+
+	- height 5%
+	- width 10%
+
+	- horizontal-alignment left
+	- vertical-alignment center
+	- font-size 100%
+
 @Button
 	- foreground-color FFFFFFFF
 
@@ -23,7 +33,7 @@
 
 @Toggle
 	- foreground-color FFFFFFFF
-	
+
 	- background-color 000080FF
 	- STATE hover background-color 333380FF
 	- STATE active background-color 803300FF
@@ -43,6 +53,41 @@
 
 	- horizontal-alignment center
 	- vertical-alignment center
+
+@ToggleSplit
+	- width 40%
+	- STATE active width 60%
+	- height 100%
+
+	- foreground-color FFFFFFFF
+
+	- background-color 202020FF
+	- STATE hover background-color 404040FF
+	- STATE active background-color 803300FF
+	- STATE active-hover background-color 808000FF
+
+	- gradient-source-y 100%
+	- gradient-color 404040FF
+	- STATE hover gradient-color 606060FF
+	- STATE active gradient-color A05020FF
+	- STATE active-hover gradient-color C0C030FF
+
+	- border-width 1px
+	- border-color 00000000
+	- STATE hover border-color FFFFFFFF
+
+	- horizontal-alignment center
+	- vertical-alignment center
+
+@ToggleSplitLeft
+	- border-radius-top-left 10px
+	- border-radius-bottom-left 10px
+
+@ToggleSplitRight
+	- border-radius-top-right 10px
+	- border-radius-bottom-right 10px
+	- position-x 60%
+	- STATE active position-x 40%
 
 @MenuList
 	- position-x 5%

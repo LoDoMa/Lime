@@ -203,6 +203,8 @@ public class RUIParser
                 nextToken();
                 results.groupMap.put(nextToken(), new RUIGroup());
                 nextLine();
+                
+                continue;
             }
             
             RUIParserData data = new RUIParserData();

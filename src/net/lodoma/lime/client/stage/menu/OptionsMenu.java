@@ -4,116 +4,104 @@ import net.lodoma.lime.Lime;
 import net.lodoma.lime.client.stage.Stage;
 import net.lodoma.lime.client.window.Window;
 import net.lodoma.lime.client.window.WindowException;
-import net.lodoma.lime.gui.UICallback;
-import net.lodoma.lime.gui.UIGroup;
-import net.lodoma.lime.gui.clean.CleanButton;
-import net.lodoma.lime.gui.clean.CleanSlider;
-import net.lodoma.lime.gui.clean.CleanText;
-import net.lodoma.lime.gui.clean.CleanToggle;
-import net.lodoma.lime.gui.clean.CleanUI;
 import net.lodoma.lime.input.Input;
+import net.lodoma.lime.rui.RUIActivable;
+import net.lodoma.lime.rui.RUIEventData;
+import net.lodoma.lime.rui.RUIEventType;
 import net.lodoma.lime.shader.Program;
 import net.lodoma.lime.shader.UniformType;
-import net.lodoma.lime.util.TrueTypeFont;
-import net.lodoma.lime.util.Vector2;
 
 public class OptionsMenu extends Stage
 {
-    private class FullscreenListener implements UICallback
-    {
-        @Override
-        public void call()
-        {
-            Window.fullscreen = !Window.fullscreen;
-            fullscreen.setText(Window.fullscreen ? "Fullscreen" : "Windowed");
-            
-            try
-            {
-                Window.recreate();
-            }
-            catch(WindowException e)
-            {
-                Lime.LOGGER.C("Failed to recreate the window");
-                Lime.LOGGER.log(e);
-                Lime.forceExit(e);
-            }
-        }
-    }
-    
-    private class VSyncListener implements UICallback
-    {
-        @Override
-        public void call()
-        {
-            boolean newVsync = vsyncGroup.selected == vsyncOn;
-            if (Window.vsync != newVsync)
-            {
-                Window.vsync = newVsync;
-                Window.updateSyncInterval();
-            }
-        }
-    }
-    
-    private class DebugListener implements UICallback
-    {
-        @Override
-        public void call()
-        {
-            boolean newDebug = debugGroup.selected == debugOn;
-            if (Window.debugEnabled = newDebug)
-            {
-                Window.debugEnabled = newDebug;
-                Lime.LOGGER.F("debug = " + Window.debugEnabled);
-            }
-        }
-    }
-    
-    private class SoundListener implements UICallback
-    {
-        @Override
-        public void call()
-        {
-            System.out.println("Sound level: " + (int) (sound.sliderValue * 100) + "%");
-        }
-    }
-    
-    private class BackListener implements UICallback
-    {
-        @Override
-        public void call()
-        {
-            manager.pop();
-        }
-    }
-
-    private UIGroup<CleanToggle> vsyncGroup;
-    private UIGroup<CleanToggle> debugGroup;
-    
-    private CleanButton fullscreen;
-    private CleanToggle vsyncOn;
-    private CleanToggle vsyncOff;
-    private CleanToggle debugOn;
-    private CleanToggle debugOff;
-    private CleanSlider sound;
-    
     public OptionsMenu()
     {
-        vsyncGroup = new UIGroup<CleanToggle>(new VSyncListener());
-        debugGroup = new UIGroup<CleanToggle>(new DebugListener());
+        rui.load("OptionsMenu");
         
-        ui.addChild(fullscreen = new CleanButton(new Vector2(0.05f, 0.50f), new Vector2(0.4f, 0.05f), Window.fullscreen ? "Fullscreen" : "Windowed", TrueTypeFont.ALIGN_CENTER, new FullscreenListener()));
-        ui.addChild(new CleanText(new Vector2(0.05f, 0.465f), 0.05f, "VSync:", CleanUI.TEXT_COLOR, TrueTypeFont.ALIGN_LEFT));
-        ui.addChild(vsyncOn = new CleanToggle(new Vector2(0.25f, 0.44f), new Vector2(0.1f, 0.05f), "on", vsyncGroup, TrueTypeFont.ALIGN_CENTER));
-        ui.addChild(vsyncOff = new CleanToggle(new Vector2(0.35f, 0.44f), new Vector2(0.1f, 0.05f), "off", vsyncGroup, TrueTypeFont.ALIGN_CENTER));
-        ui.addChild(new CleanText(new Vector2(0.05f, 0.405f), 0.05f, "Debug:", CleanUI.TEXT_COLOR, TrueTypeFont.ALIGN_LEFT));
-        ui.addChild(debugOn = new CleanToggle(new Vector2(0.25f, 0.38f), new Vector2(0.1f, 0.05f), "on", debugGroup, TrueTypeFont.ALIGN_CENTER));
-        ui.addChild(debugOff = new CleanToggle(new Vector2(0.35f, 0.38f), new Vector2(0.1f, 0.05f), "off", debugGroup, TrueTypeFont.ALIGN_CENTER));
-        ui.addChild(new CleanText(new Vector2(0.05f, 0.346f), 0.05f, "Sound: ", CleanUI.TEXT_COLOR, TrueTypeFont.ALIGN_LEFT));
-        ui.addChild(sound = new CleanSlider(new Vector2(0.25f, 0.32f), new Vector2(0.4f, 0.05f), new SoundListener()));
-        ui.addChild(new CleanButton(new Vector2(0.3f, 0.26f), new Vector2(0.4f, 0.05f), "Back", TrueTypeFont.ALIGN_CENTER, new BackListener()));
-
-        vsyncGroup.select(Window.vsync ? vsyncOn : vsyncOff);
-        debugGroup.select(Window.debugEnabled ? debugOn : debugOff);
+        if (Window.fullscreen)
+            ((RUIActivable) rui.getChildRecursive("body.ctnrFullscr.toglFullscrOn")).setActivated(true);
+        else
+            ((RUIActivable) rui.getChildRecursive("body.ctnrFullscr.toglFullscrOff")).setActivated(true);
+        
+        if (Window.vsync)
+            ((RUIActivable) rui.getChildRecursive("body.ctnrVSync.toglVSyncOn")).setActivated(true);
+        else
+            ((RUIActivable) rui.getChildRecursive("body.ctnrVSync.toglVSyncOff")).setActivated(true);
+        
+        if (Window.debugEnabled)
+            ((RUIActivable) rui.getChildRecursive("body.ctnrDebug.toglDebugOn")).setActivated(true);
+        else
+            ((RUIActivable) rui.getChildRecursive("body.ctnrDebug.toglDebugOff")).setActivated(true);
+        
+        rui.getChildRecursive("body.ctnrFullscr.toglFullscrOn").eventListener = (RUIEventType type, RUIEventData data) -> {
+            if (type == RUIEventType.ACTIVE)
+            {
+                Window.fullscreen = true;
+                try
+                {
+                    Window.recreate();
+                }
+                catch(WindowException e)
+                {
+                    Lime.LOGGER.C("Failed to recreate the window");
+                    Lime.LOGGER.log(e);
+                    Lime.forceExit(e);
+                }
+            }
+        };
+        
+        rui.getChildRecursive("body.ctnrFullscr.toglFullscrOff").eventListener = (RUIEventType type, RUIEventData data) -> {
+            if (type == RUIEventType.ACTIVE)
+            {
+                Window.fullscreen = false;
+                try
+                {
+                    Window.recreate();
+                }
+                catch(WindowException e)
+                {
+                    Lime.LOGGER.C("Failed to recreate the window");
+                    Lime.LOGGER.log(e);
+                    Lime.forceExit(e);
+                }
+            }
+        };
+        
+        rui.getChildRecursive("body.ctnrVSync.toglVSyncOn").eventListener = (RUIEventType type, RUIEventData data) -> {
+            if (type == RUIEventType.ACTIVE)
+            {
+                Window.vsync = true;
+                Window.updateSyncInterval();
+            }
+        };
+        
+        rui.getChildRecursive("body.ctnrVSync.toglVSyncOff").eventListener = (RUIEventType type, RUIEventData data) -> {
+            if (type == RUIEventType.ACTIVE)
+            {
+                Window.vsync = false;
+                Window.updateSyncInterval();
+            }
+        };
+        
+        rui.getChildRecursive("body.ctnrDebug.toglDebugOn").eventListener = (RUIEventType type, RUIEventData data) -> {
+            if (type == RUIEventType.ACTIVE)
+            {
+                Window.debugEnabled = true;
+                Lime.LOGGER.F("debug = " + Window.debugEnabled);
+            }
+        };
+        
+        rui.getChildRecursive("body.ctnrDebug.toglDebugOff").eventListener = (RUIEventType type, RUIEventData data) -> {
+            if (type == RUIEventType.ACTIVE)
+            {
+                Window.debugEnabled = false;
+                Lime.LOGGER.F("debug = " + Window.debugEnabled);
+            }
+        };
+        
+        rui.getChildRecursive("body.btnBack").eventListener = (RUIEventType type, RUIEventData data) -> {
+            if (type == RUIEventType.MOUSE_RELEASE)
+                manager.pop();
+        };
     }
     
     @Override
