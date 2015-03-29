@@ -122,8 +122,15 @@ public class RUIParser
         }
         return tokens.get(cline).get(ctoken);
     }
+
+    private static class ParseResults
+    {
+        Map<String, RUIParserData> valuemapMap = new HashMap<String, RUIParserData>();
+        Map<String, Map<String, RUIParserData>> elementMap = new HashMap<String, Map<String, RUIParserData>>();
+        Map<String, RUIGroup> groupMap = new HashMap<String, RUIGroup>();
+    }
     
-    private RUIElement createElement(RUIParserData data, RUIElement parent)
+    private RUIElement createElement(RUIParserData data, RUIElement parent, ParseResults results)
     {
         RUIElement element = null;
         switch (data.type)
@@ -147,6 +154,11 @@ public class RUIParser
             Lime.LOGGER.C("Error while parsing RUI file - invalid element type");
             Lime.forceExit(null);
         }
+        
+        String group = data.get("group");
+        if (group != null)
+            element.group = results.groupMap.get(group);
+        
         element.loadData(data);
         
         return element;
@@ -166,10 +178,9 @@ public class RUIParser
         }
     }
     
-    protected Pair<Map<String, RUIParserData>, Map<String, Map<String, RUIParserData>>> parse()
+    private ParseResults parse()
     {
-        Map<String, RUIParserData> valuemapMap = new HashMap<String, RUIParserData>();
-        Map<String, Map<String, RUIParserData>> elementMap = new HashMap<String, Map<String, RUIParserData>>();
+        ParseResults results = new ParseResults();
         
         while (!lastLine())
         {
@@ -180,48 +191,51 @@ public class RUIParser
                 nextLine();
                 
                 RUIParser includeParser = new RUIParser(path);
-                Pair<Map<String, RUIParserData>, Map<String, Map<String, RUIParserData>>> parsed = includeParser.parse();
-                Map<String, RUIParserData> includedValuemapMap = parsed.first;
-                Map<String, Map<String, RUIParserData>> includedElementMap = parsed.second;
-                merge(includedValuemapMap, valuemapMap);
-                merge(includedElementMap, elementMap);
+                ParseResults parsed = includeParser.parse();
+                merge(parsed.valuemapMap, results.valuemapMap);
+                merge(parsed.elementMap, results.elementMap);
+                merge(parsed.groupMap, results.groupMap);
                 
                 continue;
+            }
+            else if (peekToken().equals("GROUP"))
+            {
+                nextToken();
+                results.groupMap.put(nextToken(), new RUIGroup());
+                nextLine();
             }
             
             RUIParserData data = new RUIParserData();
             data.parse(this);
             if (data.isValuemap)
             {
-                valuemapMap.put(data.name, data);
+                results.valuemapMap.put(data.name, data);
             }
             else
             {
-                if (!elementMap.containsKey(data.parent))
-                    elementMap.put(data.parent, new HashMap<String, RUIParserData>());
-                elementMap.get(data.parent).put(data.name, data);
+                if (!results.elementMap.containsKey(data.parent))
+                    results.elementMap.put(data.parent, new HashMap<String, RUIParserData>());
+                results.elementMap.get(data.parent).put(data.name, data);
             }
         }
         
-        return new Pair<Map<String, RUIParserData>, Map<String, Map<String, RUIParserData>>>(valuemapMap, elementMap);
+        return results;
     }
     
     public void load(RUIElement root)
     {
         // Parse elements and valuemaps
-        Pair<Map<String, RUIParserData>, Map<String, Map<String, RUIParserData>>> parsed = parse();
-        Map<String, RUIParserData> valuemapMap = parsed.first;
-        Map<String, Map<String, RUIParserData>> elementMap = parsed.second;
+        ParseResults parsed = parse();
         
         // Resolve valuemap requests
-        Collection<Map<String, RUIParserData>> elementMaps = elementMap.values();
+        Collection<Map<String, RUIParserData>> elementMaps = parsed.elementMap.values();
         for (Map<String, RUIParserData> elementsMap : elementMaps)
         {
             Collection<RUIParserData> elements = elementsMap.values();
             for (RUIParserData element : elements)
                 for (String valuemapName : element.valuemapList)
                 {
-                    RUIParserData valuemap = valuemapMap.get(valuemapName);
+                    RUIParserData valuemap = parsed.valuemapMap.get(valuemapName);
                     valuemap.merge(element);
                 }
         }
@@ -236,12 +250,12 @@ public class RUIParser
             for (Pair<String, RUIElement> parent : parentListCopy)
             {
                 parentList.remove(parent);
-                if (!elementMap.containsKey(parent.first)) continue;
+                if (!parsed.elementMap.containsKey(parent.first)) continue;
                 
-                Collection<RUIParserData> elements = elementMap.get(parent.first).values();
+                Collection<RUIParserData> elements = parsed.elementMap.get(parent.first).values();
                 for (RUIParserData element : elements)
                 {
-                    RUIElement newElement = createElement(element, parent.second);
+                    RUIElement newElement = createElement(element, parent.second, parsed); 
                     parent.second.addChild(element.name, newElement);
                     parentList.add(new Pair<String, RUIElement>(element.name, newElement));
                 }

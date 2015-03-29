@@ -16,6 +16,18 @@ public class RUIParserData
     public List<String> valuemapList = new ArrayList<String>();
     public Map<String, Map<String, String>> values = new HashMap<String, Map<String, String>>();
 
+    public String get(String category)
+    {
+        Set<String> stateNames = values.keySet();
+        for (String stateName : stateNames)
+        {
+            Map<String, String> stateMap = values.get(stateName);
+            if (stateMap != null && stateMap.containsKey(category))
+                return stateMap.get(category);
+        }
+        return null;
+    }
+    
     public void copy(String category, RUIValueType type, RUIValueMap map)
     {
         copy(category, category, type, map);

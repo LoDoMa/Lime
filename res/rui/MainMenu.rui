@@ -9,24 +9,24 @@ menu body unordered-list
 
 btnMultiplayer menu button
 	- index 10
-	- @Button
+	- @Toggle
 	- @MenuListMember
 	- text "Multiplayer"
 
 btnEditor menu button
 	- index 20
-	- @Button
+	- @Toggle
 	- @MenuListMember
 	- text "Editor"
 
 btnOptions menu button
 	- index 30
-	- @Button
+	- @Toggle
 	- @MenuListMember
 	- text "Options"
 
 btnExit menu button
 	- index 40
-	- @Button
+	- @Toggle
 	- @MenuListMember
 	- text "Exit"

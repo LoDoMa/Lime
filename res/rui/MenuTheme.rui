@@ -3,12 +3,14 @@
 	- visible false
 
 @Button
+	- foreground-color FFFFFFFF
+
 	- background-color 000080FF
+	- STATE hover background-color 333380FF
+
 	- gradient-color 5050A0FF
 	- gradient-source-y 100%
-
-	- foreground-color FFFFFFFF
-	- STATE hover background-color 333380FF
+	- STATE hover gradient-color 8080FFFF
 
 	- border-width 1px
 	- border-radius-top-right 10px
@@ -20,11 +22,18 @@
 	- vertical-alignment center
 
 @Toggle
-	- background-color 000080FF
 	- foreground-color FFFFFFFF
+	
+	- background-color 000080FF
 	- STATE hover background-color 333380FF
 	- STATE active background-color 803300FF
 	- STATE active-hover background-color 808000FF
+
+	- gradient-source-y 100%
+	- gradient-color 5050A0FF
+	- STATE hover gradient-color 8080FFFF
+	- STATE active gradient-color A05020FF
+	- STATE active-hover gradient-color C0C030FF
 
 	- border-width 1px
 	- border-radius-top-right 10px
