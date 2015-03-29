@@ -6,7 +6,17 @@
 	- foreground-color FFFFFFFF
 
 	- height 5%
-	- width 10%
+	- width 0%
+
+	- horizontal-alignment left
+	- vertical-alignment center
+	- font-size 100%
+
+@LabelTitle
+	- foreground-color FFFFFFFF
+
+	- height 6%
+	- width 0%
 
 	- horizontal-alignment left
 	- vertical-alignment center

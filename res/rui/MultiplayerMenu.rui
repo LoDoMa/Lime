@@ -1,0 +1,65 @@
+
+INCLUDE "MenuTheme"
+
+@MultiplayerButton
+	- width 29%
+	- height 5%
+
+body ROOT container
+	- @Body
+
+lblTitle body label
+	- @LabelTitle
+	- position-x 5%
+	- position-y 80%
+	- text "Multiplayer"
+
+btnConnect body button
+	- @Button
+	- @MultiplayerButton
+	- position-x 5%
+	- position-y 20%
+	- text "Connect"
+
+btnDirect body button
+	- @Button
+	- @MultiplayerButton
+	- position-x 35%
+	- position-y 20%
+	- text "Direct"
+
+btnSearch body button
+	- @Button
+	- @MultiplayerButton
+	- position-x 65%
+	- position-y 20%
+	- text "Search LAN"
+
+btnAdd body button
+	- @Button
+	- @MultiplayerButton
+	- position-x 5%
+	- position-y 14%
+	- text "Add"
+
+btnModify body button
+	- @Button
+	- @MultiplayerButton
+	- position-x 35%
+	- position-y 14%
+	- text "Modify"
+
+btnRemove body button
+	- @Button
+	- @MultiplayerButton
+	- position-x 65%
+	- position-y 14%
+	- text "Remove"
+
+btnBack body button
+	- @Button
+	- position-x 25%
+	- position-y 8%
+	- width 50%
+	- height 5%
+	- text "Back"

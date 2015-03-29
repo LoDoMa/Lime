@@ -13,6 +13,7 @@ ctnrFullscr body container
 	- position-y 50%
 	- width 40%
 	- height 5%
+	- visible false
 
 toglFullscrOn ctnrFullscr toggle
 	- group "FullscreenToggleGroup"
@@ -37,6 +38,7 @@ ctnrVSync body container
 	- position-y 44%
 	- width 20%
 	- height 5%
+	- visible false
 
 toglVSyncOn ctnrVSync toggle
 	- group "VSyncToggleGroup"
@@ -61,6 +63,7 @@ ctnrDebug body container
 	- position-y 38%
 	- width 20%
 	- height 5%
+	- visible false
 
 toglDebugOn ctnrDebug toggle
 	- group "DebugToggleGroup"
