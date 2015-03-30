@@ -37,7 +37,7 @@ public class SLGame extends ServerLogic
         
         snapshotPacket = server.spPool.get(SPSnapshot.HASH);
         
-        String gamemodeName = "test";
+        String gamemodeName = "Deathmatch";
         try
         {
             server.world.load(gamemodeName, server);
