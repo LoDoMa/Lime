@@ -19,7 +19,7 @@ local function createBody()
 	lime.setShapeRadius(0.5)
 	lime.setComponentDensity(2.3)
 	lime.setComponentFriction(0.3)
-	lime.setComponentRestitution(0.0)
+	lime.setComponentRestitution(0.2)
 	mainCompo = lime.endComponent()
 
 	lime.selectComponent(mainCompo)
@@ -42,7 +42,7 @@ function Lime_Init(entityID_)
 end
 
 function Lime_Update(timeDelta)
-	local speed = 5.0
+	local speed = 50.0
 
 	local vx, vy = 0.0, 0.0
 	lime.setInputData(userOwner)
@@ -51,7 +51,7 @@ function Lime_Update(timeDelta)
 	if lime.getKeyState(lime.KEY_A) then vx = -speed end
 	if lime.getKeyState(lime.KEY_S) then vy = -speed end
 	if lime.getKeyState(lime.KEY_D) then vx = speed end
-	lime.setLinearVelocity(vx, vy)
+	lime.applyForceToCenter(vx, vy)
 
 	lime.selectComponent(cameraFocusCompo)
 	local cfx, cfy = lime.getComponentPosition()
