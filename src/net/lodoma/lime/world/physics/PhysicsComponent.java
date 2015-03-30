@@ -15,6 +15,7 @@ import org.jbox2d.dynamics.FixtureDef;
 
 import net.lodoma.lime.util.Identifiable;
 import net.lodoma.lime.util.Vector2;
+import net.lodoma.lime.world.entity.Entity;
 
 public class PhysicsComponent implements Identifiable<Integer>
 {
@@ -22,6 +23,7 @@ public class PhysicsComponent implements Identifiable<Integer>
     
     public PhysicsWorld world;
     
+    public Entity owner;
     public Body engineBody;
     public Fixture[] engineFixtures;
     

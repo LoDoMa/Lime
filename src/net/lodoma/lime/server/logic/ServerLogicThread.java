@@ -8,7 +8,7 @@ import net.lodoma.lime.util.Timer;
 
 public class ServerLogicThread implements Runnable
 {
-    public static final double SNAPSHOT_PS = 20;
+    public static final double SNAPSHOT_PS = 40;
     public static final double SNAPSHOT_MAXTIME = 1.0 / SNAPSHOT_PS;
     public double snapshotTime = SNAPSHOT_MAXTIME;
     

@@ -1,16 +1,25 @@
 
-lime.include("ExtendedUtils")
-
 -- Constants
 local radius = 0.5
 local sensorGroundName = "GroundSensor"
 local sensorWallLeftName = "WallSensorLeft"
 local sensorWallRightName = "WallSensorRight"
 
--- Sensor data -- amount of objects in contact
+-- Property names
+local property_canCollectPickups = "canCollectPickups"
+local property_wallClimbing = "wallClimbing"
+local property_horizontalJumpMultiplier = "horizontalJumpMultiplier"
+local property_verticalJumpMultiplier = "verticalJumpMultiplier"
+local property_wallJumpVerticalMultiplier = "wallJumpVerticalMultiplier"
+
+-- Sensor and jump data
 local sensorGround = 0
 local sensorWallLeft = 0
 local sensorWallRight = 0
+local hasGround = false
+local hasWallLeft = false
+local hasWallRight = false
+local allowWallJump = false
 
 local entityID
 local userOwner
@@ -20,121 +29,155 @@ local cameraFocusCompo
 local compos = {}
 local joints = {}
 
+local function loadDefaultProperties()
+    lime.setAttribute(entityID, property_canCollectPickups, true)
+    lime.setAttribute(entityID, property_wallClimbing, 0)
+    lime.setAttribute(entityID, property_horizontalJumpMultiplier, 15)
+    lime.setAttribute(entityID, property_verticalJumpMultiplier, 40)
+    lime.setAttribute(entityID, property_wallJumpVerticalMultiplier, 0.7)
+end
+
 local function registerCompo(compoID) compos[compoID] = true end
 local function registerJoint(jointID) joints[jointID] = true end
 
 local function sensorBegin(contact)
-	if contact.fixtureA == sensorGroundName then
-		sensorGround = sensorGround + 1
-	elseif contact.fixtureA == sensorWallLeftName then
-		sensorWallLeft = sensorWallLeft + 1
-	elseif contact.fixtureA == sensorWallRightName then
-		sensorWallRight = sensorWallRight + 1
-	end
+    if contact.fixtureA == sensorGroundName then
+        sensorGround = sensorGround + 1
+    elseif contact.fixtureA == sensorWallLeftName then
+        sensorWallLeft = sensorWallLeft + 1
+    elseif contact.fixtureA == sensorWallRightName then
+        sensorWallRight = sensorWallRight + 1
+    end
 end
 
 local function sensorEnd(contact)
-	if contact.fixtureA == sensorGroundName then
-		sensorGround = sensorGround - 1
-	elseif contact.fixtureA == sensorWallLeftName then
-		sensorWallLeft = sensorWallLeft - 1
-	elseif contact.fixtureA == sensorWallRightName then
-		sensorWallRight = sensorWallRight - 1
-	end
+    if contact.fixtureA == sensorGroundName then
+        sensorGround = sensorGround - 1
+    elseif contact.fixtureA == sensorWallLeftName then
+        sensorWallLeft = sensorWallLeft - 1
+    elseif contact.fixtureA == sensorWallRightName then
+        sensorWallRight = sensorWallRight - 1
+    end
 end
 
 local function createSensor(name, offx, offy)
-	lime.startShape("circle")
-	lime.setShapeName(name)
-	lime.setShapeOffset(offx * radius, offy * radius)
-	lime.setShapeSolid(false)
-	lime.setShapeDensity(0.0)
-	lime.setShapeFriction(0.0)
-	lime.setShapeRestitution(0.0)
-	lime.setShapeRadius(0.05)
-	lime.endShape()
+    lime.startShape("circle")
+    lime.setShapeName(name)
+    lime.setShapeOffset(offx * radius, offy * radius)
+    lime.setShapeSolid(false)
+    lime.setShapeDensity(0.0)
+    lime.setShapeFriction(0.0)
+    lime.setShapeRestitution(0.0)
+    lime.setShapeRadius(0.05)
+    lime.endShape()
 end
 
 local function createBody()
-	lime.startComponent()
-	lime.setInitialPosition(0.0, 0.0)
-	lime.setInitialAngle(0.0)
-	lime.setComponentType("dynamic")
-	
-	-- body
-	lime.startShape("circle")
-	lime.setShapeDensity(2.3)
-	lime.setShapeFriction(0.2)
-	lime.setShapeRestitution(0.05)
-	lime.setShapeRadius(radius)
-	lime.endShape()
-	
-	-- sensors
-	createSensor(sensorGroundName, 0, -1);
-	createSensor(sensorWallLeftName, -1, 0);
-	createSensor(sensorWallRightName, 1, 0);
+    lime.startComponent()
+    lime.setInitialPosition(0.0, 0.0)
+    lime.setInitialAngle(0.0)
+    lime.setComponentType("dynamic")
+    
+    -- body
+    lime.startShape("triangle-group")
+    lime.setShapeDensity(1.8)
+    lime.setShapeFriction(0.2)
+    lime.setShapeRestitution(0.05)
+    lime.addShapeTriangle(-radius, -radius, -radius, radius, radius, -radius)
+    lime.addShapeTriangle(radius, radius, -radius, radius, radius, -radius)
+    lime.endShape()
+    
+    -- sensors
+    createSensor(sensorGroundName, 0, -1);
+    createSensor(sensorWallLeftName, -1, 0);
+    createSensor(sensorWallRightName, 1, 0);
 
-	mainCompo = lime.endComponent()
+    mainCompo = lime.endComponent()
 
-	lime.selectComponent(mainCompo)
-	lime.setLinearDamping(0.6)
-	lime.setAngularDamping(0.1)
-	lime.setAngleLocked(true)
-	lime.setUsingCCD(false)
+    lime.selectComponent(mainCompo)
+    lime.setLinearDamping(0.6)
+    lime.setAngularDamping(0.1)
+    lime.setAngleLocked(true)
+    lime.setUsingCCD(false)
+    lime.setOwner(entityID)
 
-	lime.addContactListener(nil, nil, sensorBegin, sensorEnd, mainCompo, nil)
+    lime.addContactListener(nil, nil, sensorBegin, sensorEnd, mainCompo, nil)
 
-	registerCompo(mainCompo)
-	cameraFocusCompo = mainCompo
+    registerCompo(mainCompo)
+    cameraFocusCompo = mainCompo
 end
 
 function Lime_Init(entityID_)
-	entityID = entityID_
-	userOwner = lime.getAndClearAttribute(entityID, "owner")
+    entityID = entityID_
+    userOwner = lime.getAndClearAttribute(entityID, "owner")
 
-	createBody()
+    loadDefaultProperties()
+    createBody()
 
-	print("created player [ID=" .. entityID .. "] for user [ID=" .. userOwner .. "]")
+    print("created player [ID=" .. entityID .. "] for user [ID=" .. userOwner .. "]")
 end
 
 -- Return values:
--- 	   0 = can jump up
--- 	  -1 = can jump left
---     1 = can jump right
 --    -2 = can't jump
+--    -1 = can jump left
+--     0 = can jump up
+--     1 = can jump right
 local function jumpDirection()
-	local hasGround = sensorGround > 0
-	local hasWallLeft = sensorWallLeft > 0
-	local hasWallRight = sensorWallRight > 0
-	if hasGround then return 0 end
-	if hasWallLeft and hasWallRight then return 0 end
-	if hasWallLeft then return 1 end
-	if hasWallRight then return -1 end
-	return -2
+    if hasGround then return 0 end
+    if hasWallLeft and hasWallRight then return 0 end
+    if hasWallLeft or hasWallRight then allowWallJump = false end
+    if hasWallLeft then return 1 end
+    if hasWallRight then return -1 end
+    return -2
+end
+
+local function updateJumpData()
+    hasGround = sensorGround > 0
+    if sensorGround > 0 then
+        allowWallJump = true
+    end
+
+    local wallClimber = lime.getAttribute(entityID, property_wallClimbing) > 0
+    hasWallLeft = (allowWallJump or wallClimber) and sensorWallLeft > 0
+    hasWallRight = (allowWallJump or wallClimber) and sensorWallRight > 0
+end
+
+local function tryJump()
+    updateJumpData()
+
+    lime.setInputData(userOwner)
+    if lime.getKeyPress(lime.KEY_W) then
+        local jumpDir = jumpDirection()
+        if jumpDir ~= -2 then
+            local verticalJumpMultiplier = lime.getAttribute(entityID, property_verticalJumpMultiplier)
+            local horizontalJumpMultiplier = lime.getAttribute(entityID, property_horizontalJumpMultiplier)
+            if jumpDir ~= 0 then
+                local wallJumpMultiplier = lime.getAttribute(entityID, property_wallJumpVerticalMultiplier)
+                verticalJumpMultiplier = verticalJumpMultiplier * wallJumpMultiplier
+            end
+
+            lime.selectComponent(mainCompo)
+            lime.applyLinearImpulseToCenter(jumpDir * horizontalJumpMultiplier, verticalJumpMultiplier)
+        end
+    end
 end
 
 function Lime_Update(timeDelta)
-	lime.setInputData(userOwner)
-	lime.selectComponent(mainCompo)
+    tryJump()
 
-	if lime.getKeyPress(lime.KEY_W) then
-		local jumpDir = jumpDirection()
-		if jumpDir ~= -2 then
-			lime.applyLinearImpulseToCenter(jumpDir * 15, 15)
-		end
-	end
+    local speed = 75.0
+    local vx, vy = 0.0, 0.0
+    if lime.getKeyState(lime.KEY_A) then vx = -speed end
+    if lime.getKeyState(lime.KEY_D) then vx = speed end
+    
+    lime.selectComponent(mainCompo)
+    lime.applyForceToCenter(vx, vy)
 
-	local speed = 75.0
-	local vx, vy = 0.0, 0.0
-	if lime.getKeyState(lime.KEY_A) then vx = -speed end
-	if lime.getKeyState(lime.KEY_D) then vx = speed end
-	lime.applyForceToCenter(vx, vy)
+    lime.selectComponent(cameraFocusCompo)
+    local cfx, cfy = lime.getComponentPosition()
 
-	lime.selectComponent(cameraFocusCompo)
-	local cfx, cfy = lime.getComponentPosition()
-
-	lime.setAttribute(entityID, "focusX", cfx)
-	lime.setAttribute(entityID, "focusY", cfy)
+    lime.setAttribute(entityID, "focusX", cfx)
+    lime.setAttribute(entityID, "focusY", cfy)
 end
 
 function Lime_PostUpdate()
@@ -142,15 +185,15 @@ function Lime_PostUpdate()
 end
 
 function Lime_Clean()
-	for compoID in pairs(compos) do
-		lime.removeComponent(compoID)
-		compos[compoID] = nil
-	end
+    for compoID in pairs(compos) do
+        lime.removeComponent(compoID)
+        compos[compoID] = nil
+    end
 
-	for jointID in pairs(joints) do
-		lime.removeJoint(jointID)
-		compos[jointID] = nil
-	end
+    for jointID in pairs(joints) do
+        lime.removeJoint(jointID)
+        compos[jointID] = nil
+    end
 
-	print("removed player [ID=" .. entityID .. "] for user [ID=" .. userOwner .. "]")
+    print("removed player [ID=" .. entityID .. "] for user [ID=" .. userOwner .. "]")
 end

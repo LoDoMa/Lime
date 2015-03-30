@@ -1,7 +1,5 @@
 #version 120
 
-precision highp float;
-
 #define PI 3.14159265359
 
 varying vec2 vTexCoord;

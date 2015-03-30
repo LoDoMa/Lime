@@ -570,7 +570,7 @@ public class PhysicsFunctions
                 float impulseY = args.arg(2).checknumber().tofloat();
                 if (compo == null)
                     throw new LuaError("manipulating nonexistent body component");
-                compo.engineBody.applyLinearImpulse(new Vec2(impulseX, impulseY), compo.engineBody.getLocalCenter());
+                compo.engineBody.applyLinearImpulse(new Vec2(impulseX, impulseY), compo.engineBody.getWorldCenter());
                 break;
             }
             case GET_USING_CCD:
@@ -586,6 +586,22 @@ public class PhysicsFunctions
                 if (compo == null)
                     throw new LuaError("manipulating nonexistent body component");
                 compo.engineBody.setBullet(using);
+                break;
+            }
+            case GET_OWNER:
+            {
+                if (compo == null)
+                    throw new LuaError("manipulating nonexistent body component");
+                if (compo.owner == null)
+                    return LuaValue.NIL;
+                return LuaValue.valueOf(compo.owner.identifier);
+            }
+            case SET_OWNER:
+            {
+                int entityID = args.checkint(1);
+                if (compo == null)
+                    throw new LuaError("manipulating nonexistent body component");
+                compo.owner = world.entityPool.get(entityID);
                 break;
             }
             case SELECT_JOINT:
@@ -730,6 +746,8 @@ public class PhysicsFunctions
         APPLY_LINEAR_IMPULSE_TO_CENTER(2, true, "applyLinearImpulseToCenter"),
         GET_USING_CCD(0, true, "getUsingCCD"),
         SET_USING_CCD(1, true, "setUsingCCD"),
+        GET_OWNER(0, true, "getOwner"),
+        SET_OWNER(1, true, "setOwner"),
         
         SELECT_JOINT(1, true, "selectJoint"),
         ENABLE_REVOLUTE_ANGLE_LIMIT(1, true, "enableRevoluteAngleLimit"),
