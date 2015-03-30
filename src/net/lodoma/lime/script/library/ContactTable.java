@@ -1,5 +1,8 @@
 package net.lodoma.lime.script.library;
 
+import net.lodoma.lime.world.physics.PhysicsComponent;
+
+import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.contacts.Contact;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
@@ -9,18 +12,28 @@ import org.luaj.vm2.lib.VarArgFunction;
 
 public class ContactTable
 {
-    public static synchronized LuaTable create(Contact contact)
+    public static synchronized LuaTable create(Fixture fixtureA, Fixture fixtureB, Contact contact)
     {
-        return new ContactTable(contact).table;
+        return new ContactTable(fixtureA, fixtureB, contact).table;
     }
 
     private LuaTable table;
     private Contact contact;
     
-    public ContactTable(Contact contact)
+    public ContactTable(Fixture fixtureA, Fixture fixtureB, Contact contact)
     {
         table = LuaTable.tableOf();
         this.contact = contact;
+
+        PhysicsComponent bodyA = (PhysicsComponent) fixtureA.m_body.m_userData;
+        PhysicsComponent bodyB = (PhysicsComponent) fixtureB.m_body.m_userData;
+        table.set("bodyA", bodyA.identifier);
+        table.set("bodyB", bodyB.identifier);
+        
+        if (fixtureA.m_userData != null)
+            table.set("fixtureA", LuaValue.valueOf((String) fixtureA.m_userData));
+        if (fixtureB.m_userData != null)
+            table.set("fixtureB", LuaValue.valueOf((String) fixtureB.m_userData));
         
         for (FuncData func : FuncData.values())
             new LimeFunc(func).addToTable();

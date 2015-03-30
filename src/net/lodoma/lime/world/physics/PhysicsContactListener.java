@@ -1,5 +1,6 @@
 package net.lodoma.lime.world.physics;
 
+import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.contacts.Contact;
 
 import net.lodoma.lime.Lime;
@@ -47,31 +48,73 @@ public abstract class PhysicsContactListener implements Identifiable<Integer>
         Lime.LOGGER.I("Destroyed contact listener " + identifier);
     }
     
-    public void tryPreSolve(PhysicsComponent bodyA, PhysicsComponent bodyB, Contact contact)
+    public void tryPreSolve(Contact contact)
     {
+        Fixture fixtureA = contact.m_fixtureA;
+        Fixture fixtureB = contact.m_fixtureB;
+        PhysicsComponent bodyA = (PhysicsComponent) fixtureA.m_body.m_userData;
+        PhysicsComponent bodyB = (PhysicsComponent) fixtureB.m_body.m_userData;
+        
         int match = matches(bodyA.identifier, bodyB.identifier);
         
         if (match == 0) return;
-        else if (match == 1) preSolve(bodyA, bodyB, contact);
-        else if (match == 2) preSolve(bodyB, bodyA, contact);
+        else if (match == 1) preSolve(fixtureA, fixtureB, contact);
+        else if (match == 2) preSolve(fixtureB, fixtureA, contact);
         else throw new IllegalStateException();
     }
     
-    public void tryPostSolve(PhysicsComponent bodyA, PhysicsComponent bodyB, Contact contact)
+    public void tryPostSolve(Contact contact)
     {
+        Fixture fixtureA = contact.m_fixtureA;
+        Fixture fixtureB = contact.m_fixtureB;
+        PhysicsComponent bodyA = (PhysicsComponent) fixtureA.m_body.m_userData;
+        PhysicsComponent bodyB = (PhysicsComponent) fixtureB.m_body.m_userData;
+        
         int match = matches(bodyA.identifier, bodyB.identifier);
         
         if (match == 0) return;
-        else if (match == 1) postSolve(bodyA, bodyB, contact);
-        else if (match == 2) postSolve(bodyB, bodyA, contact);
+        else if (match == 1) postSolve(fixtureA, fixtureB, contact);
+        else if (match == 2) postSolve(fixtureB, fixtureA, contact);
         else throw new IllegalStateException();
     }
     
-    /* For preSolve() and postSolve(), if the field bodyA is not null, the bodyA argument
+    public void tryBeginContact(Contact contact)
+    {
+        Fixture fixtureA = contact.m_fixtureA;
+        Fixture fixtureB = contact.m_fixtureB;
+        PhysicsComponent bodyA = (PhysicsComponent) fixtureA.m_body.m_userData;
+        PhysicsComponent bodyB = (PhysicsComponent) fixtureB.m_body.m_userData;
+        
+        int match = matches(bodyA.identifier, bodyB.identifier);
+        
+        if (match == 0) return;
+        else if (match == 1) beginContact(fixtureA, fixtureB, contact);
+        else if (match == 2) beginContact(fixtureB, fixtureA, contact);
+        else throw new IllegalStateException();
+    }
+    
+    public void tryEndContact(Contact contact)
+    {
+        Fixture fixtureA = contact.m_fixtureA;
+        Fixture fixtureB = contact.m_fixtureB;
+        PhysicsComponent bodyA = (PhysicsComponent) fixtureA.m_body.m_userData;
+        PhysicsComponent bodyB = (PhysicsComponent) fixtureB.m_body.m_userData;
+        
+        int match = matches(bodyA.identifier, bodyB.identifier);
+        
+        if (match == 0) return;
+        else if (match == 1) endContact(fixtureA, fixtureB, contact);
+        else if (match == 2) endContact(fixtureB, fixtureA, contact);
+        else throw new IllegalStateException();
+    }
+    
+    /* For the next four methods, if the field bodyA is not null, the body of fixtureA argument
        must be equal to it. The same is true for bodyB. */
     
-    public abstract void preSolve(PhysicsComponent bodyA, PhysicsComponent bodyB, Contact contact);
-    public abstract void postSolve(PhysicsComponent bodyA, PhysicsComponent bodyB, Contact contact);
+    public abstract void preSolve(Fixture fixtureA, Fixture fixtureB, Contact contact);
+    public abstract void postSolve(Fixture fixtureA, Fixture fixtureB, Contact contact);
+    public abstract void beginContact(Fixture fixtureA, Fixture fixtureB, Contact contact);
+    public abstract void endContact(Fixture fixtureA, Fixture fixtureB, Contact contact);
     
     /* Returns 0 if the bodies don't match this listener's filter, 1 if they match
        perfectly, or 2 if the bodies need to be swapped. */

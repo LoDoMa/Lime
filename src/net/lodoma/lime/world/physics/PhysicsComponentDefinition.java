@@ -29,7 +29,16 @@ public class PhysicsComponentDefinition
         if (shapes.size() <= 0) throw new InvalidPhysicsComponentException("invalid component shape list: empty");
         
         for (PhysicsShape shape : shapes)
-            shape.validate();
+        {
+            try
+            {
+                shape.validate();
+            }
+            catch (InvalidPhysicsShapeException ex)
+            {
+                throw new InvalidPhysicsComponentException(ex);
+            }
+        }
     }
     
     public void create()
@@ -53,6 +62,7 @@ public class PhysicsComponentDefinition
             for (Shape engineInstance : shape.engineInstances)
             {
                 engineFixtureDefinitions[i] = new FixtureDef();
+                engineFixtureDefinitions[i].userData = shape.name;
                 engineFixtureDefinitions[i].shape = engineInstance;
                 engineFixtureDefinitions[i].isSensor = !shape.isSolid;
                 engineFixtureDefinitions[i].density = shape.density;

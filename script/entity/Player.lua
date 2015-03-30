@@ -7,8 +7,22 @@ local cameraFocusCompo
 local compos = {}
 local joints = {}
 
+local canJump = 0
+
 local function registerCompo(compoID) compos[compoID] = true end
 local function registerJoint(jointID) joints[jointID] = true end
+
+local function sensorBegin(contact)
+	if contact.fixtureA == "Sensor" then
+		canJump = canJump + 1
+	end
+end
+
+local function sensorEnd(contact)
+	if contact.fixtureA == "Sensor" then
+		canJump = canJump - 1
+	end
+end
 
 local function createBody()
 	lime.startComponent()
@@ -18,18 +32,18 @@ local function createBody()
 	-- body
 	lime.startShape("circle")
 	lime.setShapeDensity(2.3)
-	lime.setShapeFriction(0.3)
+	lime.setShapeFriction(0.0)
 	lime.setShapeRestitution(0.2)
 	lime.setShapeRadius(0.5)
 	lime.endShape()
 	-- sensor
 	lime.startShape("circle")
+	lime.setShapeName("Sensor")
 	lime.setShapeSolid(false)
-	lime.setShapeOffset(0, -0.5)
 	lime.setShapeDensity(0.0)
 	lime.setShapeFriction(0.0)
 	lime.setShapeRestitution(0.0)
-	lime.setShapeRadius(0.1)
+	lime.setShapeRadius(0.55)
 	lime.endShape()
 	mainCompo = lime.endComponent()
 
@@ -38,6 +52,8 @@ local function createBody()
 	lime.setAngularDamping(0.1)
 	lime.setAngleLocked(true)
 	lime.setUsingCCD(false)
+
+	lime.addContactListener(nil, nil, sensorBegin, sensorEnd, mainCompo, nil)
 
 	registerCompo(mainCompo)
 	cameraFocusCompo = mainCompo
@@ -55,12 +71,15 @@ end
 function Lime_Update(timeDelta)
 	local speed = 50.0
 
-	local vx, vy = 0.0, 0.0
 	lime.setInputData(userOwner)
 	lime.selectComponent(mainCompo)
-	if lime.getKeyState(lime.KEY_W) then vy = speed end
+
+	if canJump > 0 and lime.getKeyPress(lime.KEY_W) then
+		lime.applyLinearImpulseToCenter(0, 15)
+	end
+
+	local vx, vy = 0.0, 0.0
 	if lime.getKeyState(lime.KEY_A) then vx = -speed end
-	if lime.getKeyState(lime.KEY_S) then vy = -speed end
 	if lime.getKeyState(lime.KEY_D) then vx = speed end
 	lime.applyForceToCenter(vx, vy)
 

@@ -43,7 +43,7 @@ function Lime_Init()
 	-- TODO: remove crazy ambient light, add normal lights
 	lime.setAmbientLight(1, 1, 1)
 
-	Material.addMaterial("stone", 5, 0.6, 0.1)
+	Material.addMaterial("stone", 5, 0.0, 0.1)
 
 	World.addTerrain("stone", 0, 0, 0, -2, 20, -2) -- bottom
 	World.addTerrain("stone", 0, 0, 20, -2, 20, 0) -- bottom

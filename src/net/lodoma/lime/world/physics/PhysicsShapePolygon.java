@@ -12,14 +12,14 @@ public class PhysicsShapePolygon extends PhysicsShape
     public Vector2 vertices[];
     
     @Override
-    public void validate() throws InvalidPhysicsComponentException
+    public void validate() throws InvalidPhysicsShapeException
     {
         super.validate();
         
-        if (vertices == null)    throw new InvalidPhysicsComponentException("invalid component polygon shape vertices: null");
-        if (vertices.length < 3) throw new InvalidPhysicsComponentException("invalid component polygon shape vertices: less than 3");
+        if (vertices == null)    throw new InvalidPhysicsShapeException("invalid shape polygon vertices: null");
+        if (vertices.length < 3) throw new InvalidPhysicsShapeException("invalid shape polygon vertices: less than 3");
         if (vertices.length > Settings.maxPolygonVertices)
-            throw new InvalidPhysicsComponentException("invalid component polygon shape vertices: more than " + Settings.maxPolygonVertices);
+            throw new InvalidPhysicsShapeException("invalid shape polygon vertices: more than " + Settings.maxPolygonVertices);
     }
     
     @Override

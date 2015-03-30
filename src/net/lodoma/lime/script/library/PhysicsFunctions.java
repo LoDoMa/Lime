@@ -184,6 +184,17 @@ public class PhysicsFunctions
                 shape = null;
                 break;
             }
+            case SET_SHAPE_NAME:
+            {
+                String name = args.checkstring(1).tojstring();
+                if (compoDefinition == null)
+                    throw new LuaError("modifying nonexistent body component");
+                if (shape == null)
+                    throw new LuaError("setting name to nonexistent shape");
+                
+                shape.name = name;
+                break;
+            }
             case SET_SHAPE_RADIUS:
             {
                 float radius = args.arg(1).checknumber().tofloat();
@@ -641,15 +652,17 @@ public class PhysicsFunctions
             }
             case ADD_CONTACT_LISTENER:
             {
-                if (args.narg() > 4)
+                if (args.narg() > 6)
                     throw new LuaError("too many arguments to \"" + data.name + "\"");
-                LuaFunction preSolve = args.arg(1).checkfunction();
-                LuaFunction postSolve = args.arg(2).checkfunction();
+                LuaFunction preSolve = args.arg(1).isnil() ? null : args.checkfunction(1);
+                LuaFunction postSolve = args.arg(2).isnil() ? null : args.checkfunction(2);
+                LuaFunction beginContact = args.arg(3).isnil() ? null : args.checkfunction(3);
+                LuaFunction endContact = args.arg(4).isnil() ? null : args.checkfunction(4);
 
-                Integer bodyA = args.arg(3).isnil() ? null : args.arg(3).checkint();
-                Integer bodyB = args.arg(4).isnil() ? null : args.arg(4).checkint();
+                Integer bodyA = args.arg(5).isnil() ? null : args.checkint(5);
+                Integer bodyB = args.arg(6).isnil() ? null : args.checkint(6);
                 
-                LuaContactListener listener = new LuaContactListener(world, bodyA, bodyB, preSolve, postSolve);
+                LuaContactListener listener = new LuaContactListener(world, bodyA, bodyB, preSolve, postSolve, beginContact, endContact);
                 
                 int listenerID = world.physicsWorld.contactManager.contactListeners.add(listener);
                 Lime.LOGGER.I("Added contact listener " + listenerID);
@@ -677,6 +690,7 @@ public class PhysicsFunctions
         SET_COMPONENT_TYPE(1, true, "setComponentType"),
         START_SHAPE(1, true, "startShape"),
         END_SHAPE(0, true, "endShape"),
+        SET_SHAPE_NAME(1, true, "setShapeName"),
         SET_SHAPE_RADIUS(1, true, "setShapeRadius"),
         SET_SHAPE_VERTICES(0, false, "setShapeVertices"),
         ADD_SHAPE_TRIANGLE(6, true, "addShapeTriangle"),
@@ -724,7 +738,7 @@ public class PhysicsFunctions
         SET_REVOLUTE_MOTOR_SPEED(1, true, "setRevoluteMotorSpeed"),
         SET_REVOLUTE_MAX_MOTOR_TORQUE(1, true, "setRevoluteMaxMotorTorque"),
         
-        ADD_CONTACT_LISTENER(4, true, "addContactListener"),
+        ADD_CONTACT_LISTENER(6, true, "addContactListener"),
         REMOVE_CONTACT_LISTENER(1, true, "removeContactListener");
         
         public int argc;

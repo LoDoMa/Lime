@@ -37,7 +37,7 @@ public class PhysicsContactManager implements ContactListener
         }
         else if ((userdataA instanceof PhysicsComponent) && (userdataB instanceof PhysicsComponent))
         {
-            contactListeners.foreach((PhysicsContactListener listener) -> listener.tryPreSolve((PhysicsComponent) userdataA, (PhysicsComponent) userdataB, contact));
+            contactListeners.foreach((PhysicsContactListener listener) -> listener.tryPreSolve(contact));
         }
     }
     
@@ -60,19 +60,25 @@ public class PhysicsContactManager implements ContactListener
         }
         else if ((userdataA instanceof PhysicsComponent) && (userdataB instanceof PhysicsComponent))
         {
-            contactListeners.foreach((PhysicsContactListener listener) -> listener.tryPostSolve((PhysicsComponent) userdataA, (PhysicsComponent) userdataB, contact));
+            contactListeners.foreach((PhysicsContactListener listener) -> listener.tryPostSolve(contact));
         }
     }
     
     @Override
     public void beginContact(Contact contact)
     {
-        
+        Object userdataA = contact.m_fixtureA.m_body.m_userData;
+        Object userdataB = contact.m_fixtureB.m_body.m_userData;
+        if ((userdataA instanceof PhysicsComponent) && (userdataB instanceof PhysicsComponent))
+            contactListeners.foreach((PhysicsContactListener listener) -> listener.tryBeginContact(contact));
     }
     
     @Override
     public void endContact(Contact contact)
     {
-        
+        Object userdataA = contact.m_fixtureA.m_body.m_userData;
+        Object userdataB = contact.m_fixtureB.m_body.m_userData;
+        if ((userdataA instanceof PhysicsComponent) && (userdataB instanceof PhysicsComponent))
+            contactListeners.foreach((PhysicsContactListener listener) -> listener.tryEndContact(contact));
     }
 }

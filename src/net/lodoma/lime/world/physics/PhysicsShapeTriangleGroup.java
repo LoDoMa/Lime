@@ -18,22 +18,22 @@ public class PhysicsShapeTriangleGroup extends PhysicsShape
     }
     
     @Override
-    public void validate() throws InvalidPhysicsComponentException
+    public void validate() throws InvalidPhysicsShapeException
     {
         super.validate();
         
-        if (triangles == null)       throw new InvalidPhysicsComponentException("invalid component triangle group shape: triangle list is null");
-        if (triangles.isEmpty())     throw new InvalidPhysicsComponentException("invalid component triangle group shape: empty triangle list");
+        if (triangles == null)       throw new InvalidPhysicsShapeException("invalid shape triangle group: triangle list is null");
+        if (triangles.isEmpty())     throw new InvalidPhysicsShapeException("invalid shape triangle group: empty triangle list");
         for (int i = 0; i < triangles.size(); i++)
         {
             Vector2[] triangle = triangles.get(i);
             if (triangle == null)
-                throw new InvalidPhysicsComponentException("invalid component triangle group shape: element #" + (i + 1) + " is null");
+                throw new InvalidPhysicsShapeException("invalid shape triangle group: element #" + (i + 1) + " is null");
             if (triangle.length != 3)
-                throw new InvalidPhysicsComponentException("invalid component triangle group shape: element #" + (i + 1) + " is not a triangle");
+                throw new InvalidPhysicsShapeException("invalid shape triangle group: element #" + (i + 1) + " is not a triangle");
             for (int j = 0; j < 3; j++)
                 if (triangle[j] == null)
-                    throw new InvalidPhysicsComponentException("invalid component triangle group shape: element #" + (i + 1) + " is incomplete");
+                    throw new InvalidPhysicsShapeException("invalid shape triangle group: element #" + (i + 1) + " is incomplete");
         }
     }
     

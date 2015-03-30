@@ -8,11 +8,11 @@ public class PhysicsShapeCircle extends PhysicsShape
     public float radius;
 
     @Override
-    public void validate() throws InvalidPhysicsComponentException
+    public void validate() throws InvalidPhysicsShapeException
     {
         super.validate();
         
-        if (radius < 0) throw new InvalidPhysicsComponentException("invalid component circle shape radius: negative");
+        if (radius < 0) throw new InvalidPhysicsShapeException("invalid shape circle radius: negative");
     }
     
     @Override
