@@ -18,7 +18,8 @@ import net.lodoma.lime.util.Color;
 import net.lodoma.lime.util.Vector2;
 import net.lodoma.lime.world.physics.InvalidPhysicsParticleException;
 import net.lodoma.lime.world.physics.PhysicsComponentModifications;
-import net.lodoma.lime.world.physics.PhysicsComponentShapeType;
+import net.lodoma.lime.world.physics.PhysicsShapeSnapshot;
+import net.lodoma.lime.world.physics.PhysicsShapeType;
 import net.lodoma.lime.world.physics.PhysicsComponentSnapshot;
 import net.lodoma.lime.world.physics.PhysicsComponentType;
 import net.lodoma.lime.world.physics.PhysicsParticleDefinition;
@@ -87,19 +88,30 @@ public class WorldSnapshotSegment implements SnapshotData
                 if (currentCompo.angle != previousCompo.angle)
                     modified |= MODIFIED_ROTATION;
                 
-                if (!currentCompo.shapeType.equals(previousCompo.shapeType))
+                if (currentCompo.shapes.length != previousCompo.shapes.length)
                     modified |= MODIFIED_SHAPE;
-                else switch (currentCompo.shapeType)
-                {
-                case CIRCLE:
-                    if (currentCompo.radius != previousCompo.radius)
-                        modified |= MODIFIED_SHAPE;
-                    break;
-                case POLYGON: case TRIANGLE_GROUP:
-                    if (!Arrays.equals(currentCompo.vertices, previousCompo.vertices))
-                        modified |= MODIFIED_SHAPE;
-                    break;
-                }
+                else
+                    for (int shapeI = 0; shapeI < currentCompo.shapes.length; shapeI++)
+                    {
+                        PhysicsShapeSnapshot currentShape = currentCompo.shapes[shapeI];
+                        PhysicsShapeSnapshot previousShape = previousCompo.shapes[shapeI];
+                        if (currentShape.shapeType != previousShape.shapeType)
+                            modified |= MODIFIED_SHAPE;
+                        else
+                            switch (currentShape.shapeType)
+                            {
+                            case CIRCLE:
+                                if (currentShape.radius != previousShape.radius)
+                                    modified |= MODIFIED_SHAPE;
+                                break;
+                            case POLYGON: case TRIANGLE_GROUP:
+                                if (!Arrays.equals(currentShape.vertices, previousShape.vertices))
+                                    modified |= MODIFIED_SHAPE;
+                                break;
+                            }
+                        if ((modified & MODIFIED_SHAPE) != 0)
+                            break;
+                    }
                 
                 if (currentCompo.type != previousCompo.type)
                     modified |= MODIFIED_PHYSICS_DATA;
@@ -238,38 +250,37 @@ public class WorldSnapshotSegment implements SnapshotData
             
             if ((data & WorldSnapshotSegment.MODIFIED_SHAPE) != 0)
             {
-                int typeOrdinal = in.readInt();
-                PhysicsComponentShapeType type = PhysicsComponentShapeType.values()[typeOrdinal];
-
                 modifications.shapeModified = true;
-                modifications.data.shapeType = type;
-                
-                switch (type)
+                modifications.data.shapes = new PhysicsShapeSnapshot[in.readInt()];
+                for (int shapeI = 0; shapeI < modifications.data.shapes.length; shapeI++)
                 {
-                case CIRCLE:
-                    float radius = in.readFloat();
-                    modifications.data.radius = radius;
-                    break;
-                case POLYGON:
-                    int polygonN = in.readInt();
-                    modifications.data.vertices = new Vector2[polygonN];
-                    for (int j = 0; j < polygonN; j++)
+                    PhysicsShapeSnapshot shape = new PhysicsShapeSnapshot();
+                    
+                    int typeOrdinal = in.readInt();
+                    PhysicsShapeType type = PhysicsShapeType.values()[typeOrdinal];
+                    shape.shapeType = type;
+                    
+                    switch (type)
                     {
-                        float vertexX = in.readFloat();
-                        float vertexY = in.readFloat();
-                        modifications.data.vertices[j] = new Vector2(vertexX, vertexY);
+                    case CIRCLE:
+                        float radius = in.readFloat();
+                        shape.radius = radius;
+                        break;
+                    case POLYGON:
+                        int polygonN = in.readInt();
+                        shape.vertices = new Vector2[polygonN];
+                        for (int j = 0; j < polygonN; j++)
+                        {
+                            float vertexX = in.readFloat();
+                            float vertexY = in.readFloat();
+                            shape.vertices[j] = new Vector2(vertexX, vertexY);
+                        }
+                        break;
+                    default:
+                        throw new IllegalStateException();
                     }
-                    break;
-                case TRIANGLE_GROUP:
-                    int triangleN = in.readInt();
-                    modifications.data.vertices = new Vector2[triangleN * 3];
-                    for (int j = 0; j < triangleN * 3; j++)
-                    {
-                        float vertexX = in.readFloat();
-                        float vertexY = in.readFloat();
-                        modifications.data.vertices[j] = new Vector2(vertexX, vertexY);
-                    }
-                    break;
+                    
+                    modifications.data.shapes[shapeI] = shape;
                 }
             }
             
@@ -412,28 +423,27 @@ public class WorldSnapshotSegment implements SnapshotData
             
             if ((data & WorldSnapshotSegment.MODIFIED_SHAPE) != 0)
             {
-                user.outputStream.writeInt(compo.shapeType.ordinal());
-                switch (compo.shapeType)
+                user.outputStream.writeInt(compo.shapes.length);
+                for (int shapeI = 0; shapeI < compo.shapes.length; shapeI++)
                 {
-                case CIRCLE:
-                    user.outputStream.writeFloat(compo.radius);
-                    break;
-                case POLYGON:
-                    user.outputStream.writeInt(compo.vertices.length);
-                    for (int i = 0; i < compo.vertices.length; i++)
+                    PhysicsShapeSnapshot shape = compo.shapes[shapeI];
+                    user.outputStream.writeInt(shape.shapeType.ordinal());
+                    switch (shape.shapeType)
                     {
-                        user.outputStream.writeFloat(compo.vertices[i].x);
-                        user.outputStream.writeFloat(compo.vertices[i].y);
+                    case CIRCLE:
+                        user.outputStream.writeFloat(shape.radius);
+                        break;
+                    case POLYGON:
+                        user.outputStream.writeInt(shape.vertices.length);
+                        for (int i = 0; i < shape.vertices.length; i++)
+                        {
+                            user.outputStream.writeFloat(shape.vertices[i].x);
+                            user.outputStream.writeFloat(shape.vertices[i].y);
+                        }
+                        break;
+                    default:
+                        throw new IllegalStateException();
                     }
-                    break;
-                case TRIANGLE_GROUP:
-                    user.outputStream.writeInt(compo.vertices.length / 3);
-                    for (int i = 0; i < compo.vertices.length; i++)
-                    {
-                        user.outputStream.writeFloat(compo.vertices[i].x);
-                        user.outputStream.writeFloat(compo.vertices[i].y);
-                    }
-                    break;
                 }
             }
             

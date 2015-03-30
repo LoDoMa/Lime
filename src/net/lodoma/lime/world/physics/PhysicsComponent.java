@@ -88,37 +88,34 @@ public class PhysicsComponent implements Identifiable<Integer>
         else if (engineBody.m_type == BodyType.STATIC)
             snapshot.type = PhysicsComponentType.STATIC;
         
-        if (engineFixtures[0].m_shape.m_type == ShapeType.CIRCLE)
-            snapshot.shapeType = PhysicsComponentShapeType.CIRCLE;
-        else if (engineFixtures[0].m_shape.m_type == ShapeType.POLYGON)
-            if (engineFixtures.length == 1)
-                snapshot.shapeType = PhysicsComponentShapeType.POLYGON;
-            else
-                snapshot.shapeType = PhysicsComponentShapeType.TRIANGLE_GROUP;
-        
-        switch (snapshot.shapeType)
+        snapshot.shapes = new PhysicsShapeSnapshot[engineFixtures.length];
+        for (int shapeI = 0; shapeI < snapshot.shapes.length; shapeI++)
         {
-        case CIRCLE:
-        {
-            snapshot.radius = ((CircleShape) engineFixtures[0].m_shape).m_radius;
-            break;
-        }
-        case POLYGON:
-        {
-            Vec2[] engineVertices = ((PolygonShape) engineFixtures[0].m_shape).m_vertices;
-            snapshot.vertices = new Vector2[((PolygonShape) engineFixtures[0].m_shape).m_count];
-            for (int i = 0; i < snapshot.vertices.length; i++)
-                snapshot.vertices[i] = new Vector2(engineVertices[i].x, engineVertices[i].y);
-            break;
-        }
-        case TRIANGLE_GROUP:
-        {
-            snapshot.vertices = new Vector2[engineFixtures.length * 3];
-            for (int i = 0; i < engineFixtures.length; i++)
-                for (int j = 0; j < 3; j++)
-                    snapshot.vertices[i * 3 + j] = new Vector2(((PolygonShape) engineFixtures[i].m_shape).m_vertices[j]);
-            break;
-        }
+            snapshot.shapes[shapeI] = new PhysicsShapeSnapshot();
+            
+            if (engineFixtures[0].m_shape.m_type == ShapeType.CIRCLE)
+                snapshot.shapes[shapeI].shapeType = PhysicsShapeType.CIRCLE;
+            else if (engineFixtures[0].m_shape.m_type == ShapeType.POLYGON)
+                snapshot.shapes[shapeI].shapeType = PhysicsShapeType.POLYGON;
+            
+            switch (snapshot.shapes[shapeI].shapeType)
+            {
+            case CIRCLE:
+            {
+                snapshot.shapes[shapeI].radius = ((CircleShape) engineFixtures[0].m_shape).m_radius;
+                break;
+            }
+            case POLYGON:
+            {
+                Vec2[] engineVertices = ((PolygonShape) engineFixtures[0].m_shape).m_vertices;
+                snapshot.shapes[shapeI].vertices = new Vector2[((PolygonShape) engineFixtures[0].m_shape).m_count];
+                for (int i = 0; i < snapshot.shapes[shapeI].vertices.length; i++)
+                    snapshot.shapes[shapeI].vertices[i] = new Vector2(engineVertices[i].x, engineVertices[i].y);
+                break;
+            }
+            default:
+                throw new IllegalStateException();
+            }
         }
         
         return snapshot;

@@ -9,11 +9,11 @@ import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
 
-public class PhysicsComponentTriangleGroupShape extends PhysicsComponentShape
+public class PhysicsShapeTriangleGroup extends PhysicsShape
 {
     public List<Vector2[]> triangles;
     
-    public PhysicsComponentTriangleGroupShape()
+    public PhysicsShapeTriangleGroup()
     {
         triangles = new ArrayList<Vector2[]>();
     }

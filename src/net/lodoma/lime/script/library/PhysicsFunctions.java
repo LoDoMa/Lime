@@ -7,11 +7,11 @@ import net.lodoma.lime.world.World;
 import net.lodoma.lime.world.physics.InvalidPhysicsComponentException;
 import net.lodoma.lime.world.physics.InvalidPhysicsJointException;
 import net.lodoma.lime.world.physics.PhysicsComponent;
-import net.lodoma.lime.world.physics.PhysicsComponentCircleShape;
-import net.lodoma.lime.world.physics.PhysicsComponentPolygonShape;
+import net.lodoma.lime.world.physics.PhysicsShapeCircle;
+import net.lodoma.lime.world.physics.PhysicsShapePolygon;
 import net.lodoma.lime.world.physics.PhysicsComponentDefinition;
-import net.lodoma.lime.world.physics.PhysicsComponentShape;
-import net.lodoma.lime.world.physics.PhysicsComponentTriangleGroupShape;
+import net.lodoma.lime.world.physics.PhysicsShape;
+import net.lodoma.lime.world.physics.PhysicsShapeTriangleGroup;
 import net.lodoma.lime.world.physics.PhysicsComponentType;
 import net.lodoma.lime.world.physics.PhysicsJoint;
 import net.lodoma.lime.world.physics.PhysicsJointDefinition;
@@ -42,6 +42,7 @@ public class PhysicsFunctions
     private PhysicsComponentDefinition compoDefinition;
     private PhysicsJoint joint;
     private PhysicsJointDefinition jointDefinition;
+    private PhysicsShape shape;
     
     private PhysicsFunctions(LimeLibrary library)
     {
@@ -149,28 +150,38 @@ public class PhysicsFunctions
                 }
                 break;
             }
-            case SET_SHAPE_TYPE:
+            case START_SHAPE:
             {
                 String typeName = args.arg(1).checkstring().tojstring();
                 if (compoDefinition == null)
                     throw new LuaError("modifying nonexistent body component");
                 
-                PhysicsComponentShape shape = null;
                 switch (typeName)
                 {
                 case "circle":
-                    shape = new PhysicsComponentCircleShape();
+                    shape = new PhysicsShapeCircle();
                     break;
                 case "polygon":
-                    shape = new PhysicsComponentPolygonShape();
+                    shape = new PhysicsShapePolygon();
                     break;
                 case "triangle-group":
-                    shape = new PhysicsComponentTriangleGroupShape();
+                    shape = new PhysicsShapeTriangleGroup();
                     break;
                 default:
                     throw new LuaError("invalid physics component shape typename");
                 }
-                compoDefinition.shape = shape;
+                
+                break;
+            }
+            case END_SHAPE:
+            {
+                if (compoDefinition == null)
+                    throw new LuaError("modifying nonexistent body component");
+                if (shape == null)
+                    throw new LuaError("setting radius to nonexistent shape");
+                
+                compoDefinition.shapes.add(shape);
+                shape = null;
                 break;
             }
             case SET_SHAPE_RADIUS:
@@ -179,11 +190,11 @@ public class PhysicsFunctions
                 if (compoDefinition == null)
                     throw new LuaError("modifying nonexistent body component");
 
-                if (compoDefinition.shape == null)
+                if (shape == null)
                     throw new LuaError("setting radius to nonexistent shape");
-                if (!(compoDefinition.shape instanceof PhysicsComponentCircleShape))
+                if (!(shape instanceof PhysicsShapeCircle))
                     throw new LuaError("setting radius to non-circular shape");
-                ((PhysicsComponentCircleShape) compoDefinition.shape).radius = radius;
+                ((PhysicsShapeCircle) shape).radius = radius;
                 break;
             }
             case SET_SHAPE_VERTICES:
@@ -197,15 +208,15 @@ public class PhysicsFunctions
 
                 if (compoDefinition == null)
                     throw new LuaError("modifying nonexistent body component");
-                if (compoDefinition.shape == null)
+                if (shape == null)
                     throw new LuaError("setting vertices to nonexistent shape");
-                if (!(compoDefinition.shape instanceof PhysicsComponentPolygonShape))
+                if (!(shape instanceof PhysicsShapePolygon))
                     throw new LuaError("setting vertices to non-polygonal shape");
                 
-                PhysicsComponentPolygonShape shape = (PhysicsComponentPolygonShape) compoDefinition.shape;
-                shape.vertices = new Vector2[args.narg() / 2];
+                PhysicsShapePolygon pshape = (PhysicsShapePolygon) shape;
+                pshape.vertices = new Vector2[args.narg() / 2];
                 for (int i = 0; i < args.narg() / 2; i++)
-                    shape.vertices[i] = new Vector2(args.arg(i * 2 + 1).checknumber().tofloat(), args.arg(i * 2 + 2).checknumber().tofloat());
+                    pshape.vertices[i] = new Vector2(args.arg(i * 2 + 1).checknumber().tofloat(), args.arg(i * 2 + 2).checknumber().tofloat());
                 break;
             }
             case ADD_SHAPE_TRIANGLE:
@@ -226,12 +237,12 @@ public class PhysicsFunctions
 
                 if (compoDefinition == null)
                     throw new LuaError("modifying nonexistent body component");
-                if (compoDefinition.shape == null)
+                if (shape == null)
                     throw new LuaError("adding triangle to nonexistent shape");
-                if (!(compoDefinition.shape instanceof PhysicsComponentTriangleGroupShape))
+                if (!(shape instanceof PhysicsShapeTriangleGroup))
                     throw new LuaError("adding triangle to non-group shape");
                 
-                ((PhysicsComponentTriangleGroupShape) compoDefinition.shape).triangles.add(triangle);
+                ((PhysicsShapeTriangleGroup) shape).triangles.add(triangle);
                 break;
             }
             case SET_COMPONENT_DENSITY:
@@ -635,7 +646,8 @@ public class PhysicsFunctions
         SET_INITIAL_POSITION(2, true, "setInitialPosition"),
         SET_INITIAL_ANGLE(1, true, "setInitialAngle"),
         SET_COMPONENT_TYPE(1, true, "setComponentType"),
-        SET_SHAPE_TYPE(1, true, "setShapeType"),
+        START_SHAPE(1, true, "startShape"),
+        END_SHAPE(0, true, "endShape"),
         SET_SHAPE_RADIUS(1, true, "setShapeRadius"),
         SET_SHAPE_VERTICES(0, false, "setShapeVertices"),
         ADD_SHAPE_TRIANGLE(6, true, "addShapeTriangle"),

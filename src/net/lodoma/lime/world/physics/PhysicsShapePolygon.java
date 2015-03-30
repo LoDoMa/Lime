@@ -7,7 +7,7 @@ import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Settings;
 import org.jbox2d.common.Vec2;
 
-public class PhysicsComponentPolygonShape extends PhysicsComponentShape
+public class PhysicsShapePolygon extends PhysicsShape
 {
     public Vector2 vertices[];
     

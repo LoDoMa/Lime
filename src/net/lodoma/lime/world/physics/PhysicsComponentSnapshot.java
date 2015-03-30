@@ -1,11 +1,10 @@
 package net.lodoma.lime.world.physics;
 
-import org.lwjgl.opengl.GL11;
-
 import net.lodoma.lime.Lime;
-import net.lodoma.lime.texture.Texture;
 import net.lodoma.lime.util.Identifiable;
 import net.lodoma.lime.util.Vector2;
+
+import static org.lwjgl.opengl.GL11.*;
 
 public class PhysicsComponentSnapshot implements Identifiable<Integer>
 {
@@ -15,9 +14,7 @@ public class PhysicsComponentSnapshot implements Identifiable<Integer>
     public float angle;
     
     public PhysicsComponentType type;
-    public PhysicsComponentShapeType shapeType;
-    public float radius;
-    public Vector2[] vertices;
+    public PhysicsShapeSnapshot[] shapes;
     
     @Override
     public Integer getIdentifier()
@@ -37,16 +34,8 @@ public class PhysicsComponentSnapshot implements Identifiable<Integer>
         compoDefinition.position.set(position);
         compoDefinition.angle = angle;
         compoDefinition.type = type;
-        compoDefinition.shape = shapeType.factory.get();
-        switch (shapeType)
-        {
-        case CIRCLE:
-            ((PhysicsComponentCircleShape) compoDefinition.shape).radius = radius;
-            break;
-        case POLYGON: case TRIANGLE_GROUP:
-            ((PhysicsComponentPolygonShape) compoDefinition.shape).vertices = vertices;
-            break;
-        }
+        for (PhysicsShapeSnapshot shape : shapes)
+            compoDefinition.shapes.add(shape.toShape());
         
         // Note that snapshots don't have information about density, friction and restitution
         compoDefinition.density = 0.0f;
@@ -70,111 +59,13 @@ public class PhysicsComponentSnapshot implements Identifiable<Integer>
     
     public void debugRender()
     {
-        switch(shapeType)
-        {
-        case CIRCLE:
-        {
-            GL11.glPushMatrix();
-            GL11.glTranslatef(position.x, position.y, 0.0f);
-            GL11.glRotatef((float) Math.toDegrees(angle), 0.0f, 0.0f, 1.0f);
-            GL11.glScalef(radius, radius, 1.0f);
-
-            Texture.NO_TEXTURE.bind();
-
-            GL11.glColor3f(0.7f, 0.7f, 0.7f);
-            GL11.glBegin(GL11.GL_TRIANGLE_FAN);
-
-            GL11.glVertex2f(0.0f, 0.0f);
-            for (int i = 0; i <= 10; i++)
-            {
-                float angle = (float) Math.toRadians(i * 360.0 / 10.0);
-                GL11.glVertex2f((float) Math.cos(angle), (float) Math.sin(angle));
-            }
-          
-            GL11.glEnd();
-
-            GL11.glColor3f(0.3f, 0.3f, 0.3f);
-            GL11.glBegin(GL11.GL_LINES);
-
-            for (int i = 0; i <= 10; i++)
-            {
-                float angle = (float) Math.toRadians(i * 360.0 / 10.0);
-                GL11.glVertex2f((float) Math.cos(angle), (float) Math.sin(angle));
-                float angle2 = (float) Math.toRadians((i + 1) * 360.0 / 10.0);
-                GL11.glVertex2f((float) Math.cos(angle2), (float) Math.sin(angle2));
-            }
-          
-            GL11.glEnd();
-            
-            GL11.glPopMatrix();
-            break;
-        }
-        case POLYGON:
-        {
-            GL11.glPushMatrix();
-            GL11.glTranslatef(position.x, position.y, 0.0f);
-            GL11.glRotatef((float) Math.toDegrees(angle), 0.0f, 0.0f, 1.0f);
-
-            Texture.NO_TEXTURE.bind();
-
-            GL11.glColor3f(0.7f, 0.7f, 0.7f);
-            GL11.glBegin(GL11.GL_POLYGON);
-
-            for (int i = 0; i < vertices.length; i++)
-                GL11.glVertex2f(vertices[i].x, vertices[i].y);
-          
-            GL11.glEnd();
-
-            GL11.glColor3f(0.3f, 0.3f, 0.3f);
-            GL11.glBegin(GL11.GL_LINES);
-
-            for (int i = 0; i < vertices.length; i++)
-            {
-                GL11.glVertex2f(vertices[i].x, vertices[i].y);
-                GL11.glVertex2f(vertices[(i + 1) % vertices.length].x, vertices[(i + 1) % vertices.length].y);
-            }
-          
-            GL11.glEnd();
-            GL11.glLineWidth(1.0f);
-            
-            GL11.glPopMatrix();
-            break;
-        }
-        case TRIANGLE_GROUP:
-        {
-            GL11.glPushMatrix();
-            GL11.glTranslatef(position.x, position.y, 0.0f);
-            GL11.glRotatef((float) Math.toDegrees(angle), 0.0f, 0.0f, 1.0f);
-
-            Texture.NO_TEXTURE.bind();
-
-            GL11.glColor3f(0.7f, 0.7f, 0.7f);
-            GL11.glBegin(GL11.GL_TRIANGLES);
-
-            for (int i = 0; i < vertices.length; i++)
-                GL11.glVertex2f(vertices[i].x, vertices[i].y);
-          
-            GL11.glEnd();
-
-            GL11.glColor3f(0.3f, 0.3f, 0.3f);
-            GL11.glBegin(GL11.GL_LINES);
-
-            for (int i = 0; i < vertices.length / 3; i++)
-            {
-                GL11.glVertex2f(vertices[i * 3 + 0].x, vertices[i * 3 + 0].y);
-                GL11.glVertex2f(vertices[i * 3 + 1].x, vertices[i * 3 + 1].y);
-                GL11.glVertex2f(vertices[i * 3 + 1].x, vertices[i * 3 + 1].y);
-                GL11.glVertex2f(vertices[i * 3 + 2].x, vertices[i * 3 + 2].y);
-                GL11.glVertex2f(vertices[i * 3 + 2].x, vertices[i * 3 + 2].y);
-                GL11.glVertex2f(vertices[i * 3 + 0].x, vertices[i * 3 + 0].y);
-            }
-          
-            GL11.glEnd();
-            GL11.glLineWidth(1.0f);
-            
-            GL11.glPopMatrix();
-            break;
-        }
-        }
+        glPushMatrix();
+        glTranslatef(position.x, position.y, 0.0f);
+        glRotatef((float) Math.toDegrees(angle), 0.0f, 0.0f, 1.0f);
+        
+        for (PhysicsShapeSnapshot shape : shapes)
+            shape.debugRender();
+        
+        glPopMatrix();
     }
 }

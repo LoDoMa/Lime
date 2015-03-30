@@ -17,23 +17,15 @@ public class PhysicsComponentModifications
     public void apply(PhysicsComponentSnapshot compo)
     {
         if (positionModified)
-        {
             compo.position = data.position;
-        }
         
         if (rotationModified)
             compo.angle = data.angle;
         
         if (shapeModified)
-        {
-            compo.shapeType = data.shapeType;
-            compo.radius = data.radius;
-            compo.vertices = data.vertices;
-        }
+            compo.shapes = data.shapes;
         
         if (physicsDataModified)
-        {
             compo.type = data.type;
-        }
     }
 }

@@ -1,5 +1,8 @@
 package net.lodoma.lime.world.physics;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.lodoma.lime.util.Vector2;
 
 import org.jbox2d.collision.shapes.Shape;
@@ -12,7 +15,7 @@ public class PhysicsComponentDefinition
     public float angle;
     public PhysicsComponentType type;
     
-    public PhysicsComponentShape shape;
+    public List<PhysicsShape> shapes = new ArrayList<PhysicsShape>();
     public float density;
     public float friction;
     public float restitution;
@@ -25,12 +28,14 @@ public class PhysicsComponentDefinition
         if (position == null)   throw new InvalidPhysicsComponentException("invalid component position: null");
         if (type == null)       throw new InvalidPhysicsComponentException("invalid component type: null");
 
-        if (shape == null)      throw new InvalidPhysicsComponentException("invalid component shape: null");
+        if (shapes == null)     throw new InvalidPhysicsComponentException("invalid component shape list: null");
+        if (shapes.size() <= 0) throw new InvalidPhysicsComponentException("invalid component shape list: empty");
         if (density < 0)        throw new InvalidPhysicsComponentException("invalid component density: negative");
         if (friction < 0)       throw new InvalidPhysicsComponentException("invalid component friction: negative");
         if (restitution < 0)    throw new InvalidPhysicsComponentException("invalid component restitution: negative");
         
-        shape.validate();
+        for (PhysicsShape shape : shapes)
+            shape.validate();
     }
     
     public void create()
@@ -40,13 +45,20 @@ public class PhysicsComponentDefinition
         engineBodyDefinition.angle = angle;
         engineBodyDefinition.type = type.engineType;
         
-        Shape[] engineShapes = shape.newEngineInstances();
-        engineFixtureDefinitions = new FixtureDef[engineShapes.length];
+        List<Shape> engineShapes = new ArrayList<Shape>();
+        for (PhysicsShape shape : shapes)
+        {
+            Shape[] engineInstances = shape.newEngineInstances();
+            for (Shape engineInstance : engineInstances)
+                engineShapes.add(engineInstance);
+        }
+        
+        engineFixtureDefinitions = new FixtureDef[engineShapes.size()];
         
         for (int i = 0; i < engineFixtureDefinitions.length; i++)
         {
             engineFixtureDefinitions[i] = new FixtureDef();
-            engineFixtureDefinitions[i].shape = engineShapes[i];
+            engineFixtureDefinitions[i].shape = engineShapes.get(i);
             engineFixtureDefinitions[i].density = density;
             engineFixtureDefinitions[i].friction = friction;
             engineFixtureDefinitions[i].restitution = restitution;
