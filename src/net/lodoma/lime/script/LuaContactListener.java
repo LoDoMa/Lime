@@ -1,6 +1,5 @@
 package net.lodoma.lime.script;
 
-import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.contacts.Contact;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaValue;
@@ -28,30 +27,30 @@ public class LuaContactListener extends PhysicsContactListener
     }
     
     @Override
-    public void preSolve(Fixture fixtureA, Fixture fixtureB, Contact contact)
+    public void preSolve(Contact contact, boolean swap)
     {
         if (preSolve != null)
-            preSolve.invoke(new LuaValue[] { ContactTable.create(fixtureA, fixtureB, contact) });
+            preSolve.invoke(new LuaValue[] { ContactTable.create(contact, swap) });
     }
 
     @Override
-    public void postSolve(Fixture fixtureA, Fixture fixtureB, Contact contact)
+    public void postSolve(Contact contact, boolean swap)
     {
         if (postSolve != null)
-            postSolve.invoke(new LuaValue[] { ContactTable.create(fixtureA, fixtureB, contact) });
+            postSolve.invoke(new LuaValue[] { ContactTable.create(contact, swap) });
     }
     
     @Override
-    public void beginContact(Fixture fixtureA, Fixture fixtureB, Contact contact)
+    public void beginContact(Contact contact, boolean swap)
     {
         if (beginContact != null)
-            beginContact.invoke(new LuaValue[] { ContactTable.create(fixtureA, fixtureB, contact) });
+            beginContact.invoke(new LuaValue[] { ContactTable.create(contact, swap) });
     }
 
     @Override
-    public void endContact(Fixture fixtureA, Fixture fixtureB, Contact contact)
+    public void endContact(Contact contact, boolean swap)
     {
         if (endContact != null)
-            endContact.invoke(new LuaValue[] { ContactTable.create(fixtureA, fixtureB, contact) });
+            endContact.invoke(new LuaValue[] { ContactTable.create(contact, swap) });
     }
 }

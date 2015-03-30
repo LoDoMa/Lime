@@ -2,6 +2,8 @@ package net.lodoma.lime.script.library;
 
 import net.lodoma.lime.world.physics.PhysicsComponent;
 
+import org.jbox2d.collision.WorldManifold;
+import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.contacts.Contact;
 import org.luaj.vm2.LuaError;
@@ -12,19 +14,21 @@ import org.luaj.vm2.lib.VarArgFunction;
 
 public class ContactTable
 {
-    public static synchronized LuaTable create(Fixture fixtureA, Fixture fixtureB, Contact contact)
+    public static synchronized LuaTable create(Contact contact, boolean swap)
     {
-        return new ContactTable(fixtureA, fixtureB, contact).table;
+        return new ContactTable(contact, swap).table;
     }
 
     private LuaTable table;
     private Contact contact;
     
-    public ContactTable(Fixture fixtureA, Fixture fixtureB, Contact contact)
+    public ContactTable(Contact contact, boolean swap)
     {
         table = LuaTable.tableOf();
         this.contact = contact;
-
+        
+        Fixture fixtureA = swap ? contact.m_fixtureB : contact.m_fixtureA;
+        Fixture fixtureB = swap ? contact.m_fixtureA : contact.m_fixtureB;
         PhysicsComponent bodyA = (PhysicsComponent) fixtureA.m_body.m_userData;
         PhysicsComponent bodyB = (PhysicsComponent) fixtureB.m_body.m_userData;
         table.set("bodyA", bodyA.identifier);
@@ -34,6 +38,19 @@ public class ContactTable
             table.set("fixtureA", LuaValue.valueOf((String) fixtureA.m_userData));
         if (fixtureB.m_userData != null)
             table.set("fixtureB", LuaValue.valueOf((String) fixtureB.m_userData));
+        
+        WorldManifold manifold = new WorldManifold();
+        contact.getWorldManifold(manifold);
+        Vec2 pointA = manifold.points[swap ? 1 : 0];
+        Vec2 pointB = manifold.points[swap ? 0 : 1];
+        Vec2 normal = manifold.normal;
+        
+        table.set("pointAx", LuaValue.valueOf(pointA.x));
+        table.set("pointAy", LuaValue.valueOf(pointA.y));
+        table.set("pointBx", LuaValue.valueOf(pointB.x));
+        table.set("pointBy", LuaValue.valueOf(pointB.y));
+        table.set("normalX", LuaValue.valueOf(normal.x));
+        table.set("normalY", LuaValue.valueOf(normal.y));
         
         for (FuncData func : FuncData.values())
             new LimeFunc(func).addToTable();
