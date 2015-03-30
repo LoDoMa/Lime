@@ -48,7 +48,7 @@ public class PhysicsShapeTriangleGroup extends PhysicsShape
             Vector2[] vertices = triangles.get(i);
             Vec2[] engineVertices = new Vec2[3];
             for (int j = 0; j < 3; j++)
-                engineVertices[j] = vertices[j].toVec2();
+                engineVertices[j] = new Vec2(offset.x + vertices[j].x, offset.y + vertices[j].y);
             
             shapes[i].set(engineVertices, engineVertices.length);
         }

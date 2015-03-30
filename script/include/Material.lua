@@ -1,7 +1,7 @@
 
 local materialMap = {}
 
-function addMaterial(name, density, friction, restitution)
+local function addMaterial(name, density, friction, restitution)
 	local material = {}
 	material.density = density
 	material.friction = friction
@@ -10,13 +10,19 @@ function addMaterial(name, density, friction, restitution)
 	materialMap[name] = material
 end
 
-function getMaterial(name)
+local function getMaterial(name)
 	return materialMap[name]
 end
 
-function applyMaterial(name)
+local function applyMaterial(name)
 	local material = materialMap[name]
 	lime.setShapeDensity(material.density)
 	lime.setShapeFriction(material.friction)
 	lime.setShapeRestitution(material.restitution)
 end
+
+__LIME_IncludeTable__ = {
+	addMaterial = addMaterial,
+	getMaterial = getMaterial,
+	applyMaterial = applyMaterial,
+}

@@ -19,6 +19,7 @@ public class PhysicsShapeCircle extends PhysicsShape
     public void newEngineInstances()
     {
         CircleShape shape = new CircleShape();
+        shape.m_p.set(offset.x, offset.y);
         shape.m_radius = radius;
         
         engineInstances = new Shape[] { shape };

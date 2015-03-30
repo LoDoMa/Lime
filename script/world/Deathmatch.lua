@@ -1,12 +1,12 @@
 
-lime.include("WorldUtils")
-lime.include("Material")
+local World = lime.include("World")
+local Material = lime.include("Material")
 
 -- Constants
 local cameraRatioX = 16
 local cameraRatioY = 9
 local cameraRatio = cameraRatioX / cameraRatioY
-local cameraPadding = 4
+local cameraPadding = 4 -- minimum space around edge players
 local minCameraWidth = 32
 local minCameraHeight = 18
 
@@ -43,31 +43,31 @@ function Lime_Init()
 	-- TODO: remove crazy ambient light, add normal lights
 	lime.setAmbientLight(1, 1, 1)
 
-	addMaterial("stone", 5, 0.6, 0.1)
+	Material.addMaterial("stone", 5, 0.6, 0.1)
 
-	addTerrain("stone", 0, 0, 0, -2, 20, -2) -- bottom
-	addTerrain("stone", 0, 0, 20, -2, 20, 0) -- bottom
-	addTerrain("stone", -2, 0, 0, -2, 0, 0) -- bottom left corner
-	addTerrain("stone", 20, 0, 20, -2, 22, 0) -- bottom right corner
-	addTerrain("stone", -2, 9.5, -2, 0, 0, 0) -- left
-	addTerrain("stone", -2, 9.5, 0, 0, 0, 9.5) -- left
-	addTerrain("stone", 20, 9.5, 20, 0, 22, 0) -- right
-	addTerrain("stone", 20, 9.5, 22, 0, 22, 9.5) -- right
-	addTerrain("stone", 0, 11.5, 0, 9.5, 20, 9.5) -- top
-	addTerrain("stone", 0, 11.5, 20, 9.5, 20, 11.5) -- top
-	addTerrain("stone", -2, 9.5, 0, 9.5, 0, 11.5) -- top left corner
-	addTerrain("stone", 20, 11.5, 20, 9.5, 22, 9.5) -- top right corner
+	World.addTerrain("stone", 0, 0, 0, -2, 20, -2) -- bottom
+	World.addTerrain("stone", 0, 0, 20, -2, 20, 0) -- bottom
+	World.addTerrain("stone", -2, 0, 0, -2, 0, 0) -- bottom left corner
+	World.addTerrain("stone", 20, 0, 20, -2, 22, 0) -- bottom right corner
+	World.addTerrain("stone", -2, 9.5, -2, 0, 0, 0) -- left
+	World.addTerrain("stone", -2, 9.5, 0, 0, 0, 9.5) -- left
+	World.addTerrain("stone", 20, 9.5, 20, 0, 22, 0) -- right
+	World.addTerrain("stone", 20, 9.5, 22, 0, 22, 9.5) -- right
+	World.addTerrain("stone", 0, 11.5, 0, 9.5, 20, 9.5) -- top
+	World.addTerrain("stone", 0, 11.5, 20, 9.5, 20, 11.5) -- top
+	World.addTerrain("stone", -2, 9.5, 0, 9.5, 0, 11.5) -- top left corner
+	World.addTerrain("stone", 20, 11.5, 20, 9.5, 22, 9.5) -- top right corner
 
-	addTerrain("stone", 3, 4, 3, 3, 9.5, 3) -- obstacle bottom-left
-	addTerrain("stone", 3, 4, 9.5, 3, 9.5, 4) -- obstacle bottom-left
-	addTerrain("stone", 10.5, 4, 10.5, 3, 17, 3) -- obstacle bottom-right
-	addTerrain("stone", 10.5, 4, 17, 3, 17, 4) -- obstacle bottom-right
-	addTerrain("stone", 9.5, 6.5, 9.5, 3, 10.5, 3) -- obstacle middle
-	addTerrain("stone", 9.5, 6.5, 10.5, 3, 10.5, 6.5) -- obstacle middle
-	addTerrain("stone", 3, 6.5, 3, 5.5, 9.5, 5.5) -- obstacle top-left
-	addTerrain("stone", 3, 6.5, 9.5, 5.5, 9.5, 6.5) -- obstacle top-left
-	addTerrain("stone", 10.5, 6.5, 10.5, 5.5, 17, 5.5) -- obstacle top-right
-	addTerrain("stone", 10.5, 6.5, 17, 5.5, 17, 6.5) -- obstacle top-right
+	World.addTerrain("stone", 3, 4, 3, 3, 9.5, 3) -- obstacle bottom-left
+	World.addTerrain("stone", 3, 4, 9.5, 3, 9.5, 4) -- obstacle bottom-left
+	World.addTerrain("stone", 10.5, 4, 10.5, 3, 17, 3) -- obstacle bottom-right
+	World.addTerrain("stone", 10.5, 4, 17, 3, 17, 4) -- obstacle bottom-right
+	World.addTerrain("stone", 9.5, 6.5, 9.5, 3, 10.5, 3) -- obstacle middle
+	World.addTerrain("stone", 9.5, 6.5, 10.5, 3, 10.5, 6.5) -- obstacle middle
+	World.addTerrain("stone", 3, 6.5, 3, 5.5, 9.5, 5.5) -- obstacle top-left
+	World.addTerrain("stone", 3, 6.5, 9.5, 5.5, 9.5, 6.5) -- obstacle top-left
+	World.addTerrain("stone", 10.5, 6.5, 10.5, 5.5, 17, 5.5) -- obstacle top-right
+	World.addTerrain("stone", 10.5, 6.5, 17, 5.5, 17, 6.5) -- obstacle top-right
 
 
 	print("Gamemode initialized")

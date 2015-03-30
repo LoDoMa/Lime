@@ -83,9 +83,12 @@ public class UtilFunctions
                 
                 if (includeTable.get(filepath).isnil())
                 {
+                    LuaTable include = null;
                     try
                     {
                         luaInstance.load(new File(OsHelper.JARPATH + "script/include/" + filepath + ".lua"));
+                        include = luaInstance.globals.get("__LIME_IncludeTable__").checktable();
+                        luaInstance.globals.set("__LIME_IncludeTable__", LuaValue.NIL);
                     }
                     catch(IOException e)
                     {
@@ -94,10 +97,10 @@ public class UtilFunctions
                         Lime.forceExit(e);
                     }
                     
-                    includeTable.set(filepath, LuaValue.valueOf(true));
+                    includeTable.set(filepath, include);
                 }
                 
-                break;
+                return includeTable.get(filepath);
             }
             case LOG:
             {

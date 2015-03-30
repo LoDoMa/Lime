@@ -28,7 +28,7 @@ public class PhysicsShapePolygon extends PhysicsShape
         PolygonShape shape = new PolygonShape();
         Vec2[] engineVertices = new Vec2[vertices.length];
         for (int i = 0; i < vertices.length; i++)
-            engineVertices[i] = new Vec2(vertices[i].x, vertices[i].y);
+            engineVertices[i] = new Vec2(offset.x + vertices[i].x, offset.y + vertices[i].y);
         shape.set(engineVertices, engineVertices.length);
         
         engineInstances = new Shape[] { shape };

@@ -54,6 +54,7 @@ public class PhysicsComponentDefinition
             {
                 engineFixtureDefinitions[i] = new FixtureDef();
                 engineFixtureDefinitions[i].shape = engineInstance;
+                engineFixtureDefinitions[i].isSensor = !shape.isSolid;
                 engineFixtureDefinitions[i].density = shape.density;
                 engineFixtureDefinitions[i].friction = shape.friction;
                 engineFixtureDefinitions[i].restitution = shape.restitution;

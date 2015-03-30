@@ -7,6 +7,7 @@ import static org.lwjgl.opengl.GL11.*;
 public class PhysicsShapeSnapshot
 {
     public PhysicsShapeType shapeType;
+    public Vector2 offset;
     public float radius;
     public Vector2[] vertices;
     
@@ -17,6 +18,7 @@ public class PhysicsShapeSnapshot
         case CIRCLE:
         {
             PhysicsShapeCircle shape = new PhysicsShapeCircle();
+            shape.offset.set(offset);
             shape.radius = radius;
             return shape;
         }
@@ -35,6 +37,7 @@ public class PhysicsShapeSnapshot
         {
         case CIRCLE:
         {
+            glTranslatef(offset.x, offset.y, 0.0f);
             glScalef(radius, radius, 1.0f);
 
             Texture.NO_TEXTURE.bind();
@@ -65,6 +68,7 @@ public class PhysicsShapeSnapshot
             glEnd();
 
             glScalef(1.0f / radius, 1.0f / radius, 1.0f);
+            glTranslatef(-offset.x, -offset.y, 0.0f);
             
             break;
         }

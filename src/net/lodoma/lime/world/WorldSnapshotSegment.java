@@ -101,7 +101,8 @@ public class WorldSnapshotSegment implements SnapshotData
                             switch (currentShape.shapeType)
                             {
                             case CIRCLE:
-                                if (currentShape.radius != previousShape.radius)
+                                if (!Vector2.equals(currentShape.offset, previousShape.offset) ||
+                                        currentShape.radius != previousShape.radius)
                                     modified |= MODIFIED_SHAPE;
                                 break;
                             case POLYGON: case TRIANGLE_GROUP:
@@ -263,7 +264,10 @@ public class WorldSnapshotSegment implements SnapshotData
                     switch (type)
                     {
                     case CIRCLE:
+                        float offsetX = in.readFloat();
+                        float offsetY = in.readFloat();
                         float radius = in.readFloat();
+                        shape.offset = new Vector2(offsetX, offsetY);
                         shape.radius = radius;
                         break;
                     case POLYGON:
@@ -431,6 +435,8 @@ public class WorldSnapshotSegment implements SnapshotData
                     switch (shape.shapeType)
                     {
                     case CIRCLE:
+                        user.outputStream.writeFloat(shape.offset.x);
+                        user.outputStream.writeFloat(shape.offset.y);
                         user.outputStream.writeFloat(shape.radius);
                         break;
                     case POLYGON:

@@ -245,13 +245,36 @@ public class PhysicsFunctions
                 ((PhysicsShapeTriangleGroup) shape).triangles.add(triangle);
                 break;
             }
+            case SET_SHAPE_OFFSET:
+            {
+                float offsetX = args.checknumber(1).tofloat();
+                float offsetY = args.checknumber(2).tofloat();
+                if (compoDefinition == null)
+                    throw new LuaError("modifying nonexistent body component");
+                if (shape == null)
+                    throw new LuaError("modifying nonexistent shape");
+                
+                shape.offset.set(offsetX, offsetY);
+                break;
+            }
+            case SET_SHAPE_SOLID:
+            {
+                boolean flag = args.checkboolean(1);
+                if (compoDefinition == null)
+                    throw new LuaError("modifying nonexistent body component");
+                if (shape == null)
+                    throw new LuaError("modifying nonexistent shape");
+                
+                shape.isSolid = flag;
+                break;
+            }
             case SET_SHAPE_DENSITY:
             {
                 float density = args.arg(1).checknumber().tofloat();
                 if (compoDefinition == null)
                     throw new LuaError("modifying nonexistent body component");
                 if (shape == null)
-                    throw new LuaError("adding triangle to nonexistent shape");
+                    throw new LuaError("modifying nonexistent shape");
                 
                 shape.density = density;
                 break;
@@ -262,7 +285,7 @@ public class PhysicsFunctions
                 if (compoDefinition == null)
                     throw new LuaError("modifying nonexistent body component");
                 if (shape == null)
-                    throw new LuaError("adding triangle to nonexistent shape");
+                    throw new LuaError("modifying nonexistent shape");
                 
                 shape.friction = friction;
                 break;
@@ -273,7 +296,7 @@ public class PhysicsFunctions
                 if (compoDefinition == null)
                     throw new LuaError("modifying nonexistent body component");
                 if (shape == null)
-                    throw new LuaError("adding triangle to nonexistent shape");
+                    throw new LuaError("modifying nonexistent shape");
                 
                 shape.restitution = restitution;
                 break;
@@ -657,6 +680,8 @@ public class PhysicsFunctions
         SET_SHAPE_RADIUS(1, true, "setShapeRadius"),
         SET_SHAPE_VERTICES(0, false, "setShapeVertices"),
         ADD_SHAPE_TRIANGLE(6, true, "addShapeTriangle"),
+        SET_SHAPE_OFFSET(2, true, "setShapeOffset"),
+        SET_SHAPE_SOLID(1, true, "setShapeSolid"),
         SET_SHAPE_DENSITY(1, true, "setShapeDensity"),
         SET_SHAPE_FRICTION(1, true, "setShapeFriction"),
         SET_SHAPE_RESTITUTION(1, true, "setShapeRestitution"),
