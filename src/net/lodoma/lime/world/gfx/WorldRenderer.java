@@ -37,6 +37,26 @@ public class WorldRenderer
         if (lightMap != null) lightMap.destroy();
     }
     
+    // TODO: optimize, render only things within this square
+    public void renderOcclusion(float lowX, float lowY, float highX, float highY)
+    {
+        float scaleX = 1.0f / (highX - lowX);
+        float scaleY = 1.0f / (highY - lowY);
+        
+        glPushMatrix();
+        glScalef(scaleX, scaleY, 1.0f);
+        glTranslatef(-lowX, -lowY, 0.0f);
+        
+        Program.basicProgram.useProgram();
+        Program.basicProgram.setUniform("uTexture", UniformType.INT1, 0);
+        Texture.NO_TEXTURE.bind(0);
+        
+        world.compoSnapshotPool.foreach((PhysicsComponentSnapshot compoSnapshot) -> compoSnapshot.debugRender());
+        world.particleList.forEach((PhysicsParticle particle) -> particle.debugRender());
+        
+        glPopMatrix();
+    }
+    
     private void renderOcclusionMap()
     {
         occlusionMap.bind();
@@ -102,7 +122,7 @@ public class WorldRenderer
         
         glBlendFunc(GL_SRC_ALPHA, GL_ONE);
         
-        world.lightPool.foreach((Light light) -> light.renderDSL(occlusionMap, lightMap, camera));
+        world.lightPool.foreach((Light light) -> light.renderDSL(this, lightMap, camera));
         
         lightMap.unbind();
     }

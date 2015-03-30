@@ -9,6 +9,8 @@ local entityID
 local compoID
 local applyEffects
 
+local removeNextUpdate = false
+
 local function onContact(contact)
     lime.selectComponent(contact.bodyB)
     local owner = lime.getOwner()
@@ -17,7 +19,8 @@ local function onContact(contact)
             if applyEffects then
                 applyEffects(owner)
             end
-            lime.removeEntity(entityID)
+            contact.setEnabled(false)
+            removeNextUpdate = true
         end
     end
 end
@@ -33,7 +36,7 @@ local function createBody()
     
     -- body
     lime.startShape("triangle-group")
-    lime.setShapeDensity(1.8)
+    lime.setShapeDensity(0.9)
     lime.setShapeFriction(0.2)
     lime.setShapeRestitution(0.05)
     lime.addShapeTriangle(-radius, -radius, -radius, radius, radius, -radius)
@@ -57,7 +60,9 @@ function Lime_Init(entityID_)
 end
 
 function Lime_Update(timeDelta)
-    
+    if removeNextUpdate then
+        lime.removeEntity(entityID)
+    end
 end
 
 function Lime_PostUpdate()
@@ -65,6 +70,5 @@ function Lime_PostUpdate()
 end
 
 function Lime_Clean()
-    print(compoID)
     lime.removeComponent(compoID)
 end

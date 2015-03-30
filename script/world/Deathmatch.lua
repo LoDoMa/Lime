@@ -11,7 +11,7 @@ local minCameraWidth = 32
 local minCameraHeight = 18
 
 -- Timers/countdowns
-local pickupCountdownMax = 5
+local pickupCountdownMax = 15
 local pickupCountdown = pickupCountdownMax
 
 local connectedUsers = {}
@@ -19,7 +19,7 @@ local playerIDs = {}
 
 function Lime_WorldInit()
     lime.setAmbientLight(0.01, 0.0, 0.1)
-    lime.setWorldGravity(0.0, -36.0)
+    lime.setWorldGravity(0.0, -18.0)
 end
 
 local function createPlayer(userID)
@@ -163,6 +163,7 @@ function Lime_PostUpdate()
 
         for userID in pairs(connectedUsers) do
             lime.setCameraTranslation(userID, cameraTranslationX, cameraTranslationY)
+            lime.setCameraRotation(userID, 45)
             lime.setCameraScale(userID, cameraBoundsWidth, cameraBoundsHeight)
         end
     end

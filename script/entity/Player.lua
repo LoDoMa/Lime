@@ -32,8 +32,8 @@ local joints = {}
 local function loadDefaultProperties()
     lime.setAttribute(entityID, property_canCollectPickups, true)
     lime.setAttribute(entityID, property_wallClimbing, 0)
-    lime.setAttribute(entityID, property_horizontalJumpMultiplier, 15)
-    lime.setAttribute(entityID, property_verticalJumpMultiplier, 40)
+    lime.setAttribute(entityID, property_horizontalJumpMultiplier, 8)
+    lime.setAttribute(entityID, property_verticalJumpMultiplier, 15)
     lime.setAttribute(entityID, property_wallJumpVerticalMultiplier, 0.7)
 end
 
@@ -80,7 +80,7 @@ local function createBody()
     
     -- body
     lime.startShape("triangle-group")
-    lime.setShapeDensity(1.8)
+    lime.setShapeDensity(0.9)
     lime.setShapeFriction(0.2)
     lime.setShapeRestitution(0.05)
     lime.addShapeTriangle(-radius, -radius, -radius, radius, radius, -radius)
@@ -166,10 +166,9 @@ function Lime_Update(timeDelta)
     tryJump()
 
     local speed = 75.0
-    local vx, vy = 0.0, 0.0
+    local vx, vy = 0.0, -5.0
     if lime.getKeyState(lime.KEY_A) then vx = -speed end
-    if lime.getKeyState(lime.KEY_D) then vx = speed end
-    
+    if lime.getKeyState(lime.KEY_D ) then vx = speed end
     lime.selectComponent(mainCompo)
     lime.applyForceToCenter(vx, vy)
 

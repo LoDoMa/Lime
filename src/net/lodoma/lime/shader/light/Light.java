@@ -10,6 +10,7 @@ import net.lodoma.lime.util.Identifiable;
 import net.lodoma.lime.world.World;
 import net.lodoma.lime.world.gfx.Camera;
 import net.lodoma.lime.world.gfx.FBO;
+import net.lodoma.lime.world.gfx.WorldRenderer;
 
 public class Light implements Identifiable<Integer>
 {
@@ -18,7 +19,7 @@ public class Light implements Identifiable<Integer>
     public World world;
     public LightData data;
     
-    private FBO occlusionLocal;
+    private FBO occlusion;
     private FBO shadowMap;
     
     public Light(World world)
@@ -41,13 +42,13 @@ public class Light implements Identifiable<Integer>
     
     public void destroy()
     {
-        if (occlusionLocal != null || shadowMap != null)
-            Lime.LOGGER.I("Added light " + identifier + " FBOs to the destruction list");
-        
         synchronized (FBO.destroyList)
         {
-            if (occlusionLocal != null) FBO.destroyList.add(occlusionLocal);
+            if (occlusion != null) FBO.destroyList.add(occlusion);
             if (shadowMap != null) FBO.destroyList.add(shadowMap);
+            
+            if (occlusion != null || shadowMap != null)
+                Lime.LOGGER.I("Added light " + identifier + " FBOs to the destruction list");
         }
     }
     
@@ -75,18 +76,22 @@ public class Light implements Identifiable<Integer>
         brightnessMap.unbind();
     }
     
-    public void renderDSL(FBO occlusionMap, FBO lightMap, Camera camera)
+    public void renderDSL(WorldRenderer renderer, FBO lightMap, Camera camera)
     {
         float lightFW = Window.viewportWidth * data.radius / camera.scale.x;
         float lightFH = Window.viewportHeight * data.radius / camera.scale.y;
         int lightRW = (int) lightFW;
         int lightRH = (int) lightFH;
         
-        if (occlusionLocal == null || occlusionLocal.width != lightRW || occlusionLocal.height != lightRH)
+        /*
+         * Create/recreate FBOs if needed
+         */
+        
+        if (occlusion == null || occlusion.width != lightRW)
         {
-            if (occlusionLocal != null)
-                occlusionLocal.destroy();
-            occlusionLocal = new FBO(lightRW, lightRH);
+            if (occlusion != null)
+                occlusion.destroy();
+            occlusion = new FBO(lightRW, lightRH);
         }
         
         if (shadowMap == null || shadowMap.width != lightRW)
@@ -101,7 +106,22 @@ public class Light implements Identifiable<Integer>
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         }
+        
+        /*
+         * Render occlusion
+         */
+        
+        occlusion.bind();
+        occlusion.clear();
 
+        float lightLX = data.position.x - data.radius;
+        float lightLY = data.position.y - data.radius;
+        float lightHX = data.position.x + data.radius;
+        float lightHY = data.position.y + data.radius;
+        renderer.renderOcclusion(lightLX, lightLY, lightHX, lightHY);
+        
+        occlusion.unbind();
+        
         /*
          * Create a 1D shadow map
          */
@@ -110,16 +130,11 @@ public class Light implements Identifiable<Integer>
         shadowMap.clear();
         
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, occlusionMap.textureID);
+        glBindTexture(GL_TEXTURE_2D, occlusion.textureID);
         
         Program.shadowMapProgram.useProgram();
         Program.shadowMapProgram.setUniform("uTexture", UniformType.INT1, 0);
         Program.shadowMapProgram.setUniform("uResolution", UniformType.FLOAT1, lightFW);
-
-        Program.shadowMapProgram.setUniform("uLightPosition", UniformType.FLOAT2, data.position.x, data.position.y);
-        Program.shadowMapProgram.setUniform("uLightRadius", UniformType.FLOAT1, data.radius);
-        Program.shadowMapProgram.setUniform("uCamScale", UniformType.FLOAT2, camera.scale.x, camera.scale.y);
-        Program.shadowMapProgram.setUniform("uCamTranslation", UniformType.FLOAT2, camera.translation.x, camera.translation.y);
         
         data.color.setGL();
         
