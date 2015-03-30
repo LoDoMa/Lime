@@ -6,7 +6,6 @@ import java.util.List;
 import net.lodoma.lime.util.Vector2;
 
 import org.jbox2d.collision.shapes.PolygonShape;
-import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
 
 public class PhysicsShapeTriangleGroup extends PhysicsShape
@@ -21,6 +20,8 @@ public class PhysicsShapeTriangleGroup extends PhysicsShape
     @Override
     public void validate() throws InvalidPhysicsComponentException
     {
+        super.validate();
+        
         if (triangles == null)       throw new InvalidPhysicsComponentException("invalid component triangle group shape: triangle list is null");
         if (triangles.isEmpty())     throw new InvalidPhysicsComponentException("invalid component triangle group shape: empty triangle list");
         for (int i = 0; i < triangles.size(); i++)
@@ -37,7 +38,7 @@ public class PhysicsShapeTriangleGroup extends PhysicsShape
     }
     
     @Override
-    public Shape[] newEngineInstances()
+    public void newEngineInstances()
     {
         PolygonShape[] shapes = new PolygonShape[triangles.size()];
         for (int i = 0; i < shapes.length; i++)
@@ -51,6 +52,7 @@ public class PhysicsShapeTriangleGroup extends PhysicsShape
             
             shapes[i].set(engineVertices, engineVertices.length);
         }
-        return shapes;
+        
+        engineInstances = shapes;
     }
 }

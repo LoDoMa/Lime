@@ -245,31 +245,37 @@ public class PhysicsFunctions
                 ((PhysicsShapeTriangleGroup) shape).triangles.add(triangle);
                 break;
             }
-            case SET_COMPONENT_DENSITY:
+            case SET_SHAPE_DENSITY:
             {
                 float density = args.arg(1).checknumber().tofloat();
                 if (compoDefinition == null)
                     throw new LuaError("modifying nonexistent body component");
+                if (shape == null)
+                    throw new LuaError("adding triangle to nonexistent shape");
                 
-                compoDefinition.density = density;
+                shape.density = density;
                 break;
             }
-            case SET_COMPONENT_FRICTION:
+            case SET_SHAPE_FRICTION:
             {
                 float friction = args.arg(1).checknumber().tofloat();
                 if (compoDefinition == null)
                     throw new LuaError("modifying nonexistent body component");
+                if (shape == null)
+                    throw new LuaError("adding triangle to nonexistent shape");
                 
-                compoDefinition.friction = friction;
+                shape.friction = friction;
                 break;
             }
-            case SET_COMPONENT_RESTITUTION:
+            case SET_SHAPE_RESTITUTION:
             {
                 float restitution = args.arg(1).checknumber().tofloat();
                 if (compoDefinition == null)
                     throw new LuaError("modifying nonexistent body component");
+                if (shape == null)
+                    throw new LuaError("adding triangle to nonexistent shape");
                 
-                compoDefinition.restitution = restitution;
+                shape.restitution = restitution;
                 break;
             }
             case START_JOINT:
@@ -651,9 +657,9 @@ public class PhysicsFunctions
         SET_SHAPE_RADIUS(1, true, "setShapeRadius"),
         SET_SHAPE_VERTICES(0, false, "setShapeVertices"),
         ADD_SHAPE_TRIANGLE(6, true, "addShapeTriangle"),
-        SET_COMPONENT_DENSITY(1, true, "setComponentDensity"),
-        SET_COMPONENT_FRICTION(1, true, "setComponentFriction"),
-        SET_COMPONENT_RESTITUTION(1, true, "setComponentRestitution"),
+        SET_SHAPE_DENSITY(1, true, "setShapeDensity"),
+        SET_SHAPE_FRICTION(1, true, "setShapeFriction"),
+        SET_SHAPE_RESTITUTION(1, true, "setShapeRestitution"),
         
         START_JOINT(0, true, "startJoint"),
         END_JOINT(0, true, "endJoint"),

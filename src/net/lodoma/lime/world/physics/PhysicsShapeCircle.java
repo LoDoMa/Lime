@@ -10,14 +10,17 @@ public class PhysicsShapeCircle extends PhysicsShape
     @Override
     public void validate() throws InvalidPhysicsComponentException
     {
+        super.validate();
+        
         if (radius < 0) throw new InvalidPhysicsComponentException("invalid component circle shape radius: negative");
     }
     
     @Override
-    public Shape[] newEngineInstances()
+    public void newEngineInstances()
     {
         CircleShape shape = new CircleShape();
         shape.m_radius = radius;
-        return new Shape[] { shape };
+        
+        engineInstances = new Shape[] { shape };
     }
 }

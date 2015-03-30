@@ -16,7 +16,7 @@ end
 
 function applyMaterial(name)
 	local material = materialMap[name]
-	lime.setComponentDensity(material.density)
-	lime.setComponentFriction(material.friction)
-	lime.setComponentRestitution(material.restitution)
+	lime.setShapeDensity(material.density)
+	lime.setShapeFriction(material.friction)
+	lime.setShapeRestitution(material.restitution)
 end

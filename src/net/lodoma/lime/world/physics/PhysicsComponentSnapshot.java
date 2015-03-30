@@ -37,11 +37,6 @@ public class PhysicsComponentSnapshot implements Identifiable<Integer>
         for (PhysicsShapeSnapshot shape : shapes)
             compoDefinition.shapes.add(shape.toShape());
         
-        // Note that snapshots don't have information about density, friction and restitution
-        compoDefinition.density = 0.0f;
-        compoDefinition.friction = 0.0f;
-        compoDefinition.restitution = 0.0f;
-        
         try
         {
             compoDefinition.validate();

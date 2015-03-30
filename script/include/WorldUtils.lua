@@ -7,9 +7,9 @@ function addTerrain(material, x1, y1, x2, y2, x3, y3)
 	lime.setInitialAngle(0.0)
 	lime.setComponentType("static")
 	lime.startShape("triangle-group")
+	applyMaterial(material)
 	lime.addShapeTriangle(x1, y1, x2, y2, x3, y3)
 	lime.endShape()
-	applyMaterial(material)
 	local terrainID = lime.endComponent()
 
 	-- NOTE: Terrain is currently never cleaned

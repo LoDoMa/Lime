@@ -14,6 +14,8 @@ public class PhysicsShapePolygon extends PhysicsShape
     @Override
     public void validate() throws InvalidPhysicsComponentException
     {
+        super.validate();
+        
         if (vertices == null)    throw new InvalidPhysicsComponentException("invalid component polygon shape vertices: null");
         if (vertices.length < 3) throw new InvalidPhysicsComponentException("invalid component polygon shape vertices: less than 3");
         if (vertices.length > Settings.maxPolygonVertices)
@@ -21,13 +23,14 @@ public class PhysicsShapePolygon extends PhysicsShape
     }
     
     @Override
-    public Shape[] newEngineInstances()
+    public void newEngineInstances()
     {
         PolygonShape shape = new PolygonShape();
         Vec2[] engineVertices = new Vec2[vertices.length];
         for (int i = 0; i < vertices.length; i++)
             engineVertices[i] = new Vec2(vertices[i].x, vertices[i].y);
         shape.set(engineVertices, engineVertices.length);
-        return new Shape[] { shape };
+        
+        engineInstances = new Shape[] { shape };
     }
 }

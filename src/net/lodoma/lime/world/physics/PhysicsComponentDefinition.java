@@ -16,9 +16,6 @@ public class PhysicsComponentDefinition
     public PhysicsComponentType type;
     
     public List<PhysicsShape> shapes = new ArrayList<PhysicsShape>();
-    public float density;
-    public float friction;
-    public float restitution;
     
     public BodyDef engineBodyDefinition;
     public FixtureDef[] engineFixtureDefinitions;
@@ -30,9 +27,6 @@ public class PhysicsComponentDefinition
 
         if (shapes == null)     throw new InvalidPhysicsComponentException("invalid component shape list: null");
         if (shapes.size() <= 0) throw new InvalidPhysicsComponentException("invalid component shape list: empty");
-        if (density < 0)        throw new InvalidPhysicsComponentException("invalid component density: negative");
-        if (friction < 0)       throw new InvalidPhysicsComponentException("invalid component friction: negative");
-        if (restitution < 0)    throw new InvalidPhysicsComponentException("invalid component restitution: negative");
         
         for (PhysicsShape shape : shapes)
             shape.validate();
@@ -45,23 +39,25 @@ public class PhysicsComponentDefinition
         engineBodyDefinition.angle = angle;
         engineBodyDefinition.type = type.engineType;
         
-        List<Shape> engineShapes = new ArrayList<Shape>();
+        int instanceCount = 0;
         for (PhysicsShape shape : shapes)
         {
-            Shape[] engineInstances = shape.newEngineInstances();
-            for (Shape engineInstance : engineInstances)
-                engineShapes.add(engineInstance);
+            shape.newEngineInstances();
+            instanceCount += shape.engineInstances.length;
         }
         
-        engineFixtureDefinitions = new FixtureDef[engineShapes.size()];
-        
-        for (int i = 0; i < engineFixtureDefinitions.length; i++)
-        {
-            engineFixtureDefinitions[i] = new FixtureDef();
-            engineFixtureDefinitions[i].shape = engineShapes.get(i);
-            engineFixtureDefinitions[i].density = density;
-            engineFixtureDefinitions[i].friction = friction;
-            engineFixtureDefinitions[i].restitution = restitution;
-        }
+        engineFixtureDefinitions = new FixtureDef[instanceCount];
+
+        int i = 0;
+        for (PhysicsShape shape : shapes)
+            for (Shape engineInstance : shape.engineInstances)
+            {
+                engineFixtureDefinitions[i] = new FixtureDef();
+                engineFixtureDefinitions[i].shape = engineInstance;
+                engineFixtureDefinitions[i].density = shape.density;
+                engineFixtureDefinitions[i].friction = shape.friction;
+                engineFixtureDefinitions[i].restitution = shape.restitution;
+                i++;
+            }
     }
 }
