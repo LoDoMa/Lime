@@ -1,6 +1,7 @@
 package net.lodoma.lime.script.library;
 
 import net.lodoma.lime.world.physics.PhysicsComponent;
+import net.lodoma.lime.world.physics.PhysicsShapeAttachments;
 
 import org.jbox2d.collision.WorldManifold;
 import org.jbox2d.common.Vec2;
@@ -33,11 +34,13 @@ public class ContactTable
         PhysicsComponent bodyB = (PhysicsComponent) fixtureB.m_body.m_userData;
         table.set("bodyA", bodyA.identifier);
         table.set("bodyB", bodyB.identifier);
-        
-        if (fixtureA.m_userData != null)
-            table.set("fixtureA", LuaValue.valueOf((String) fixtureA.m_userData));
-        if (fixtureB.m_userData != null)
-            table.set("fixtureB", LuaValue.valueOf((String) fixtureB.m_userData));
+
+        PhysicsShapeAttachments attachmentsA = (PhysicsShapeAttachments) fixtureA.m_userData;
+        PhysicsShapeAttachments attachmentsB = (PhysicsShapeAttachments) fixtureB.m_userData;
+        if (attachmentsA.name != null)
+            table.set("fixtureA", LuaValue.valueOf(attachmentsA.name));
+        if (attachmentsB.name != null)
+            table.set("fixtureB", LuaValue.valueOf(attachmentsB.name));
         
         WorldManifold manifold = new WorldManifold();
         contact.getWorldManifold(manifold);

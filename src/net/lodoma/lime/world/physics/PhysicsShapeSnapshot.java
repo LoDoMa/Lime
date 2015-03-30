@@ -11,6 +11,8 @@ public class PhysicsShapeSnapshot
     public float radius;
     public Vector2[] vertices;
     
+    public PhysicsShapeAttachments attachments;
+    
     public PhysicsShape toShape()
     {
         switch (shapeType)
@@ -20,11 +22,13 @@ public class PhysicsShapeSnapshot
             PhysicsShapeCircle shape = new PhysicsShapeCircle();
             shape.offset.set(offset);
             shape.radius = radius;
+            shape.attachments = attachments;
             return shape;
         }
-        case POLYGON: case TRIANGLE_GROUP:
+        case POLYGON:
             PhysicsShapePolygon shape = new PhysicsShapePolygon();
             shape.vertices = vertices;
+            shape.attachments = attachments;
             return shape;
         default:
             throw new IllegalStateException();
@@ -42,7 +46,7 @@ public class PhysicsShapeSnapshot
 
             Texture.NO_TEXTURE.bind();
 
-            glColor3f(0.7f, 0.7f, 0.7f);
+            attachments.color.setGL();
             glBegin(GL_TRIANGLE_FAN);
 
             glVertex2f(0.0f, 0.0f);
@@ -54,7 +58,7 @@ public class PhysicsShapeSnapshot
           
             glEnd();
 
-            glColor3f(0.3f, 0.3f, 0.3f);
+            attachments.color.setGL(0.9f, 1.0f);
             glBegin(GL_LINES);
 
             for (int i = 0; i <= 10; i++)
@@ -75,8 +79,8 @@ public class PhysicsShapeSnapshot
         case POLYGON:
         {
             Texture.NO_TEXTURE.bind();
-
-            glColor3f(0.7f, 0.7f, 0.7f);
+            
+            attachments.color.setGL();
             glBegin(GL_POLYGON);
 
             for (int i = 0; i < vertices.length; i++)
@@ -84,7 +88,7 @@ public class PhysicsShapeSnapshot
           
             glEnd();
 
-            glColor3f(0.3f, 0.3f, 0.3f);
+            attachments.color.setGL(0.9f, 1.0f);
             glBegin(GL_LINES);
 
             for (int i = 0; i < vertices.length; i++)

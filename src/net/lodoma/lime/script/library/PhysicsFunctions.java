@@ -192,7 +192,7 @@ public class PhysicsFunctions
                 if (shape == null)
                     throw new LuaError("setting name to nonexistent shape");
                 
-                shape.name = name;
+                shape.attachments.name = name;
                 break;
             }
             case SET_SHAPE_RADIUS:
@@ -310,6 +310,20 @@ public class PhysicsFunctions
                     throw new LuaError("modifying nonexistent shape");
                 
                 shape.restitution = restitution;
+                break;
+            }
+            case SET_SHAPE_COLOR:
+            {
+                float colorR = args.checknumber(1).tofloat();
+                float colorG = args.checknumber(2).tofloat();
+                float colorB = args.checknumber(3).tofloat();
+                float colorA = args.checknumber(4).tofloat();
+                if (compoDefinition == null)
+                    throw new LuaError("modifying nonexistent body component");
+                if (shape == null)
+                    throw new LuaError("modifying nonexistent shape");
+                
+                shape.attachments.color.set(colorR, colorG, colorB, colorA);
                 break;
             }
             case START_JOINT:
@@ -715,6 +729,7 @@ public class PhysicsFunctions
         SET_SHAPE_DENSITY(1, true, "setShapeDensity"),
         SET_SHAPE_FRICTION(1, true, "setShapeFriction"),
         SET_SHAPE_RESTITUTION(1, true, "setShapeRestitution"),
+        SET_SHAPE_COLOR(4, true, "setShapeColor"),
         
         START_JOINT(0, true, "startJoint"),
         END_JOINT(0, true, "endJoint"),

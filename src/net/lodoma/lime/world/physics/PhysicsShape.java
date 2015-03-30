@@ -6,7 +6,6 @@ import org.jbox2d.collision.shapes.Shape;
 
 public abstract class PhysicsShape
 {
-    public String name;
     public final Vector2 offset = new Vector2();
     public boolean isSolid = true;
     public float density;
@@ -14,6 +13,8 @@ public abstract class PhysicsShape
     public float restitution;
     
     public Shape[] engineInstances;
+    
+    public PhysicsShapeAttachments attachments = new PhysicsShapeAttachments();
     
     public void validate() throws InvalidPhysicsShapeException
     {

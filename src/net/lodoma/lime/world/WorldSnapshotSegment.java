@@ -18,6 +18,7 @@ import net.lodoma.lime.util.Color;
 import net.lodoma.lime.util.Vector2;
 import net.lodoma.lime.world.physics.InvalidPhysicsParticleException;
 import net.lodoma.lime.world.physics.PhysicsComponentModifications;
+import net.lodoma.lime.world.physics.PhysicsShapeAttachments;
 import net.lodoma.lime.world.physics.PhysicsShapeSnapshot;
 import net.lodoma.lime.world.physics.PhysicsShapeType;
 import net.lodoma.lime.world.physics.PhysicsComponentSnapshot;
@@ -97,6 +98,8 @@ public class WorldSnapshotSegment implements SnapshotData
                         PhysicsShapeSnapshot previousShape = previousCompo.shapes[shapeI];
                         if (currentShape.shapeType != previousShape.shapeType)
                             modified |= MODIFIED_SHAPE;
+                        else if (!currentShape.attachments.compareVisual(previousShape.attachments))
+                            modified |= MODIFIED_SHAPE;
                         else
                             switch (currentShape.shapeType)
                             {
@@ -110,6 +113,7 @@ public class WorldSnapshotSegment implements SnapshotData
                                     modified |= MODIFIED_SHAPE;
                                 break;
                             }
+                        
                         if ((modified & MODIFIED_SHAPE) != 0)
                             break;
                     }
@@ -284,6 +288,9 @@ public class WorldSnapshotSegment implements SnapshotData
                         throw new IllegalStateException();
                     }
                     
+                    shape.attachments = new PhysicsShapeAttachments();
+                    shape.attachments.readVisual(in);
+                    
                     modifications.data.shapes[shapeI] = shape;
                 }
             }
@@ -450,6 +457,8 @@ public class WorldSnapshotSegment implements SnapshotData
                     default:
                         throw new IllegalStateException();
                     }
+                    
+                    shape.attachments.writeVisual(user.outputStream);
                 }
             }
             

@@ -85,6 +85,7 @@ local function createBody()
     lime.setShapeRestitution(0.05)
     lime.addShapeTriangle(-radius, -radius, -radius, radius, radius, -radius)
     lime.addShapeTriangle(radius, radius, -radius, radius, radius, -radius)
+    lime.setShapeColor(0.7, 0.2, 0.3, 1.0)
     lime.endShape()
     
     -- sensors

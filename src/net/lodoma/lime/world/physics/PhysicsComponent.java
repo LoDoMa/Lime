@@ -103,6 +103,7 @@ public class PhysicsComponent implements Identifiable<Integer>
                 continue;
             
             PhysicsShapeSnapshot shape = new PhysicsShapeSnapshot();
+            shape.attachments = (PhysicsShapeAttachments) engineFixture.m_userData;
             
             if (engineFixture.m_shape.m_type == ShapeType.CIRCLE)
                 shape.shapeType = PhysicsShapeType.CIRCLE;

@@ -62,7 +62,7 @@ public class PhysicsComponentDefinition
             for (Shape engineInstance : shape.engineInstances)
             {
                 engineFixtureDefinitions[i] = new FixtureDef();
-                engineFixtureDefinitions[i].userData = shape.name;
+                engineFixtureDefinitions[i].userData = shape.attachments;
                 engineFixtureDefinitions[i].shape = engineInstance;
                 engineFixtureDefinitions[i].isSensor = !shape.isSolid;
                 engineFixtureDefinitions[i].density = shape.density;
