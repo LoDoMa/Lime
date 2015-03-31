@@ -14,28 +14,6 @@ public class PhysicsShapeSnapshot
     
     public PhysicsShapeAttachments attachments;
     
-    public PhysicsShape toShape()
-    {
-        switch (shapeType)
-        {
-        case CIRCLE:
-        {
-            PhysicsShapeCircle shape = new PhysicsShapeCircle();
-            shape.offset.set(offset);
-            shape.radius = radius;
-            shape.attachments = attachments;
-            return shape;
-        }
-        case POLYGON:
-            PhysicsShapePolygon shape = new PhysicsShapePolygon();
-            shape.vertices = vertices;
-            shape.attachments = attachments;
-            return shape;
-        default:
-            throw new IllegalStateException();
-        }
-    }
-    
     public void debugRender()
     {
         Texture texture = Texture.NO_TEXTURE;

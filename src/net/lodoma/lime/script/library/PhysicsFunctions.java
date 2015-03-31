@@ -4,12 +4,10 @@ import net.lodoma.lime.Lime;
 import net.lodoma.lime.script.LuaContactListener;
 import net.lodoma.lime.util.Vector2;
 import net.lodoma.lime.world.World;
-import net.lodoma.lime.world.physics.InvalidPhysicsComponentException;
 import net.lodoma.lime.world.physics.InvalidPhysicsJointException;
+import net.lodoma.lime.world.physics.InvalidPhysicsShapeException;
 import net.lodoma.lime.world.physics.PhysicsComponent;
 import net.lodoma.lime.world.physics.PhysicsShapeCircle;
-import net.lodoma.lime.world.physics.PhysicsShapePolygon;
-import net.lodoma.lime.world.physics.PhysicsComponentDefinition;
 import net.lodoma.lime.world.physics.PhysicsShape;
 import net.lodoma.lime.world.physics.PhysicsShapeTriangleGroup;
 import net.lodoma.lime.world.physics.PhysicsComponentType;
@@ -19,7 +17,6 @@ import net.lodoma.lime.world.physics.PhysicsJointRevoluteDefinition;
 import net.lodoma.lime.world.physics.PhysicsJointType;
 import net.lodoma.lime.world.physics.PhysicsJointTypeDefinition;
 
-import org.jbox2d.common.Settings;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.joints.RevoluteJoint;
 import org.luaj.vm2.LuaError;
@@ -39,7 +36,6 @@ public class PhysicsFunctions
     public World world;
 
     private PhysicsComponent compo;
-    private PhysicsComponentDefinition compoDefinition;
     private PhysicsJoint joint;
     private PhysicsJointDefinition jointDefinition;
     private PhysicsShape shape;
@@ -75,31 +71,28 @@ public class PhysicsFunctions
             
             switch (data)
             {
-            case START_COMPONENT:
+            case NEW_COMPONENT:
             {
-                compoDefinition = new PhysicsComponentDefinition();
-                break;
-            }
-            case END_COMPONENT:
-            {
-                if (compoDefinition == null)
-                    throw new LuaError("ending nonexistent body component");
+                String typename = args.checkstring(1).tojstring();
+                float positionX = args.checknumber(2).tofloat();
+                float positionY = args.checknumber(3).tofloat();
+                float angle = args.checknumber(4).tofloat();
                 
-                try
+                PhysicsComponentType type;
+                switch (typename)
                 {
-                    compoDefinition.validate();
-                }
-                catch (InvalidPhysicsComponentException e)
-                {
-                    throw new LuaError(e);
+                case "dynamic": type = PhysicsComponentType.DYNAMIC; break;
+                case "kinematic": type = PhysicsComponentType.KINEMATIC; break;
+                case "static": type = PhysicsComponentType.STATIC; break;
+                default:
+                    throw new LuaError("invalid physics component typename");
                 }
                 
-                compoDefinition.create();
-                PhysicsComponent newCompo = new PhysicsComponent(compoDefinition, world.physicsWorld);
-                compoDefinition = null;
+                PhysicsComponent newCompo = new PhysicsComponent(new Vector2(positionX, positionY), angle, type, world.physicsWorld);
                 
                 int compoID = world.componentPool.add(newCompo);
-                Lime.LOGGER.I("Created physics component " + compoID);
+                Lime.LOGGER.D("Created physics component " + compoID);
+                
                 return LuaValue.valueOf(compoID);
             }
             case REMOVE_COMPONENT:
@@ -109,373 +102,6 @@ public class PhysicsFunctions
                 world.componentPool.remove(compoID);
                 
                 Lime.LOGGER.I("Removed physics component " + compoID);
-                break;
-            }
-            case SET_INITIAL_POSITION:
-            {
-                float positionX = args.arg(1).checknumber().tofloat();
-                float positionY = args.arg(2).checknumber().tofloat();
-                if (compoDefinition == null)
-                    throw new LuaError("modifying nonexistent body component");
-                compoDefinition.position.set(positionX, positionY);
-                break;
-            }
-            case SET_INITIAL_ANGLE:
-            {
-                float angle = args.arg(1).checknumber().tofloat();
-                if (compoDefinition == null)
-                    throw new LuaError("modifying nonexistent body component");
-                compoDefinition.angle = angle;
-                break;
-            }
-            case SET_COMPONENT_TYPE:
-            {
-                String typeName = args.arg(1).checkstring().tojstring();
-                if (compoDefinition == null)
-                    throw new LuaError("modifying nonexistent body component");
-                
-                switch (typeName)
-                {
-                case "dynamic": 
-                    compoDefinition.type = PhysicsComponentType.DYNAMIC;
-                    break;
-                case "kinematic": 
-                    compoDefinition.type = PhysicsComponentType.KINEMATIC;
-                    break;
-                case "static": 
-                    compoDefinition.type = PhysicsComponentType.STATIC;
-                    break;
-                default:
-                    throw new LuaError("invalid physics component typename");
-                }
-                break;
-            }
-            case START_SHAPE:
-            {
-                String typeName = args.arg(1).checkstring().tojstring();
-                if (compoDefinition == null)
-                    throw new LuaError("modifying nonexistent body component");
-                
-                switch (typeName)
-                {
-                case "circle":
-                    shape = new PhysicsShapeCircle();
-                    break;
-                case "polygon":
-                    shape = new PhysicsShapePolygon();
-                    break;
-                case "triangle-group":
-                    shape = new PhysicsShapeTriangleGroup();
-                    break;
-                default:
-                    throw new LuaError("invalid physics component shape typename");
-                }
-                
-                break;
-            }
-            case END_SHAPE:
-            {
-                if (compoDefinition == null)
-                    throw new LuaError("modifying nonexistent body component");
-                if (shape == null)
-                    throw new LuaError("setting radius to nonexistent shape");
-                
-                compoDefinition.shapes.add(shape);
-                shape = null;
-                break;
-            }
-            case SET_SHAPE_NAME:
-            {
-                String name = args.checkstring(1).tojstring();
-                if (compoDefinition == null)
-                    throw new LuaError("modifying nonexistent body component");
-                if (shape == null)
-                    throw new LuaError("setting name to nonexistent shape");
-                
-                shape.attachments.name = name;
-                break;
-            }
-            case SET_SHAPE_RADIUS:
-            {
-                float radius = args.arg(1).checknumber().tofloat();
-                if (compoDefinition == null)
-                    throw new LuaError("modifying nonexistent body component");
-
-                if (shape == null)
-                    throw new LuaError("setting radius to nonexistent shape");
-                if (!(shape instanceof PhysicsShapeCircle))
-                    throw new LuaError("setting radius to non-circular shape");
-                ((PhysicsShapeCircle) shape).radius = radius;
-                break;
-            }
-            case SET_SHAPE_VERTICES:
-            {
-                if ((args.narg() % 2) != 0)
-                    throw new LuaError("argument count to \"" + data.name + "\" must be even");
-                if (args.narg() < 6)
-                    throw new LuaError("insufficient arguments to \"" + data.name + "\", minimum of 6 required");
-                if (args.narg() > Settings.maxPolygonVertices * 2)
-                    throw new LuaError("too many arguments to \"" + data.name + "\", maximum vertex count " + Settings.maxPolygonVertices);
-
-                if (compoDefinition == null)
-                    throw new LuaError("modifying nonexistent body component");
-                if (shape == null)
-                    throw new LuaError("setting vertices to nonexistent shape");
-                if (!(shape instanceof PhysicsShapePolygon))
-                    throw new LuaError("setting vertices to non-polygonal shape");
-                
-                PhysicsShapePolygon pshape = (PhysicsShapePolygon) shape;
-                pshape.vertices = new Vector2[args.narg() / 2];
-                for (int i = 0; i < args.narg() / 2; i++)
-                    pshape.vertices[i] = new Vector2(args.arg(i * 2 + 1).checknumber().tofloat(), args.arg(i * 2 + 2).checknumber().tofloat());
-                break;
-            }
-            case ADD_SHAPE_TRIANGLE:
-            {
-                Vector2[] triangle = new Vector2[3];
-                for (int i = 0; i < 3; i++)
-                    triangle[i] = new Vector2(args.checknumber(i * 2 + 1).tofloat(), args.checknumber(i * 2 + 2).tofloat());
-                
-                float ccw = triangle[0].x * (triangle[1].y - triangle[2].y)
-                          + triangle[1].x * (triangle[2].y - triangle[0].y)
-                          + triangle[2].x * (triangle[0].y - triangle[1].y);
-                if (ccw < 0)
-                {
-                    Vector2 swap = triangle[0];
-                    triangle[0] = triangle[2];
-                    triangle[2] = swap;
-                }
-
-                if (compoDefinition == null)
-                    throw new LuaError("modifying nonexistent body component");
-                if (shape == null)
-                    throw new LuaError("adding triangle to nonexistent shape");
-                if (!(shape instanceof PhysicsShapeTriangleGroup))
-                    throw new LuaError("adding triangle to non-group shape");
-                
-                ((PhysicsShapeTriangleGroup) shape).triangles.add(triangle);
-                break;
-            }
-            case SET_SHAPE_OFFSET:
-            {
-                float offsetX = args.checknumber(1).tofloat();
-                float offsetY = args.checknumber(2).tofloat();
-                if (compoDefinition == null)
-                    throw new LuaError("modifying nonexistent body component");
-                if (shape == null)
-                    throw new LuaError("modifying nonexistent shape");
-                
-                shape.offset.set(offsetX, offsetY);
-                break;
-            }
-            case SET_SHAPE_SOLID:
-            {
-                boolean flag = args.checkboolean(1);
-                if (compoDefinition == null)
-                    throw new LuaError("modifying nonexistent body component");
-                if (shape == null)
-                    throw new LuaError("modifying nonexistent shape");
-                
-                shape.isSolid = flag;
-                break;
-            }
-            case SET_SHAPE_DENSITY:
-            {
-                float density = args.arg(1).checknumber().tofloat();
-                if (compoDefinition == null)
-                    throw new LuaError("modifying nonexistent body component");
-                if (shape == null)
-                    throw new LuaError("modifying nonexistent shape");
-                
-                shape.density = density;
-                break;
-            }
-            case SET_SHAPE_FRICTION:
-            {
-                float friction = args.arg(1).checknumber().tofloat();
-                if (compoDefinition == null)
-                    throw new LuaError("modifying nonexistent body component");
-                if (shape == null)
-                    throw new LuaError("modifying nonexistent shape");
-                
-                shape.friction = friction;
-                break;
-            }
-            case SET_SHAPE_RESTITUTION:
-            {
-                float restitution = args.arg(1).checknumber().tofloat();
-                if (compoDefinition == null)
-                    throw new LuaError("modifying nonexistent body component");
-                if (shape == null)
-                    throw new LuaError("modifying nonexistent shape");
-                
-                shape.restitution = restitution;
-                break;
-            }
-            case SET_SHAPE_COLOR:
-            {
-                float colorR = args.checknumber(1).tofloat();
-                float colorG = args.checknumber(2).tofloat();
-                float colorB = args.checknumber(3).tofloat();
-                float colorA = args.checknumber(4).tofloat();
-                if (compoDefinition == null)
-                    throw new LuaError("modifying nonexistent body component");
-                if (shape == null)
-                    throw new LuaError("modifying nonexistent shape");
-                
-                shape.attachments.color.set(colorR, colorG, colorB, colorA);
-                break;
-            }
-            case SET_SHAPE_TEXTURE:
-            {
-                String texture = args.isnil(1) ? null : args.checkstring(1).tojstring();
-                if (compoDefinition == null)
-                    throw new LuaError("modifying nonexistent body component");
-                if (shape == null)
-                    throw new LuaError("modifying nonexistent shape");
-                
-                shape.attachments.textureName = texture;
-                break;
-            }
-            case SET_SHAPE_TEXTURE_POINT:
-            {
-                float pointX = args.isnil(1) ? Float.NaN : args.checknumber(1).tofloat();
-                float pointY = args.isnil(2) ? Float.NaN : args.checknumber(2).tofloat();
-                if (compoDefinition == null)
-                    throw new LuaError("modifying nonexistent body component");
-                if (shape == null)
-                    throw new LuaError("modifying nonexistent shape");
-                
-                shape.attachments.texturePoint.set(pointX, pointY);
-                break;
-            }
-            case SET_SHAPE_TEXTURE_SIZE:
-            {
-                float sizeX = args.isnil(1) ? Float.NaN : args.checknumber(1).tofloat();
-                float sizeY = args.isnil(2) ? Float.NaN : args.checknumber(2).tofloat();
-                if (compoDefinition == null)
-                    throw new LuaError("modifying nonexistent body component");
-                if (shape == null)
-                    throw new LuaError("modifying nonexistent shape");
-                
-                shape.attachments.textureSize.set(sizeX, sizeY);
-                break;
-            }
-            case START_JOINT:
-            {
-                jointDefinition = new PhysicsJointDefinition();
-                break;
-            }
-            case END_JOINT:
-            {
-                if (jointDefinition == null)
-                    throw new LuaError("ending nonexistent joint");
-                
-                try
-                 {
-                    jointDefinition.validate();
-                }
-                catch (InvalidPhysicsJointException e)
-                {
-                    throw new LuaError(e);
-                }
-                
-                jointDefinition.create();
-                PhysicsJoint newJoint = new PhysicsJoint(jointDefinition, world.physicsWorld);
-                jointDefinition = null;
-                
-                int jointID = world.jointPool.add(newJoint);
-                Lime.LOGGER.I("Created physics joint " + jointID);
-                return LuaValue.valueOf(jointID);
-            }
-            case REMOVE_JOINT:
-            {
-                int jointID = args.arg(1).checkint();
-                world.jointPool.get(jointID).destroy();
-                world.jointPool.remove(jointID);
-                Lime.LOGGER.I("Removed physics joint " + jointID);
-                break;
-            }
-            case SET_JOINT_COMPONENT_A:
-            {
-                int compoID = args.arg(1).checkint();
-                if (jointDefinition == null)
-                    throw new LuaError("modifying nonexistent joint");
-                
-                if (!world.componentPool.has(compoID))
-                    throw new LuaError("joint component A set to nonexistent component");
-                jointDefinition.componentA = world.componentPool.get(compoID);
-                break;
-            }
-            case SET_JOINT_COMPONENT_B:
-            {
-                int compoID = args.arg(1).checkint();
-                if (jointDefinition == null)
-                    throw new LuaError("modifying nonexistent joint");
-                
-                if (!world.componentPool.has(compoID))
-                    throw new LuaError("joint component B set to nonexistent component");
-                jointDefinition.componentB = world.componentPool.get(compoID);
-                break;
-            }
-            case ENABLE_JOINT_COLLISION:
-            {
-                boolean enabled = args.arg(1).checkboolean();
-                if (jointDefinition == null)
-                    throw new LuaError("modifying nonexistent joint");
-                
-                jointDefinition.collideConnected = enabled;
-                break;
-            }
-            case SET_JOINT_TYPE:
-            {
-                String typeName = args.arg(1).checkstring().tojstring();
-                if (jointDefinition == null)
-                    throw new LuaError("modifying nonexistent joint");
-
-                PhysicsJointType type;
-                PhysicsJointTypeDefinition typedef;
-                
-                switch (typeName)
-                {
-                case "revolute":
-                    type = PhysicsJointType.REVOLUTE;
-                    typedef = new PhysicsJointRevoluteDefinition();
-                    break;
-                default:
-                    throw new LuaError("invalid joint typename");
-                }
-                
-                jointDefinition.type = type;
-                jointDefinition.typeDefinition = typedef;
-                break;
-            }
-            case SET_REVOLUTE_ANCHOR_A:
-            {
-                float anchorX = args.arg(1).checknumber().tofloat();
-                float anchorY = args.arg(2).checknumber().tofloat();
-                if (jointDefinition == null)
-                    throw new LuaError("modifying nonexistent joint");
-
-                if (jointDefinition.type == null)
-                    throw new LuaError("setting anchor to typeless joint");
-                if (!(jointDefinition.typeDefinition instanceof PhysicsJointRevoluteDefinition))
-                    throw new LuaError("setting anchor to non-revolute joint");
-                ((PhysicsJointRevoluteDefinition) jointDefinition.typeDefinition).localAnchorA = new Vector2(anchorX, anchorY);
-                break;
-            }
-            case SET_REVOLUTE_ANCHOR_B:
-            {   
-                float anchorX = args.arg(1).checknumber().tofloat();
-                float anchorY = args.arg(2).checknumber().tofloat();
-                if (jointDefinition == null)
-                    throw new LuaError("modifying nonexistent joint");
-
-                if (jointDefinition.type == null)
-                    throw new LuaError("setting anchor to typeless joint");
-                if (!(jointDefinition.typeDefinition instanceof PhysicsJointRevoluteDefinition))
-                    throw new LuaError("setting anchor to non-revolute joint");
-                ((PhysicsJointRevoluteDefinition) jointDefinition.typeDefinition).localAnchorB = new Vector2(anchorX, anchorY);
                 break;
             }
             case SELECT_COMPONENT:
@@ -491,12 +117,29 @@ public class PhysicsFunctions
                 Vec2 position = compo.engineBody.getPosition();
                 return LuaValue.varargsOf(new LuaValue[] { LuaValue.valueOf(position.x), LuaValue.valueOf(position.y) });
             }
+            case SET_POSITION:
+            {
+                float positionX = args.checknumber(1).tofloat();
+                float positionY = args.checknumber(2).tofloat();
+                if (compo == null)
+                    throw new LuaError("manipulating nonexistent body component");
+                compo.engineBody.setTransform(new Vec2(positionX, positionY), compo.engineBody.getAngle());
+                break;
+            }
             case GET_ANGLE:
             {
                 if (compo == null)
                     throw new LuaError("manipulating nonexistent body component");
                 float angle = compo.engineBody.getAngle();
                 return LuaValue.valueOf(angle);
+            }
+            case SET_ANGLE:
+            {
+                float angle = args.checknumber(1).tofloat();
+                if (compo == null)
+                    throw new LuaError("manipulating nonexistent body component");
+                compo.engineBody.setTransform(compo.engineBody.getPosition(), angle);
+                break;
             }
             case GET_LINEAR_VELOCITY:
             {
@@ -653,6 +296,305 @@ public class PhysicsFunctions
                 compo.owner = world.entityPool.get(entityID);
                 break;
             }
+            case NEW_SHAPE:
+            {
+                String typeName = args.arg(1).checkstring().tojstring();
+                if (compo == null)
+                    throw new LuaError("modifying nonexistent body component");
+                
+                PhysicsShape shape;
+                switch (typeName)
+                {
+                case "circle":
+                    shape = new PhysicsShapeCircle();
+                    break;
+                case "triangle-group":
+                    shape = new PhysicsShapeTriangleGroup();
+                    break;
+                default:
+                    throw new LuaError("invalid physics component shape typename");
+                }
+                
+                shape.create(compo.engineBody);
+                
+                int shapeID = compo.shapePool.add(shape);
+                Lime.LOGGER.D("Created physics shape " + shapeID + ", owner " + compo.identifier);
+                
+                return LuaValue.valueOf(shapeID);
+            }
+            case REMOVE_SHAPE:
+            {
+                int shapeID = args.arg(1).checkint();
+                if (compo == null)
+                    throw new LuaError("modifying nonexistent body component");
+                compo.shapePool.get(shapeID).destroy(compo.engineBody);
+                compo.shapePool.remove(shapeID);
+                Lime.LOGGER.I("Removed physics shape " + shapeID + ", owner " + compo.identifier);
+                break;
+            }
+            case SELECT_SHAPE:
+            {
+                int shapeID = args.arg(1).checkint();
+                if (compo == null)
+                    throw new LuaError("modifying nonexistent body component");
+                shape = compo.shapePool.get(shapeID);
+                break;
+            }
+            case UPDATE_SHAPE:
+            {
+                try
+                {
+                    shape.validate();
+                }
+                catch(InvalidPhysicsShapeException e)
+                {
+                    Lime.LOGGER.C("Invalid physics shape");
+                    Lime.LOGGER.log(e);
+                    Lime.forceExit(e);
+                }
+                
+                shape.update();
+                break;
+            }
+            case SET_SHAPE_RADIUS:
+            {
+                float radius = args.arg(1).checknumber().tofloat();
+
+                if (shape == null)
+                    throw new LuaError("setting radius to nonexistent shape");
+                if (!(shape instanceof PhysicsShapeCircle))
+                    throw new LuaError("setting radius to non-circular shape");
+                ((PhysicsShapeCircle) shape).radius = radius;
+                break;
+            }
+            case ADD_SHAPE_TRIANGLE:
+            {
+                Vector2[] triangle = new Vector2[3];
+                for (int i = 0; i < 3; i++)
+                    triangle[i] = new Vector2(args.checknumber(i * 2 + 1).tofloat(), args.checknumber(i * 2 + 2).tofloat());
+                
+                float ccw = triangle[0].x * (triangle[1].y - triangle[2].y)
+                          + triangle[1].x * (triangle[2].y - triangle[0].y)
+                          + triangle[2].x * (triangle[0].y - triangle[1].y);
+                if (ccw < 0)
+                {
+                    Vector2 swap = triangle[0];
+                    triangle[0] = triangle[2];
+                    triangle[2] = swap;
+                }
+                
+                if (shape == null)
+                    throw new LuaError("adding triangle to nonexistent shape");
+                if (!(shape instanceof PhysicsShapeTriangleGroup))
+                    throw new LuaError("adding triangle to non-group shape");
+                
+                ((PhysicsShapeTriangleGroup) shape).triangles.add(triangle);
+                break;
+            }
+            case SET_SHAPE_OFFSET:
+            {
+                float offsetX = args.checknumber(1).tofloat();
+                float offsetY = args.checknumber(2).tofloat();
+                if (shape == null)
+                    throw new LuaError("modifying nonexistent shape");
+                
+                shape.offset.set(offsetX, offsetY);
+                break;
+            }
+            case SET_SHAPE_SOLID:
+            {
+                boolean flag = args.checkboolean(1);
+                if (shape == null)
+                    throw new LuaError("modifying nonexistent shape");
+                
+                shape.isSolid = flag;
+                break;
+            }
+            case SET_SHAPE_DENSITY:
+            {
+                float density = args.arg(1).checknumber().tofloat();
+                if (shape == null)
+                    throw new LuaError("modifying nonexistent shape");
+                
+                shape.density = density;
+                break;
+            }
+            case SET_SHAPE_FRICTION:
+            {
+                float friction = args.arg(1).checknumber().tofloat();
+                if (shape == null)
+                    throw new LuaError("modifying nonexistent shape");
+                
+                shape.friction = friction;
+                break;
+            }
+            case SET_SHAPE_RESTITUTION:
+            {
+                float restitution = args.arg(1).checknumber().tofloat();
+                if (shape == null)
+                    throw new LuaError("modifying nonexistent shape");
+                
+                shape.restitution = restitution;
+                break;
+            }
+            case SET_SHAPE_COLOR:
+            {
+                float colorR = args.checknumber(1).tofloat();
+                float colorG = args.checknumber(2).tofloat();
+                float colorB = args.checknumber(3).tofloat();
+                float colorA = args.checknumber(4).tofloat();
+                if (shape == null)
+                    throw new LuaError("modifying nonexistent shape");
+                
+                shape.color.set(colorR, colorG, colorB, colorA);
+                break;
+            }
+            case SET_SHAPE_TEXTURE:
+            {
+                String texture = args.isnil(1) ? null : args.checkstring(1).tojstring();
+                if (shape == null)
+                    throw new LuaError("modifying nonexistent shape");
+                
+                shape.textureName = texture;
+                break;
+            }
+            case SET_SHAPE_TEXTURE_POINT:
+            {
+                float pointX = args.isnil(1) ? Float.NaN : args.checknumber(1).tofloat();
+                float pointY = args.isnil(2) ? Float.NaN : args.checknumber(2).tofloat();
+                if (shape == null)
+                    throw new LuaError("modifying nonexistent shape");
+                
+                shape.texturePoint.set(pointX, pointY);
+                break;
+            }
+            case SET_SHAPE_TEXTURE_SIZE:
+            {
+                float sizeX = args.isnil(1) ? Float.NaN : args.checknumber(1).tofloat();
+                float sizeY = args.isnil(2) ? Float.NaN : args.checknumber(2).tofloat();
+                if (shape == null)
+                    throw new LuaError("modifying nonexistent shape");
+                
+                shape.textureSize.set(sizeX, sizeY);
+                break;
+            }
+            case START_JOINT:
+            {
+                jointDefinition = new PhysicsJointDefinition();
+                break;
+            }
+            case END_JOINT:
+            {
+                if (jointDefinition == null)
+                    throw new LuaError("ending nonexistent joint");
+                
+                try
+                 {
+                    jointDefinition.validate();
+                }
+                catch (InvalidPhysicsJointException e)
+                {
+                    throw new LuaError(e);
+                }
+                
+                jointDefinition.create();
+                PhysicsJoint newJoint = new PhysicsJoint(jointDefinition, world.physicsWorld);
+                jointDefinition = null;
+                
+                int jointID = world.jointPool.add(newJoint);
+                Lime.LOGGER.I("Created physics joint " + jointID);
+                return LuaValue.valueOf(jointID);
+            }
+            case REMOVE_JOINT:
+            {
+                int jointID = args.arg(1).checkint();
+                world.jointPool.get(jointID).destroy();
+                world.jointPool.remove(jointID);
+                Lime.LOGGER.I("Removed physics joint " + jointID);
+                break;
+            }
+            case SET_JOINT_COMPONENT_A:
+            {
+                int compoID = args.arg(1).checkint();
+                if (jointDefinition == null)
+                    throw new LuaError("modifying nonexistent joint");
+                
+                if (!world.componentPool.has(compoID))
+                    throw new LuaError("joint component A set to nonexistent component");
+                jointDefinition.componentA = world.componentPool.get(compoID);
+                break;
+            }
+            case SET_JOINT_COMPONENT_B:
+            {
+                int compoID = args.arg(1).checkint();
+                if (jointDefinition == null)
+                    throw new LuaError("modifying nonexistent joint");
+                
+                if (!world.componentPool.has(compoID))
+                    throw new LuaError("joint component B set to nonexistent component");
+                jointDefinition.componentB = world.componentPool.get(compoID);
+                break;
+            }
+            case ENABLE_JOINT_COLLISION:
+            {
+                boolean enabled = args.arg(1).checkboolean();
+                if (jointDefinition == null)
+                    throw new LuaError("modifying nonexistent joint");
+                
+                jointDefinition.collideConnected = enabled;
+                break;
+            }
+            case SET_JOINT_TYPE:
+            {
+                String typeName = args.arg(1).checkstring().tojstring();
+                if (jointDefinition == null)
+                    throw new LuaError("modifying nonexistent joint");
+
+                PhysicsJointType type;
+                PhysicsJointTypeDefinition typedef;
+                
+                switch (typeName)
+                {
+                case "revolute":
+                    type = PhysicsJointType.REVOLUTE;
+                    typedef = new PhysicsJointRevoluteDefinition();
+                    break;
+                default:
+                    throw new LuaError("invalid joint typename");
+                }
+                
+                jointDefinition.type = type;
+                jointDefinition.typeDefinition = typedef;
+                break;
+            }
+            case SET_REVOLUTE_ANCHOR_A:
+            {
+                float anchorX = args.arg(1).checknumber().tofloat();
+                float anchorY = args.arg(2).checknumber().tofloat();
+                if (jointDefinition == null)
+                    throw new LuaError("modifying nonexistent joint");
+
+                if (jointDefinition.type == null)
+                    throw new LuaError("setting anchor to typeless joint");
+                if (!(jointDefinition.typeDefinition instanceof PhysicsJointRevoluteDefinition))
+                    throw new LuaError("setting anchor to non-revolute joint");
+                ((PhysicsJointRevoluteDefinition) jointDefinition.typeDefinition).localAnchorA = new Vector2(anchorX, anchorY);
+                break;
+            }
+            case SET_REVOLUTE_ANCHOR_B:
+            {   
+                float anchorX = args.arg(1).checknumber().tofloat();
+                float anchorY = args.arg(2).checknumber().tofloat();
+                if (jointDefinition == null)
+                    throw new LuaError("modifying nonexistent joint");
+
+                if (jointDefinition.type == null)
+                    throw new LuaError("setting anchor to typeless joint");
+                if (!(jointDefinition.typeDefinition instanceof PhysicsJointRevoluteDefinition))
+                    throw new LuaError("setting anchor to non-revolute joint");
+                ((PhysicsJointRevoluteDefinition) jointDefinition.typeDefinition).localAnchorB = new Vector2(anchorX, anchorY);
+                break;
+            }
             case SELECT_JOINT:
             {
                 int jointID = args.arg(1).checkint();
@@ -747,17 +689,38 @@ public class PhysicsFunctions
     
     private static enum FuncData
     {
-        START_COMPONENT(0, true, "startComponent"),
-        END_COMPONENT(0, true, "endComponent"),
+        NEW_COMPONENT(4, true, "newComponent"),
         REMOVE_COMPONENT(1, true, "removeComponent"),
-        SET_INITIAL_POSITION(2, true, "setInitialPosition"),
-        SET_INITIAL_ANGLE(1, true, "setInitialAngle"),
-        SET_COMPONENT_TYPE(1, true, "setComponentType"),
-        START_SHAPE(1, true, "startShape"),
-        END_SHAPE(0, true, "endShape"),
-        SET_SHAPE_NAME(1, true, "setShapeName"),
+        SELECT_COMPONENT(1, true, "selectComponent"),
+        GET_POSITION(0, true, "getComponentPosition"),
+        SET_POSITION(2, true, "setComponentPosition"),
+        GET_ANGLE(0, true, "getComponentAngle"),
+        SET_ANGLE(1, true, "setComponentAngle"),
+        GET_LINEAR_VELOCITY(0, true, "getLinearVelocity"),
+        SET_LINEAR_VELOCITY(2, true, "setLinearVelocity"),
+        GET_ANGULAR_VELOCITY(0, true, "getAngularVelocity"),
+        SET_ANGULAR_VELOCITY(1, true, "setAngularVelocity"),
+        GET_LINEAR_DAMPING(0, true, "getLinearDamping"),
+        SET_LINEAR_DAMPING(1, true, "setLinearDamping"),
+        GET_ANGULAR_DAMPING(0, true, "getAngularDamping"),
+        SET_ANGULAR_DAMPING(1, true, "setAngularDamping"),
+        GET_ANGLE_LOCKED(0, true, "getAngleLocked"),
+        SET_ANGLE_LOCKED(1, true, "setAngleLocked"),
+        APPLY_FORCE(4, true, "applyForce"),
+        APPLY_FORCE_TO_CENTER(2, true, "applyForceToCenter"),
+        APPLY_ANGULAR_IMPULSE(1, true, "applyAngularImpulse"),
+        APPLY_LINEAR_IMPULSE(4, true, "applyLinearImpulse"),
+        APPLY_LINEAR_IMPULSE_TO_CENTER(2, true, "applyLinearImpulseToCenter"),
+        GET_USING_CCD(0, true, "getUsingCCD"),
+        SET_USING_CCD(1, true, "setUsingCCD"),
+        GET_OWNER(0, true, "getOwner"),
+        SET_OWNER(1, true, "setOwner"),
+        
+        NEW_SHAPE(1, true, "newShape"),
+        REMOVE_SHAPE(1, true, "removeShape"),
+        SELECT_SHAPE(1, true, "selectShape"),
+        UPDATE_SHAPE(0, true, "updateShape"),
         SET_SHAPE_RADIUS(1, true, "setShapeRadius"),
-        SET_SHAPE_VERTICES(0, false, "setShapeVertices"),
         ADD_SHAPE_TRIANGLE(6, true, "addShapeTriangle"),
         SET_SHAPE_OFFSET(2, true, "setShapeOffset"),
         SET_SHAPE_SOLID(1, true, "setShapeSolid"),
@@ -778,29 +741,6 @@ public class PhysicsFunctions
         SET_JOINT_TYPE(1, true, "setJointType"),
         SET_REVOLUTE_ANCHOR_A(2, true, "setRevoluteAnchorA"),
         SET_REVOLUTE_ANCHOR_B(2, true, "setRevoluteAnchorB"),
-
-        SELECT_COMPONENT(1, true, "selectComponent"),
-        GET_POSITION(0, true, "getComponentPosition"),
-        GET_ANGLE(0, true, "getComponentAngle"),
-        GET_LINEAR_VELOCITY(0, true, "getLinearVelocity"),
-        SET_LINEAR_VELOCITY(2, true, "setLinearVelocity"),
-        GET_ANGULAR_VELOCITY(0, true, "getAngularVelocity"),
-        SET_ANGULAR_VELOCITY(1, true, "setAngularVelocity"),
-        GET_LINEAR_DAMPING(0, true, "getLinearDamping"),
-        SET_LINEAR_DAMPING(1, true, "setLinearDamping"),
-        GET_ANGULAR_DAMPING(0, true, "getAngularDamping"),
-        SET_ANGULAR_DAMPING(1, true, "setAngularDamping"),
-        GET_ANGLE_LOCKED(0, true, "getAngleLocked"),
-        SET_ANGLE_LOCKED(1, true, "setAngleLocked"),
-        APPLY_FORCE(4, true, "applyForce"),
-        APPLY_FORCE_TO_CENTER(2, true, "applyForceToCenter"),
-        APPLY_ANGULAR_IMPULSE(1, true, "applyAngularImpulse"),
-        APPLY_LINEAR_IMPULSE(4, true, "applyLinearImpulse"),
-        APPLY_LINEAR_IMPULSE_TO_CENTER(2, true, "applyLinearImpulseToCenter"),
-        GET_USING_CCD(0, true, "getUsingCCD"),
-        SET_USING_CCD(1, true, "setUsingCCD"),
-        GET_OWNER(0, true, "getOwner"),
-        SET_OWNER(1, true, "setOwner"),
         
         SELECT_JOINT(1, true, "selectJoint"),
         ENABLE_REVOLUTE_ANGLE_LIMIT(1, true, "enableRevoluteAngleLimit"),

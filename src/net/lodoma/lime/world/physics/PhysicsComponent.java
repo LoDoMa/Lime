@@ -1,19 +1,17 @@
 package net.lodoma.lime.world.physics;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
-import org.jbox2d.collision.shapes.CircleShape;
-import org.jbox2d.collision.shapes.PolygonShape;
-import org.jbox2d.collision.shapes.ShapeType;
-import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
+import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
-import org.jbox2d.dynamics.Fixture;
-import org.jbox2d.dynamics.FixtureDef;
 
 import net.lodoma.lime.util.Identifiable;
+import net.lodoma.lime.util.IdentityPool;
 import net.lodoma.lime.util.Vector2;
 import net.lodoma.lime.world.entity.Entity;
 
@@ -25,30 +23,28 @@ public class PhysicsComponent implements Identifiable<Integer>
     
     public Entity owner;
     public Body engineBody;
-    public Fixture[] engineFixtures;
+    
+    public IdentityPool<PhysicsShape> shapePool;
     
     /* A set of related contact listeners. These are destroyed when the component is destroyed.
        It's a set so that elements can be quickly removed. */
     public Set<PhysicsContactListener> contactListeners = new HashSet<PhysicsContactListener>();
     
-    public PhysicsComponent(PhysicsComponentDefinition definition, PhysicsWorld world)
+    public PhysicsComponent(Vector2 initPosition, float initAngle, PhysicsComponentType type, PhysicsWorld world)
     {
         this.world = world;
         
-        engineBody = world.engineWorld.createBody(definition.engineBodyDefinition);
+        shapePool = new IdentityPool<PhysicsShape>(false);
         
-        FixtureDef fixtureDefs[] = definition.engineFixtureDefinitions;
-        engineFixtures = new Fixture[fixtureDefs.length];
-        for (int i = 0; i < fixtureDefs.length; i++)
-            engineFixtures[i] = engineBody.createFixture(fixtureDefs[i]);
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.position = initPosition.toVec2();
+        bodyDef.angle = initAngle;
+        bodyDef.type = type.engineType;
+        
+        engineBody = world.engineWorld.createBody(bodyDef);
         
         // UserData for PhysicsComponents is the PhysicsComponent itself.
         engineBody.m_userData = this;
-    }
-    
-    public PhysicsComponent(PhysicsComponentSnapshot snapshot, PhysicsWorld world)
-    {
-        this(snapshot.createDefinition(), world);
     }
     
     @Override
@@ -72,8 +68,7 @@ public class PhysicsComponent implements Identifiable<Integer>
             contactListener.destroy();
         }
         
-        for (int i = 0; i < engineFixtures.length; i++)
-            engineBody.destroyFixture(engineFixtures[i]);
+        shapePool.foreach((PhysicsShape shape) -> shape.destroy(engineBody));
         world.engineWorld.destroyBody(engineBody);
     }
     
@@ -90,48 +85,15 @@ public class PhysicsComponent implements Identifiable<Integer>
         else if (engineBody.m_type == BodyType.STATIC)
             snapshot.type = PhysicsComponentType.STATIC;
         
-        int relevantCount = 0;
-        for (Fixture engineFixture : engineFixtures)
-            if (!engineFixture.isSensor())
-                relevantCount++;
-        snapshot.shapes = new PhysicsShapeSnapshot[relevantCount];
+        List<PhysicsShapeSnapshot> snapshots = new ArrayList<PhysicsShapeSnapshot>();
         
-        for (int fixtureI = 0, shapeI = 0; fixtureI < engineFixtures.length && shapeI < snapshot.shapes.length;)
-        {
-            Fixture engineFixture = engineFixtures[fixtureI++];
-            if (engineFixture.isSensor())
-                continue;
-            
-            PhysicsShapeSnapshot shape = new PhysicsShapeSnapshot();
-            shape.attachments = (PhysicsShapeAttachments) engineFixture.m_userData;
-            
-            if (engineFixture.m_shape.m_type == ShapeType.CIRCLE)
-                shape.shapeType = PhysicsShapeType.CIRCLE;
-            else if (engineFixture.m_shape.m_type == ShapeType.POLYGON)
-                shape.shapeType = PhysicsShapeType.POLYGON;
-            
-            switch (shape.shapeType)
-            {
-            case CIRCLE:
-            {
-                shape.offset = new Vector2(((CircleShape) engineFixture.m_shape).m_p);
-                shape.radius = ((CircleShape) engineFixture.m_shape).m_radius;
-                break;
-            }
-            case POLYGON:
-            {
-                Vec2[] engineVertices = ((PolygonShape) engineFixture.m_shape).m_vertices;
-                shape.vertices = new Vector2[((PolygonShape) engineFixture.m_shape).m_count];
-                for (int i = 0; i < shape.vertices.length; i++)
-                    shape.vertices[i] = new Vector2(engineVertices[i].x, engineVertices[i].y);
-                break;
-            }
-            default:
-                throw new IllegalStateException();
-            }
-            
-            snapshot.shapes[shapeI++] = shape;
-        }
+        shapePool.foreach((PhysicsShape shape) -> {
+            if (shape.isRelevantToClient())
+                snapshots.addAll(shape.getSnapshots());
+        });
+        
+        snapshot.shapes = new PhysicsShapeSnapshot[snapshots.size()];
+        snapshots.toArray(snapshot.shapes);
         
         return snapshot;
     }

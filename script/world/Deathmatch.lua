@@ -41,48 +41,56 @@ local function onLeave(userID)
     lime.removeEntity(playerID)
 end
 
+local function spawnSegment(x, y)
+    World.addLight(x + 1.5,  y + 1.5,  14.0, 0.05, 1.0,  0.4)
+    World.addLight(x + 18.5, y + 8,    14.0, 1.0,  0.4,  0.05)
+
+    World.addTerrain("stone", x + 0,    y + 0,    x + 0,    y - 2,    x + 8.5,  y - 2) -- bottom
+    World.addTerrain("stone", x + 0,    y + 0,    x + 8.5,  y - 2,    x + 8.5,  y + 0) -- bottom
+    World.addTerrain("stone", x + 11.5, y + 0,    x + 11.5, y - 2,    x + 20,   y - 2) -- bottom
+    World.addTerrain("stone", x + 11.5, y + 0,    x + 20,   y - 2,    x + 20,   y + 0) -- bottom
+    World.addTerrain("stone", x - 2,    y + 0,    x + 0,    y - 2,    x + 0,    y + 0) -- bottom left corner
+    World.addTerrain("stone", x + 20,   y + 0,    x + 20,   y - 2,    x + 22,   y + 0) -- bottom right corner
+    World.addTerrain("stone", x - 2,    y + 9.5,  x - 2,    y + 0,    x + 0,    y + 0) -- left
+    World.addTerrain("stone", x - 2,    y + 9.5,  x + 0,    y + 0,    x + 0,    y + 9.5) -- left
+    World.addTerrain("stone", x + 20,   y + 9.5,  x + 20,   y + 0,    x + 22,   y + 0) -- right
+    World.addTerrain("stone", x + 20,   y + 9.5,  x + 22,   y + 0,    x + 22,   y + 9.5) -- right
+    World.addTerrain("stone", x + 0,    y + 11.5, x + 0,    y + 9.5,  x + 8.5,  y + 9.5) -- top
+    World.addTerrain("stone", x + 0,    y + 11.5, x + 8.5,  y + 9.5,  x + 8.5,  y + 11.5) -- top
+    World.addTerrain("stone", x + 11.5, y + 11.5, x + 11.5, y + 9.5,  x + 20,   y + 9.5) -- top
+    World.addTerrain("stone", x + 11.5, y + 11.5, x + 20,   y + 9.5,  x + 20,   y + 11.5) -- top
+    World.addTerrain("stone", x - 2,    y + 9.5,  x + 0,    y + 9.5,  x + 0,    y + 11.5) -- top left corner
+    World.addTerrain("stone", x + 20,   y + 11.5, x + 20,   y + 9.5,  x + 22,   y + 9.5) -- top right corner
+
+    World.addTerrain("stone", x + 3,    y + 4,    x + 3,    y + 3,    x + 9.5,  y + 3) -- obstacle bottom-left
+    World.addTerrain("stone", x + 3,    y + 4,    x + 9.5,  y + 3,    x + 9.5,  y + 4) -- obstacle bottom-left
+    World.addTerrain("stone", x + 10.5, y + 4,    x + 10.5, y + 3,    x + 17,   y + 3) -- obstacle bottom-right
+    World.addTerrain("stone", x + 10.5, y + 4,    x + 17,   y + 3,    x + 17,   y + 4) -- obstacle bottom-right
+    World.addTerrain("stone", x + 9.5,  y + 6.5,  x + 9.5,  y + 3,    x + 10.5, y + 3) -- obstacle middle
+    World.addTerrain("stone", x + 9.5,  y + 6.5,  x + 10.5, y + 3,    x + 10.5, y + 6.5) -- obstacle middle
+    World.addTerrain("stone", x + 3,    y + 6.5,  x + 3,    y + 5.5,  x + 9.5,  y + 5.5) -- obstacle top-left
+    World.addTerrain("stone", x + 3,    y + 6.5,  x + 9.5,  y + 5.5,  x + 9.5,  y + 6.5) -- obstacle top-left
+    World.addTerrain("stone", x + 10.5, y + 6.5,  x + 10.5, y + 5.5,  x + 17,   y + 5.5) -- obstacle top-right
+    World.addTerrain("stone", x + 10.5, y + 6.5,  x + 17,   y + 5.5,  x + 17,   y + 6.5) -- obstacle top-right
+
+    World.addPickupLocation(x + 1.5,  y + 1.5)
+    World.addPickupLocation(x + 18.5, y + 1.5)
+    World.addPickupLocation(x + 4,    y + 1.5)
+    World.addPickupLocation(x + 16,   y + 1.5)
+    World.addPickupLocation(x + 4,    y + 8)
+    World.addPickupLocation(x + 10,   y + 8)
+    World.addPickupLocation(x + 16,   y + 8)
+end
+
 function Lime_Init()
     lime.addEventListener("Lime::OnJoin", onJoin)
     lime.addEventListener("Lime::OnLeave", onLeave)
 
-    Material.addMaterial("stone", 0.4, 0.4, 0.4, 5, 0.7, 0.05)
+    Material.addMaterial("stone", 0.4, 0.4, 0.4, 5, 0.7, 0.0)
 
-    World.addPickupLocation(1.5, 1.5)
-    World.addPickupLocation(18.5, 1.5)
-    World.addPickupLocation(4, 1.5)
-    World.addPickupLocation(10, 1.5)
-    World.addPickupLocation(16, 1.5)
-    World.addPickupLocation(4, 8)
-    World.addPickupLocation(10, 8)
-    World.addPickupLocation(16, 8)
-
-    World.addLight(1.5, 1.5, 14, 0.05, 1.0, 0.4)
-    World.addLight(18.5, 8, 14, 1.0, 0.4, 0.05)
-
-    World.addTerrain("stone", 0, 0, 0, -2, 20, -2) -- bottom
-    World.addTerrain("stone", 0, 0, 20, -2, 20, 0) -- bottom
-    World.addTerrain("stone", -2, 0, 0, -2, 0, 0) -- bottom left corner
-    World.addTerrain("stone", 20, 0, 20, -2, 22, 0) -- bottom right corner
-    World.addTerrain("stone", -2, 9.5, -2, 0, 0, 0) -- left
-    World.addTerrain("stone", -2, 9.5, 0, 0, 0, 9.5) -- left
-    World.addTerrain("stone", 20, 9.5, 20, 0, 22, 0) -- right
-    World.addTerrain("stone", 20, 9.5, 22, 0, 22, 9.5) -- right
-    World.addTerrain("stone", 0, 11.5, 0, 9.5, 20, 9.5) -- top
-    World.addTerrain("stone", 0, 11.5, 20, 9.5, 20, 11.5) -- top
-    World.addTerrain("stone", -2, 9.5, 0, 9.5, 0, 11.5) -- top left corner
-    World.addTerrain("stone", 20, 11.5, 20, 9.5, 22, 9.5) -- top right corner
-
-    World.addTerrain("stone", 3, 4, 3, 3, 9.5, 3) -- obstacle bottom-left
-    World.addTerrain("stone", 3, 4, 9.5, 3, 9.5, 4) -- obstacle bottom-left
-    World.addTerrain("stone", 10.5, 4, 10.5, 3, 17, 3) -- obstacle bottom-right
-    World.addTerrain("stone", 10.5, 4, 17, 3, 17, 4) -- obstacle bottom-right
-    World.addTerrain("stone", 9.5, 6.5, 9.5, 3, 10.5, 3) -- obstacle middle
-    World.addTerrain("stone", 9.5, 6.5, 10.5, 3, 10.5, 6.5) -- obstacle middle
-    World.addTerrain("stone", 3, 6.5, 3, 5.5, 9.5, 5.5) -- obstacle top-left
-    World.addTerrain("stone", 3, 6.5, 9.5, 5.5, 9.5, 6.5) -- obstacle top-left
-    World.addTerrain("stone", 10.5, 6.5, 10.5, 5.5, 17, 5.5) -- obstacle top-right
-    World.addTerrain("stone", 10.5, 6.5, 17, 5.5, 17, 6.5) -- obstacle top-right
-
+    spawnSegment(0, 0)
+    spawnSegment(0, 13.5)
+    spawnSegment(0, 27)
 
     print("Gamemode initialized")
 end

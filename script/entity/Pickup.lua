@@ -9,6 +9,7 @@ local entityID
 local compoID
 local applyEffects
 
+local applied = false
 local removeNextUpdate = false
 
 local function onContact(contact)
@@ -16,8 +17,9 @@ local function onContact(contact)
     local owner = lime.getOwner()
     if owner then
         if lime.getAttribute(owner, property_canCollectPickups) == true then
-            if applyEffects then
+            if not applied and applyEffects then
                 applyEffects(owner)
+                applied = true
             end
             contact.setEnabled(false)
             removeNextUpdate = true
@@ -29,25 +31,21 @@ local function createBody()
     local posx = lime.getAndClearAttribute(entityID, "posx")
     local posy = lime.getAndClearAttribute(entityID, "posy")
 
-    lime.startComponent()
-    lime.setInitialPosition(posx, posy)
-    lime.setInitialAngle(0.0)
-    lime.setComponentType("dynamic")
+    compoID = lime.newComponent("dynamic", posx, posy, 0.0f)
+    lime.selectComponent(compoID)
+    lime.setLinearDamping(0.6)
+    lime.setAngularDamping(0.1)
     
     -- body
-    lime.startShape("triangle-group")
+    local shapeID = lime.newShape("triangle-group")
+    lime.selectShape(shapeID)
     lime.setShapeDensity(0.9)
     lime.setShapeFriction(0.2)
     lime.setShapeRestitution(0.05)
     lime.addShapeTriangle(-radius, -radius, -radius, radius, radius, -radius)
     lime.addShapeTriangle(radius, radius, -radius, radius, radius, -radius)
-    lime.endShape()
-
-    compoID = lime.endComponent()
-
-    lime.selectComponent(compoID)
-    lime.setLinearDamping(0.6)
-    lime.setAngularDamping(0.1)
+    lime.setShapeColor(1.0, 0.2, 0.3, 1.0)
+    lime.updateShape()
 
     lime.addContactListener(onContact, nil, nil, nil, compoID, nil)
 end

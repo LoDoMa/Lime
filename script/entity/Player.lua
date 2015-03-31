@@ -1,9 +1,6 @@
 
 -- Constants
 local radius = 0.5
-local sensorGroundName = "GroundSensor"
-local sensorWallLeftName = "WallSensorLeft"
-local sensorWallRightName = "WallSensorRight"
 
 -- Property names
 local property_canCollectPickups = "canCollectPickups"
@@ -40,7 +37,7 @@ local function loadDefaultProperties()
     lime.setAttribute(entityID, property_maxVelocityX, 30)
     lime.setAttribute(entityID, property_groundAcceleration, 5)
     lime.setAttribute(entityID, property_airAcceleration, 0.5)
-    lime.setAttribute(entityID, property_wallClimbing, 0)
+    lime.setAttribute(entityID, property_wallClimbing, 1)
     lime.setAttribute(entityID, property_horizontalJumpMultiplier, 8)
     lime.setAttribute(entityID, property_verticalJumpMultiplier, 17)
     lime.setAttribute(entityID, property_wallJumpVerticalMultiplier, 0.7)
@@ -52,45 +49,50 @@ local function registerCompo(compoID) compos[compoID] = true end
 local function registerJoint(jointID) joints[jointID] = true end
 
 local function sensorBegin(contact)
-    if contact.fixtureA == sensorGroundName then
+    if contact.shapeA == sensorGroundID then
         sensorGround = sensorGround + 1
-    elseif contact.fixtureA == sensorWallLeftName then
+    elseif contact.shapeA == sensorWallLeftID then
         sensorWallLeft = sensorWallLeft + 1
-    elseif contact.fixtureA == sensorWallRightName then
+    elseif contact.shapeA == sensorWallRightID then
         sensorWallRight = sensorWallRight + 1
     end
 end
 
 local function sensorEnd(contact)
-    if contact.fixtureA == sensorGroundName then
+    if contact.shapeA == sensorGroundID then
         sensorGround = sensorGround - 1
-    elseif contact.fixtureA == sensorWallLeftName then
+    elseif contact.shapeA == sensorWallLeftID then
         sensorWallLeft = sensorWallLeft - 1
-    elseif contact.fixtureA == sensorWallRightName then
+    elseif contact.shapeA == sensorWallRightID then
         sensorWallRight = sensorWallRight - 1
     end
 end
 
-local function createSensor(name, offx, offy)
-    lime.startShape("circle")
-    lime.setShapeName(name)
+local function createSensor(offx, offy)
+    local sensorID = lime.newShape("circle")
+    lime.selectShape(sensorID)
     lime.setShapeOffset(offx * radius, offy * radius)
     lime.setShapeSolid(false)
     lime.setShapeDensity(0.0)
     lime.setShapeFriction(0.0)
     lime.setShapeRestitution(0.0)
     lime.setShapeRadius(0.05)
-    lime.endShape()
+    lime.updateShape()
+    return sensorID;
 end
 
 local function createBody()
-    lime.startComponent()
-    lime.setInitialPosition(0.0, 0.0)
-    lime.setInitialAngle(0.0)
-    lime.setComponentType("dynamic")
+    mainCompo = lime.newComponent("dynamic", 1.5, 1.5, 0.0)
+    lime.selectComponent(mainCompo)
+    lime.setLinearDamping(0.6)
+    lime.setAngularDamping(0.1)
+    lime.setAngleLocked(true)
+    lime.setUsingCCD(false)
+    lime.setOwner(entityID)
     
     -- body
-    lime.startShape("triangle-group")
+    local shapeID = lime.newShape("triangle-group")
+    lime.selectShape(shapeID)
     lime.setShapeDensity(0.9)
     lime.setShapeFriction(0.0)
     lime.setShapeRestitution(0.0)
@@ -98,21 +100,12 @@ local function createBody()
     lime.addShapeTriangle(radius, radius, -radius, radius, radius, -radius)
     lime.setShapeColor(1.0, 1.0, 1.0, 1.0)
     lime.setShapeTexture("gamemode/Deathmatch/Player")
-    lime.endShape()
+    lime.updateShape()
     
     -- sensors
-    createSensor(sensorGroundName, 0, -1);
-    createSensor(sensorWallLeftName, -1, 0);
-    createSensor(sensorWallRightName, 1, 0);
-
-    mainCompo = lime.endComponent()
-
-    lime.selectComponent(mainCompo)
-    lime.setLinearDamping(0.6)
-    lime.setAngularDamping(0.1)
-    lime.setAngleLocked(true)
-    lime.setUsingCCD(false)
-    lime.setOwner(entityID)
+    sensorGroundID = createSensor(0, -1);
+    sensorWallLeftID = createSensor(-1, 0);
+    sensorWallRightID = createSensor(1, 0);
 
     lime.addContactListener(nil, nil, sensorBegin, sensorEnd, mainCompo, nil)
 
@@ -159,7 +152,7 @@ local function tryJump()
     updateJumpData()
 
     lime.setInputData(userOwner)
-    if lime.getKeyPress(lime.KEY_W) then
+    if lime.getKeyPress(lime.KEY_W) or lime.getKeyPress(lime.KEY_UP) then
         local jumpDir = jumpDirection()
         if jumpDir ~= -2 then
             local verticalJumpMultiplier = lime.getAttribute(entityID, property_verticalJumpMultiplier)
@@ -184,8 +177,8 @@ local function move(timeDelta)
     local velocityX = lime.getLinearVelocity()
 
     local inputForce = 0
-    if lime.getKeyState(lime.KEY_A) then inputForce = -maxVelocityX - velocityX end
-    if lime.getKeyState(lime.KEY_D) then inputForce = maxVelocityX - velocityX end
+    if lime.getKeyState(lime.KEY_A) or lime.getKeyState(lime.KEY_LEFT) then inputForce = -maxVelocityX - velocityX end
+    if lime.getKeyState(lime.KEY_D) or lime.getKeyState(lime.KEY_RIGHT) then inputForce = maxVelocityX - velocityX end
 
     if hasGround then
         inputForce = inputForce * groundAcceleration
@@ -220,6 +213,14 @@ function Lime_Update(timeDelta)
 
     lime.selectComponent(cameraFocusCompo)
     local cfx, cfy = lime.getComponentPosition()
+
+    if cfy < -10 then
+        lime.selectComponent(mainCompo)
+        lime.setComponentPosition(1.5, 1.5)
+
+        lime.selectComponent(cameraFocusCompo)
+        cfx, cfy = lime.getComponentPosition()
+    end
 
     lime.setAttribute(entityID, "focusX", cfx)
     lime.setAttribute(entityID, "focusY", cfy)

@@ -231,7 +231,7 @@ public class World
                         componentPool.remove(key);
                     }
                     
-                    PhysicsComponent compo = new PhysicsComponent(compoSnapshot, physicsWorld);
+                    PhysicsComponent compo = new PhysicsComponent(compoSnapshot.position, compoSnapshot.angle, compoSnapshot.type, physicsWorld);
                     compo.identifier = key;
                     componentPool.addManaged(compo);
                     
