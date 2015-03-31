@@ -326,6 +326,41 @@ public class PhysicsFunctions
                 shape.attachments.color.set(colorR, colorG, colorB, colorA);
                 break;
             }
+            case SET_SHAPE_TEXTURE:
+            {
+                String texture = args.isnil(1) ? null : args.checkstring(1).tojstring();
+                if (compoDefinition == null)
+                    throw new LuaError("modifying nonexistent body component");
+                if (shape == null)
+                    throw new LuaError("modifying nonexistent shape");
+                
+                shape.attachments.textureName = texture;
+                break;
+            }
+            case SET_SHAPE_TEXTURE_POINT:
+            {
+                float pointX = args.isnil(1) ? Float.NaN : args.checknumber(1).tofloat();
+                float pointY = args.isnil(2) ? Float.NaN : args.checknumber(2).tofloat();
+                if (compoDefinition == null)
+                    throw new LuaError("modifying nonexistent body component");
+                if (shape == null)
+                    throw new LuaError("modifying nonexistent shape");
+                
+                shape.attachments.texturePoint.set(pointX, pointY);
+                break;
+            }
+            case SET_SHAPE_TEXTURE_SIZE:
+            {
+                float sizeX = args.isnil(1) ? Float.NaN : args.checknumber(1).tofloat();
+                float sizeY = args.isnil(2) ? Float.NaN : args.checknumber(2).tofloat();
+                if (compoDefinition == null)
+                    throw new LuaError("modifying nonexistent body component");
+                if (shape == null)
+                    throw new LuaError("modifying nonexistent shape");
+                
+                shape.attachments.textureSize.set(sizeX, sizeY);
+                break;
+            }
             case START_JOINT:
             {
                 jointDefinition = new PhysicsJointDefinition();
@@ -730,6 +765,9 @@ public class PhysicsFunctions
         SET_SHAPE_FRICTION(1, true, "setShapeFriction"),
         SET_SHAPE_RESTITUTION(1, true, "setShapeRestitution"),
         SET_SHAPE_COLOR(4, true, "setShapeColor"),
+        SET_SHAPE_TEXTURE(1, true, "setShapeTexture"),
+        SET_SHAPE_TEXTURE_POINT(2, true, "setShapeTexturePoint"),
+        SET_SHAPE_TEXTURE_SIZE(2, true, "setShapeTextureSize"),
         
         START_JOINT(0, true, "startJoint"),
         END_JOINT(0, true, "endJoint"),

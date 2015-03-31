@@ -1,6 +1,7 @@
 package net.lodoma.lime.world.physics;
 
 import net.lodoma.lime.texture.Texture;
+import net.lodoma.lime.texture.TexturePool;
 import net.lodoma.lime.util.Vector2;
 import static org.lwjgl.opengl.GL11.*;
 
@@ -37,6 +38,17 @@ public class PhysicsShapeSnapshot
     
     public void debugRender()
     {
+        Texture texture = Texture.NO_TEXTURE;
+        if (attachments.textureName != null)
+        {
+            texture = TexturePool.get(attachments.textureName);
+            if (texture == null)
+            {
+                TexturePool.add(attachments.textureName);
+                texture = TexturePool.get(attachments.textureName);
+            }
+        }
+        
         switch (shapeType)
         {
         case CIRCLE:
@@ -44,8 +56,7 @@ public class PhysicsShapeSnapshot
             glTranslatef(offset.x, offset.y, 0.0f);
             glScalef(radius, radius, 1.0f);
 
-            Texture.NO_TEXTURE.bind();
-
+            texture.bind();
             attachments.color.setGL();
             glBegin(GL_TRIANGLE_FAN);
 
@@ -53,20 +64,17 @@ public class PhysicsShapeSnapshot
             for (int i = 0; i <= 10; i++)
             {
                 float angle = (float) Math.toRadians(i * 360.0 / 10.0);
-                glVertex2f((float) Math.cos(angle), (float) Math.sin(angle));
-            }
-          
-            glEnd();
-
-            attachments.color.setGL(0.9f, 1.0f);
-            glBegin(GL_LINES);
-
-            for (int i = 0; i <= 10; i++)
-            {
-                float angle = (float) Math.toRadians(i * 360.0 / 10.0);
-                glVertex2f((float) Math.cos(angle), (float) Math.sin(angle));
-                float angle2 = (float) Math.toRadians((i + 1) * 360.0 / 10.0);
-                glVertex2f((float) Math.cos(angle2), (float) Math.sin(angle2));
+                float x = (float) Math.cos(angle);
+                float y = (float) Math.sin(angle);
+                if (attachments.textureName != null)
+                {
+                    float texx = (x - attachments.texturePoint.x) / attachments.textureSize.x;
+                    float texy = (y - attachments.texturePoint.y) / attachments.textureSize.y;
+                    glTexCoord2f(texx, texy);
+                }
+                else
+                    glTexCoord2f(0.0f, 0.0f);
+                glVertex2f(x, y);
             }
           
             glEnd();
@@ -78,27 +86,24 @@ public class PhysicsShapeSnapshot
         }
         case POLYGON:
         {
-            Texture.NO_TEXTURE.bind();
-            
+            texture.bind();
             attachments.color.setGL();
             glBegin(GL_POLYGON);
 
             for (int i = 0; i < vertices.length; i++)
-                glVertex2f(vertices[i].x, vertices[i].y);
-          
-            glEnd();
-
-            attachments.color.setGL(0.9f, 1.0f);
-            glBegin(GL_LINES);
-
-            for (int i = 0; i < vertices.length; i++)
             {
+                if (attachments.textureName != null)
+                {
+                    float texx = (vertices[i].x - attachments.texturePoint.x) / attachments.textureSize.x;
+                    float texy = (vertices[i].y - attachments.texturePoint.y) / attachments.textureSize.y;
+                    glTexCoord2f(texx, texy);
+                }
+                else
+                    glTexCoord2f(0.0f, 0.0f);
                 glVertex2f(vertices[i].x, vertices[i].y);
-                glVertex2f(vertices[(i + 1) % vertices.length].x, vertices[(i + 1) % vertices.length].y);
             }
           
             glEnd();
-            glLineWidth(1.0f);
             
             break;
         }

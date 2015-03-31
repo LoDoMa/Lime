@@ -85,7 +85,10 @@ local function createBody()
     lime.setShapeRestitution(0.05)
     lime.addShapeTriangle(-radius, -radius, -radius, radius, radius, -radius)
     lime.addShapeTriangle(radius, radius, -radius, radius, radius, -radius)
-    lime.setShapeColor(0.7, 0.2, 0.3, 1.0)
+    lime.setShapeColor(1.0, 1.0, 1.0, 1.0)
+    lime.setShapeTexture("gamemode/Deathmatch/Player")
+    lime.setShapeTextureSize(0.25, 0.25)
+    lime.setShapeTexturePoint(0.125, 0.125)
     lime.endShape()
     
     -- sensors

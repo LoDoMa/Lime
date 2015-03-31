@@ -290,6 +290,7 @@ public class WorldSnapshotSegment implements SnapshotData
                     
                     shape.attachments = new PhysicsShapeAttachments();
                     shape.attachments.readVisual(in);
+                    shape.attachments.infer(shape);
                     
                     modifications.data.shapes[shapeI] = shape;
                 }

@@ -57,6 +57,8 @@ public class World
     public final IdentityPool<Light> lightPool;
     public final Color lightAmbientColor;
     
+    public String gamemode;
+    
     public World()
     {
         physicsWorld = new PhysicsWorld();
