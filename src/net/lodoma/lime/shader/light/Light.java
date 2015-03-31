@@ -79,26 +79,25 @@ public class Light implements Identifiable<Integer>
     public void renderDSL(WorldRenderer renderer, FBO lightMap, Camera camera)
     {
         float lightFW = Window.viewportWidth * data.radius / camera.scale.x;
-        float lightFH = Window.viewportHeight * data.radius / camera.scale.y;
-        int lightRW = (int) lightFW;
-        int lightRH = (int) lightFH;
         
         /*
          * Create/recreate FBOs if needed
          */
-        
-        if (occlusion == null || occlusion.width != lightRW)
+
+        int FBOwidth = 512;
+        int FBOheight = 512;
+        if (occlusion == null || occlusion.width != FBOwidth || occlusion.height != FBOheight)
         {
             if (occlusion != null)
                 occlusion.destroy();
-            occlusion = new FBO(lightRW, lightRH);
+            occlusion = new FBO(FBOwidth, FBOheight);
         }
         
-        if (shadowMap == null || shadowMap.width != lightRW)
+        if (shadowMap == null || shadowMap.width != FBOwidth)
         {
             if (shadowMap != null)
                 shadowMap.destroy();
-            shadowMap = new FBO(lightRW, 1);
+            shadowMap = new FBO(FBOwidth, 1);
 
             glBindTexture(GL_TEXTURE_2D, shadowMap.textureID);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);

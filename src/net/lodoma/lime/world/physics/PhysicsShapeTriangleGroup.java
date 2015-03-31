@@ -87,7 +87,7 @@ public class PhysicsShapeTriangleGroup extends PhysicsShape
             for (int j = 0; j < 3; j++)
             {
                 Vec2 current = shape.m_vertices[j];
-                if ((current.x != offset.x + triangle[i].x) || (current.y != offset.y + triangle[i].y))
+                if ((current.x != offset.x + triangle[j].x) || (current.y != offset.y + triangle[j].y))
                 {
                     recreate = true;
                     break;

@@ -7,8 +7,8 @@ local cameraRatioX = 16
 local cameraRatioY = 9
 local cameraRatio = cameraRatioX / cameraRatioY
 local cameraPadding = 4 -- minimum space around edge players
-local minCameraWidth = 32
-local minCameraHeight = 18
+local minCameraWidth = 8
+local minCameraHeight = 4.5
 
 -- Timers/countdowns
 local pickupCountdownMax = 15
@@ -86,7 +86,7 @@ function Lime_Init()
     lime.addEventListener("Lime::OnJoin", onJoin)
     lime.addEventListener("Lime::OnLeave", onLeave)
 
-    Material.addMaterial("stone", 0.4, 0.4, 0.4, 5, 0.7, 0.0)
+    Material.addMaterial("stone", 1.0, 1.0, 1.0, 5, 0.7, 0.0)
 
     spawnSegment(0, 0)
     spawnSegment(0, 13.5)

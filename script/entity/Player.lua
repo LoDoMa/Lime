@@ -11,7 +11,6 @@ local property_wallClimbing = "wallClimbing"
 local property_horizontalJumpMultiplier = "horizontalJumpMultiplier"
 local property_verticalJumpMultiplier = "verticalJumpMultiplier"
 local property_wallJumpVerticalMultiplier = "wallJumpVerticalMultiplier"
-local property_groundVelocityMultiplier = "groundVelocityMultiplier"
 local property_wallSlidingVelocityMultiplier = "wallSlidingVelocityMultiplier"
 
 -- Sensor and jump data
@@ -22,27 +21,31 @@ local hasGround = false
 local hasWallLeft = false
 local hasWallRight = false
 local wallSliding = false
+local isMoving = false
+local movingDirection = 1
+local movingTime = 0
+local jumpRaise = false
 local allowWallJump = false
 
 local entityID
 local userOwner
 
 local mainCompo
+local mainShape
 local cameraFocusCompo
 local compos = {}
 local joints = {}
 
 local function loadDefaultProperties()
     lime.setAttribute(entityID, property_canCollectPickups, true)
-    lime.setAttribute(entityID, property_maxVelocityX, 30)
-    lime.setAttribute(entityID, property_groundAcceleration, 5)
-    lime.setAttribute(entityID, property_airAcceleration, 0.5)
+    lime.setAttribute(entityID, property_maxVelocityX, 12)
+    lime.setAttribute(entityID, property_groundAcceleration, 10)
+    lime.setAttribute(entityID, property_airAcceleration, 1.5)
     lime.setAttribute(entityID, property_wallClimbing, 1)
     lime.setAttribute(entityID, property_horizontalJumpMultiplier, 8)
     lime.setAttribute(entityID, property_verticalJumpMultiplier, 17)
     lime.setAttribute(entityID, property_wallJumpVerticalMultiplier, 0.7)
-    lime.setAttribute(entityID, property_groundVelocityMultiplier, 10)
-    lime.setAttribute(entityID, property_wallSlidingVelocityMultiplier, 17.7)
+    lime.setAttribute(entityID, property_wallSlidingVelocityMultiplier, 8.7)
 end
 
 local function registerCompo(compoID) compos[compoID] = true end
@@ -89,17 +92,24 @@ local function createBody()
     lime.setAngleLocked(true)
     lime.setUsingCCD(false)
     lime.setOwner(entityID)
-    
+
     -- body
-    local shapeID = lime.newShape("triangle-group")
-    lime.selectShape(shapeID)
-    lime.setShapeDensity(0.9)
+    mainShape = lime.newShape("triangle-group")
+    lime.selectShape(mainShape)
+    lime.setShapeDensity(1.2)
     lime.setShapeFriction(0.0)
     lime.setShapeRestitution(0.0)
-    lime.addShapeTriangle(-radius, -radius, -radius, radius, radius, -radius)
-    lime.addShapeTriangle(radius, radius, -radius, radius, radius, -radius)
+
+    local lss = radius * 0.3
+    lime.addShapeTriangle(-radius + lss, -radius, -radius + lss, radius, radius - lss, -radius)
+    lime.addShapeTriangle(radius - lss, radius, -radius + lss, radius, radius - lss, -radius)
+    lime.addShapeTriangle(-radius, -radius + lss, -radius, radius - lss, radius, -radius + lss)
+    lime.addShapeTriangle(radius, radius - lss, -radius, radius - lss, radius, -radius + lss)
+    lime.addShapeTriangle(-radius, -radius + lss, -radius + lss, -radius, -radius + lss, -radius + lss)
+    lime.addShapeTriangle(radius, -radius + lss, radius - lss, -radius, radius - lss, -radius + lss)
+    lime.addShapeTriangle(-radius, radius - lss, -radius + lss, radius, -radius + lss, radius - lss)
+    lime.addShapeTriangle(radius, radius - lss, radius - lss, radius, radius - lss, radius - lss)
     lime.setShapeColor(1.0, 1.0, 1.0, 1.0)
-    lime.setShapeTexture("gamemode/Deathmatch/Player")
     lime.updateShape()
     
     -- sensors
@@ -176,9 +186,26 @@ local function move(timeDelta)
     lime.selectComponent(mainCompo)
     local velocityX = lime.getLinearVelocity()
 
-    local inputForce = 0
-    if lime.getKeyState(lime.KEY_A) or lime.getKeyState(lime.KEY_LEFT) then inputForce = -maxVelocityX - velocityX end
-    if lime.getKeyState(lime.KEY_D) or lime.getKeyState(lime.KEY_RIGHT) then inputForce = maxVelocityX - velocityX end
+    local targetVelocity = 0
+    isMoving = false
+    if lime.getKeyState(lime.KEY_A) or lime.getKeyState(lime.KEY_LEFT) then
+        isMoving = true
+        movingDirection = -1
+        targetVelocity = -maxVelocityX
+    end
+    if lime.getKeyState(lime.KEY_D) or lime.getKeyState(lime.KEY_RIGHT) then
+        isMoving = true
+        movingDirection = 1
+        targetVelocity = maxVelocityX
+    end
+
+    if not isMoving then
+        movingTime = 0
+    else
+        movingTime = movingTime + timeDelta
+    end
+
+    local inputForce = targetVelocity - velocityX
 
     if hasGround then
         inputForce = inputForce * groundAcceleration
@@ -192,11 +219,8 @@ local function move(timeDelta)
     local newVelocityX = velocityX
     local newVelocityY = velocityY
 
-    if hasGround then
-        local groundVelocityMultiplier = lime.getAttribute(entityID, property_groundVelocityMultiplier)
-        newVelocityX = velocityX - velocityX * timeDelta * groundVelocityMultiplier
-    end
-
+    wallSliding = false
+    jumpRaise = velocityY > 0
     if not hasGround and (hasWallLeft or hasWallRight) and velocityY < 0 then
         local wallSlidingVelocityMultiplier = lime.getAttribute(entityID, property_wallSlidingVelocityMultiplier)
         newVelocityY = velocityY - velocityY * timeDelta * wallSlidingVelocityMultiplier
@@ -224,6 +248,56 @@ function Lime_Update(timeDelta)
 
     lime.setAttribute(entityID, "focusX", cfx)
     lime.setAttribute(entityID, "focusY", cfy)
+
+    lime.selectShape(mainShape)
+
+    if hasGround then
+        if not isMoving then
+            lime.setShapeTexture("gamemode/Deathmatch/PlayerStill")
+        else
+            local frame = math.floor(movingTime * 40) % 7
+            if frame >= 3 then frame = 3 - (frame - 3) end
+            lime.setShapeTexture("gamemode/Deathmatch/PlayerWalk" .. frame)
+        end
+        lime.setShapeTexturePoint(-radius, -radius)
+        lime.setShapeTextureSize(radius * 2 * -movingDirection, radius * 2)
+        lime.updateShape()
+    elseif wallSliding then
+        lime.setShapeTexture("gamemode/Deathmatch/PlayerWallSlide")
+        lime.setShapeTexturePoint(-radius, -radius)
+        if hasWallLeft then
+            lime.setShapeTextureSize(radius * 2, radius * 2)
+        else
+            lime.setShapeTextureSize(-radius * 2, radius * 2)
+        end
+        lime.updateShape()
+    else
+        if not isMoving then
+            if jumpRaise then
+                lime.selectComponent(mainCompo)
+                local velocityX = lime.getLinearVelocity()
+                if velocityX < -0.75 then
+                    lime.setShapeTexture("gamemode/Deathmatch/PlayerWalk" .. 3)
+                    lime.setShapeTextureSize(radius * 2, radius * 2)
+                elseif velocityX > 0.75 then
+                    lime.setShapeTexture("gamemode/Deathmatch/PlayerWalk" .. 3)
+                    lime.setShapeTextureSize(-radius * 2, radius * 2)
+                else
+                    lime.setShapeTexture("gamemode/Deathmatch/PlayerJumpRaise")
+                    lime.setShapeTextureSize(radius * 2, radius * 2)
+                end
+            else
+                lime.setShapeTexture("gamemode/Deathmatch/PlayerJumpFall")
+                lime.setShapeTextureSize(radius * 2, radius * 2)
+            end
+            lime.setShapeTexturePoint(-radius, -radius)
+        else
+            lime.setShapeTexture("gamemode/Deathmatch/PlayerWalk" .. 3)
+            lime.setShapeTexturePoint(-radius, -radius)
+            lime.setShapeTextureSize(radius * 2 * -movingDirection, radius * 2)
+        end
+        lime.updateShape()
+    end
 end
 
 function Lime_PostUpdate()

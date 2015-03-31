@@ -48,7 +48,7 @@ public class PhysicsShapeSnapshot
                 {
                     float texx = (x - attachments.texturePoint.x) / attachments.textureSize.x;
                     float texy = (y - attachments.texturePoint.y) / attachments.textureSize.y;
-                    glTexCoord2f(texx, texy);
+                    glTexCoord2f(texx, -texy);
                 }
                 else
                     glTexCoord2f(0.0f, 0.0f);
@@ -74,7 +74,7 @@ public class PhysicsShapeSnapshot
                 {
                     float texx = (vertices[i].x - attachments.texturePoint.x) / attachments.textureSize.x;
                     float texy = (vertices[i].y - attachments.texturePoint.y) / attachments.textureSize.y;
-                    glTexCoord2f(texx, texy);
+                    glTexCoord2f(texx, -texy);
                 }
                 else
                     glTexCoord2f(0.0f, 0.0f);

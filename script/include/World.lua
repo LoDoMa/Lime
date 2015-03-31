@@ -22,6 +22,9 @@ local function addTerrain(material, x1, y1, x2, y2, x3, y3)
     lime.selectShape(shapeID)
 
     Material.applyMaterial(material)
+    lime.setShapeTexture("gamemode/Deathmatch/Brick")
+    lime.setShapeTexturePoint(0, 0)
+    lime.setShapeTextureSize(1, 1)
     lime.addShapeTriangle(x1, y1, x2, y2, x3, y3)
     lime.updateShape()
 
