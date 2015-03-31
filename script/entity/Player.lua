@@ -7,10 +7,15 @@ local sensorWallRightName = "WallSensorRight"
 
 -- Property names
 local property_canCollectPickups = "canCollectPickups"
+local property_maxVelocityX = "maxVelocityX"
+local property_groundAcceleration = "groundAcceleration"
+local property_airAcceleration = "airAcceleration"
 local property_wallClimbing = "wallClimbing"
 local property_horizontalJumpMultiplier = "horizontalJumpMultiplier"
 local property_verticalJumpMultiplier = "verticalJumpMultiplier"
 local property_wallJumpVerticalMultiplier = "wallJumpVerticalMultiplier"
+local property_groundVelocityMultiplier = "groundVelocityMultiplier"
+local property_wallSlidingVelocityMultiplier = "wallSlidingVelocityMultiplier"
 
 -- Sensor and jump data
 local sensorGround = 0
@@ -19,6 +24,7 @@ local sensorWallRight = 0
 local hasGround = false
 local hasWallLeft = false
 local hasWallRight = false
+local wallSliding = false
 local allowWallJump = false
 
 local entityID
@@ -31,10 +37,15 @@ local joints = {}
 
 local function loadDefaultProperties()
     lime.setAttribute(entityID, property_canCollectPickups, true)
+    lime.setAttribute(entityID, property_maxVelocityX, 30)
+    lime.setAttribute(entityID, property_groundAcceleration, 5)
+    lime.setAttribute(entityID, property_airAcceleration, 0.5)
     lime.setAttribute(entityID, property_wallClimbing, 0)
     lime.setAttribute(entityID, property_horizontalJumpMultiplier, 8)
-    lime.setAttribute(entityID, property_verticalJumpMultiplier, 15)
+    lime.setAttribute(entityID, property_verticalJumpMultiplier, 17)
     lime.setAttribute(entityID, property_wallJumpVerticalMultiplier, 0.7)
+    lime.setAttribute(entityID, property_groundVelocityMultiplier, 10)
+    lime.setAttribute(entityID, property_wallSlidingVelocityMultiplier, 17.7)
 end
 
 local function registerCompo(compoID) compos[compoID] = true end
@@ -81,14 +92,12 @@ local function createBody()
     -- body
     lime.startShape("triangle-group")
     lime.setShapeDensity(0.9)
-    lime.setShapeFriction(0.2)
-    lime.setShapeRestitution(0.05)
+    lime.setShapeFriction(0.0)
+    lime.setShapeRestitution(0.0)
     lime.addShapeTriangle(-radius, -radius, -radius, radius, radius, -radius)
     lime.addShapeTriangle(radius, radius, -radius, radius, radius, -radius)
     lime.setShapeColor(1.0, 1.0, 1.0, 1.0)
     lime.setShapeTexture("gamemode/Deathmatch/Player")
-    lime.setShapeTextureSize(0.25, 0.25)
-    lime.setShapeTexturePoint(0.125, 0.125)
     lime.endShape()
     
     -- sensors
@@ -166,15 +175,48 @@ local function tryJump()
     end
 end
 
+local function move(timeDelta)
+    local maxVelocityX = lime.getAttribute(entityID, property_maxVelocityX)
+    local groundAcceleration = lime.getAttribute(entityID, property_groundAcceleration)
+    local airAcceleration = lime.getAttribute(entityID, property_airAcceleration)
+
+    lime.selectComponent(mainCompo)
+    local velocityX = lime.getLinearVelocity()
+
+    local inputForce = 0
+    if lime.getKeyState(lime.KEY_A) then inputForce = -maxVelocityX - velocityX end
+    if lime.getKeyState(lime.KEY_D) then inputForce = maxVelocityX - velocityX end
+
+    if hasGround then
+        inputForce = inputForce * groundAcceleration
+    else
+        inputForce = inputForce * airAcceleration
+    end
+
+    lime.applyForceToCenter(inputForce, -20.0)
+
+    local velocityX, velocityY = lime.getLinearVelocity()
+    local newVelocityX = velocityX
+    local newVelocityY = velocityY
+
+    if hasGround then
+        local groundVelocityMultiplier = lime.getAttribute(entityID, property_groundVelocityMultiplier)
+        newVelocityX = velocityX - velocityX * timeDelta * groundVelocityMultiplier
+    end
+
+    if not hasGround and (hasWallLeft or hasWallRight) and velocityY < 0 then
+        local wallSlidingVelocityMultiplier = lime.getAttribute(entityID, property_wallSlidingVelocityMultiplier)
+        newVelocityY = velocityY - velocityY * timeDelta * wallSlidingVelocityMultiplier
+
+        wallSliding = true
+    end
+
+    lime.setLinearVelocity(newVelocityX, newVelocityY)
+end
+
 function Lime_Update(timeDelta)
     tryJump()
-
-    local speed = 75.0
-    local vx, vy = 0.0, -5.0
-    if lime.getKeyState(lime.KEY_A) then vx = -speed end
-    if lime.getKeyState(lime.KEY_D ) then vx = speed end
-    lime.selectComponent(mainCompo)
-    lime.applyForceToCenter(vx, vy)
+    move(timeDelta)
 
     lime.selectComponent(cameraFocusCompo)
     local cfx, cfy = lime.getComponentPosition()

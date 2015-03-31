@@ -45,7 +45,7 @@ function Lime_Init()
     lime.addEventListener("Lime::OnJoin", onJoin)
     lime.addEventListener("Lime::OnLeave", onLeave)
 
-    Material.addMaterial("stone", 0.4, 0.4, 0.4, 5, 0.4, 0.05)
+    Material.addMaterial("stone", 0.4, 0.4, 0.4, 5, 0.7, 0.05)
 
     World.addPickupLocation(1.5, 1.5)
     World.addPickupLocation(18.5, 1.5)
