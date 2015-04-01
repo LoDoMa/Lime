@@ -68,27 +68,27 @@ public class UtilFunctions
                 String string = args.arg(1).checkstring().toString();
                 return LuaValue.valueOf(HashHelper.hash64(string));
             }
-            case INCLUDE:
+            case MODULE:
             {
                 String filepath = args.arg(1).checkstring().toString();
                 LuaScript luaInstance = library.server.world.luaInstance;
                 
-                LuaTable includeTable;
-                if (luaInstance.globals.get("__LIME_INCLUDE__").isnil())
+                LuaTable moduleTable;
+                if (luaInstance.globals.get("__LIME_MODULES__").isnil())
                 {
-                    includeTable = LuaTable.tableOf();
-                    luaInstance.globals.set("__LIME_INCLUDE__", includeTable);
+                    moduleTable = LuaTable.tableOf();
+                    luaInstance.globals.set("__LIME_MODULES__", moduleTable);
                 }
-                else includeTable = luaInstance.globals.get("__LIME_INCLUDE__").checktable();
+                else moduleTable = luaInstance.globals.get("__LIME_MODULES__").checktable();
                 
-                if (includeTable.get(filepath).isnil())
+                if (moduleTable.get(filepath).isnil())
                 {
-                    LuaTable include = null;
+                    LuaTable module = null;
                     try
                     {
-                        luaInstance.load(new File(OsHelper.JARPATH + "script/include/" + filepath + ".lua"));
-                        include = luaInstance.globals.get("__LIME_IncludeTable__").checktable();
-                        luaInstance.globals.set("__LIME_IncludeTable__", LuaValue.NIL);
+                        luaInstance.load(new File(OsHelper.JARPATH + "script/module/" + filepath + ".lua"));
+                        module = luaInstance.globals.get("__LIME_MODULE_TABLE__").checktable();
+                        luaInstance.globals.set("__LIME_MODULE_TABLE__", LuaValue.NIL);
                     }
                     catch(IOException e)
                     {
@@ -97,10 +97,10 @@ public class UtilFunctions
                         Lime.forceExit(e);
                     }
                     
-                    includeTable.set(filepath, include);
+                    moduleTable.set(filepath, module);
                 }
                 
-                return includeTable.get(filepath);
+                return moduleTable.get(filepath);
             }
             case LOG:
             {
@@ -124,7 +124,7 @@ public class UtilFunctions
     {
         HASH32(1, true, "hash32"),
         HASH64(1, true, "hash64"),
-        INCLUDE(1, true, "include"),
+        MODULE(1, true, "module"),
         LOG(2, true, "log"),
         CRASH(0, true, "crash");
         

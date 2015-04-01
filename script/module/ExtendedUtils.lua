@@ -7,4 +7,4 @@ function string.endsWith(str, ending)
    return ending == '' or string.sub(str, -string.len(ending)) == ending
 end
 
-__LIME_IncludeTable__ = {}
+__LIME_MODULE_TABLE__ = {}

@@ -25,7 +25,7 @@ local function applyMaterial(name)
     lime.setShapeRestitution(material.restitution)
 end
 
-__LIME_IncludeTable__ = {
+__LIME_MODULE_TABLE__ = {
     addMaterial = addMaterial,
     getMaterial = getMaterial,
     applyMaterial = applyMaterial,

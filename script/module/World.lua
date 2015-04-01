@@ -1,5 +1,5 @@
 
-local Material = lime.include("Material")
+local Material = lime.module("Material")
 
 local pickupLocationsX = {}
 local pickupLocationsY = {}
@@ -42,7 +42,7 @@ local function addLight(x, y, r, cr, cg, cb)
     --       It doesn't really need to be cleaned, but it would be nice if it was
 end
 
-__LIME_IncludeTable__ = {
+__LIME_MODULE_TABLE__ = {
     addTerrain = addTerrain,
     addLight = addLight,
     addPickupLocation = addPickupLocation,

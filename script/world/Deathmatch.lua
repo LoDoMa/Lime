@@ -1,14 +1,11 @@
 
-local World = lime.include("World")
-local Material = lime.include("Material")
+local Camera = lime.module("Camera")
+local World = lime.module("World")
+local Material = lime.module("Material")
 
 -- Constants
-local cameraRatioX = 16
-local cameraRatioY = 9
-local cameraRatio = cameraRatioX / cameraRatioY
-local cameraPadding = 4 -- minimum space around edge players
-local minCameraWidth = 8
-local minCameraHeight = 4.5
+Camera.setPadding(4)
+Camera.setMinimumScale(32, 18)
 
 -- Timers/countdowns
 local pickupCountdownMax = 15
@@ -122,58 +119,20 @@ function Lime_Update(timeDelta)
 end
 
 function Lime_PostUpdate()
-    local cameraBoundsMinX = nil
-    local cameraBoundsMaxX = nil
-    local cameraBoundsMinY = nil
-    local cameraBoundsMaxY = nil
-
     for user, playerID in pairs(connectedUsers) do
         local focusX = lime.getAttribute(playerID, "focusX")
         local focusY = lime.getAttribute(playerID, "focusY")
-
-        if cameraBoundsMinX then
-            cameraBoundsMinX = math.min(cameraBoundsMinX, focusX)
-            cameraBoundsMaxX = math.max(cameraBoundsMaxX, focusX)
-            cameraBoundsMinY = math.min(cameraBoundsMinY, focusY)
-            cameraBoundsMaxY = math.max(cameraBoundsMaxY, focusY)
-        else
-            cameraBoundsMinX = focusX
-            cameraBoundsMaxX = focusX
-            cameraBoundsMinY = focusY
-            cameraBoundsMaxY = focusY
-        end
+        Camera.addFocusPoint(focusX, focusY)
     end
 
-    if cameraBoundsMinX then
-        cameraBoundsMinX = cameraBoundsMinX - cameraPadding
-        cameraBoundsMaxX = cameraBoundsMaxX + cameraPadding
-        cameraBoundsMinY = cameraBoundsMinY - cameraPadding
-        cameraBoundsMaxY = cameraBoundsMaxY + cameraPadding
+    Camera.update()
 
-        local cameraBoundsWidth = cameraBoundsMaxX - cameraBoundsMinX
-        local cameraBoundsHeight = cameraBoundsMaxY - cameraBoundsMinY
+    local translationX, translationY = Camera.getTranslation()
+    local scaleX, scaleY = Camera.getScale()
 
-        local cameraCenterX = cameraBoundsMaxX - cameraBoundsWidth / 2.0
-        local cameraCenterY = cameraBoundsMaxY - cameraBoundsHeight / 2.0
-
-        if cameraBoundsWidth < minCameraWidth then cameraBoundsWidth = minCameraWidth end
-        if cameraBoundsHeight < minCameraHeight then cameraBoundsHeight = minCameraHeight end
-
-        local currentRatio = cameraBoundsWidth / cameraBoundsHeight
-        if currentRatio > cameraRatio then
-            cameraBoundsHeight = cameraBoundsWidth / cameraRatio
-        elseif currentRatio < cameraRatio then
-            cameraBoundsWidth = cameraBoundsHeight * cameraRatio
-        end
-
-        local cameraTranslationX = cameraCenterX - cameraBoundsWidth / 2.0
-        local cameraTranslationY = cameraCenterY - cameraBoundsHeight / 2.0
-
-        for userID in pairs(connectedUsers) do
-            lime.setCameraTranslation(userID, cameraTranslationX, cameraTranslationY)
-            lime.setCameraRotation(userID, 45)
-            lime.setCameraScale(userID, cameraBoundsWidth, cameraBoundsHeight)
-        end
+    for userID in pairs(connectedUsers) do
+        lime.setCameraTranslation(userID, translationX, translationY)
+        lime.setCameraScale(userID, scaleX, scaleY)
     end
 end
 
