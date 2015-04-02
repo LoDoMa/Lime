@@ -23,6 +23,9 @@ public abstract class PhysicsShape implements Identifiable<Integer>
     
     // Visual data
     public final Color color = new Color();
+    public String animationName;
+    public final Vector2 animationRoot = new Vector2(0.0f);
+    public final Vector2 animationScale = new Vector2(1.0f);
     public String textureName;
     public final Vector2 texturePoint = new Vector2(Float.NaN);
     public final Vector2 textureSize = new Vector2(Float.NaN);
@@ -47,6 +50,8 @@ public abstract class PhysicsShape implements Identifiable<Integer>
         if (color.b < 0)          throw new InvalidPhysicsShapeException("invalid shape color: blue < 0");
         if (color.a > 1)          throw new InvalidPhysicsShapeException("invalid shape color: alpha > 1");
         if (color.a < 0)          throw new InvalidPhysicsShapeException("invalid shape color: alpha < 0");
+        if (animationRoot == null) throw new InvalidPhysicsShapeException("invalid shape animation root: null");
+        if (animationScale == null)  throw new InvalidPhysicsShapeException("invalid shape animation scale: null");
         if (texturePoint == null) throw new InvalidPhysicsShapeException("invalid shape texture point: null");
         if (textureSize == null)  throw new InvalidPhysicsShapeException("invalid shape texture size: null");
     }
@@ -86,6 +91,9 @@ public abstract class PhysicsShape implements Identifiable<Integer>
         PhysicsShapeSnapshot snapshot = new PhysicsShapeSnapshot();
         snapshot.attachments = new PhysicsShapeAttachments();
         snapshot.attachments.color.set(color);
+        snapshot.attachments.animationName = animationName;
+        snapshot.attachments.animationRoot.set(animationRoot);
+        snapshot.attachments.animationScale.set(animationScale);
         snapshot.attachments.textureName = textureName;
         snapshot.attachments.texturePoint.set(texturePoint);
         snapshot.attachments.textureSize.set(textureSize);

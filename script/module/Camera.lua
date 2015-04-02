@@ -13,8 +13,8 @@ local scaleX
 local scaleY
 
 local function addFocusPoint(focusX, focusY)
-    table.insert(focusPointsX, focusX)
-    table.insert(focusPointsY, focusY)
+    focusPointsX[#focusPointsX + 1] = focusX
+    focusPointsY[#focusPointsY + 1] = focusY
 end
 
 local function updateCamera()
@@ -23,7 +23,8 @@ local function updateCamera()
     local minY = nil
     local maxY = nil
 
-    for i, focusX in pairs(focusPointsX) do
+    for i = 1, #focusPointsX do
+        local focusX = focusPointsX[i]
         local focusY = focusPointsY[i]
 
         if minX then

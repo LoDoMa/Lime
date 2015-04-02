@@ -4,6 +4,10 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import net.lodoma.lime.Lime;
+import net.lodoma.lime.texture.animation.Animation;
+import net.lodoma.lime.texture.animation.AnimationLoader;
+import net.lodoma.lime.texture.animation.AnimationPool;
 import net.lodoma.lime.util.Color;
 import net.lodoma.lime.util.Vector2;
 
@@ -13,6 +17,10 @@ public class PhysicsShapeAttachments
     public String name;
     
     public final Color color = new Color();
+    public Animation animation;
+    public String animationName;
+    public final Vector2 animationRoot = new Vector2(0.0f);
+    public final Vector2 animationScale = new Vector2(1.0f);
     public String textureName;
     public final Vector2 texturePoint = new Vector2(Float.NaN);
     public final Vector2 textureSize = new Vector2(Float.NaN);
@@ -20,7 +28,10 @@ public class PhysicsShapeAttachments
     public boolean compareVisual(PhysicsShapeAttachments other)
     {
         if (!color.equals(other.color)) return false;
-        
+
+        if (!compareStringsWithNull(animationName, other.animationName)) return false;
+        if (!Vector2.equals(animationRoot, other.animationRoot)) return false;
+        if (!Vector2.equals(animationScale, other.animationScale)) return false;
         if (!compareStringsWithNull(textureName, other.textureName)) return false;
         if (!compareVectorsWithNaN(texturePoint, other.texturePoint)) return false;
         if (!compareVectorsWithNaN(textureSize, other.textureSize)) return false;
@@ -69,6 +80,37 @@ public class PhysicsShapeAttachments
         color.g = in.readFloat();
         color.b = in.readFloat();
         color.a = in.readFloat();
+
+        String oldAnimationName = animationName;
+        if (in.readByte() == 1)
+            animationName = in.readUTF();
+        if (!compareStringsWithNull(oldAnimationName, animationName))
+        {
+            if (animation != null)
+            {
+                AnimationPool.remove(animation);
+                animation.delete();
+            }
+            
+            try
+            {
+                animation = AnimationLoader.load(animationName);
+                animation.start();
+            }
+            catch(IOException e)
+            {
+                Lime.LOGGER.C("Failed to load animation " + animationName);
+                Lime.LOGGER.log(e);
+                Lime.forceExit(e);
+            }
+            
+            AnimationPool.add(animation);
+        }
+        
+        animationRoot.x = in.readFloat();
+        animationRoot.y = in.readFloat();
+        animationScale.x = in.readFloat();
+        animationScale.y = in.readFloat();
         
         if (in.readByte() == 1)
             textureName = in.readUTF();
@@ -85,6 +127,19 @@ public class PhysicsShapeAttachments
         out.writeFloat(color.g);
         out.writeFloat(color.b);
         out.writeFloat(color.a);
+        
+        if (animationName == null)
+            out.writeByte(0);
+        else
+        {
+            out.writeByte(1);
+            out.writeUTF(animationName);
+        }
+
+        out.writeFloat(animationRoot.x);
+        out.writeFloat(animationRoot.y);
+        out.writeFloat(animationScale.x);
+        out.writeFloat(animationScale.y);
         
         if (textureName == null)
             out.writeByte(0);

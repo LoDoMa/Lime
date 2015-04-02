@@ -449,6 +449,35 @@ public class PhysicsFunctions
                 shape.color.set(colorR, colorG, colorB, colorA);
                 break;
             }
+            case SET_SHAPE_ANIMATION:
+            {
+                String animation = args.isnil(1) ? null : args.checkstring(1).tojstring();
+                if (shape == null)
+                    throw new LuaError("modifying nonexistent shape");
+                
+                shape.animationName = animation;
+                break;
+            }
+            case SET_SHAPE_ANIMATION_ROOT:
+            {
+                float pointX = args.isnil(1) ? Float.NaN : args.checknumber(1).tofloat();
+                float pointY = args.isnil(2) ? Float.NaN : args.checknumber(2).tofloat();
+                if (shape == null)
+                    throw new LuaError("modifying nonexistent shape");
+                
+                shape.animationRoot.set(pointX, pointY);
+                break;
+            }
+            case SET_SHAPE_ANIMATION_SCALE:
+            {
+                float scaleX = args.isnil(1) ? Float.NaN : args.checknumber(1).tofloat();
+                float scaleY = args.isnil(2) ? Float.NaN : args.checknumber(2).tofloat();
+                if (shape == null)
+                    throw new LuaError("modifying nonexistent shape");
+                
+                shape.animationScale.set(scaleX, scaleY);
+                break;
+            }
             case SET_SHAPE_TEXTURE:
             {
                 String texture = args.isnil(1) ? null : args.checkstring(1).tojstring();
@@ -728,6 +757,9 @@ public class PhysicsFunctions
         SET_SHAPE_FRICTION(1, true, "setShapeFriction"),
         SET_SHAPE_RESTITUTION(1, true, "setShapeRestitution"),
         SET_SHAPE_COLOR(4, true, "setShapeColor"),
+        SET_SHAPE_ANIMATION(1, true, "setShapeAnimation"),
+        SET_SHAPE_ANIMATION_ROOT(2, true, "setShapeAnimationRoot"),
+        SET_SHAPE_ANIMATION_SCALE(2, true, "setShapeAnimationScale"),
         SET_SHAPE_TEXTURE(1, true, "setShapeTexture"),
         SET_SHAPE_TEXTURE_POINT(2, true, "setShapeTexturePoint"),
         SET_SHAPE_TEXTURE_SIZE(2, true, "setShapeTextureSize"),

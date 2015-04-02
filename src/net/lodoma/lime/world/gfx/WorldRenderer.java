@@ -5,6 +5,7 @@ import net.lodoma.lime.shader.Program;
 import net.lodoma.lime.shader.UniformType;
 import net.lodoma.lime.shader.light.Light;
 import net.lodoma.lime.texture.Texture;
+import net.lodoma.lime.texture.animation.AnimationPool;
 import net.lodoma.lime.world.World;
 import net.lodoma.lime.world.physics.PhysicsComponentSnapshot;
 import net.lodoma.lime.world.physics.PhysicsParticle;
@@ -32,6 +33,8 @@ public class WorldRenderer
     
     public void clean()
     {
+        AnimationPool.clear();
+        
         if (occlusionMap != null) occlusionMap.destroy();
         if (brightnessMap != null) brightnessMap.destroy();
         if (lightMap != null) lightMap.destroy();

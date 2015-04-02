@@ -251,13 +251,17 @@ function Lime_Update(timeDelta)
 
     lime.selectShape(mainShape)
 
+    lime.setShapeColor(1.0, 1.0, 1.0, 1.0)
+    lime.setShapeAnimation(nil)
     if hasGround then
         if not isMoving then
             lime.setShapeTexture("gamemode/Deathmatch/PlayerStill")
         else
-            local frame = math.floor(movingTime * 40) % 7
-            if frame >= 3 then frame = 3 - (frame - 3) end
-            lime.setShapeTexture("gamemode/Deathmatch/PlayerWalk" .. frame)
+            lime.setShapeTexture(nil)
+            lime.setShapeColor(0.5, 0.5, 0.5, 1.0)
+            lime.setShapeAnimation("gamemode/Deathmatch/test.san")
+            lime.setShapeAnimationRoot(0.0, -radius + 0.15)
+            lime.setShapeAnimationScale(0.4, 0.4)
         end
         lime.setShapeTexturePoint(-radius, -radius)
         lime.setShapeTextureSize(radius * 2 * -movingDirection, radius * 2)
