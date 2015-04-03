@@ -5,7 +5,7 @@ local Material = lime.module("Material")
 
 -- Constants
 Camera.setPadding(4)
-Camera.setMinimumScale(32, 18)
+Camera.setMinimumScale(8, 4.5)
 
 -- Timers/countdowns
 local pickupCountdownMax = 15

@@ -9,24 +9,36 @@ public class AnimationPool
     
     public static void add(Animation animation)
     {
-        loadedAnimations.add(animation);
+        synchronized (loadedAnimations)
+        {
+            loadedAnimations.add(animation);
+        }
     }
     
     public static void remove(Animation animation)
     {
-        loadedAnimations.remove(animation);
+        synchronized (loadedAnimations)
+        {
+            loadedAnimations.remove(animation);
+        }
     }
     
     public static void updateAll(double timeDelta)
     {
-        for (Animation animation : loadedAnimations)
-            animation.update((float) timeDelta);
+        synchronized (loadedAnimations)
+        {
+            for (Animation animation : loadedAnimations)
+                animation.update((float) timeDelta);
+        }
     }
     
     public static void clear()
     {
-        for (Animation animation : loadedAnimations)
-            animation.delete();
-        loadedAnimations.clear();
+        synchronized (loadedAnimations)
+        {
+            for (Animation animation : loadedAnimations)
+                animation.delete();
+            loadedAnimations.clear();
+        }
     }
 }

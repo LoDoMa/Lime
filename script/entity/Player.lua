@@ -1,6 +1,7 @@
 
 -- Constants
-local radius = 0.5
+local radiusw = 0.25
+local radiush = 0.5
 
 -- Property names
 local property_canCollectPickups = "canCollectPickups"
@@ -24,7 +25,7 @@ local wallSliding = false
 local isMoving = false
 local movingDirection = 1
 local movingTime = 0
-local jumpRaise = false
+local jumpRise = false
 local allowWallJump = false
 
 local entityID
@@ -74,7 +75,7 @@ end
 local function createSensor(offx, offy)
     local sensorID = lime.newShape("circle")
     lime.selectShape(sensorID)
-    lime.setShapeOffset(offx * radius, offy * radius)
+    lime.setShapeOffset(offx * radiusw, offy * radiush)
     lime.setShapeSolid(false)
     lime.setShapeDensity(0.0)
     lime.setShapeFriction(0.0)
@@ -96,20 +97,21 @@ local function createBody()
     -- body
     mainShape = lime.newShape("triangle-group")
     lime.selectShape(mainShape)
-    lime.setShapeDensity(1.2)
+    lime.setShapeDensity(2.2)
     lime.setShapeFriction(0.0)
     lime.setShapeRestitution(0.0)
 
-    local lss = radius * 0.3
-    lime.addShapeTriangle(-radius + lss, -radius, -radius + lss, radius, radius - lss, -radius)
-    lime.addShapeTriangle(radius - lss, radius, -radius + lss, radius, radius - lss, -radius)
-    lime.addShapeTriangle(-radius, -radius + lss, -radius, radius - lss, radius, -radius + lss)
-    lime.addShapeTriangle(radius, radius - lss, -radius, radius - lss, radius, -radius + lss)
-    lime.addShapeTriangle(-radius, -radius + lss, -radius + lss, -radius, -radius + lss, -radius + lss)
-    lime.addShapeTriangle(radius, -radius + lss, radius - lss, -radius, radius - lss, -radius + lss)
-    lime.addShapeTriangle(-radius, radius - lss, -radius + lss, radius, -radius + lss, radius - lss)
-    lime.addShapeTriangle(radius, radius - lss, radius - lss, radius, radius - lss, radius - lss)
-    lime.setShapeColor(1.0, 1.0, 1.0, 1.0)
+    local lssw = radiusw * 0.3
+    local lssh = radiush * 0.3
+    lime.addShapeTriangle(-radiusw + lssw, -radiush, -radiusw + lssw, radiush, radiusw - lssw, -radiush)
+    lime.addShapeTriangle(radiusw - lssw, radiush, -radiusw + lssw, radiush, radiusw - lssw, -radiush)
+    lime.addShapeTriangle(-radiusw, -radiush + lssh, -radiusw, radiush - lssh, radiusw, -radiush + lssh)
+    lime.addShapeTriangle(radiusw, radiush - lssh, -radiusw, radiush - lssh, radiusw, -radiush + lssh)
+    lime.addShapeTriangle(-radiusw, -radiush + lssh, -radiusw + lssw, -radiush, -radiusw + lssw, -radiush + lssh)
+    lime.addShapeTriangle(radiusw, -radiush + lssh, radiusw - lssw, -radiush, radiusw - lssw, -radiush + lssh)
+    lime.addShapeTriangle(-radiusw, radiush - lssh, -radiusw + lssw, radiush, -radiusw + lssw, radiush - lssh)
+    lime.addShapeTriangle(radiusw, radiush - lssh, radiusw - lssw, radiush, radiusw - lssw, radiush - lssh)
+    lime.setShapeColor(0.5, 0.5, 0.5, 1.0)
     lime.updateShape()
     
     -- sensors
@@ -220,7 +222,7 @@ local function move(timeDelta)
     local newVelocityY = velocityY
 
     wallSliding = false
-    jumpRaise = velocityY > 0
+    jumpRise = velocityY > 0
     if not hasGround and (hasWallLeft or hasWallRight) and velocityY < 0 then
         local wallSlidingVelocityMultiplier = lime.getAttribute(entityID, property_wallSlidingVelocityMultiplier)
         newVelocityY = velocityY - velocityY * timeDelta * wallSlidingVelocityMultiplier
@@ -251,54 +253,54 @@ function Lime_Update(timeDelta)
 
     lime.selectShape(mainShape)
 
-    lime.setShapeColor(1.0, 1.0, 1.0, 1.0)
-    lime.setShapeAnimation(nil)
     if hasGround then
         if not isMoving then
-            lime.setShapeTexture("gamemode/Deathmatch/PlayerStill")
+            lime.setShapeAnimation("gamemode/Deathmatch/PlayerStill.san")
+            lime.setShapeAnimationRoot(0.0, -radiush + 0.15)
+            lime.setShapeAnimationScale(0.4 * -movingDirection, 0.4)
         else
-            lime.setShapeTexture(nil)
-            lime.setShapeColor(0.5, 0.5, 0.5, 1.0)
-            lime.setShapeAnimation("gamemode/Deathmatch/test.san")
-            lime.setShapeAnimationRoot(0.0, -radius + 0.15)
-            lime.setShapeAnimationScale(0.4, 0.4)
+            lime.setShapeAnimation("gamemode/Deathmatch/PlayerWalking.san")
+            lime.setShapeAnimationRoot(0.0, -radiush + 0.15)
+            lime.setShapeAnimationScale(0.4 * -movingDirection, 0.4)
         end
-        lime.setShapeTexturePoint(-radius, -radius)
-        lime.setShapeTextureSize(radius * 2 * -movingDirection, radius * 2)
         lime.updateShape()
     elseif wallSliding then
-        lime.setShapeTexture("gamemode/Deathmatch/PlayerWallSlide")
-        lime.setShapeTexturePoint(-radius, -radius)
+        lime.setShapeAnimation("gamemode/Deathmatch/PlayerWallSliding.san")
         if hasWallLeft then
-            lime.setShapeTextureSize(radius * 2, radius * 2)
+            lime.setShapeAnimationRoot(-0.1, -radiush + 0.15)
+            lime.setShapeAnimationScale(0.4, 0.4)
         else
-            lime.setShapeTextureSize(-radius * 2, radius * 2)
+            lime.setShapeAnimationRoot(0.1, -radiush + 0.15)
+            lime.setShapeAnimationScale(-0.4, 0.4)
         end
         lime.updateShape()
     else
         if not isMoving then
-            if jumpRaise then
+            if jumpRise then
                 lime.selectComponent(mainCompo)
                 local velocityX = lime.getLinearVelocity()
-                if velocityX < -0.75 then
-                    lime.setShapeTexture("gamemode/Deathmatch/PlayerWalk" .. 3)
-                    lime.setShapeTextureSize(radius * 2, radius * 2)
-                elseif velocityX > 0.75 then
-                    lime.setShapeTexture("gamemode/Deathmatch/PlayerWalk" .. 3)
-                    lime.setShapeTextureSize(-radius * 2, radius * 2)
+                if velocityX < -0.75 or velocityX > 0.75 then
+                    lime.setShapeAnimation("gamemode/Deathmatch/PlayerFallingLeft.san")
+                    lime.setShapeAnimationRoot(0.0, -radiush + 0.15)
+                    if velocityX < -0.75 then
+                        lime.setShapeAnimationScale(0.4, 0.4)
+                    else
+                        lime.setShapeAnimationScale(-0.4, 0.4)
+                    end
                 else
-                    lime.setShapeTexture("gamemode/Deathmatch/PlayerJumpRaise")
-                    lime.setShapeTextureSize(radius * 2, radius * 2)
+                    lime.setShapeAnimation("gamemode/Deathmatch/PlayerJumpRising.san")
+                    lime.setShapeAnimationRoot(0.0, -radiush + 0.15)
+                    lime.setShapeAnimationScale(0.4, 0.4)
                 end
             else
-                lime.setShapeTexture("gamemode/Deathmatch/PlayerJumpFall")
-                lime.setShapeTextureSize(radius * 2, radius * 2)
+                lime.setShapeAnimation("gamemode/Deathmatch/PlayerFalling.san")
+                lime.setShapeAnimationRoot(0.0, -radiush + 0.15)
+                lime.setShapeAnimationScale(0.4, 0.4)
             end
-            lime.setShapeTexturePoint(-radius, -radius)
         else
-            lime.setShapeTexture("gamemode/Deathmatch/PlayerWalk" .. 3)
-            lime.setShapeTexturePoint(-radius, -radius)
-            lime.setShapeTextureSize(radius * 2 * -movingDirection, radius * 2)
+            lime.setShapeAnimation("gamemode/Deathmatch/PlayerFallingLeft.san")
+            lime.setShapeAnimationRoot(0.0, -radiush + 0.15)
+            lime.setShapeAnimationScale(0.4 * -movingDirection, 0.4)
         end
         lime.updateShape()
     end

@@ -68,7 +68,7 @@ local function updateCamera()
     if ratio > targetRatio then
         height = width / targetRatio
     elseif ratio < targetRatio then
-        width = height * cameraRatio
+        width = height * targetRatio
     end
 
     translationX = centerX - width / 2.0
