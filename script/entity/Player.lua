@@ -1,4 +1,8 @@
 
+local Gun = lime.module("Gun")
+
+local gun = Gun.create()
+
 -- Constants
 local radiusw = 0.25
 local radiush = 0.5
@@ -235,26 +239,30 @@ local function move(timeDelta)
     lime.setLinearVelocity(newVelocityX, newVelocityY)
 end
 
-local function shoot()
-    if lime.getMousePress(lime.MOUSE_BUTTON_LEFT) then
-        lime.selectComponent(mainCompo)
-        local posx, posy = lime.getComponentPosition()
-        local mx, my = lime.getMousePosition()
+local function shoot(timeDelta)
+    Gun.update(gun, timeDelta)
 
-        local bullet = lime.newEntity()
-        lime.setAttribute(bullet, "parent", entityID)
-        lime.setAttribute(bullet, "timeout", 2)
-        lime.setAttribute(bullet, "angle", math.atan2(my - posy, mx - posx))
-        lime.setAttribute(bullet, "posx", posx)
-        lime.setAttribute(bullet, "posy", posy)
-        lime.assignScript(bullet, "Bullet")
+    if lime.getMouseState(lime.MOUSE_BUTTON_LEFT) then
+        if Gun.shoot(gun) then
+            lime.selectComponent(mainCompo)
+            local posx, posy = lime.getComponentPosition()
+            local mx, my = lime.getMousePosition()
+
+            local bullet = lime.newEntity()
+            lime.setAttribute(bullet, "parent", entityID)
+            lime.setAttribute(bullet, "timeout", 2)
+            lime.setAttribute(bullet, "angle", math.atan2(my - posy, mx - posx))
+            lime.setAttribute(bullet, "posx", posx)
+            lime.setAttribute(bullet, "posy", posy)
+            lime.assignScript(bullet, "Bullet")
+        end
     end
 end
 
 function Lime_Update(timeDelta)
     tryJump()
     move(timeDelta)
-    shoot()
+    shoot(timeDelta)
 
     lime.selectComponent(cameraFocusCompo)
     local cfx, cfy = lime.getComponentPosition()
