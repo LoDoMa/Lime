@@ -1,9 +1,9 @@
 
--- Constants
-local radius = 0.35
+local C = lime.module("Deathmatch/C")
 
--- Property names
-local property_canCollectPickups = "canCollectPickups"
+local attribEntityCollector = C.attribEntityCollector
+
+local cPickupWidth = C.cPickupWidth
 
 local entityID
 local compoID
@@ -16,7 +16,7 @@ local function onContact(contact)
     lime.selectComponent(contact.bodyB)
     local owner = lime.getOwner()
     if owner then
-        if lime.getAttribute(owner, property_canCollectPickups) == true then
+        if lime.getAttribute(owner, attribEntityCollector) == true then
             if not applied and applyEffects then
                 applyEffects(owner)
                 applied = true
@@ -35,6 +35,8 @@ local function createBody()
     lime.selectComponent(compoID)
     lime.setLinearDamping(0.6)
     lime.setAngularDamping(0.1)
+    
+    local radius = cPickupWidth / 2.0
     
     -- body
     local shapeID = lime.newShape("triangle-group")

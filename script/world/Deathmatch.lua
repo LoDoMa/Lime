@@ -1,11 +1,20 @@
 
+local C = lime.module("Deathmatch/C")
+
+local attribEntityPosX = C.attribEntityPosX
+local attribEntityPosY = C.attribEntityPosY
+local attribEntityParent = C.attribEntityParent
+
+local cCameraPadding = C.cCameraPadding
+local cCameraScaleX = C.cCameraScaleX
+local cCameraScaleY = C.cCameraScaleY
+
 local Camera = lime.module("common/Camera")
+Camera.setPadding(cCameraPadding)
+Camera.setMinimumScale(cCameraScaleX, cCameraScaleY)
+
 local World = lime.module("Deathmatch/World")
 local Material = lime.module("Deathmatch/Material")
-
--- Constants
-Camera.setPadding(4)
-Camera.setMinimumScale(32, 18)
 
 -- Timers/countdowns
 local pickupCountdownMax = 15
@@ -21,7 +30,9 @@ end
 
 local function createPlayer(userID)
     local playerID = lime.newEntity()
-    lime.setAttribute(playerID, "owner", userID)
+    lime.setAttribute(playerID, attribEntityPosX, 1.5)
+    lime.setAttribute(playerID, attribEntityPosY, 1.5)
+    lime.setAttribute(playerID, attribEntityParent, userID)
     lime.assignScript(playerID, "Deathmatch/Lykke")
     return playerID
 end

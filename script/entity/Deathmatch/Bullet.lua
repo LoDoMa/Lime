@@ -1,6 +1,4 @@
 
-local property_canGetShot = "canGetShot"
-
 local entityID
 local compoID
 
@@ -20,7 +18,7 @@ local function contactListener(contact)
         if owner == parentID then return end
         removeNextUpdate = true
 
-        if lime.getAttribute(owner, property_canGetShot) == true then
+        if lime.getAttribute(owner, C.attribEntityDamageable) == true then
             print("POOF")
         end
     else
