@@ -8,7 +8,6 @@ import net.lodoma.lime.client.packet.CPInputState;
 import net.lodoma.lime.input.Input;
 import net.lodoma.lime.snapshot.Snapshot;
 import net.lodoma.lime.snapshot.SnapshotData;
-import net.lodoma.lime.texture.animation.AnimationPool;
 import net.lodoma.lime.util.HashHelper;
 import net.lodoma.lime.util.Timer;
 import net.lodoma.lime.world.World;
@@ -64,7 +63,6 @@ public class CLGame extends ClientLogic
         updateTime -= timeDelta;
         if (updateTime <= 0.0)
         {
-            AnimationPool.updateAll(UPDATE_MAXTIME);
             client.world.updateParticles(UPDATE_MAXTIME);
             client.world.physicsWorld.update((float) UPDATE_MAXTIME);
         }

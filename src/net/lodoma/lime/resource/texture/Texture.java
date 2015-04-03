@@ -1,4 +1,4 @@
-package net.lodoma.lime.texture;
+package net.lodoma.lime.resource.texture;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;

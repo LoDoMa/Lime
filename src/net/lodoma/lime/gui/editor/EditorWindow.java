@@ -3,7 +3,7 @@ package net.lodoma.lime.gui.editor;
 import net.lodoma.lime.gui.UICallback;
 import net.lodoma.lime.gui.UIObject;
 import net.lodoma.lime.gui.clean.CleanText;
-import net.lodoma.lime.texture.Texture;
+import net.lodoma.lime.resource.texture.Texture;
 import net.lodoma.lime.util.Color;
 import net.lodoma.lime.util.TrueTypeFont;
 import net.lodoma.lime.util.Vector2;

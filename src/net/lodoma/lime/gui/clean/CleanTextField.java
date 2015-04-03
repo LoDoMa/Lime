@@ -1,7 +1,7 @@
 package net.lodoma.lime.gui.clean;
 
 import net.lodoma.lime.gui.UITextField;
-import net.lodoma.lime.texture.Texture;
+import net.lodoma.lime.resource.texture.Texture;
 import net.lodoma.lime.util.Vector2;
 import static org.lwjgl.opengl.GL11.*;
 

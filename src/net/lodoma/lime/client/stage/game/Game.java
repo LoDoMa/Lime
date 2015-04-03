@@ -45,7 +45,7 @@ public class Game extends Stage
     {
         super.onInactive();
         
-        if(client.isRunning())
+        if (client.isRunning())
         {
             client.worldRenderer.clean();
             client.close();

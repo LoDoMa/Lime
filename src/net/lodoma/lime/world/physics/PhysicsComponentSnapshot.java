@@ -27,6 +27,12 @@ public class PhysicsComponentSnapshot implements Identifiable<Integer>
         this.identifier = identifier;
     }
     
+    public void destroy()
+    {
+        for (PhysicsShapeSnapshot shape : shapes)
+            shape.destroy();
+    }
+    
     public void debugRender()
     {
         glPushMatrix();

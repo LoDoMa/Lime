@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.awt.GraphicsEnvironment;
 
-import net.lodoma.lime.texture.Texture;
+import net.lodoma.lime.resource.texture.Texture;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;

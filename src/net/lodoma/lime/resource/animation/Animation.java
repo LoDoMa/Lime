@@ -1,4 +1,4 @@
-package net.lodoma.lime.texture.animation;
+package net.lodoma.lime.resource.animation;
 
 public interface Animation
 {

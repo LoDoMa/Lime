@@ -84,6 +84,9 @@ public class World
         componentPool.foreach((PhysicsComponent component) -> component.destroy());
         componentPool.clear();
         
+        compoSnapshotPool.foreach((PhysicsComponentSnapshot compoSnapshot) -> compoSnapshot.destroy());
+        compoSnapshotPool.clear();
+        
         jointPool.foreach((PhysicsJoint joint) -> joint.destroy());
         jointPool.clear();
         

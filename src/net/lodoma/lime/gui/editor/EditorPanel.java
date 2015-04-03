@@ -2,7 +2,7 @@ package net.lodoma.lime.gui.editor;
 
 import net.lodoma.lime.gui.UIObject;
 import net.lodoma.lime.gui.editor.layout.EditorPanelHorizontalLayout;
-import net.lodoma.lime.texture.Texture;
+import net.lodoma.lime.resource.texture.Texture;
 import net.lodoma.lime.util.Vector2;
 import static org.lwjgl.opengl.GL11.*;
 

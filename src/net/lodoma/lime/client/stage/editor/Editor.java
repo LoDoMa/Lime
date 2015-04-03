@@ -5,9 +5,10 @@ import net.lodoma.lime.gui.editor.EditorIcon;
 import net.lodoma.lime.gui.editor.EditorPanel;
 import net.lodoma.lime.gui.editor.EditorWindow;
 import net.lodoma.lime.input.Input;
+import net.lodoma.lime.resource.ResourcePool;
+import net.lodoma.lime.resource.ResourceType;
 import net.lodoma.lime.shader.Program;
 import net.lodoma.lime.shader.UniformType;
-import net.lodoma.lime.texture.TexturePool;
 import net.lodoma.lime.util.Vector2;
 
 public class Editor extends Stage
@@ -27,10 +28,10 @@ public class Editor extends Stage
     {
         super.onActive();
 
-        TexturePool.add("editor/window_close");
-        TexturePool.add("editor/window_shade");
-        TexturePool.add("editor/load");
-        TexturePool.add("editor/save");
+        ResourcePool.referenceUp("editor/load", ResourceType.TEXTURE);
+        ResourcePool.referenceUp("editor/save", ResourceType.TEXTURE);
+        ResourcePool.referenceUp("editor/window_close", ResourceType.TEXTURE);
+        ResourcePool.referenceUp("editor/window_shade", ResourceType.TEXTURE);
     }
     
     @Override
@@ -38,7 +39,10 @@ public class Editor extends Stage
     {
         super.onInactive();
         
-        TexturePool.clear();
+        ResourcePool.referenceDown("editor/load", ResourceType.TEXTURE);
+        ResourcePool.referenceDown("editor/save", ResourceType.TEXTURE);
+        ResourcePool.referenceDown("editor/window_close", ResourceType.TEXTURE);
+        ResourcePool.referenceDown("editor/window_shade", ResourceType.TEXTURE);
     }
     
     @Override

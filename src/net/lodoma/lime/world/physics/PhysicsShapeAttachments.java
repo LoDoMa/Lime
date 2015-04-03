@@ -4,10 +4,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import net.lodoma.lime.Lime;
-import net.lodoma.lime.texture.animation.Animation;
-import net.lodoma.lime.texture.animation.AnimationLoader;
-import net.lodoma.lime.texture.animation.AnimationPool;
+import net.lodoma.lime.resource.ResourcePool;
+import net.lodoma.lime.resource.ResourceType;
 import net.lodoma.lime.util.Color;
 import net.lodoma.lime.util.Vector2;
 
@@ -17,7 +15,6 @@ public class PhysicsShapeAttachments
     public String name;
     
     public final Color color = new Color();
-    public Animation animation;
     public String animationName;
     public final Vector2 animationRoot = new Vector2(0.0f);
     public final Vector2 animationScale = new Vector2(1.0f);
@@ -86,34 +83,25 @@ public class PhysicsShapeAttachments
             animationName = in.readUTF();
         if (!compareStringsWithNull(oldAnimationName, animationName))
         {
-            if (animation != null)
-            {
-                AnimationPool.remove(animation);
-                animation.delete();
-            }
-            
-            try
-            {
-                animation = AnimationLoader.load(animationName);
-                animation.start();
-            }
-            catch(IOException e)
-            {
-                Lime.LOGGER.C("Failed to load animation " + animationName);
-                Lime.LOGGER.log(e);
-                Lime.forceExit(e);
-            }
-            
-            AnimationPool.add(animation);
+            if (oldAnimationName != null)
+                ResourcePool.referenceDown(oldAnimationName, ResourceType.ANIMATION);
+            ResourcePool.referenceUp(animationName, ResourceType.ANIMATION);
         }
         
         animationRoot.x = in.readFloat();
         animationRoot.y = in.readFloat();
         animationScale.x = in.readFloat();
         animationScale.y = in.readFloat();
-        
+
+        String oldTextureName = textureName;
         if (in.readByte() == 1)
             textureName = in.readUTF();
+        if (!compareStringsWithNull(oldTextureName, textureName))
+        {
+            if (oldTextureName != null)
+                ResourcePool.referenceDown(oldTextureName, ResourceType.TEXTURE);
+            ResourcePool.referenceUp(textureName, ResourceType.TEXTURE);
+        }
 
         texturePoint.x = in.readFloat();
         texturePoint.y = in.readFloat();

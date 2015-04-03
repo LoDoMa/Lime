@@ -22,8 +22,8 @@ local constants = {
     attribEntityDamageable = "EntityDamageable", -- if the value evaluates to true, an entity is considered damageable
     attribEntityHealth = "EntityHealth", -- damageable entity's health
 
-    attribLykkeFocusX = "LykkeFocusX",
-    attribLykkeFocusY = "LykkeFocusY",
+    attribLykkeFocusX = "LykkeFocusX", -- attribute used to provide position X of a camera focus point
+    attribLykkeFocusY = "LykkeFocusY", -- attribute used to provide position Y of a camera focus point
     attribLykkeAbilityWallSlide = "LykkeAbilityWallSlide", -- if the value evaluates to true, Lykke can wall slide
     attribLykkeAbilityWallJump = "LykkeAbilityWallJump", -- if the value evaluates to true, Lykke can wall jump
 
@@ -42,8 +42,8 @@ local constants = {
     cWorldAmbientLightB = 0.1,
 
     cCameraPadding = 4,
-    cCameraScaleX = 32,
-    cCameraScaleY = 18,
+    cCameraScaleX = 16,
+    cCameraScaleY = 9,
 
     cLykkeWidth = 0.25,
     cLykkeHeight = 0.5,

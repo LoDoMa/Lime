@@ -1,10 +1,10 @@
 package net.lodoma.lime.world.gfx;
 
 import net.lodoma.lime.client.window.Window;
+import net.lodoma.lime.resource.texture.Texture;
 import net.lodoma.lime.shader.Program;
 import net.lodoma.lime.shader.UniformType;
 import net.lodoma.lime.shader.light.Light;
-import net.lodoma.lime.texture.Texture;
 import net.lodoma.lime.world.World;
 import net.lodoma.lime.world.physics.PhysicsComponentSnapshot;
 import net.lodoma.lime.world.physics.PhysicsParticle;

@@ -23,7 +23,12 @@ public class PhysicsComponentModifications
             compo.angle = data.angle;
         
         if (shapeModified)
+        {
+            if (compo.shapes != null)
+                for (PhysicsShapeSnapshot shape : compo.shapes)
+                    shape.destroy();
             compo.shapes = data.shapes;
+        }
         
         if (physicsDataModified)
             compo.type = data.type;

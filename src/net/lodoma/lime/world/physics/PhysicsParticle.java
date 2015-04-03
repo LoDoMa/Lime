@@ -4,7 +4,7 @@ import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.Fixture;
 import org.lwjgl.opengl.GL11;
 
-import net.lodoma.lime.texture.Texture;
+import net.lodoma.lime.resource.texture.Texture;
 import net.lodoma.lime.util.Vector2;
 
 public class PhysicsParticle

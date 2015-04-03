@@ -10,7 +10,7 @@ import static org.lwjgl.opengl.GL11.glVertex2f;
 import net.lodoma.lime.gui.UICallback;
 import net.lodoma.lime.gui.UIObject;
 import net.lodoma.lime.input.Input;
-import net.lodoma.lime.texture.Texture;
+import net.lodoma.lime.resource.texture.Texture;
 import net.lodoma.lime.util.Vector2;
 
 class EditorWindowHandle extends UIObject

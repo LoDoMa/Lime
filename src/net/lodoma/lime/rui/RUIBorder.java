@@ -3,7 +3,7 @@ package net.lodoma.lime.rui;
 import org.lwjgl.opengl.GL11;
 
 import net.lodoma.lime.client.window.Window;
-import net.lodoma.lime.texture.Texture;
+import net.lodoma.lime.resource.texture.Texture;
 import net.lodoma.lime.util.Color;
 import net.lodoma.lime.util.Vector2;
 
