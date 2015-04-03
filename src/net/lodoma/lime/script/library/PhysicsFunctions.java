@@ -280,6 +280,14 @@ public class PhysicsFunctions
                 compo.engineBody.setBullet(using);
                 break;
             }
+            case SET_GRAVITY_SCALE:
+            {
+                float gravityScale = args.checknumber(1).tofloat();
+                if (compo == null)
+                    throw new LuaError("manipulating nonexistent body component");
+                compo.engineBody.setGravityScale(gravityScale);
+                break;
+            }
             case GET_OWNER:
             {
                 if (compo == null)
@@ -742,6 +750,7 @@ public class PhysicsFunctions
         APPLY_LINEAR_IMPULSE_TO_CENTER(2, true, "applyLinearImpulseToCenter"),
         GET_USING_CCD(0, true, "getUsingCCD"),
         SET_USING_CCD(1, true, "setUsingCCD"),
+        SET_GRAVITY_SCALE(1, true, "setGravityScale"),
         GET_OWNER(0, true, "getOwner"),
         SET_OWNER(1, true, "setOwner"),
         

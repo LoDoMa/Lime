@@ -4,6 +4,7 @@ local radiusw = 0.25
 local radiush = 0.5
 
 -- Property names
+local property_canGetShot = "canGetShot"
 local property_canCollectPickups = "canCollectPickups"
 local property_maxVelocityX = "maxVelocityX"
 local property_groundAcceleration = "groundAcceleration"
@@ -38,6 +39,7 @@ local compos = {}
 local joints = {}
 
 local function loadDefaultProperties()
+    lime.setAttribute(entityID, property_canGetShot, true)
     lime.setAttribute(entityID, property_canCollectPickups, true)
     lime.setAttribute(entityID, property_maxVelocityX, 12)
     lime.setAttribute(entityID, property_groundAcceleration, 10)
@@ -233,9 +235,26 @@ local function move(timeDelta)
     lime.setLinearVelocity(newVelocityX, newVelocityY)
 end
 
+local function shoot()
+    if lime.getMousePress(lime.MOUSE_BUTTON_LEFT) then
+        lime.selectComponent(mainCompo)
+        local posx, posy = lime.getComponentPosition()
+        local mx, my = lime.getMousePosition()
+
+        local bullet = lime.newEntity()
+        lime.setAttribute(bullet, "parent", entityID)
+        lime.setAttribute(bullet, "timeout", 2)
+        lime.setAttribute(bullet, "angle", math.atan2(my - posy, mx - posx))
+        lime.setAttribute(bullet, "posx", posx)
+        lime.setAttribute(bullet, "posy", posy)
+        lime.assignScript(bullet, "Bullet")
+    end
+end
+
 function Lime_Update(timeDelta)
     tryJump()
     move(timeDelta)
+    shoot()
 
     lime.selectComponent(cameraFocusCompo)
     local cfx, cfy = lime.getComponentPosition()
