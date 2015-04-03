@@ -22,6 +22,8 @@ local constants = {
     attribEntityDamageable = "EntityDamageable", -- if the value evaluates to true, an entity is considered damageable
     attribEntityHealth = "EntityHealth", -- damageable entity's health
 
+    attribLykkeFocusX = "LykkeFocusX",
+    attribLykkeFocusY = "LykkeFocusY",
     attribLykkeAbilityWallSlide = "LykkeAbilityWallSlide", -- if the value evaluates to true, Lykke can wall slide
     attribLykkeAbilityWallJump = "LykkeAbilityWallJump", -- if the value evaluates to true, Lykke can wall jump
 
@@ -32,6 +34,12 @@ local constants = {
     attribBulletOnWaste = "BulletOnWaste", -- a callback for a bullet hitting a non-damageable target
 
     -- Constants
+
+    cWorldGravityX = 0.0,
+    cWorldGravityY = -18.0,
+    cWorldAmbientLightR = 0.01,
+    cWorldAmbientLightG = 0.0,
+    cWorldAmbientLightB = 0.1,
 
     cCameraPadding = 4,
     cCameraScaleX = 32,

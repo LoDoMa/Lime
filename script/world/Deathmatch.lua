@@ -4,7 +4,14 @@ local C = lime.module("Deathmatch/C")
 local attribEntityPosX = C.attribEntityPosX
 local attribEntityPosY = C.attribEntityPosY
 local attribEntityParent = C.attribEntityParent
+local attribLykkeFocusX = C.attribLykkeFocusX
+local attribLykkeFocusY = C.attribLykkeFocusY
 
+local cWorldGravityX = C.cWorldGravityX
+local cWorldGravityY = C.cWorldGravityY
+local cWorldAmbientLightR = C.cWorldAmbientLightR
+local cWorldAmbientLightG = C.cWorldAmbientLightG
+local cWorldAmbientLightB = C.cWorldAmbientLightB
 local cCameraPadding = C.cCameraPadding
 local cCameraScaleX = C.cCameraScaleX
 local cCameraScaleY = C.cCameraScaleY
@@ -24,8 +31,8 @@ local connectedUsers = {}
 local playerIDs = {}
 
 function Lime_WorldInit()
-    lime.setAmbientLight(0.01, 0.0, 0.1)
-    lime.setWorldGravity(0.0, -18.0)
+    lime.setAmbientLight(cWorldAmbientLightR, cWorldAmbientLightG, cWorldAmbientLightB)
+    lime.setWorldGravity(cWorldGravityX, cWorldGravityY)
 end
 
 local function createPlayer(userID)
@@ -131,8 +138,8 @@ end
 
 function Lime_PostUpdate()
     for user, playerID in pairs(connectedUsers) do
-        local focusX = lime.getAttribute(playerID, "focusX")
-        local focusY = lime.getAttribute(playerID, "focusY")
+        local focusX = lime.getAttribute(playerID, attribLykkeFocusX)
+        local focusY = lime.getAttribute(playerID, attribLykkeFocusY)
         Camera.addFocusPoint(focusX, focusY)
     end
 

@@ -3,12 +3,18 @@ local C = lime.module("Deathmatch/C")
 
 local attribEntityPosX = C.attribEntityPosX
 local attribEntityPosY = C.attribEntityPosY
+local attribEntityAngle = C.attribEntityAngle
 local attribEntityParent = C.attribEntityParent
 local attribEntityCollector = C.attribEntityCollector
 local attribEntityDamageable = C.attribEntityDamageable
 local attribEntityHealth = C.attribEntityHealth
-local attribLykkeAbilityWallJump = C.attribLykkeAbilityWallJump
+local attribLykkeFocusX = C.attribLykkeFocusX
+local attribLykkeFocusY = C.attribLykkeFocusY
 local attribLykkeAbilityWallSlide = C.attribLykkeAbilityWallSlide
+local attribLykkeAbilityWallJump = C.attribLykkeAbilityWallJump
+local attribBulletSpeed = C.attribBulletSpeed
+local attribBulletTimeout = C.attribBulletTimeout
+local attribBulletRadius = C.attribBulletRadius
 
 local cLykkeWidth = C.cLykkeWidth
 local cLykkeHeight = C.cLykkeHeight
@@ -227,7 +233,9 @@ local function move(timeDelta)
 
     wallSliding = false
     jumpRise = velocityY > 0
-    if not hasGround and (hasWallLeft or hasWallRight) and velocityY < 0 then
+
+    local wallSlide = lime.getAttribute(entityID, attribLykkeAbilityWallSlide) > 0
+    if wallSlide and not hasGround and (hasWallLeft or hasWallRight) and velocityY < 0 then
         newVelocityY = velocityY - velocityY * timeDelta * cLykkeWallSlideVelYM
 
         wallSliding = true
@@ -246,11 +254,13 @@ local function shoot(timeDelta)
             local mx, my = lime.getMousePosition()
 
             local bullet = lime.newEntity()
-            lime.setAttribute(bullet, "parent", entityID)
-            lime.setAttribute(bullet, "timeout", 2)
-            lime.setAttribute(bullet, "angle", math.atan2(my - posy, mx - posx))
-            lime.setAttribute(bullet, "posx", posx)
-            lime.setAttribute(bullet, "posy", posy)
+            lime.setAttribute(bullet, attribEntityParent, entityID)
+            lime.setAttribute(bullet, attribEntityPosX, posx)
+            lime.setAttribute(bullet, attribEntityPosY, posy)
+            lime.setAttribute(bullet, attribEntityAngle, math.atan2(my - posy, mx - posx))
+            lime.setAttribute(bullet, attribBulletSpeed, 10)
+            lime.setAttribute(bullet, attribBulletTimeout, 2)
+            lime.setAttribute(bullet, attribBulletRadius, 0.05)
             lime.assignScript(bullet, "Deathmatch/Bullet")
         end
     end
@@ -272,8 +282,8 @@ function Lime_Update(timeDelta)
         cfx, cfy = lime.getComponentPosition()
     end
 
-    lime.setAttribute(entityID, "focusX", cfx)
-    lime.setAttribute(entityID, "focusY", cfy)
+    lime.setAttribute(entityID, attribLykkeFocusX, cfx)
+    lime.setAttribute(entityID, attribLykkeFocusY, cfy)
 
     lime.selectShape(mainShape)
 
