@@ -1,5 +1,5 @@
 
-local Material = lime.module("Material")
+local Material = lime.module("Deathmatch/Material")
 
 local pickupLocationsX = {}
 local pickupLocationsY = {}

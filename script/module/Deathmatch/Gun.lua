@@ -1,7 +1,9 @@
 
 --[[
 
-Fields in  gun table:
+Common module for gun mechanics.
+
+Fields in gun table:
     [number] maxBulletCount - the maximum amount of bullets that can be available
     [number] maxReloadTime - total reloading duration
     [number] maxNextTime - minimum time between shots
@@ -22,7 +24,7 @@ local function create()
         allowShooting = false,
         maxBulletCount = 10,
         maxReloadTime = 1,
-        maxNextTime = 0.2,
+        maxNextTime = 0.1,
         bulletCount = 10,
         reloadTime = 1,
         reloadAmount = 5,
@@ -55,7 +57,7 @@ local function update(gun, timeDelta)
     end
 end
 
--- Returns true if the gun can successfully shoot.
+-- Returns true if the gun successfully shot.
 -- If shooting is allowed, it also lowers the bullet count and resets timers.
 local function shoot(gun)
     if gun.allowShooting then

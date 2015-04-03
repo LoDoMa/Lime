@@ -1,5 +1,5 @@
 
-local Gun = lime.module("Gun")
+local Gun = lime.module("Deathmatch/Gun")
 
 local gun = Gun.create()
 
@@ -254,7 +254,7 @@ local function shoot(timeDelta)
             lime.setAttribute(bullet, "angle", math.atan2(my - posy, mx - posx))
             lime.setAttribute(bullet, "posx", posx)
             lime.setAttribute(bullet, "posy", posy)
-            lime.assignScript(bullet, "Bullet")
+            lime.assignScript(bullet, "Deathmatch/Bullet")
         end
     end
 end

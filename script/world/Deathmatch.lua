@@ -1,11 +1,11 @@
 
-local Camera = lime.module("Camera")
-local World = lime.module("World")
-local Material = lime.module("Material")
+local Camera = lime.module("common/Camera")
+local World = lime.module("Deathmatch/World")
+local Material = lime.module("Deathmatch/Material")
 
 -- Constants
 Camera.setPadding(4)
-Camera.setMinimumScale(8, 4.5)
+Camera.setMinimumScale(32, 18)
 
 -- Timers/countdowns
 local pickupCountdownMax = 15
@@ -22,7 +22,7 @@ end
 local function createPlayer(userID)
     local playerID = lime.newEntity()
     lime.setAttribute(playerID, "owner", userID)
-    lime.assignScript(playerID, "Player")
+    lime.assignScript(playerID, "Deathmatch/Lykke")
     return playerID
 end
 
@@ -101,7 +101,7 @@ local function spawnPickup()
     lime.setAttribute(pickupID, "applyEffects", function(playerID)
         print("Picked up by player [ID=" .. playerID .. "]")
     end)
-    lime.assignScript(pickupID, "Pickup")
+    lime.assignScript(pickupID, "Deathmatch/Pickup")
 end
 
 local function updateTimers(timeDelta)
