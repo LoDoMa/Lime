@@ -25,7 +25,9 @@ public class AnimationLoader
         
         try (Scanner scanner = new Scanner(new FileInputStream(animationFile)))
         {
-            animation.totalDuration = scanner.nextFloat();
+            // Apparently, Scanner#nextFloat() works different between OracleJDK and OpenJDK
+            // Parsing the float manually fixes that.
+            animation.totalDuration = Float.parseFloat(scanner.next());
             
             Map<String, Bone> bones = new HashMap<String, Bone>();
             
@@ -44,9 +46,9 @@ public class AnimationLoader
                     bones.get(parentName).children.add(newBone);
                 }
                 bones.put(objectName, newBone);
-
-                newBone.length = scanner.nextFloat();
-                newBone.width = scanner.nextFloat();
+                
+                newBone.length = Float.parseFloat(scanner.next());
+                newBone.width = Float.parseFloat(scanner.next());
                 
                 int frameCount = scanner.nextInt();
                 newBone.keyFrames = new float[frameCount];
@@ -54,8 +56,8 @@ public class AnimationLoader
                 
                 for (int i = 0; i < frameCount; i++)
                 {
-                    newBone.keyFrames[i] = scanner.nextFloat();
-                    newBone.frameDurations[i] = scanner.nextFloat();
+                    newBone.keyFrames[i] = Float.parseFloat(scanner.next());
+                    newBone.frameDurations[i] = Float.parseFloat(scanner.next());
                 }
             }
         }
