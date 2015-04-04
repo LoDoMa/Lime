@@ -101,7 +101,10 @@ public class WorldRenderer
         
         glBlendFunc(GL_SRC_ALPHA, GL_ONE);
         
-        world.lightPool.foreach((Light light) -> light.renderBrightness(brightnessMap, camera));
+        world.lightPool.foreach((Light light) -> {
+            if (light.inView(camera))
+                light.renderBrightness(brightnessMap, camera);
+        });
         
         brightnessMap.unbind();
     }
@@ -126,7 +129,10 @@ public class WorldRenderer
         
         glBlendFunc(GL_SRC_ALPHA, GL_ONE);
         
-        world.lightPool.foreach((Light light) -> light.renderDSL(this, lightMap, camera));
+        world.lightPool.foreach((Light light) -> {
+            if (light.inView(camera))
+                light.renderDSL(this, lightMap, camera);
+        });
         
         lightMap.unbind();
     }

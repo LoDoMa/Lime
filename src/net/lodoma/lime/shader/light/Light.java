@@ -47,6 +47,15 @@ public class Light implements Identifiable<Integer>
             FBO.destroyFBO(shadowMap);
     }
     
+    public boolean inView(Camera camera)
+    {
+        if (camera.translation.x > (data.position.x + data.radius)) return false;
+        if (camera.translation.y > (data.position.y + data.radius)) return false;
+        if ((camera.translation.x + camera.scale.x) < (data.position.x - data.radius)) return false;
+        if ((camera.translation.y + camera.scale.y) < (data.position.y - data.radius)) return false;
+        return true;
+    }
+    
     public void renderBrightness(FBO brightnessMap, Camera camera)
     {
         brightnessMap.bind();
