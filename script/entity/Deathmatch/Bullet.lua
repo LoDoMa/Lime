@@ -28,7 +28,7 @@ local removeNextUpdate = false
 
 local function contactListener(contact)
     contact.setEnabled(false)
-    
+
     if removeNextUpdate then return end
 
     lime.selectComponent(contact.bodyB)
@@ -69,7 +69,11 @@ local function createBody()
     lime.setShapeFriction(0.0)
     lime.setShapeRestitution(0.0)
     lime.setShapeRadius(radius)
-    lime.setShapeColor(0.5, 0.5, 0.5, 1.0)
+    lime.setShapeColor(1.0, 1.0, 1.0, 1.0)
+    lime.setShapeAnimation("gamemode/Deathmatch/Bullet")
+    lime.setShapeAnimationSelection("def")
+    lime.setShapeAnimationRoot(0.0, 0.0)
+    lime.setShapeAnimationScale(radius * 2, radius * 2)
     lime.updateShape()
 
     lime.addContactListener(contactListener, nil, nil, nil, compoID, nil)

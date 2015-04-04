@@ -62,7 +62,7 @@ end
 
 local function onDamaged()
     local health = lime.getAttribute(entityID, attribEntityHealth)
-    
+
     if health < 0 then
         reset()
     end
@@ -142,7 +142,7 @@ local function createBody()
     lime.addShapeTriangle(cLykkeWidth, -cLykkeHeight + lssh, cLykkeWidth - lssw, -cLykkeHeight, cLykkeWidth - lssw, -cLykkeHeight + lssh)
     lime.addShapeTriangle(-cLykkeWidth, cLykkeHeight - lssh, -cLykkeWidth + lssw, cLykkeHeight, -cLykkeWidth + lssw, cLykkeHeight - lssh)
     lime.addShapeTriangle(cLykkeWidth, cLykkeHeight - lssh, cLykkeWidth - lssw, cLykkeHeight, cLykkeWidth - lssw, cLykkeHeight - lssh)
-    lime.setShapeColor(0.5, 0.5, 0.5, 1.0)
+    lime.setShapeColor(1.0, 1.0, 1.0, 1.0)
     lime.setShapeAnimation("gamemode/Deathmatch/Player")
     lime.setShapeAnimationSelection("still")
     lime.updateShape()
@@ -279,7 +279,7 @@ local function shoot(timeDelta)
             lime.setAttribute(bullet, attribEntityAngle, math.atan2(my - posy, mx - posx))
             lime.setAttribute(bullet, attribBulletSpeed, 10)
             lime.setAttribute(bullet, attribBulletTimeout, 2)
-            lime.setAttribute(bullet, attribBulletRadius, 0.05)
+            lime.setAttribute(bullet, attribBulletRadius, 0.25)
             lime.setAttribute(bullet, attribBulletOnHit, function(body)
                 lime.selectComponent(body)
                 local owner = lime.getOwner()
