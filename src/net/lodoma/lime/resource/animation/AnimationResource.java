@@ -12,7 +12,8 @@ public class AnimationResource extends Resource
     @Override
     public void update(double timeDelta)
     {
-        animation.update((float) timeDelta);
+        if (animation != null)
+            animation.update((float) timeDelta);
     }
     
     @Override

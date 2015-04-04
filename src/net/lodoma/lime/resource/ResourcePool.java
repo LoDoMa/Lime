@@ -30,11 +30,14 @@ public class ResourcePool
     
     public static void update(double timeDelta)
     {
-        resources.forEach((ResourceType type, Map<String, Resource> map) -> {
-            map.forEach((String name, Resource resource) -> {
-                resource.update(timeDelta);
+        synchronized (resources)
+        {
+            resources.forEach((ResourceType type, Map<String, Resource> map) -> {
+                map.forEach((String name, Resource resource) -> {
+                    resource.update(timeDelta);
+                });
             });
-        });
+        }
     }
     
     public static void referenceUp(String name, ResourceType type)
@@ -83,9 +86,14 @@ public class ResourcePool
     {
         synchronized (resources)
         {
-            for (Resource resource : createList)
-                resource.create();
-            createList.clear();
+            while (createList.size() > 0)
+            {
+                List<Resource> ncl = new ArrayList<Resource>(createList);
+                createList.clear();
+                
+                for (Resource resource : ncl)
+                    resource.create();
+            }
         }
     }
     
@@ -93,20 +101,28 @@ public class ResourcePool
     {
         synchronized (resources)
         {
-            for (Resource resource : destroyList)
-                resource.destroy();
-            destroyList.clear();
+            while (destroyList.size() > 0)
+            {
+                List<Resource> ndl = new ArrayList<Resource>(destroyList);
+                destroyList.clear();
+                
+                for (Resource resource : ndl)
+                    resource.destroy();
+            }
         }
     }
     
     public static void checkClean()
     {
-        resources.forEach((ResourceType type, Map<String, Resource> map) -> {
-            map.forEach((String name, Resource resource) -> {
-                resource.destroy();
-                Lime.LOGGER.W("Deleted resource " + name + " during a check clean.");
+        synchronized (resources)
+        {
+            resources.forEach((ResourceType type, Map<String, Resource> map) -> {
+                map.forEach((String name, Resource resource) -> {
+                    resource.destroy();
+                    Lime.LOGGER.W("Deleted resource " + name + " during a check clean.");
+                });
+                map.clear();
             });
-            map.clear();
-        });
+        }
     }
 }

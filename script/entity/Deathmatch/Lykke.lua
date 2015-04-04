@@ -290,21 +290,21 @@ function Lime_Update(timeDelta)
     if hasGround then
         if not isMoving then
             lime.setShapeAnimation("gamemode/Deathmatch/PlayerStill.lua")
-            lime.setShapeAnimationRoot(0.0, -cLykkeHeight + 0.15)
+            lime.setShapeAnimationRoot(0.0, -cLykkeHeight + 0.1)
             lime.setShapeAnimationScale(0.4 * -movingDirection, 0.4)
         else
             lime.setShapeAnimation("gamemode/Deathmatch/PlayerWalking.lua")
-            lime.setShapeAnimationRoot(0.0, -cLykkeHeight + 0.15)
+            lime.setShapeAnimationRoot(0.0, -cLykkeHeight + 0.1)
             lime.setShapeAnimationScale(0.4 * -movingDirection, 0.4)
         end
         lime.updateShape()
     elseif wallSliding then
         lime.setShapeAnimation("gamemode/Deathmatch/PlayerWallSliding.lua")
         if hasWallLeft then
-            lime.setShapeAnimationRoot(-0.1, -cLykkeHeight + 0.15)
+            lime.setShapeAnimationRoot(-0.1, -cLykkeHeight + 0.1)
             lime.setShapeAnimationScale(0.4, 0.4)
         else
-            lime.setShapeAnimationRoot(0.1, -cLykkeHeight + 0.15)
+            lime.setShapeAnimationRoot(0.1, -cLykkeHeight + 0.1)
             lime.setShapeAnimationScale(-0.4, 0.4)
         end
         lime.updateShape()
@@ -315,25 +315,25 @@ function Lime_Update(timeDelta)
                 local velocityX = lime.getLinearVelocity()
                 if velocityX < -0.75 or velocityX > 0.75 then
                     lime.setShapeAnimation("gamemode/Deathmatch/PlayerFallingLeft.lua")
-                    lime.setShapeAnimationRoot(0.0, -cLykkeHeight + 0.15)
+                    lime.setShapeAnimationRoot(0.0, -cLykkeHeight + 0.1)
                     if velocityX < -0.75 then
                         lime.setShapeAnimationScale(0.4, 0.4)
                     else
                         lime.setShapeAnimationScale(-0.4, 0.4)
                     end
                 else
-                    lime.setShapeAnimation("gamemode/Deathmatch/PlayerJumpRising.lua")
-                    lime.setShapeAnimationRoot(0.0, -cLykkeHeight + 0.15)
+                    lime.setShapeAnimation("gamemode/Deathmatch/PlayerFalling.lua")
+                    lime.setShapeAnimationRoot(0.0, -cLykkeHeight + 0.1)
                     lime.setShapeAnimationScale(0.4, 0.4)
                 end
             else
                 lime.setShapeAnimation("gamemode/Deathmatch/PlayerFalling.lua")
-                lime.setShapeAnimationRoot(0.0, -cLykkeHeight + 0.15)
+                lime.setShapeAnimationRoot(0.0, -cLykkeHeight + 0.1)
                 lime.setShapeAnimationScale(0.4, 0.4)
             end
         else
             lime.setShapeAnimation("gamemode/Deathmatch/PlayerFallingLeft.lua")
-            lime.setShapeAnimationRoot(0.0, -cLykkeHeight + 0.15)
+            lime.setShapeAnimationRoot(0.0, -cLykkeHeight + 0.1)
             lime.setShapeAnimationScale(0.4 * -movingDirection, 0.4)
         end
         lime.updateShape()

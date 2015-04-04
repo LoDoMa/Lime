@@ -18,6 +18,7 @@ import org.luaj.vm2.lib.jse.JseMathLib;
 
 import net.lodoma.lime.util.OsHelper;
 import net.lodoma.lime.util.Pair;
+import net.lodoma.lime.util.Vector2;
 
 public class AnimationLoader
 {
@@ -55,8 +56,24 @@ public class AnimationLoader
     private static Bone loadBone(SkeletalAnimation animation, LuaTable boneT)
     {
         Bone bone = new Bone();
-        bone.length = boneT.get("length").checknumber().tofloat();
-        bone.width = boneT.get("width").checknumber().tofloat();
+        bone.offset = new Vector2();
+        LuaTable offsetT = boneT.get("offset").checktable();
+        bone.offset.x = offsetT.get("x").checknumber().tofloat();
+        bone.offset.y = offsetT.get("y").checknumber().tofloat();
+        
+        LuaValue textureV = boneT.get("texture");
+        if (!textureV.isnil())
+        {
+            bone.textureName = textureV.checkstring().tojstring();
+            bone.textureSize = new Vector2();
+            LuaTable textureSizeT = boneT.get("textureSize").checktable();
+            bone.textureSize.x = textureSizeT.get("x").checknumber().tofloat();
+            bone.textureSize.y = textureSizeT.get("y").checknumber().tofloat();
+            bone.textureOffset = new Vector2();
+            LuaTable textureOffsetT = boneT.get("textureOffset").checktable();
+            bone.textureOffset.x = textureOffsetT.get("x").checknumber().tofloat();
+            bone.textureOffset.y = textureOffsetT.get("y").checknumber().tofloat();
+        }
         
         LuaValue childrenV = boneT.get("children");
         if (!childrenV.isnil())
@@ -65,7 +82,17 @@ public class AnimationLoader
             
             Varargs childV = LuaValue.NONE;
             while (!(childV = childrenT.next(childV.arg(1))).isnil(1))
-                bone.children.add(loadBone(animation, childV.checktable(2)));
+                bone.childrenFront.add(loadBone(animation, childV.checktable(2)));
+        }
+        
+        LuaValue childrenBackV = boneT.get("childrenBack");
+        if (!childrenBackV.isnil())
+        {
+            LuaTable childrenBackT = childrenBackV.checktable();
+            
+            Varargs childV = LuaValue.NONE;
+            while (!(childV = childrenBackT.next(childV.arg(1))).isnil(1))
+                bone.childrenBack.add(loadBone(animation, childV.checktable(2)));
         }
         
         LuaValue listV = boneT.get("__LIME_KEYFRAME_LIST__");

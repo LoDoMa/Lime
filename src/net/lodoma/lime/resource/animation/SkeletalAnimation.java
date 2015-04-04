@@ -12,6 +12,7 @@ public class SkeletalAnimation implements Animation
     public void start()
     {
         time = 0.0f;
+        root.create();
     }
 
     @Override
@@ -36,6 +37,6 @@ public class SkeletalAnimation implements Animation
     @Override
     public void delete()
     {
-        
+        root.destroy();
     }
 }
