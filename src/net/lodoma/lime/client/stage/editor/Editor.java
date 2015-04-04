@@ -5,8 +5,7 @@ import net.lodoma.lime.gui.editor.EditorIcon;
 import net.lodoma.lime.gui.editor.EditorPanel;
 import net.lodoma.lime.gui.editor.EditorWindow;
 import net.lodoma.lime.input.Input;
-import net.lodoma.lime.resource.ResourcePool;
-import net.lodoma.lime.resource.ResourceType;
+import net.lodoma.lime.resource.texture.Texture;
 import net.lodoma.lime.shader.Program;
 import net.lodoma.lime.shader.UniformType;
 import net.lodoma.lime.util.Vector2;
@@ -28,10 +27,10 @@ public class Editor extends Stage
     {
         super.onActive();
 
-        ResourcePool.referenceUp("editor/load", ResourceType.TEXTURE);
-        ResourcePool.referenceUp("editor/save", ResourceType.TEXTURE);
-        ResourcePool.referenceUp("editor/window_close", ResourceType.TEXTURE);
-        ResourcePool.referenceUp("editor/window_shade", ResourceType.TEXTURE);
+        Texture.referenceUp("editor/load");
+        Texture.referenceUp("editor/save");
+        Texture.referenceUp("editor/window_close");
+        Texture.referenceUp("editor/window_shade");
     }
     
     @Override
@@ -39,10 +38,10 @@ public class Editor extends Stage
     {
         super.onInactive();
         
-        ResourcePool.referenceDown("editor/load", ResourceType.TEXTURE);
-        ResourcePool.referenceDown("editor/save", ResourceType.TEXTURE);
-        ResourcePool.referenceDown("editor/window_close", ResourceType.TEXTURE);
-        ResourcePool.referenceDown("editor/window_shade", ResourceType.TEXTURE);
+        Texture.referenceDown("editor/load");
+        Texture.referenceDown("editor/save");
+        Texture.referenceDown("editor/window_close");
+        Texture.referenceDown("editor/window_shade");
     }
     
     @Override

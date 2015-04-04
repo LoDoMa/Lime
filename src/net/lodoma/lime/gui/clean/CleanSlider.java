@@ -74,7 +74,7 @@ public class CleanSlider extends UIAbstractButton
 
         Vector2 dimensions = getDimensions();
         
-        Texture.NO_TEXTURE.bind();
+        Texture.NO_TEXTURE.bind(0);
         
         if(transparency != 0.0f)
         {

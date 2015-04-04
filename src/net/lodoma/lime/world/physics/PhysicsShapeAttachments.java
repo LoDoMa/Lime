@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import net.lodoma.lime.resource.ResourcePool;
 import net.lodoma.lime.resource.ResourceType;
+import net.lodoma.lime.resource.texture.Texture;
 import net.lodoma.lime.util.Color;
 import net.lodoma.lime.util.Vector2;
 
@@ -99,8 +100,8 @@ public class PhysicsShapeAttachments
         if (!compareStringsWithNull(oldTextureName, textureName))
         {
             if (oldTextureName != null)
-                ResourcePool.referenceDown(oldTextureName, ResourceType.TEXTURE);
-            ResourcePool.referenceUp(textureName, ResourceType.TEXTURE);
+                Texture.referenceDown(oldTextureName);
+            Texture.referenceUp(textureName);
         }
 
         texturePoint.x = in.readFloat();

@@ -13,6 +13,7 @@ import net.lodoma.lime.client.window.WindowException;
 import net.lodoma.lime.gui.clean.CleanText;
 import net.lodoma.lime.gui.clean.CleanUI;
 import net.lodoma.lime.resource.ResourcePool;
+import net.lodoma.lime.resource.texture.Texture;
 import net.lodoma.lime.shader.Program;
 import net.lodoma.lime.shader.UniformType;
 import net.lodoma.lime.util.FontHelper;
@@ -94,6 +95,7 @@ public class VisualInstance
             
             ResourcePool.create();
             ResourcePool.update(timer.getDelta());
+            Texture.update();
             stageManager.render();
             ResourcePool.destroy();
             
@@ -166,6 +168,9 @@ public class VisualInstance
     {
         while (!stageManager.empty())
             stageManager.pop();
+        
+        Texture.forceDeleteAll();
+        Texture.update();
 
         ResourcePool.checkClean();
         Window.close();

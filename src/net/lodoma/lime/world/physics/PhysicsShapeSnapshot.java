@@ -42,7 +42,7 @@ public class PhysicsShapeSnapshot
     public void destroy()
     {
         if (attachments.textureName != null)
-            ResourcePool.referenceDown(attachments.textureName, ResourceType.TEXTURE);
+            Texture.referenceDown(attachments.textureName);
         if (attachments.animationName != null)
             ResourcePool.referenceDown(attachments.animationName, ResourceType.ANIMATION);
     }
@@ -56,9 +56,9 @@ public class PhysicsShapeSnapshot
             glTranslatef(offset.x, offset.y, 0.0f);
             attachments.color.setGL();
             if (attachments.textureName == null)
-                Texture.NO_TEXTURE.bind();
+                Texture.NO_TEXTURE.bind(0);
             else
-                ((Texture) ResourcePool.get(attachments.textureName, ResourceType.TEXTURE)).bind();
+                Texture.get(attachments.textureName).bind(0);
             
             if (attachments.animationName != null)
             {
@@ -105,9 +105,9 @@ public class PhysicsShapeSnapshot
         {
             attachments.color.setGL();
             if (attachments.textureName == null)
-                Texture.NO_TEXTURE.bind();
+                Texture.NO_TEXTURE.bind(0);
             else
-                ((Texture) ResourcePool.get(attachments.textureName, ResourceType.TEXTURE)).bind();
+                Texture.get(attachments.textureName).bind(0);
 
             if (attachments.animationName != null)
             {

@@ -2,8 +2,6 @@ package net.lodoma.lime.gui.editor;
 
 import net.lodoma.lime.gui.UIAbstractButton;
 import net.lodoma.lime.gui.UICallback;
-import net.lodoma.lime.resource.ResourcePool;
-import net.lodoma.lime.resource.ResourceType;
 import net.lodoma.lime.resource.texture.Texture;
 import net.lodoma.lime.util.Vector2;
 import static org.lwjgl.opengl.GL11.*;
@@ -26,7 +24,7 @@ public class EditorIcon extends UIAbstractButton
     public void render()
     {
         if (texture == null)
-            texture = (Texture) ResourcePool.get(textureName, ResourceType.TEXTURE);
+            texture = Texture.get(textureName);
         
         glPushMatrix();
         

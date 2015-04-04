@@ -80,7 +80,7 @@ class EditorWindowHandle extends UIObject
             
             Vector2 dimensions = getDimensions();
             
-            Texture.NO_TEXTURE.bind();
+            Texture.NO_TEXTURE.bind(0);
             
             glBegin(GL_QUADS);
             {

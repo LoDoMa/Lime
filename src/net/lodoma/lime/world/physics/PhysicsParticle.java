@@ -62,7 +62,7 @@ public class PhysicsParticle
         GL11.glRotatef((float) Math.toDegrees(angle), 0.0f, 0.0f, 1.0f);
         GL11.glScalef(size, size, 1.0f);
 
-        Texture.NO_TEXTURE.bind();
+        Texture.NO_TEXTURE.bind(0);
 
         GL11.glColor3f(0.7f, 0.7f, 0.7f);
         GL11.glBegin(GL11.GL_TRIANGLE_FAN);

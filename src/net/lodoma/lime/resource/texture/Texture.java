@@ -1,11 +1,19 @@
 package net.lodoma.lime.resource.texture;
 
 import java.awt.image.BufferedImage;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
+
+import net.lodoma.lime.Lime;
+import net.lodoma.lime.util.OsHelper;
 
 import org.lwjgl.BufferUtils;
 
@@ -16,16 +24,116 @@ public class Texture
 {
     public static Texture NO_TEXTURE = new Texture(new int[] { 0xFFFFFFFF }, 1, 1, true);
 
+    private static Object lock = new Object();
+    private static List<Texture> createList = new ArrayList<Texture>();
+    private static List<Texture> destroyList = new ArrayList<Texture>();
+    private static Map<String, Texture> loadedTextures = new HashMap<String, Texture>();
+    
+    public static void referenceUp(String name)
+    {
+        synchronized (lock)
+        {
+            Texture texture = loadedTextures.get(name);
+            if (texture == null)
+            {
+                texture = new Texture();
+                texture.name = name;
+                loadedTextures.put(name, texture);
+                createList.add(texture);
+            }
+            texture.refc++;
+        }
+    }
+    
+    public static void referenceDown(String name)
+    {
+        synchronized (lock)
+        {
+            Texture texture = loadedTextures.get(name);
+            if (texture == null)
+                throw new NullPointerException();
+            texture.refc--;
+            if (texture.refc == 0)
+            {
+                loadedTextures.remove(texture.name);
+                destroyList.add(texture);
+            }
+        }
+    }
+    
+    /**
+     * Call this method only in renderer thread!
+     */
+    public static void update()
+    {
+        synchronized (lock)
+        {
+            for (Texture texture : createList)
+                try
+                {
+                    texture.width = -1;
+                    texture.height = -1;
+                    String path = OsHelper.JARPATH + "res/textures/" + texture.name + ".png";
+                    ByteBuffer bytes = texture.loadTexture(new FileInputStream(path), 0, 0);
+                    texture.texture = texture.createTexture(bytes);
+                    Lime.LOGGER.D("Loaded texture " + texture.name);
+                }
+                catch (IOException e)
+                {
+                    Lime.LOGGER.C("Failed to load texture " + texture.name);
+                    Lime.LOGGER.log(e);
+                    Lime.forceExit(e);
+                }
+
+            for (Texture texture : destroyList)
+            {
+                texture.delete();
+                Lime.LOGGER.D("Deleted texture " + texture.name);
+            }
+            
+            createList.clear();
+            destroyList.clear();
+        }
+    }
+    
+    public static void forceDeleteAll()
+    {
+        synchronized (lock)
+        {
+            destroyList.addAll(loadedTextures.values());
+            destroyList.clear();
+        }
+    }
+    
+    public static Texture get(String name)
+    {
+        synchronized (lock)
+        {
+            Texture texture = loadedTextures.get(name);
+            if (texture == null)
+                throw new NullPointerException();
+            return texture;
+        }
+    }
+
+    private String name;
+    private int refc = 0;
+    
     private int width;
     private int height;
     private int texture;
     
-    public Texture(InputStream is) throws IOException
+    private Texture()
+    {
+        
+    }
+    
+    private Texture(InputStream is) throws IOException
     {
         this(is, 0, 0, -1, -1);
     }
     
-    public Texture(InputStream is, int offx, int offy, int width, int height) throws IOException
+    private Texture(InputStream is, int offx, int offy, int width, int height) throws IOException
     {
         this.width = width;
         this.height = height;
@@ -33,17 +141,12 @@ public class Texture
         texture = createTexture(bytes);
     }
     
-    public Texture(int[] pixels, int width, int height, boolean hasAlpha)
+    private Texture(int[] pixels, int width, int height, boolean hasAlpha)
     {
         this.width = width;
         this.height = height;
         ByteBuffer bytes = createByteBuffer(pixels, hasAlpha);
         texture = createTexture(bytes);
-    }
-    
-    public void bind()
-    {
-        bind(0);
     }
     
     public void bind(int slot)

@@ -3,8 +3,6 @@ package net.lodoma.lime.resource.animation;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.lodoma.lime.resource.ResourcePool;
-import net.lodoma.lime.resource.ResourceType;
 import net.lodoma.lime.resource.texture.Texture;
 import net.lodoma.lime.util.Vector2;
 import static org.lwjgl.opengl.GL11.*;
@@ -29,7 +27,7 @@ public class Bone
     public void create()
     {
         if (textureName != null)
-            ResourcePool.referenceUp(textureName, ResourceType.TEXTURE);
+            Texture.referenceUp(textureName);
 
         for (Bone child : childrenBack) child.create();
         for (Bone child : childrenFront) child.create();
@@ -41,9 +39,7 @@ public class Bone
         for (Bone child : childrenFront) child.destroy();
         
         if (textureName != null)
-        {
-            ResourcePool.referenceDown(textureName, ResourceType.TEXTURE);
-        }
+            Texture.referenceDown(textureName);
     }
     
     public void update(float time)
@@ -70,9 +66,8 @@ public class Bone
         
         if (textureName != null)
         {
-            Texture texture = (Texture) ResourcePool.get(textureName, ResourceType.TEXTURE);
-            texture.bind();
-    
+            Texture.get(textureName).bind(0);
+            
             glTranslatef(textureOffset.x, textureOffset.y, 0.0f);
             glBegin(GL_QUADS);
             glTexCoord2f(0.0f, 1.0f); glVertex2f(textureSize.x / -2.0f, textureSize.y / -2.0f);
