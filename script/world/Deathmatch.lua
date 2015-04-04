@@ -123,6 +123,7 @@ local function spawnPickup()
 end
 
 local function updateTimers(timeDelta)
+    --[[
     if pickupCountdown > 0 then
         pickupCountdown = pickupCountdown - timeDelta
         if pickupCountdown < 0 then
@@ -130,6 +131,7 @@ local function updateTimers(timeDelta)
             spawnPickup();
         end
     end
+    ]]
 end
 
 function Lime_Update(timeDelta)

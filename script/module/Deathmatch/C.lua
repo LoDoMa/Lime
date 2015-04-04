@@ -21,6 +21,7 @@ local constants = {
     attribEntityCollector = "EntityCollector", -- if the value evaluates to true, an entity can pick up pickups
     attribEntityDamageable = "EntityDamageable", -- if the value evaluates to true, an entity is considered damageable
     attribEntityHealth = "EntityHealth", -- damageable entity's health
+    attribEntityOnDamaged = "EntityOnDamaged", -- callback function called when an entity is damaged
 
     attribLykkeFocusX = "LykkeFocusX", -- attribute used to provide position X of a camera focus point
     attribLykkeFocusY = "LykkeFocusY", -- attribute used to provide position Y of a camera focus point

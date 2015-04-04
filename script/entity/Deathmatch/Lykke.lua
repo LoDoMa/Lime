@@ -8,6 +8,7 @@ local attribEntityParent = C.attribEntityParent
 local attribEntityCollector = C.attribEntityCollector
 local attribEntityDamageable = C.attribEntityDamageable
 local attribEntityHealth = C.attribEntityHealth
+local attribEntityOnDamaged = C.attribEntityOnDamaged
 local attribLykkeFocusX = C.attribLykkeFocusX
 local attribLykkeFocusY = C.attribLykkeFocusY
 local attribLykkeAbilityWallSlide = C.attribLykkeAbilityWallSlide
@@ -15,6 +16,7 @@ local attribLykkeAbilityWallJump = C.attribLykkeAbilityWallJump
 local attribBulletSpeed = C.attribBulletSpeed
 local attribBulletTimeout = C.attribBulletTimeout
 local attribBulletRadius = C.attribBulletRadius
+local attribBulletOnHit = C.attribBulletOnHit
 
 local cLykkeWidth = C.cLykkeWidth
 local cLykkeHeight = C.cLykkeHeight
@@ -43,6 +45,8 @@ local movingTime = 0
 local jumpRise = false
 local allowWallJump = false
 
+local resetNextUpdate = false
+
 local entityID
 local userOwner
 
@@ -52,10 +56,23 @@ local cameraFocusCompo
 local compos = {}
 local joints = {}
 
+local function reset()
+    resetNextUpdate = true
+end
+
+local function onDamaged()
+    local health = lime.getAttribute(entityID, attribEntityHealth)
+    
+    if health < 0 then
+        reset()
+    end
+end
+
 local function loadDefaultProperties()
     lime.setAttribute(entityID, attribEntityCollector, true)
     lime.setAttribute(entityID, attribEntityDamageable, true)
     lime.setAttribute(entityID, attribEntityHealth, 100)
+    lime.setAttribute(entityID, attribEntityOnDamaged, onDamaged)
 
     lime.setAttribute(entityID, attribLykkeAbilityWallJump, 1)
     lime.setAttribute(entityID, attribLykkeAbilityWallSlide, 1)
@@ -263,6 +280,15 @@ local function shoot(timeDelta)
             lime.setAttribute(bullet, attribBulletSpeed, 10)
             lime.setAttribute(bullet, attribBulletTimeout, 2)
             lime.setAttribute(bullet, attribBulletRadius, 0.05)
+            lime.setAttribute(bullet, attribBulletOnHit, function(body)
+                lime.selectComponent(body)
+                local owner = lime.getOwner()
+                local health = lime.getAttribute(owner, attribEntityHealth)
+                local onDamaged = lime.getAttribute(owner, attribEntityOnDamaged)
+
+                lime.setAttribute(owner, attribEntityHealth, health - 10)
+                onDamaged()
+            end)
             lime.assignScript(bullet, "Deathmatch/Bullet")
         end
     end
@@ -276,12 +302,15 @@ function Lime_Update(timeDelta)
     lime.selectComponent(cameraFocusCompo)
     local cfx, cfy = lime.getComponentPosition()
 
-    if cfy < -10 then
+    if cfy < -10 or resetNextUpdate then
+        lime.setAttribute(entityID, attribEntityHealth, 100)
         lime.selectComponent(mainCompo)
         lime.setComponentPosition(1.5, 1.5)
 
         lime.selectComponent(cameraFocusCompo)
         cfx, cfy = lime.getComponentPosition()
+
+        resetNextUpdate = false
     end
 
     lime.setAttribute(entityID, attribLykkeFocusX, cfx)

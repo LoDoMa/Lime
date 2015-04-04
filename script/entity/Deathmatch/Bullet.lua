@@ -28,6 +28,8 @@ local removeNextUpdate = false
 
 local function contactListener(contact)
     contact.setEnabled(false)
+    
+    if removeNextUpdate then return end
 
     lime.selectComponent(contact.bodyB)
     local owner = lime.getOwner()
