@@ -97,7 +97,7 @@ public class PhysicsShapeAttachments
             if (oldAnimationName != null)
                 Animation.referenceDown(oldAnimationName);
             Animation.referenceUp(animationName);
-            Animation.get(animationName).animation = animationSelection;
+            Animation.get(animationName).setAnimationSelection(animationSelection);
         }
 
         String oldTextureName = textureName;

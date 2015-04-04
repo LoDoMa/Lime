@@ -1,6 +1,7 @@
 package net.lodoma.lime.world.gfx;
 
 import net.lodoma.lime.client.window.Window;
+import net.lodoma.lime.resource.fbo.FBO;
 import net.lodoma.lime.resource.texture.Texture;
 import net.lodoma.lime.shader.Program;
 import net.lodoma.lime.shader.UniformType;
@@ -32,9 +33,12 @@ public class WorldRenderer
     
     public void clean()
     {
-        if (occlusionMap != null) occlusionMap.destroy();
-        if (brightnessMap != null) brightnessMap.destroy();
-        if (lightMap != null) lightMap.destroy();
+        if (occlusionMap != null)
+            FBO.destroyFBO(occlusionMap);
+        if (brightnessMap != null)
+            FBO.destroyFBO(brightnessMap);
+        if (lightMap != null)
+            FBO.destroyFBO(lightMap);
     }
     
     // TODO: optimize, render only things within this square
@@ -172,9 +176,9 @@ public class WorldRenderer
     
                 clean();
     
-                occlusionMap = new FBO(viewportWidth, viewportHeight);
-                brightnessMap = new FBO(viewportWidth, viewportHeight);
-                lightMap = new FBO(viewportWidth, viewportHeight);
+                occlusionMap = FBO.newFBO(viewportWidth, viewportHeight);
+                brightnessMap = FBO.newFBO(viewportWidth, viewportHeight);
+                lightMap = FBO.newFBO(viewportWidth, viewportHeight);
             }
     
             renderOcclusionMap();

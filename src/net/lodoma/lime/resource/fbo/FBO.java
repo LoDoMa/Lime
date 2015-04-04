@@ -1,24 +1,71 @@
-package net.lodoma.lime.world.gfx;
+package net.lodoma.lime.resource.fbo;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.*;
 import static org.lwjgl.opengl.EXTFramebufferObject.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import net.lodoma.lime.Lime;
 import net.lodoma.lime.client.window.Window;
 
 public class FBO
 {
-    public static List<FBO> destroyList = new ArrayList<FBO>();
+    private static Object lock = new Object();
+    private static Set<FBO> fbos = new HashSet<FBO>();
+    private static List<FBO> destroyList = new ArrayList<FBO>();
     
-    public int textureID;
-    public int fboID;
-    public int width;
-    public int height;
+    public static FBO newFBO(int width, int height)
+    {
+        synchronized (lock)
+        {
+            FBO fbo = new FBO(width, height);
+            fbos.add(fbo);
+            Lime.LOGGER.D("Created FBO " + fbo.fboID);
+            return fbo;
+        }
+    }
     
-    public FBO(int width, int height)
+    public static void destroyFBO(FBO fbo)
+    {
+        synchronized (lock)
+        {
+            destroyList.add(fbo);
+            fbos.remove(fbo);
+        }
+    }
+    
+    public static void forceDeleteAll()
+    {
+        synchronized (lock)
+        {
+            destroyList.addAll(fbos);
+            fbos.clear();
+        }
+    }
+    
+    public static void updateAll()
+    {
+        synchronized (lock)
+        {
+            for (FBO fbo : destroyList)
+            {
+                fbo.destroy();
+                Lime.LOGGER.D("Destroyed FBO " + fbo.fboID);
+            }
+            destroyList.clear();
+        }
+    }
+    
+    public final int textureID;
+    public final int fboID;
+    public final int width;
+    public final int height;
+    
+    private FBO(int width, int height)
     {
         textureID = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, textureID);
@@ -37,17 +84,17 @@ public class FBO
         this.height = height;
     }
     
+    private void destroy()
+    {
+        glDeleteFramebuffersEXT(fboID);
+        glDeleteTextures(textureID);
+    }
+    
     public void clear()
     {
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         glLoadIdentity();
-    }
-    
-    public void destroy()
-    {
-        glDeleteFramebuffersEXT(fboID);
-        glDeleteTextures(textureID);
     }
     
     public void bind()

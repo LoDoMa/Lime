@@ -2,14 +2,13 @@ package net.lodoma.lime.shader.light;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.*;
-import net.lodoma.lime.Lime;
 import net.lodoma.lime.client.window.Window;
+import net.lodoma.lime.resource.fbo.FBO;
 import net.lodoma.lime.shader.Program;
 import net.lodoma.lime.shader.UniformType;
 import net.lodoma.lime.util.Identifiable;
 import net.lodoma.lime.world.World;
 import net.lodoma.lime.world.gfx.Camera;
-import net.lodoma.lime.world.gfx.FBO;
 import net.lodoma.lime.world.gfx.WorldRenderer;
 
 public class Light implements Identifiable<Integer>
@@ -42,14 +41,10 @@ public class Light implements Identifiable<Integer>
     
     public void destroy()
     {
-        synchronized (FBO.destroyList)
-        {
-            if (occlusion != null) FBO.destroyList.add(occlusion);
-            if (shadowMap != null) FBO.destroyList.add(shadowMap);
-            
-            if (occlusion != null || shadowMap != null)
-                Lime.LOGGER.I("Added light " + identifier + " FBOs to the destruction list");
-        }
+        if (occlusion != null)
+            FBO.destroyFBO(occlusion);
+        if (shadowMap != null)
+            FBO.destroyFBO(shadowMap);
     }
     
     public void renderBrightness(FBO brightnessMap, Camera camera)
@@ -84,21 +79,13 @@ public class Light implements Identifiable<Integer>
          * Create/recreate FBOs if needed
          */
 
-        int FBOwidth = 512;
-        int FBOheight = 512;
-        if (occlusion == null || occlusion.width != FBOwidth || occlusion.height != FBOheight)
-        {
-            if (occlusion != null)
-                occlusion.destroy();
-            occlusion = new FBO(FBOwidth, FBOheight);
-        }
+        if (occlusion == null)
+            occlusion = FBO.newFBO(512, 512);
         
-        if (shadowMap == null || shadowMap.width != FBOwidth)
+        if (shadowMap == null)
         {
-            if (shadowMap != null)
-                shadowMap.destroy();
-            shadowMap = new FBO(FBOwidth, 1);
-
+            shadowMap = FBO.newFBO(512, 1);
+            
             glBindTexture(GL_TEXTURE_2D, shadowMap.textureID);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);

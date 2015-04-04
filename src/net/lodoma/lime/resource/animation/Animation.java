@@ -111,10 +111,10 @@ public class Animation
     
     public Bone root;
     public Map<String, Float> totalDuration = new HashMap<String, Float>();
-    public String animation;
     
     private Object animationLock = new Object();
     private float time;
+    private String animation;
 
     public void render()
     {
@@ -146,5 +146,13 @@ public class Animation
     private void delete()
     {
         root.destroy();
+    }
+    
+    public void setAnimationSelection(String selection)
+    {
+        synchronized (animationLock)
+        {
+            animation = selection;
+        }
     }
 }
