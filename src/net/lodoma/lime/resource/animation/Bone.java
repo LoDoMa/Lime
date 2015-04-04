@@ -1,7 +1,9 @@
 package net.lodoma.lime.resource.animation;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.lodoma.lime.resource.texture.Texture;
 import net.lodoma.lime.util.Vector2;
@@ -12,8 +14,8 @@ public class Bone
     public List<Bone> childrenBack = new ArrayList<Bone>();
     public List<Bone> childrenFront = new ArrayList<Bone>();
     
-    public float keyFrames[];
-    public float frameDurations[];
+    public Map<String, float[]> keyFrames = new HashMap<String, float[]>();
+    public Map<String, float[]> frameDurations = new HashMap<String, float[]>();
     
     public Vector2 offset;
     
@@ -42,17 +44,20 @@ public class Bone
             Texture.referenceDown(textureName);
     }
     
-    public void update(float time)
-    { 
+    public void update(String animation, float time)
+    {
+        float[] frameDurationArray = frameDurations.get(animation);
+        float[] keyFrameArray = keyFrames.get(animation);
+        
         cframe = -1;
         float cdur = 0.0f;
-        do { cdur += frameDurations[++cframe]; } while (cdur < time);
+        do { cdur += frameDurationArray[++cframe]; } while (cdur < time);
         
-        crotation = keyFrames[cframe];
-        crotation += (time - cdur + frameDurations[cframe]) / frameDurations[cframe] * (keyFrames[(cframe + 1) % keyFrames.length] - crotation);
+        crotation = keyFrameArray[cframe];
+        crotation += (time - cdur + frameDurationArray[cframe]) / frameDurationArray[cframe] * (keyFrameArray[(cframe + 1) % keyFrameArray.length] - crotation);
 
-        for (Bone child : childrenBack) child.update(time);
-        for (Bone child : childrenFront) child.update(time);
+        for (Bone child : childrenBack) child.update(animation, time);
+        for (Bone child : childrenFront) child.update(animation, time);
     }
     
     public void render()

@@ -466,6 +466,15 @@ public class PhysicsFunctions
                 shape.animationName = animation;
                 break;
             }
+            case SET_SHAPE_ANIMATION_SELECTION:
+            {
+                String selection = args.checkstring(1).tojstring();
+                if (shape == null)
+                    throw new LuaError("modifying nonexistent shape");
+                
+                shape.animationSelection = selection;
+                break;
+            }
             case SET_SHAPE_ANIMATION_ROOT:
             {
                 float pointX = args.isnil(1) ? Float.NaN : args.checknumber(1).tofloat();
@@ -767,6 +776,7 @@ public class PhysicsFunctions
         SET_SHAPE_RESTITUTION(1, true, "setShapeRestitution"),
         SET_SHAPE_COLOR(4, true, "setShapeColor"),
         SET_SHAPE_ANIMATION(1, true, "setShapeAnimation"),
+        SET_SHAPE_ANIMATION_SELECTION(1, true, "setShapeAnimationSelection"),
         SET_SHAPE_ANIMATION_ROOT(2, true, "setShapeAnimationRoot"),
         SET_SHAPE_ANIMATION_SCALE(2, true, "setShapeAnimationScale"),
         SET_SHAPE_TEXTURE(1, true, "setShapeTexture"),

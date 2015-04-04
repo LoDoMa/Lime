@@ -4,8 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import net.lodoma.lime.resource.ResourcePool;
-import net.lodoma.lime.resource.ResourceType;
+import net.lodoma.lime.resource.animation.Animation;
 import net.lodoma.lime.resource.texture.Texture;
 import net.lodoma.lime.util.Color;
 import net.lodoma.lime.util.Vector2;
@@ -17,6 +16,7 @@ public class PhysicsShapeAttachments
     
     public final Color color = new Color();
     public String animationName;
+    public String animationSelection;
     public final Vector2 animationRoot = new Vector2(0.0f);
     public final Vector2 animationScale = new Vector2(1.0f);
     public String textureName;
@@ -28,6 +28,7 @@ public class PhysicsShapeAttachments
         if (!color.equals(other.color)) return false;
 
         if (!compareStringsWithNull(animationName, other.animationName)) return false;
+        if (!compareStringsWithNull(animationSelection, other.animationSelection)) return false;
         if (!Vector2.equals(animationRoot, other.animationRoot)) return false;
         if (!Vector2.equals(animationScale, other.animationScale)) return false;
         if (!compareStringsWithNull(textureName, other.textureName)) return false;
@@ -81,33 +82,41 @@ public class PhysicsShapeAttachments
 
         String oldAnimationName = animationName;
         if (in.readByte() == 1)
+        {
             animationName = in.readUTF();
+            animationSelection = in.readUTF();
+            
+            animationRoot.x = in.readFloat();
+            animationRoot.y = in.readFloat();
+            animationScale.x = in.readFloat();
+            animationScale.y = in.readFloat();
+        }
+        
         if (!compareStringsWithNull(oldAnimationName, animationName))
         {
             if (oldAnimationName != null)
-                ResourcePool.referenceDown(oldAnimationName, ResourceType.ANIMATION);
-            ResourcePool.referenceUp(animationName, ResourceType.ANIMATION);
+                Animation.referenceDown(oldAnimationName);
+            Animation.referenceUp(animationName);
+            Animation.get(animationName).animation = animationSelection;
         }
-        
-        animationRoot.x = in.readFloat();
-        animationRoot.y = in.readFloat();
-        animationScale.x = in.readFloat();
-        animationScale.y = in.readFloat();
 
         String oldTextureName = textureName;
         if (in.readByte() == 1)
+        {
             textureName = in.readUTF();
+            
+            texturePoint.x = in.readFloat();
+            texturePoint.y = in.readFloat();
+            textureSize.x = in.readFloat();
+            textureSize.y = in.readFloat();
+        }
+        
         if (!compareStringsWithNull(oldTextureName, textureName))
         {
             if (oldTextureName != null)
                 Texture.referenceDown(oldTextureName);
             Texture.referenceUp(textureName);
         }
-
-        texturePoint.x = in.readFloat();
-        texturePoint.y = in.readFloat();
-        textureSize.x = in.readFloat();
-        textureSize.y = in.readFloat();
     }
     
     public void writeVisual(DataOutputStream out) throws IOException
@@ -123,12 +132,13 @@ public class PhysicsShapeAttachments
         {
             out.writeByte(1);
             out.writeUTF(animationName);
+            out.writeUTF(animationSelection);
+            
+            out.writeFloat(animationRoot.x);
+            out.writeFloat(animationRoot.y);
+            out.writeFloat(animationScale.x);
+            out.writeFloat(animationScale.y);
         }
-
-        out.writeFloat(animationRoot.x);
-        out.writeFloat(animationRoot.y);
-        out.writeFloat(animationScale.x);
-        out.writeFloat(animationScale.y);
         
         if (textureName == null)
             out.writeByte(0);
@@ -136,12 +146,12 @@ public class PhysicsShapeAttachments
         {
             out.writeByte(1);
             out.writeUTF(textureName);
+            
+            out.writeFloat(texturePoint.x);
+            out.writeFloat(texturePoint.y);
+            out.writeFloat(textureSize.x);
+            out.writeFloat(textureSize.y);
         }
-
-        out.writeFloat(texturePoint.x);
-        out.writeFloat(texturePoint.y);
-        out.writeFloat(textureSize.x);
-        out.writeFloat(textureSize.y);
     }
     
     private boolean compareStringsWithNull(String s1, String s2)

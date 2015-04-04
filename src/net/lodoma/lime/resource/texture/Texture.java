@@ -64,7 +64,7 @@ public class Texture
     /**
      * Call this method only in renderer thread!
      */
-    public static void update()
+    public static void updateAll()
     {
         synchronized (lock)
         {

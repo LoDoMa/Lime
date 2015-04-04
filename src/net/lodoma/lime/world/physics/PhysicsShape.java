@@ -24,6 +24,7 @@ public abstract class PhysicsShape implements Identifiable<Integer>
     // Visual data
     public final Color color = new Color();
     public String animationName;
+    public String animationSelection;
     public final Vector2 animationRoot = new Vector2(0.0f);
     public final Vector2 animationScale = new Vector2(1.0f);
     public String textureName;
@@ -92,6 +93,7 @@ public abstract class PhysicsShape implements Identifiable<Integer>
         snapshot.attachments = new PhysicsShapeAttachments();
         snapshot.attachments.color.set(color);
         snapshot.attachments.animationName = animationName;
+        snapshot.attachments.animationSelection = animationSelection;
         snapshot.attachments.animationRoot.set(animationRoot);
         snapshot.attachments.animationScale.set(animationScale);
         snapshot.attachments.textureName = textureName;

@@ -2,8 +2,6 @@ package net.lodoma.lime.world.physics;
 
 import java.util.Arrays;
 
-import net.lodoma.lime.resource.ResourcePool;
-import net.lodoma.lime.resource.ResourceType;
 import net.lodoma.lime.resource.animation.Animation;
 import net.lodoma.lime.resource.texture.Texture;
 import net.lodoma.lime.util.Vector2;
@@ -44,7 +42,7 @@ public class PhysicsShapeSnapshot
         if (attachments.textureName != null)
             Texture.referenceDown(attachments.textureName);
         if (attachments.animationName != null)
-            ResourcePool.referenceDown(attachments.animationName, ResourceType.ANIMATION);
+            Animation.referenceDown(attachments.animationName);
     }
     
     public void debugRender()
@@ -65,7 +63,7 @@ public class PhysicsShapeSnapshot
                 glTranslatef(attachments.animationRoot.x, attachments.animationRoot.y, 0.0f);
                 glScalef(attachments.animationScale.x, attachments.animationScale.y, 1.0f);
 
-                ((Animation) ResourcePool.get(attachments.animationName, ResourceType.ANIMATION)).render();
+                Animation.get(attachments.animationName).render();
                 
                 glScalef(1.0f / attachments.animationScale.x, 1.0f / attachments.animationScale.y, 1.0f);
                 glTranslatef(-attachments.animationRoot.x, -attachments.animationRoot.y, 0.0f);
@@ -114,7 +112,7 @@ public class PhysicsShapeSnapshot
                 glTranslatef(attachments.animationRoot.x, attachments.animationRoot.y, 0.0f);
                 glScalef(attachments.animationScale.x, attachments.animationScale.y, 1.0f);
 
-                ((Animation) ResourcePool.get(attachments.animationName, ResourceType.ANIMATION)).render();
+                Animation.get(attachments.animationName).render();
                 
                 glScalef(1.0f / attachments.animationScale.x, 1.0f / attachments.animationScale.y, 1.0f);
                 glTranslatef(-attachments.animationRoot.x, -attachments.animationRoot.y, 0.0f);

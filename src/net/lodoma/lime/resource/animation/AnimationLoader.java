@@ -5,7 +5,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LoadState;
@@ -22,15 +25,13 @@ import net.lodoma.lime.util.Vector2;
 
 public class AnimationLoader
 {
-    public static Animation load(String animationName) throws IOException
+    public static void load(Animation animation, String animationName) throws IOException
     {
-        File animationFile = new File(OsHelper.JARPATH + "res/textures/" + animationName);
-        if (animationFile.getName().endsWith(".lua"))
-            return loadSkeletalAnimation(animationFile);
-        throw new UnsupportedOperationException("Animation file " + animationFile.getPath() + " not supported.");
+        File animationFile = new File(OsHelper.JARPATH + "res/textures/" + animationName + ".lua");
+        loadSkeletalAnimation(animation, animationFile);
     }
     
-    private static SkeletalAnimation loadSkeletalAnimation(File animationFile) throws IOException
+    private static void loadSkeletalAnimation(Animation animation, File animationFile) throws IOException
     {
         Globals globals = new Globals();
         globals.load(new PackageLib());
@@ -40,20 +41,16 @@ public class AnimationLoader
         
         LuaValue chunk = globals.load(new FileReader(animationFile), "SkeletalAnimation");
         chunk.call();
-        
-        SkeletalAnimation animation = new SkeletalAnimation();
 
         LuaTable rootT = globals.get("root").checktable();
         LuaTable animationT = globals.get("animation").checktable();
 
         loadAnimation(animation, animationT, rootT);
         animation.root = loadBone(animation, rootT);
-        
-        return animation;
     }
     
     @SuppressWarnings("unchecked")
-    private static Bone loadBone(SkeletalAnimation animation, LuaTable boneT)
+    private static Bone loadBone(Animation animation, LuaTable boneT)
     {
         Bone bone = new Bone();
         bone.offset = new Vector2();
@@ -95,44 +92,54 @@ public class AnimationLoader
                 bone.childrenBack.add(loadBone(animation, childV.checktable(2)));
         }
         
-        LuaValue listV = boneT.get("__LIME_KEYFRAME_LIST__");
+        LuaValue mapV = boneT.get("__LIME_KEYFRAME_MAP__");
+        Map<String, List<Pair<Float, Float>>> map = null;
+        if (!mapV.isnil())
+            map = (Map<String, List<Pair<Float, Float>>>) mapV.checkuserdata();
         
-        List<Pair<Float, Float>> list = null;
-        if (!listV.isnil())
-            list = (List<Pair<Float, Float>>) listV.checkuserdata();
-        
-        if (list == null)
+        Set<String> animationNames = animation.totalDuration.keySet();
+        for (String animationName : animationNames)
         {
-            bone.frameDurations = new float[] { animation.totalDuration };
-            bone.keyFrames = new float [] { 0.0f };
-        }
-        else
-        {
-            list.sort(new Comparator<Pair<Float, Float>>()
-            {
-                @Override
-                public int compare(Pair<Float, Float> o1, Pair<Float, Float> o2)
-                {
-                    if (o1.first < o2.first) return -1;
-                    if (o1.first > o2.first) return 1;
-                    if (o1.second < o2.second) return -1;
-                    if (o1.second > o2.second) return 1;
-                    return 0;
-                }
-            });
-
-            bone.frameDurations = new float[list.size()];
-            bone.keyFrames = new float[list.size()];
+            List<Pair<Float, Float>> list = null;
+            if (map != null)
+                list = map.get(animationName);
             
-            for (int i = 0; i < list.size(); i++)
+            if (map == null || list == null)
             {
-                float duration = 0.0f;
-                if (i < (list.size() - 1))
-                    duration = list.get(i + 1).first - list.get(i).first;
-                else
-                    duration = animation.totalDuration - list.get(i).first;
-                bone.frameDurations[i] = duration;
-                bone.keyFrames[i] = list.get(i).second;
+                bone.frameDurations.put(animationName, new float[] { animation.totalDuration.get(animationName) });
+                bone.keyFrames.put(animationName, new float [] { 0.0f });
+            }
+            else
+            {
+                
+                list.sort(new Comparator<Pair<Float, Float>>()
+                {
+                    @Override
+                    public int compare(Pair<Float, Float> o1, Pair<Float, Float> o2)
+                    {
+                        if (o1.first < o2.first) return -1;
+                        if (o1.first > o2.first) return 1;
+                        if (o1.second < o2.second) return -1;
+                        if (o1.second > o2.second) return 1;
+                        return 0;
+                    }
+                });
+
+                float[] frameDurationArray = new float[list.size()];
+                float[] keyFrameArray = new float[list.size()];
+                bone.frameDurations.put(animationName, frameDurationArray);
+                bone.keyFrames.put(animationName, keyFrameArray);
+                
+                for (int i = 0; i < list.size(); i++)
+                {
+                    float duration = 0.0f;
+                    if (i < (list.size() - 1))
+                        duration = list.get(i + 1).first - list.get(i).first;
+                    else
+                        duration = animation.totalDuration.get(animationName) - list.get(i).first;
+                    frameDurationArray[i] = duration;
+                    keyFrameArray[i] = list.get(i).second;
+                }
             }
         }
         
@@ -140,28 +147,42 @@ public class AnimationLoader
     }
 
     @SuppressWarnings("unchecked")
-    private static void loadAnimation(SkeletalAnimation animation, LuaTable animationT, LuaTable rootT)
+    private static void loadAnimation(Animation animation, LuaTable animationT, LuaTable rootT)
     {
-        animation.totalDuration = animationT.get("duration").checknumber().tofloat();
-        
-        Varargs keyframesV = animationT.get("keyframes").checktable().unpack();
-        for (int i = 1; i <= keyframesV.narg(); i++)
+        Varargs animationV = LuaValue.NONE;
+        while (!(animationV = animationT.next(animationV.arg(1))).isnil(1))
         {
-            LuaTable keyframeT = keyframesV.checktable(i);
+            String animName = animationV.checkstring(1).tojstring();
+            LuaTable animT = animationV.checktable(2);
             
-            LuaTable body = keyframeT.get("body").checktable();
-            float time = keyframeT.get("time").checknumber().tofloat();
-            float angle = keyframeT.get("angle").checknumber().tofloat();
+            float duration = animT.get("duration").checknumber().tofloat();
+            animation.totalDuration.put(animName, duration);
             
-            LuaValue listV = body.get("__LIME_KEYFRAME_LIST__");
-            if (listV.isnil())
+            Varargs keyframesV = animT.get("keyframes").checktable().unpack();
+            for (int i = 1; i <= keyframesV.narg(); i++)
             {
-                listV = LuaValue.userdataOf(new ArrayList<Pair<Float, Float>>());
-                body.set("__LIME_KEYFRAME_LIST__", listV);
+                LuaTable keyframeT = keyframesV.checktable(i);
+                
+                LuaTable body = keyframeT.get("body").checktable();
+                float time = keyframeT.get("time").checknumber().tofloat();
+                float angle = keyframeT.get("angle").checknumber().tofloat();
+                
+                LuaValue mapV = body.get("__LIME_KEYFRAME_MAP__");
+                if (mapV.isnil())
+                {
+                    mapV = LuaValue.userdataOf(new HashMap<String, List<Pair<Float, Float>>>());
+                    body.set("__LIME_KEYFRAME_MAP__", mapV);
+                }
+                
+                Map<String, List<Pair<Float, Float>>> map = (Map<String, List<Pair<Float, Float>>>) mapV.checkuserdata();
+                List<Pair<Float, Float>> list = map.get(animName);
+                if (list == null)
+                {
+                    list = new ArrayList<Pair<Float, Float>>();
+                    map.put(animName, list);
+                }
+                list.add(new Pair<Float, Float>(time, angle));
             }
-            
-            List<Pair<Float, Float>> list = (List<Pair<Float, Float>>) listV.checkuserdata();
-            list.add(new Pair<Float, Float>(time, angle));
         }
     }
 }

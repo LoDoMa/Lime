@@ -12,7 +12,7 @@ import net.lodoma.lime.client.window.Window;
 import net.lodoma.lime.client.window.WindowException;
 import net.lodoma.lime.gui.clean.CleanText;
 import net.lodoma.lime.gui.clean.CleanUI;
-import net.lodoma.lime.resource.ResourcePool;
+import net.lodoma.lime.resource.animation.Animation;
 import net.lodoma.lime.resource.texture.Texture;
 import net.lodoma.lime.shader.Program;
 import net.lodoma.lime.shader.UniformType;
@@ -92,12 +92,10 @@ public class VisualInstance
             
             timer.update();
             stageManager.update(timer.getDelta());
-            
-            ResourcePool.create();
-            ResourcePool.update(timer.getDelta());
-            Texture.update();
+
+            Texture.updateAll();            
+            Animation.updateAll((float) timer.getDelta());
             stageManager.render();
-            ResourcePool.destroy();
             
             synchronized (FBO.destroyList)
             {
@@ -168,11 +166,12 @@ public class VisualInstance
     {
         while (!stageManager.empty())
             stageManager.pop();
-        
-        Texture.forceDeleteAll();
-        Texture.update();
 
-        ResourcePool.checkClean();
+        Texture.forceDeleteAll();
+        Texture.updateAll();
+        Animation.forceDeleteAll();
+        Animation.updateAll(0);
+        
         Window.close();
     }
     
