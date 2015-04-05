@@ -277,7 +277,7 @@ local function shoot(timeDelta)
             else
                 movingDirection = 1
             end
-            
+
             posx = posx - 0.7 * -movingDirection
             posy = posy - 0.2
 
@@ -308,6 +308,14 @@ function Lime_Update(timeDelta)
     move(timeDelta)
     shoot(timeDelta)
 
+    lime.selectComponent(mainCompo)
+    local velocityX = lime.getLinearVelocity()
+    if velocityX < -0.75 then
+        movingDirection = -1
+    elseif velocityX > 0.75 then
+        movingDirection = 1
+    end
+
     lime.selectComponent(cameraFocusCompo)
     local cfx, cfy = lime.getComponentPosition()
 
@@ -326,58 +334,36 @@ function Lime_Update(timeDelta)
     lime.setAttribute(entityID, attribLykkeFocusY, cfy)
 
     lime.selectShape(mainShape)
-
+    lime.setShapeAnimationRoot(0.0, -cLykkeHeight + 0.1)
+    lime.setShapeAnimationScale(0.4 * -movingDirection, 0.4)
+    local animationSelection = ""
     if hasGround then
         if not isMoving then
-            lime.setShapeAnimationSelection("still")
-            lime.setShapeAnimationRoot(0.0, -cLykkeHeight + 0.1)
-            lime.setShapeAnimationScale(0.4 * -movingDirection, 0.4)
+            animationSelection = "still"
         else
-            lime.setShapeAnimationSelection("walking")
-            lime.setShapeAnimationRoot(0.0, -cLykkeHeight + 0.1)
-            lime.setShapeAnimationScale(0.4 * -movingDirection, 0.4)
+            animationSelection = "walking"
         end
-        lime.updateShape()
     elseif wallSliding then
-        lime.setShapeAnimationSelection("wallSliding")
-        if hasWallLeft then
-            lime.setShapeAnimationRoot(-0.1, -cLykkeHeight + 0.1)
-            lime.setShapeAnimationScale(0.4, 0.4)
-        else
-            lime.setShapeAnimationRoot(0.1, -cLykkeHeight + 0.1)
-            lime.setShapeAnimationScale(-0.4, 0.4)
-        end
-        lime.updateShape()
+        animationSelection = "wallSliding"
     else
         if not isMoving then
             if jumpRise then
                 lime.selectComponent(mainCompo)
                 local velocityX = lime.getLinearVelocity()
                 if velocityX < -0.75 or velocityX > 0.75 then
-                    lime.setShapeAnimationSelection("fallingLeft")
-                    lime.setShapeAnimationRoot(0.0, -cLykkeHeight + 0.1)
-                    if velocityX < -0.75 then
-                        lime.setShapeAnimationScale(0.4, 0.4)
-                    else
-                        lime.setShapeAnimationScale(-0.4, 0.4)
-                    end
+                    animationSelection = "fallingLeft"
                 else
-                    lime.setShapeAnimationSelection("falling")
-                    lime.setShapeAnimationRoot(0.0, -cLykkeHeight + 0.1)
-                    lime.setShapeAnimationScale(0.4, 0.4)
+                    animationSelection = "falling"
                 end
             else
-                lime.setShapeAnimationSelection("falling")
-                lime.setShapeAnimationRoot(0.0, -cLykkeHeight + 0.1)
-                lime.setShapeAnimationScale(0.4, 0.4)
+                animationSelection = "falling"
             end
         else
-            lime.setShapeAnimationSelection("fallingLeft")
-            lime.setShapeAnimationRoot(0.0, -cLykkeHeight + 0.1)
-            lime.setShapeAnimationScale(0.4 * -movingDirection, 0.4)
+            animationSelection = "fallingLeft"
         end
-        lime.updateShape()
     end
+    lime.setShapeAnimationSelection(animationSelection)
+    lime.updateShape()
 end
 
 function Lime_PostUpdate()

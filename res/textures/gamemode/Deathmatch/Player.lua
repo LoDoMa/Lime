@@ -33,8 +33,6 @@ root = {
 
                     children = {
                         head2 = {
-                            length = 0,
-                            width = 0,
                             offset = { x = 0, y = 0, },
 
                             texture = "gamemode/Deathmatch/PlayerHeadLeft",
