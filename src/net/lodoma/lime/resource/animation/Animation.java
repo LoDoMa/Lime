@@ -92,6 +92,9 @@ public class Animation
     {
         synchronized (animationLock)
         {
+            if (root == null)
+                return;
+            
             if (animation == null)
                 return;
             root.render();
@@ -100,14 +103,23 @@ public class Animation
     
     private void start()
     {
-        time = 0.0f;
-        root.create();
+        synchronized (animationLock)
+        {
+            if (root == null)
+                return;
+            
+            time = 0.0f;
+            root.create();
+        }
     }
     
     private void update(float timeDelta)
     {
         synchronized (animationLock)
         {
+            if (root == null)
+                return;
+            
             if (animation == null)
                 return;
             time = (time + timeDelta) % totalDuration.get(animation);
@@ -117,7 +129,13 @@ public class Animation
     
     private void delete()
     {
-        root.destroy();
+        synchronized (animationLock)
+        {
+            if (root == null)
+                return;
+            
+            root.destroy();
+        }
     }
     
     public void setAnimationSelection(String selection)
