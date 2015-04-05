@@ -38,15 +38,6 @@ public class FBO
         }
     }
     
-    public static void forceDeleteAll()
-    {
-        synchronized (lock)
-        {
-            destroyList.addAll(fbos);
-            fbos.clear();
-        }
-    }
-    
     public static void updateAll()
     {
         synchronized (lock)
@@ -57,6 +48,15 @@ public class FBO
                 Lime.LOGGER.D("Destroyed FBO " + fbo.fboID);
             }
             destroyList.clear();
+        }
+    }
+    
+    public static void forceDeleteAll()
+    {
+        synchronized (lock)
+        {
+            destroyList.addAll(fbos);
+            fbos.clear();
         }
     }
     

@@ -2,50 +2,39 @@ package net.lodoma.lime.resource.animation;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.lodoma.lime.Lime;
 
 public class Animation
 {
     private static Object lock = new Object();
+    private static Set<Animation> animations = new HashSet<Animation>();
     private static List<Animation> createList = new ArrayList<Animation>();
     private static List<Animation> destroyList = new ArrayList<Animation>();
-    private static Map<String, Animation> loadedAnimations = new HashMap<String, Animation>();
     
-    public static void referenceUp(String name)
+    public static Animation newAnimation(String name)
     {
         synchronized (lock)
         {
-            Animation animation = loadedAnimations.get(name);
-            if (animation == null)
-            {
-                animation = new Animation();
-                animation.name = name;
-                loadedAnimations.put(name, animation);
-                createList.add(animation);
-            }
-            animation.refc++;
+            Animation animation = new Animation();
+            animation.name = name;
+            animations.add(animation);
+            createList.add(animation);
+            return animation;
         }
     }
     
-    public static void referenceDown(String name)
+    public static void destroyAnimation(Animation animation)
     {
         synchronized (lock)
         {
-            Animation animation = loadedAnimations.get(name);
-            if (animation == null)
-                throw new NullPointerException();
-            animation.refc--;
-            if (animation.refc == 0)
-            {
-                loadedAnimations.remove(animation.name);
-                destroyList.add(animation);
-            }
+            animations.remove(animation);
+            destroyList.add(animation);
         }
     }
     
@@ -76,13 +65,8 @@ public class Animation
             createList.clear();
             destroyList.clear();
             
-            Collection<Animation> animations = loadedAnimations.values();
-            Iterator<Animation> it = animations.iterator();
-            while (it.hasNext())
-            {
-                Animation animation = it.next();
+            for (Animation animation : animations)
                 animation.update(timeDelta);
-            }
         }
     }
     
@@ -90,24 +74,12 @@ public class Animation
     {
         synchronized (lock)
         {
-            destroyList.addAll(loadedAnimations.values());
+            destroyList.addAll(animations);
             destroyList.clear();
-        }
-    }
-    
-    public static Animation get(String name)
-    {
-        synchronized (lock)
-        {
-            Animation animation = loadedAnimations.get(name);
-            if (animation == null)
-                throw new NullPointerException();
-            return animation;
         }
     }
 
     private String name;
-    private int refc = 0;
     
     public Bone root;
     public Map<String, Float> totalDuration = new HashMap<String, Float>();

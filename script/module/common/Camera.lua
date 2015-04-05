@@ -7,17 +7,23 @@ local focusPointsX = {}
 local focusPointsY = {}
 
 -- Module output
-local translationX
-local translationY
-local scaleX
-local scaleY
+local translationX = 0
+local translationY = 0
+local scaleX = 0
+local scaleY = 0
+
+-- Module stuff
+local targetTranslationX
+local targetTranslationY
+local targetScaleX
+local targetScaleY
 
 local function addFocusPoint(focusX, focusY)
     focusPointsX[#focusPointsX + 1] = focusX
     focusPointsY[#focusPointsY + 1] = focusY
 end
 
-local function updateCamera()
+local function updateCamera(timeDelta)
     local minX = nil
     local maxX = nil
     local minY = nil
@@ -71,10 +77,15 @@ local function updateCamera()
         width = height * targetRatio
     end
 
-    translationX = centerX - width / 2.0
-    translationY = centerY - height / 2.0
-    scaleX = width
-    scaleY = height
+    targetTranslationX = centerX - width / 2.0
+    targetTranslationY = centerY - height / 2.0
+    targetScaleX = width
+    targetScaleY = height
+
+    translationX = translationX + (targetTranslationX - translationX) * timeDelta * 5
+    translationY = translationY + (targetTranslationY - translationY) * timeDelta * 5
+    scaleX = scaleX + (targetScaleX - scaleX) * timeDelta * 5
+    scaleY = scaleY + (targetScaleY - scaleY) * timeDelta * 5
 end
 
 __LIME_MODULE_TABLE__ = {

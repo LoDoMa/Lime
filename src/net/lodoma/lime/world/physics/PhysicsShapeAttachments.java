@@ -15,6 +15,7 @@ public class PhysicsShapeAttachments
     public String name;
     
     public final Color color = new Color();
+    public Animation animation;
     public String animationName;
     public String animationSelection;
     public final Vector2 animationRoot = new Vector2(0.0f);
@@ -94,10 +95,10 @@ public class PhysicsShapeAttachments
         
         if (!compareStringsWithNull(oldAnimationName, animationName))
         {
-            if (oldAnimationName != null)
-                Animation.referenceDown(oldAnimationName);
-            Animation.referenceUp(animationName);
-            Animation.get(animationName).setAnimationSelection(animationSelection);
+            if (animation != null)
+                Animation.destroyAnimation(animation);
+            animation = Animation.newAnimation(animationName);
+            animation.setAnimationSelection(animationSelection);
         }
 
         String oldTextureName = textureName;

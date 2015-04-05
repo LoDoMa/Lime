@@ -70,7 +70,7 @@ local function createWorld()
     end
 
     addLightScaled(0, 1, 14, 1, 0.4, 0.2)
-    addLightScaled(0, 13, 14, 0.4, 0.2, 1.0)
+    addLightScaled(0, 12, 14, 0.4, 0.2, 1.0)
 
     addScaled(5, 0, -5, 0, -4, -2)
     addScaled(-4, -2, 5, 0, 4, -2)
@@ -104,6 +104,17 @@ local function createWorld()
     addScaled(0, 8, 4, 8, 0, 7)
     addScaled(-5, 8, -6, 9, 6, 9)
     addScaled(-5, 8, 5, 8, 6, 9)
+
+    addScaled(-1.5, 13, -2, 14, -2, 19)
+    addScaled(-1.5, 13, -1, 14, -1, 19)
+    addScaled(-1.5, 13, -2, 19, -1, 19)
+    addScaled(-2, 19, -2, 18, -6, 18)
+    addScaled(-2, 19, -6, 18, -6.5, 19)
+    addScaled(1.5, 13, 2, 14, 2, 19)
+    addScaled(1.5, 13, 1, 14, 1, 19)
+    addScaled(1.5, 13, 2, 19, 1, 19)
+    addScaled(2, 19, 2, 18, 6, 18)
+    addScaled(2, 19, 6, 18, 6.5, 19)
 end
 
 function Lime_Init()
@@ -141,8 +152,11 @@ local function updateTimers(timeDelta)
     ]]
 end
 
-function Lime_Update(timeDelta)
-    updateTimers(timeDelta)
+local timeDelta
+
+function Lime_Update(timeDelta_)
+    updateTimers(timeDelta_)
+    timeDelta = timeDelta_
 end
 
 function Lime_PostUpdate()
@@ -152,7 +166,7 @@ function Lime_PostUpdate()
         Camera.addFocusPoint(focusX, focusY)
     end
 
-    Camera.update()
+    Camera.update(timeDelta)
 
     local translationX, translationY = Camera.getTranslation()
     local scaleX, scaleY = Camera.getScale()

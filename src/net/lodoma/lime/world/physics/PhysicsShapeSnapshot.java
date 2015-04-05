@@ -41,8 +41,8 @@ public class PhysicsShapeSnapshot
     {
         if (attachments.textureName != null)
             Texture.referenceDown(attachments.textureName);
-        if (attachments.animationName != null)
-            Animation.referenceDown(attachments.animationName);
+        if (attachments.animation != null)
+            Animation.destroyAnimation(attachments.animation);
     }
     
     public void debugRender()
@@ -63,7 +63,7 @@ public class PhysicsShapeSnapshot
                 glTranslatef(attachments.animationRoot.x, attachments.animationRoot.y, 0.0f);
                 glScalef(attachments.animationScale.x, attachments.animationScale.y, 1.0f);
 
-                Animation.get(attachments.animationName).render();
+                attachments.animation.render();
                 
                 glScalef(1.0f / attachments.animationScale.x, 1.0f / attachments.animationScale.y, 1.0f);
                 glTranslatef(-attachments.animationRoot.x, -attachments.animationRoot.y, 0.0f);
@@ -112,7 +112,7 @@ public class PhysicsShapeSnapshot
                 glTranslatef(attachments.animationRoot.x, attachments.animationRoot.y, 0.0f);
                 glScalef(attachments.animationScale.x, attachments.animationScale.y, 1.0f);
 
-                Animation.get(attachments.animationName).render();
+                attachments.animation.render();
                 
                 glScalef(1.0f / attachments.animationScale.x, 1.0f / attachments.animationScale.y, 1.0f);
                 glTranslatef(-attachments.animationRoot.x, -attachments.animationRoot.y, 0.0f);
