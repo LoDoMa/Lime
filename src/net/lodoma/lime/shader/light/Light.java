@@ -18,8 +18,18 @@ public class Light implements Identifiable<Integer>
     public World world;
     public LightData data;
     
-    private FBO occlusion;
-    private FBO shadowMap;
+    private static FBO occlusion;
+    private static FBO shadowMap;
+    
+    public static void destroyFBOs()
+    {
+        if (occlusion != null)
+            FBO.destroyFBO(occlusion);
+        if (shadowMap != null)
+            FBO.destroyFBO(shadowMap);
+        occlusion = null;
+        shadowMap = null;
+    }
     
     public Light(World world)
     {
@@ -41,10 +51,7 @@ public class Light implements Identifiable<Integer>
     
     public void destroy()
     {
-        if (occlusion != null)
-            FBO.destroyFBO(occlusion);
-        if (shadowMap != null)
-            FBO.destroyFBO(shadowMap);
+        
     }
     
     public boolean inView(Camera camera)
@@ -87,12 +94,10 @@ public class Light implements Identifiable<Integer>
         /*
          * Create/recreate FBOs if needed
          */
-
-        if (occlusion == null)
-            occlusion = FBO.newFBO(512, 512);
         
-        if (shadowMap == null)
+        if (occlusion == null)
         {
+            occlusion = FBO.newFBO(512, 512);
             shadowMap = FBO.newFBO(512, 1);
             
             glBindTexture(GL_TEXTURE_2D, shadowMap.textureID);

@@ -98,6 +98,8 @@ public class World
         lightPool.clear();
         
         physicsWorld.destroy();
+        
+        Light.destroyFBOs();
     }
     
     public void load(String filepath, Server server) throws IOException
