@@ -4,6 +4,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.*;
 import net.lodoma.lime.client.window.Window;
 import net.lodoma.lime.resource.fbo.FBO;
+import net.lodoma.lime.resource.texture.Texture;
 import net.lodoma.lime.shader.Program;
 import net.lodoma.lime.shader.UniformType;
 import net.lodoma.lime.util.Identifiable;
@@ -174,5 +175,26 @@ public class Light implements Identifiable<Integer>
         glPopMatrix();
         
         lightMap.unbind();
+    }
+    
+    public void debugRender()
+    {
+        glPushMatrix();
+        glTranslatef(data.position.x, data.position.y, 0.0f);
+        
+        Texture.NO_TEXTURE.bind(0);
+        glColor3f(1.0f, 1.0f, 1.0f);
+        glBegin(GL_LINES);
+        for (int i = 0; i <= 10; i++)
+        {
+            float angle = (float) Math.toRadians(i * 360.0 / 10.0);
+            float x = (float) Math.cos(angle);
+            float y = (float) Math.sin(angle);
+            glVertex2f(0.0f, 0.0f);
+            glVertex2f(x * 0.25f, y * 0.25f);
+        }
+        glEnd();
+        
+        glPopMatrix();
     }
 }

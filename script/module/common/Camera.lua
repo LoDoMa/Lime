@@ -50,6 +50,10 @@ local function updateCamera(timeDelta)
     end
 
     if not minX then
+        translationX = 0
+        translationY = 0
+        scaleX = 0
+        scaleY = 0
         -- no focus points, no update
         return
     end

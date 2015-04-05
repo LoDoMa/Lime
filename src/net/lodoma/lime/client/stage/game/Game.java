@@ -55,7 +55,7 @@ public class Game extends Stage
     @Override
     public void update(double timeDelta)
     {
-        if(Input.getKey(Input.KEY_ESCAPE))
+        if (Input.getKey(Input.KEY_ESCAPE))
             client.close();
         
         if(!client.isRunning())

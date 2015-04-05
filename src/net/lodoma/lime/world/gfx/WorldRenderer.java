@@ -55,8 +55,8 @@ public class WorldRenderer
         Program.basicProgram.setUniform("uTexture", UniformType.INT1, 0);
         Texture.NO_TEXTURE.bind(0);
         
-        world.compoSnapshotPool.foreach((PhysicsComponentSnapshot compoSnapshot) -> compoSnapshot.debugRender());
-        world.particleList.forEach((PhysicsParticle particle) -> particle.debugRender());
+        world.compoSnapshotPool.foreach((PhysicsComponentSnapshot compoSnapshot) -> compoSnapshot.render());
+        world.particleList.forEach((PhysicsParticle particle) -> particle.render());
         
         glPopMatrix();
     }
@@ -74,8 +74,8 @@ public class WorldRenderer
         Program.basicProgram.setUniform("uTexture", UniformType.INT1, 0);
         Texture.NO_TEXTURE.bind(0);
         
-        world.compoSnapshotPool.foreach((PhysicsComponentSnapshot compoSnapshot) -> compoSnapshot.debugRender());
-        world.particleList.forEach((PhysicsParticle particle) -> particle.debugRender());
+        world.compoSnapshotPool.foreach((PhysicsComponentSnapshot compoSnapshot) -> compoSnapshot.render());
+        world.particleList.forEach((PhysicsParticle particle) -> particle.render());
         
         occlusionMap.unbind();
     }
@@ -171,6 +171,24 @@ public class WorldRenderer
         glEnd();
     }
     
+    public void renderDebug()
+    {
+        Window.bindFBO();
+
+        glPushMatrix();
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        camera.transform();
+        camera.scale();
+        
+        Program.basicProgram.useProgram();
+        Program.basicProgram.setUniform("uTexture", UniformType.INT1, 0);
+        Texture.NO_TEXTURE.bind(0);
+
+        world.lightPool.foreach((Light light) -> light.debugRender());
+        world.compoSnapshotPool.foreach((PhysicsComponentSnapshot compoSnapshot) -> compoSnapshot.debugRender());
+        glPopMatrix();
+    }
+    
     public void render()
     {
         synchronized (world.lock)
@@ -192,6 +210,9 @@ public class WorldRenderer
             renderLightMap();
             
             renderFinal();
+            
+            if (Window.debugEnabled)
+                renderDebug();
         }
     }
 }

@@ -45,7 +45,7 @@ public class PhysicsShapeSnapshot
             Animation.destroyAnimation(attachments.animation);
     }
     
-    public void debugRender()
+    public void render()
     {
         switch (shapeType)
         {
@@ -137,6 +137,44 @@ public class PhysicsShapeSnapshot
                 glEnd();
             }
             
+            break;
+        }
+        default:
+            throw new IllegalStateException();
+        }
+    }
+    
+    public void debugRender()
+    {
+        switch (shapeType)
+        {
+        case CIRCLE:
+        {
+            glTranslatef(offset.x, offset.y, 0.0f);
+            glScalef(radius, radius, 1.0f);
+            Texture.NO_TEXTURE.bind(0);
+            glColor3f(0.2f, 1.0f, 0.2f);
+            glBegin(GL_LINE_LOOP);
+            for (int i = 0; i <= 10; i++)
+            {
+                float angle = (float) Math.toRadians(i * 360.0 / 10.0);
+                float x = (float) Math.cos(angle);
+                float y = (float) Math.sin(angle);
+                glVertex2f(x, y);
+            }
+            glEnd();
+            glScalef(1.0f / radius, 1.0f / radius, 1.0f);
+            glTranslatef(-offset.x, -offset.y, 0.0f);
+            break;
+        }
+        case POLYGON:
+        {
+            Texture.NO_TEXTURE.bind(0);
+            glColor3f(0.2f, 1.0f, 0.2f);
+            glBegin(GL_LINE_LOOP);
+            for (int i = 0; i < vertices.length; i++)
+                glVertex2f(vertices[i].x, vertices[i].y);
+            glEnd();
             break;
         }
         default:

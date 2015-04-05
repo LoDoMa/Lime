@@ -38,7 +38,7 @@ end
 local function createPlayer(userID)
     local playerID = lime.newEntity()
     lime.setAttribute(playerID, attribEntityPosX, 0)
-    lime.setAttribute(playerID, attribEntityPosY, 9)
+    lime.setAttribute(playerID, attribEntityPosY, 4 * 1.5)
     lime.setAttribute(playerID, attribEntityParent, userID)
     lime.assignScript(playerID, "Deathmatch/Lykke")
     return playerID
@@ -57,20 +57,59 @@ local function onLeave(userID)
 end
 
 local function createWorld()
+    local scaleX = 1.25
+    local scaleY = 1.5
+
     local addScaled = function(x1, y1, x2, y2, x3, y3)
-        local scaleX = 1.25
-        local scaleY = 1.5
         World.addTerrain("stone", x1 * scaleX, y1 * scaleY, x2 * scaleX, y2 * scaleY, x3 * scaleX, y3 * scaleY)
     end
 
     local addLightScaled = function(x, y, rad, r, g, b)
-        local scaleX = 1.25
-        local scaleY = 1.5
         World.addLight(x * scaleX, y * scaleY, rad, r, g, b)
+    end
+
+    local addLightpost = function(x, y, s)
+        local lightpostID = lime.newComponent("static", x * scaleX, y * scaleY, 0.0)
+        lime.selectComponent(lightpostID)
+
+        local shapeID = lime.newShape("circle")
+        lime.selectShape(shapeID)
+        lime.setShapeDensity(0)
+        lime.setShapeFriction(0)
+        lime.setShapeRestitution(0)
+        lime.setShapeColor(1.0, 1.0, 1.0, 1.0)
+        lime.setShapeAnimation("gamemode/Deathmatch/Lightpost")
+        lime.setShapeAnimationSelection("def")
+        lime.setShapeAnimationScale(s * scaleX, s * scaleY)
+        lime.setShapeRadius(0)
+        lime.updateShape()
+
+        addLightScaled(x + s * 0.205, y + s * 0.815, 1.5 * s, 1.0, 0.6, 0.0)
+        addLightScaled(x - s * 0.33, y + s * 0.8, 1.5 * s, 1.0, 0.6, 0.0)
+
+        local topID = lime.newComponent("static", x * scaleX, y * scaleY, 0.0)
+        lime.selectComponent(topID)
+
+        shapeID = lime.newShape("triangle-group")
+        lime.selectShape(shapeID)
+        lime.setShapeDensity(0.0)
+        lime.setShapeFriction(0.0)
+        lime.setShapeRestitution(0.0)
+        lime.addShapeTriangle(-0.37 * s * scaleX, s * 0.82 * scaleY, -0.37 * s * scaleX, s * 0.85 * scaleY, 0.26 * s * scaleX, s * 0.85 * scaleY)
+        lime.addShapeTriangle(-0.37 * s * scaleX, s * 0.82 * scaleY, 0.26 * s * scaleX, s * 0.82 * scaleY, 0.26 * s * scaleX, s * 0.85 * scaleY)
+        lime.updateShape()
     end
 
     addLightScaled(0, 1, 14, 1, 0.4, 0.2)
     addLightScaled(0, 12, 14, 0.4, 0.2, 1.0)
+
+    addLightpost(0, 3, 3)
+    addLightpost(-10.5, 8, 3)
+    addLightpost(10.5, 1, 3)
+    addLightpost(-5.5, 19, 3)
+    addLightpost(-1.8, 19, 3)
+    addLightpost(1.8, 19, 3)
+    addLightpost(5.5, 19, 3)
 
     addScaled(5, 0, -5, 0, -4, -2)
     addScaled(-4, -2, 5, 0, 4, -2)
@@ -80,12 +119,12 @@ local function createWorld()
     addScaled(-1, 2, -2, 3, 2, 3)
     addScaled(-8, 2, -11, 2, -10, 1)
     addScaled(-10, 1, -9, 1, -8, 2)
-    addScaled(8, 2, 11, 2, 10, 1)
-    addScaled(10, 1, 9, 1, 8, 2)
+    addScaled(8, 1, 11, 1, 10, 0)
+    addScaled(10, 0, 9, 0, 8, 1)
     addScaled(-8, 8, -11, 8, -10, 7)
     addScaled(-10, 7, -9, 7, -8, 8)
-    addScaled(8, 8, 11, 8, 10, 7)
-    addScaled(10, 7, 9, 7, 8, 8)
+    addScaled(8, 7.5, 11, 7.5, 10, 6.5)
+    addScaled(10, 6.5, 9, 6.5, 8, 7.5)
     addScaled(0, 10, -1, 11, 1, 11)
 
     addScaled(-7, 5, -5, 5, -6, 4)

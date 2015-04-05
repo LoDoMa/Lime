@@ -2,9 +2,11 @@ package net.lodoma.lime.client.logic;
 
 import java.nio.ByteBuffer;
 
+import net.lodoma.lime.Lime;
 import net.lodoma.lime.client.Client;
 import net.lodoma.lime.client.ClientPacket;
 import net.lodoma.lime.client.packet.CPInputState;
+import net.lodoma.lime.client.window.Window;
 import net.lodoma.lime.input.Input;
 import net.lodoma.lime.snapshot.Snapshot;
 import net.lodoma.lime.snapshot.SnapshotData;
@@ -75,6 +77,12 @@ public class CLGame extends ClientLogic
             Input.update();
             ByteBuffer state = Input.inputData.getState();
             inputStatePacket.write(state);
+            
+            if (Input.getKeyDown(Input.KEY_F3))
+            {
+                Window.debugEnabled = !Window.debugEnabled;
+                Lime.LOGGER.F("debug = " + Window.debugEnabled);
+            }
         }
         while (inputTime <= 0.0)
             inputTime += INPUT_MAXTIME;

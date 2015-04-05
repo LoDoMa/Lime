@@ -279,7 +279,7 @@ local function shoot(timeDelta)
             end
 
             posx = posx - 0.7 * -movingDirection
-            posy = posy - 0.15
+            posy = posy - 0.125
 
             local bullet = lime.newEntity()
             lime.setAttribute(bullet, attribEntityParent, entityID)
@@ -288,7 +288,7 @@ local function shoot(timeDelta)
             lime.setAttribute(bullet, attribEntityAngle, math.atan2(my - posy, mx - posx))
             lime.setAttribute(bullet, attribBulletSpeed, 10)
             lime.setAttribute(bullet, attribBulletTimeout, 2)
-            lime.setAttribute(bullet, attribBulletRadius, 0.25)
+            lime.setAttribute(bullet, attribBulletRadius, 0.125)
             lime.setAttribute(bullet, attribBulletOnHit, function(body)
                 lime.selectComponent(body)
                 local owner = lime.getOwner()
@@ -322,7 +322,7 @@ function Lime_Update(timeDelta)
     if cfy < -10 or resetNextUpdate then
         lime.setAttribute(entityID, attribEntityHealth, 100)
         lime.selectComponent(mainCompo)
-        lime.setComponentPosition(0, 9)
+        lime.setComponentPosition(0, 4 * 1.5)
         lime.setLinearVelocity(0, 0)
 
         lime.selectComponent(cameraFocusCompo)

@@ -78,7 +78,7 @@ local function createBody()
     lime.setShapeAnimation("gamemode/Deathmatch/Bullet")
     lime.setShapeAnimationSelection("def")
     lime.setShapeAnimationRoot(0.0, 0.0)
-    lime.setShapeAnimationScale(radius * 2, radius * 2)
+    lime.setShapeAnimationScale(radius * 4, radius * 4)
     lime.updateShape()
 
     lime.addContactListener(contactListener, nil, nil, nil, compoID, nil)

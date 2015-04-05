@@ -52,7 +52,7 @@ public class PhysicsParticle
         if (lifetime <= 0.0f) destroy();
     }
     
-    public void debugRender()
+    public void render()
     {
         Vector2 position = new Vector2(engineBody.getPosition());
         float angle = engineBody.getAngle();
