@@ -58,6 +58,12 @@ public class LightFunctions
                 Lime.LOGGER.I("Created light " + lightID);
                 return LuaValue.valueOf(lightID);
             }
+            case REMOVE_LIGHT:
+            {
+                int lightID = args.arg(1).checkint();
+                world.lightPool.remove(lightID);
+                break;
+            }
             case SET_POSITION:
             {
                 int lightID = args.arg(1).checkint();
@@ -106,6 +112,7 @@ public class LightFunctions
     private static enum FuncData
     {
         NEW_LIGHT(0, true, "newLight"),
+        REMOVE_LIGHT(1, true, "removeLight"),
         SET_POSITION(3, true, "setLightPosition"),
         SET_RADIUS(2, true, "setLightRadius"),
         SET_COLOR(5, true, "setLightColor"),

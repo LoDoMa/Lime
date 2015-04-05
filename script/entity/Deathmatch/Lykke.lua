@@ -279,7 +279,7 @@ local function shoot(timeDelta)
             end
 
             posx = posx - 0.7 * -movingDirection
-            posy = posy - 0.2
+            posy = posy - 0.15
 
             local bullet = lime.newEntity()
             lime.setAttribute(bullet, attribEntityParent, entityID)
@@ -322,7 +322,8 @@ function Lime_Update(timeDelta)
     if cfy < -10 or resetNextUpdate then
         lime.setAttribute(entityID, attribEntityHealth, 100)
         lime.selectComponent(mainCompo)
-        lime.setComponentPosition(1.5, 1.5)
+        lime.setComponentPosition(0, 9)
+        lime.setLinearVelocity(0, 0)
 
         lime.selectComponent(cameraFocusCompo)
         cfx, cfy = lime.getComponentPosition()

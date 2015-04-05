@@ -37,8 +37,8 @@ end
 
 local function createPlayer(userID)
     local playerID = lime.newEntity()
-    lime.setAttribute(playerID, attribEntityPosX, 1.5)
-    lime.setAttribute(playerID, attribEntityPosY, 1.5)
+    lime.setAttribute(playerID, attribEntityPosX, 0)
+    lime.setAttribute(playerID, attribEntityPosY, 9)
     lime.setAttribute(playerID, attribEntityParent, userID)
     lime.assignScript(playerID, "Deathmatch/Lykke")
     return playerID
@@ -56,45 +56,54 @@ local function onLeave(userID)
     lime.removeEntity(playerID)
 end
 
-local function spawnSegment(x, y)
-    World.addLight(x + 1.5,  y + 1.5,  14.0, 0.05, 1.0,  0.4)
-    World.addLight(x + 18.5, y + 8,    14.0, 1.0,  0.4,  0.05)
+local function createWorld()
+    local addScaled = function(x1, y1, x2, y2, x3, y3)
+        local scaleX = 1.25
+        local scaleY = 1.5
+        World.addTerrain("stone", x1 * scaleX, y1 * scaleY, x2 * scaleX, y2 * scaleY, x3 * scaleX, y3 * scaleY)
+    end
 
-    World.addTerrain("stone", x + 0,    y + 0,    x + 0,    y - 2,    x + 8.5,  y - 2) -- bottom
-    World.addTerrain("stone", x + 0,    y + 0,    x + 8.5,  y - 2,    x + 8.5,  y + 0) -- bottom
-    World.addTerrain("stone", x + 11.5, y + 0,    x + 11.5, y - 2,    x + 20,   y - 2) -- bottom
-    World.addTerrain("stone", x + 11.5, y + 0,    x + 20,   y - 2,    x + 20,   y + 0) -- bottom
-    World.addTerrain("stone", x - 2,    y + 0,    x + 0,    y - 2,    x + 0,    y + 0) -- bottom left corner
-    World.addTerrain("stone", x + 20,   y + 0,    x + 20,   y - 2,    x + 22,   y + 0) -- bottom right corner
-    World.addTerrain("stone", x - 2,    y + 9.5,  x - 2,    y + 0,    x + 0,    y + 0) -- left
-    World.addTerrain("stone", x - 2,    y + 9.5,  x + 0,    y + 0,    x + 0,    y + 9.5) -- left
-    World.addTerrain("stone", x + 20,   y + 9.5,  x + 20,   y + 0,    x + 22,   y + 0) -- right
-    World.addTerrain("stone", x + 20,   y + 9.5,  x + 22,   y + 0,    x + 22,   y + 9.5) -- right
-    World.addTerrain("stone", x + 0,    y + 11.5, x + 0,    y + 9.5,  x + 8.5,  y + 9.5) -- top
-    World.addTerrain("stone", x + 0,    y + 11.5, x + 8.5,  y + 9.5,  x + 8.5,  y + 11.5) -- top
-    World.addTerrain("stone", x + 11.5, y + 11.5, x + 11.5, y + 9.5,  x + 20,   y + 9.5) -- top
-    World.addTerrain("stone", x + 11.5, y + 11.5, x + 20,   y + 9.5,  x + 20,   y + 11.5) -- top
-    World.addTerrain("stone", x - 2,    y + 9.5,  x + 0,    y + 9.5,  x + 0,    y + 11.5) -- top left corner
-    World.addTerrain("stone", x + 20,   y + 11.5, x + 20,   y + 9.5,  x + 22,   y + 9.5) -- top right corner
+    local addLightScaled = function(x, y, rad, r, g, b)
+        local scaleX = 1.25
+        local scaleY = 1.5
+        World.addLight(x * scaleX, y * scaleY, rad, r, g, b)
+    end
 
-    World.addTerrain("stone", x + 3,    y + 4,    x + 3,    y + 3,    x + 9.5,  y + 3) -- obstacle bottom-left
-    World.addTerrain("stone", x + 3,    y + 4,    x + 9.5,  y + 3,    x + 9.5,  y + 4) -- obstacle bottom-left
-    World.addTerrain("stone", x + 10.5, y + 4,    x + 10.5, y + 3,    x + 17,   y + 3) -- obstacle bottom-right
-    World.addTerrain("stone", x + 10.5, y + 4,    x + 17,   y + 3,    x + 17,   y + 4) -- obstacle bottom-right
-    World.addTerrain("stone", x + 9.5,  y + 6.5,  x + 9.5,  y + 3,    x + 10.5, y + 3) -- obstacle middle
-    World.addTerrain("stone", x + 9.5,  y + 6.5,  x + 10.5, y + 3,    x + 10.5, y + 6.5) -- obstacle middle
-    World.addTerrain("stone", x + 3,    y + 6.5,  x + 3,    y + 5.5,  x + 9.5,  y + 5.5) -- obstacle top-left
-    World.addTerrain("stone", x + 3,    y + 6.5,  x + 9.5,  y + 5.5,  x + 9.5,  y + 6.5) -- obstacle top-left
-    World.addTerrain("stone", x + 10.5, y + 6.5,  x + 10.5, y + 5.5,  x + 17,   y + 5.5) -- obstacle top-right
-    World.addTerrain("stone", x + 10.5, y + 6.5,  x + 17,   y + 5.5,  x + 17,   y + 6.5) -- obstacle top-right
+    addLightScaled(0, 1, 14, 1, 0.4, 0.2)
+    addLightScaled(0, 13, 14, 0.4, 0.2, 1.0)
 
-    World.addPickupLocation(x + 1.5,  y + 1.5)
-    World.addPickupLocation(x + 18.5, y + 1.5)
-    World.addPickupLocation(x + 4,    y + 1.5)
-    World.addPickupLocation(x + 16,   y + 1.5)
-    World.addPickupLocation(x + 4,    y + 8)
-    World.addPickupLocation(x + 10,   y + 8)
-    World.addPickupLocation(x + 16,   y + 8)
+    addScaled(5, 0, -5, 0, -4, -2)
+    addScaled(-4, -2, 5, 0, 4, -2)
+    addScaled(-4, -2, 4, -2, 0, -3)
+
+    addScaled(-1, 2, 1, 2, 2, 3)
+    addScaled(-1, 2, -2, 3, 2, 3)
+    addScaled(-8, 2, -11, 2, -10, 1)
+    addScaled(-10, 1, -9, 1, -8, 2)
+    addScaled(8, 2, 11, 2, 10, 1)
+    addScaled(10, 1, 9, 1, 8, 2)
+    addScaled(-8, 8, -11, 8, -10, 7)
+    addScaled(-10, 7, -9, 7, -8, 8)
+    addScaled(8, 8, 11, 8, 10, 7)
+    addScaled(10, 7, 9, 7, 8, 8)
+    addScaled(0, 10, -1, 11, 1, 11)
+
+    addScaled(-7, 5, -5, 5, -6, 4)
+    addScaled(-6, 4, -5, 5, -4, 4)
+    addScaled(-5, 5, -4, 4, -4, 6)
+    addScaled(-3, 6, -4, 4, -4, 6)
+    addScaled(-4, 6, -1, 6, 0, 7)
+    addScaled(-4, 6, -4, 8, 0, 7)
+    addScaled(0, 8, -4, 8, 0, 7)
+    addScaled(7, 5, 5, 5, 6, 4)
+    addScaled(6, 4, 5, 5, 4, 4)
+    addScaled(5, 5, 4, 4, 4, 6)
+    addScaled(3, 6, 4, 4, 4, 6)
+    addScaled(4, 6, 1, 6, 0, 7)
+    addScaled(4, 6, 4, 8, 0, 7)
+    addScaled(0, 8, 4, 8, 0, 7)
+    addScaled(-5, 8, -6, 9, 6, 9)
+    addScaled(-5, 8, 5, 8, 6, 9)
 end
 
 function Lime_Init()
@@ -103,9 +112,7 @@ function Lime_Init()
 
     Material.addMaterial("stone", 1.0, 1.0, 1.0, 5, 0.7, 0.0)
 
-    spawnSegment(0, 0)
-    spawnSegment(0, 13.5)
-    spawnSegment(0, 27)
+    createWorld()
 
     print("Gamemode initialized")
 end

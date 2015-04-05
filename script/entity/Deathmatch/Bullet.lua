@@ -15,7 +15,12 @@ local attribBulletOnWaste = C.attribBulletOnWaste
 local entityID
 local compoID
 
-local parentID
+local lightID
+local lightID
+local lightID
+local lightID
+
+local parentIDa
 local velocityX
 local velocityY
 
@@ -77,6 +82,10 @@ local function createBody()
     lime.updateShape()
 
     lime.addContactListener(contactListener, nil, nil, nil, compoID, nil)
+
+    lightID = lime.newLight()
+    lime.setLightRadius(lightID, 2)
+    lime.setLightColor(lightID, 1.0, 1.0, 0.2, 1)
 end
 
 function Lime_Init(entityID_)
@@ -106,9 +115,12 @@ function Lime_Update(timeDelta)
 end
 
 function Lime_PostUpdate()
-
+    lime.selectComponent(compoID)
+    local positionX, positionY = lime.getComponentPosition()
+    lime.setLightPosition(lightID, positionX, positionY)
 end
 
 function Lime_Clean()
     lime.removeComponent(compoID)
+    lime.removeLight(lightID)
 end

@@ -38,16 +38,16 @@ local constants = {
 
     cWorldGravityX = 0.0,
     cWorldGravityY = -18.0,
-    cWorldAmbientLightR = 0.01,
-    cWorldAmbientLightG = 0.0,
-    cWorldAmbientLightB = 0.1,
+    cWorldAmbientLightR = 0.05,
+    cWorldAmbientLightG = 0.025,
+    cWorldAmbientLightB = 0.125,
 
     cCameraPadding = 4,
     cCameraScaleX = 16,
     cCameraScaleY = 9,
 
     cLykkeWidth = 0.25,
-    cLykkeHeight = 0.5,
+    cLykkeHeight = 0.4,
     cLykkeMaxVelocityX = 12,
     cLykkeGroundAcceleration = 10,
     cLykkeAirAcceleration = 1.5,
