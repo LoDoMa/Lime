@@ -10,6 +10,13 @@ root = {
             textureOffset = { x = 0, y = 0.25, },
 
             children = {
+                gun = {
+                    offset = { x = -0.4, y = 0.0, },
+
+                    texture = "gamemode/Deathmatch/Gun",
+                    textureSize = { x = 2.5, y = 1.5, },
+                    textureOffset = { x = 0, y = 0.25, },
+                },
                 armLeft = {
                     offset = { x = 0, y = 0.5, },
 
@@ -70,6 +77,8 @@ animation = {
     still = {
         duration = 1,
         keyframes = {
+            { body = root.children.body.children.gun, time = 0.0, angle = 2 },
+            { body = root.children.body.children.gun, time = 0.5, angle = -2 },
             { body = root.children.body.children.head, time = 0.0, angle = 2 },
             { body = root.children.body.children.head, time = 0.5, angle = -2 },
             { body = root.children.body.children.armLeft, time = 0.0, angle = 179 },
@@ -83,6 +92,8 @@ animation = {
     falling = {
         duration = 0.5,
         keyframes = {
+            { body = root.children.body.children.gun, time = 0.0, angle = 2 },
+            { body = root.children.body.children.gun, time = 0.25, angle = -2 },
             { body = root.children.body.children.head, time = 0.0, angle = 2 },
             { body = root.children.body.children.head, time = 0.25, angle = -2 },
             { body = root.children.body.children.armLeft, time = 0.0, angle = 290 },
@@ -99,6 +110,8 @@ animation = {
         duration = 0.5,
         keyframes = {
             { body = root, time = 0.0, angle = -8 },
+            { body = root.children.body.children.gun, time = 0.0, angle = 2 },
+            { body = root.children.body.children.gun, time = 0.25, angle = -2 },
             { body = root.children.body.children.head, time = 0.0, angle = 2 },
             { body = root.children.body.children.head, time = 0.25, angle = -2 },
             { body = root.children.body.children.armLeft, time = 0.0, angle = 290 },
@@ -112,6 +125,8 @@ animation = {
     walking = {
         duration = 0.5,
         keyframes = {
+            { body = root.children.body.children.gun, time = 0.0, angle = 8 },
+            { body = root.children.body.children.gun, time = 0.25, angle = -8 },
             { body = root.children.body.children.head, time = 0.0, angle = 8 },
             { body = root.children.body.children.head, time = 0.25, angle = -8 },
             { body = root.children.body.children.armLeft, time = 0.0, angle = 140 },
@@ -127,6 +142,8 @@ animation = {
     wallSliding = {
         duration = 1,
         keyframes = {
+            { body = root.children.body.children.gun, time = 0.0, angle = 47 },
+            { body = root.children.body.children.gun, time = 0.5, angle = 43 },
             { body = root.children.body.children.head, time = 0.0, angle = 47 },
             { body = root.children.body.children.head, time = 0.5, angle = 43 },
             { body = root.children.body.children.armLeft, time = 0.0, angle = 280 },

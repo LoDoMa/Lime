@@ -272,6 +272,15 @@ local function shoot(timeDelta)
             local posx, posy = lime.getComponentPosition()
             local mx, my = lime.getMousePosition()
 
+            if mx < posx then
+                movingDirection = -1
+            else
+                movingDirection = 1
+            end
+            
+            posx = posx - 0.7 * -movingDirection
+            posy = posy - 0.2
+
             local bullet = lime.newEntity()
             lime.setAttribute(bullet, attribEntityParent, entityID)
             lime.setAttribute(bullet, attribEntityPosX, posx)
