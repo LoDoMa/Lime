@@ -128,7 +128,7 @@ local function createBody()
     -- body
     mainShape = lime.newShape("triangle-group")
     lime.selectShape(mainShape)
-    lime.setShapeDensity(2.2)
+    lime.setShapeDensity(1.4)
     lime.setShapeFriction(0.0)
     lime.setShapeRestitution(0.0)
 
