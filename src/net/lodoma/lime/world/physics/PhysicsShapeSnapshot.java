@@ -112,11 +112,8 @@ public class PhysicsShapeSnapshot
             Animation.destroyAnimation(attachments.animation);
     }
     
-    private void createDisplayList()
+    private void renderShape()
     {
-        displayList = glGenLists(1);
-        glNewList(displayList, GL_COMPILE);
-
         attachments.color.setGL();
         
         switch (shapeType)
@@ -157,8 +154,6 @@ public class PhysicsShapeSnapshot
         default:
             throw new IllegalStateException();
         }
-        
-        glEndList();
     }
     
     public void render()
@@ -186,7 +181,12 @@ public class PhysicsShapeSnapshot
                     glDeleteLists(displayList, 1);
                     firstDisplayList = false;
                 }
-                createDisplayList();
+
+                displayList = glGenLists(1);
+                glNewList(displayList, GL_COMPILE);
+                renderShape();
+                glEndList();
+                
                 recreateDisplayList = false;
             }
 

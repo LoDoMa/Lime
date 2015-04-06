@@ -68,6 +68,24 @@ local function createWorld()
         World.addLight(x * scaleX, y * scaleY, rad, r, g, b)
     end
 
+    local addBox = function(x, y, s)
+        local boxID = lime.newComponent("dynamic", x * scaleX, y * scaleY, 0.0)
+        lime.selectComponent(boxID)
+
+        local shapeID = lime.newShape("triangle-group")
+        lime.selectShape(shapeID)
+        lime.addShapeTriangle(0, 0, s, 0, s, s)
+        lime.addShapeTriangle(0, 0, 0, s, s, s)
+        lime.setShapeDensity(5.0)
+        lime.setShapeFriction(0.5)
+        lime.setShapeRestitution(0.1)
+        lime.setShapeColor(1.0, 1.0, 1.0, 1.0)
+        lime.setShapeTexture("gamemode/Deathmatch/Box")
+        lime.setShapeTexturePoint(0, 0)
+        lime.setShapeTextureSize(s, s)
+        lime.updateShape()
+    end
+
     local addLightpost = function(x, y, s)
         local lightpostID = lime.newComponent("static", x * scaleX, y * scaleY, 0.0)
         lime.selectComponent(lightpostID)
@@ -102,6 +120,10 @@ local function createWorld()
 
     addLightScaled(0, 1, 14, 1, 0.4, 0.2)
     addLightScaled(0, 12, 14, 0.4, 0.2, 1.0)
+
+    addBox(-3, 0, 1)
+    addBox(-2, 0, 1)
+    addBox(-2.5, 1, 1)
 
     addLightpost(0, 3, 3)
     addLightpost(-10.5, 8, 3)
@@ -160,7 +182,7 @@ function Lime_Init()
     lime.addEventListener("Lime::OnJoin", onJoin)
     lime.addEventListener("Lime::OnLeave", onLeave)
 
-    Material.addMaterial("stone", 1.0, 1.0, 1.0, 5, 0.7, 0.0)
+    Material.addMaterial("stone", 1.0, 1.0, 1.0, 5, 0.7, 0.1)
 
     createWorld()
 

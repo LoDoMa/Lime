@@ -76,6 +76,7 @@ public abstract class PhysicsShape implements Identifiable<Integer>
             fixture.setFriction(friction);
             fixture.setRestitution(restitution);
             fixture.setSensor(!isSolid);
+            fixture.m_body.resetMassData();
         }
     }
     
