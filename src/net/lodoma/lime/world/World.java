@@ -9,8 +9,6 @@ import java.util.List;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaValue;
 
-import net.lodoma.lime.Lime;
-import net.lodoma.lime.client.Client;
 import net.lodoma.lime.script.LuaScript;
 import net.lodoma.lime.script.library.AttributeFunctions;
 import net.lodoma.lime.script.library.CameraFunctions;
@@ -30,7 +28,6 @@ import net.lodoma.lime.util.OsHelper;
 import net.lodoma.lime.world.entity.Entity;
 import net.lodoma.lime.world.physics.PhysicsComponent;
 import net.lodoma.lime.world.physics.PhysicsComponentSnapshot;
-import net.lodoma.lime.world.physics.PhysicsComponentType;
 import net.lodoma.lime.world.physics.PhysicsJoint;
 import net.lodoma.lime.world.physics.PhysicsParticle;
 import net.lodoma.lime.world.physics.PhysicsParticleDefinition;
@@ -171,98 +168,6 @@ public class World
                 if (particle.destroyed)
                     it.remove();
             }
-        }
-    }
-    
-    public void applySnapshot(WorldSnapshotSegment segment, Client client)
-    {
-        synchronized (lock)
-        {
-            // Set camera
-            
-            client.worldRenderer.camera.translation.set(segment.cameraTranslation);
-            client.worldRenderer.camera.rotation = segment.cameraRotation;
-            client.worldRenderer.camera.scale.set(segment.cameraScale);
-            
-            // Remove components and lights
-            
-            for (int key : segment.removedComponents)
-            {
-                if (compoSnapshotPool.get(key).type == PhysicsComponentType.STATIC)
-                {
-                    componentPool.get(key).destroy();
-                    componentPool.remove(key);
-                    
-                    Lime.LOGGER.I("Removed physics component " + key);
-                }
-                compoSnapshotPool.remove(key);
-            }
-            
-            for (int key : segment.removedLights)
-            {
-                lightPool.get(key).destroy();
-                lightPool.remove(key);
-            }
-            
-            // Create components and lights
-            
-            for (int key : segment.createdComponents)
-            {
-                PhysicsComponentSnapshot compoSnapshot = new PhysicsComponentSnapshot();
-                compoSnapshot.identifier = key;
-                compoSnapshotPool.addManaged(compoSnapshot);
-            }
-            
-            for (int key : segment.createdLights)
-            {
-                Light light = new Light(this);
-                light.identifier = key;
-                lightPool.addManaged(light);
-            }
-            
-            // Modify components and lights
-            
-            for (int i = 0; i < segment.modifiedComponents.length; i++)
-            {
-                int key = (int) (segment.modifiedComponents[i] & 0xFFFFFFFF);
-                PhysicsComponentSnapshot compoSnapshot = compoSnapshotPool.get(key);
-                segment.productComponents[i].apply(compoSnapshot);
-                
-                if (compoSnapshot.type == PhysicsComponentType.STATIC)
-                {
-                    if (componentPool.has(key))
-                    {
-                        componentPool.get(key).destroy();
-                        componentPool.remove(key);
-                    }
-                    
-                    PhysicsComponent compo = new PhysicsComponent(compoSnapshot.position, compoSnapshot.angle, compoSnapshot.type, physicsWorld);
-                    compo.identifier = key;
-                    componentPool.addManaged(compo);
-                    
-                    Lime.LOGGER.I("Created physics component " + key);
-                }
-            }
-            
-            for (int i = 0; i < segment.modifiedLights.length; i++)
-            {
-                int key = (int) (segment.modifiedLights[i] & 0xFFFFFFFF);
-                segment.productLights[i].apply(lightPool.get(key).data);
-            }
-
-            // Create particles
-            
-            for (PhysicsParticleDefinition physicsDef : segment.createdParticles)
-            {
-                particleList.add(new PhysicsParticle(physicsDef, physicsWorld));
-            }
-            
-            // Set ambient light
-
-            lightAmbientColor.r = segment.lightAmbientColor.r;
-            lightAmbientColor.g = segment.lightAmbientColor.g;
-            lightAmbientColor.b = segment.lightAmbientColor.b;
-            lightAmbientColor.a = segment.lightAmbientColor.a;
         }
     }
 }

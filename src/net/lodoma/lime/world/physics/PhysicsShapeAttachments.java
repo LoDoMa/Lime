@@ -98,8 +98,9 @@ public class PhysicsShapeAttachments
             if (animation != null)
                 Animation.destroyAnimation(animation);
             animation = Animation.newAnimation(animationName);
-            animation.setAnimationSelection(animationSelection);
         }
+        if (animation != null)
+            animation.setAnimationSelection(animationSelection);
 
         String oldTextureName = textureName;
         if (in.readByte() == 1)

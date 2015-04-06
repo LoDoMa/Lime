@@ -104,6 +104,6 @@ public class CLGame extends ClientLogic
     @Override
     public void handleSnapshot(Snapshot snapshot)
     {
-        client.world.applySnapshot((WorldSnapshotSegment) snapshot.data, client);
+        
     }
 }
