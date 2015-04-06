@@ -7,6 +7,7 @@ import java.util.Map;
 
 import net.lodoma.lime.resource.texture.Texture;
 import net.lodoma.lime.util.Vector2;
+import net.lodoma.lime.world.gfx.Vertex;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Bone
@@ -58,6 +59,33 @@ public class Bone
 
         for (Bone child : childrenBack) child.update(animation, time);
         for (Bone child : childrenFront) child.update(animation, time);
+    }
+    
+    public void getVertices(List<Vertex> verts)
+    {
+        List<Vertex> verts2 = new ArrayList<Vertex>();
+
+        for (Bone child : childrenBack)
+            child.getVertices(verts2);
+        if (textureName != null)
+        {
+            verts2.add(new Vertex().setXY(textureOffset.x + textureSize.x / -2.0f, textureOffset.y + textureSize.y / -2.0f).setRGBA(1.0f, 1.0f, 1.0f, 1.0f).setST(0.0f, 1.0f).setTexture(textureName));
+            verts2.add(new Vertex().setXY(textureOffset.x + textureSize.x / +2.0f, textureOffset.y + textureSize.y / -2.0f).setRGBA(1.0f, 1.0f, 1.0f, 1.0f).setST(1.0f, 1.0f).setTexture(textureName));
+            verts2.add(new Vertex().setXY(textureOffset.x + textureSize.x / +2.0f, textureOffset.y + textureSize.y / +2.0f).setRGBA(1.0f, 1.0f, 1.0f, 1.0f).setST(1.0f, 0.0f).setTexture(textureName));
+            verts2.add(new Vertex().setXY(textureOffset.x + textureSize.x / -2.0f, textureOffset.y + textureSize.y / -2.0f).setRGBA(1.0f, 1.0f, 1.0f, 1.0f).setST(0.0f, 1.0f).setTexture(textureName));
+            verts2.add(new Vertex().setXY(textureOffset.x + textureSize.x / +2.0f, textureOffset.y + textureSize.y / +2.0f).setRGBA(1.0f, 1.0f, 1.0f, 1.0f).setST(1.0f, 0.0f).setTexture(textureName));
+            verts2.add(new Vertex().setXY(textureOffset.x + textureSize.x / -2.0f, textureOffset.y + textureSize.y / +2.0f).setRGBA(1.0f, 1.0f, 1.0f, 1.0f).setST(0.0f, 0.0f).setTexture(textureName));
+        }
+        for (Bone child : childrenFront)
+            child.getVertices(verts2);
+        
+        for (Vertex v : verts2)
+        {
+            Vector2 rv = new Vector2(v.x, v.y).rotateDeg(-crotation);
+            v.x = rv.x + offset.x;
+            v.y = rv.y + offset.y;
+        }
+        verts.addAll(verts2);
     }
     
     public void render()

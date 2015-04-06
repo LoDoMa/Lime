@@ -1,5 +1,14 @@
 package net.lodoma.lime.world.gfx;
 
+import java.nio.FloatBuffer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.lwjgl.BufferUtils;
+
 import net.lodoma.lime.client.window.Window;
 import net.lodoma.lime.resource.fbo.FBO;
 import net.lodoma.lime.resource.texture.Texture;
@@ -8,9 +17,9 @@ import net.lodoma.lime.shader.UniformType;
 import net.lodoma.lime.shader.light.Light;
 import net.lodoma.lime.world.World;
 import net.lodoma.lime.world.physics.PhysicsComponentSnapshot;
-import net.lodoma.lime.world.physics.PhysicsParticle;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.*;
+import static org.lwjgl.opengl.GL15.*;
 
 public class WorldRenderer
 {
@@ -24,6 +33,10 @@ public class WorldRenderer
     private FBO lightMap;
     
     public Camera camera;
+    
+    private int[] vbos;
+    private int[] vertexcs;
+    private String[] vbotexs;
     
     public WorldRenderer(World world)
     {
@@ -41,6 +54,91 @@ public class WorldRenderer
             FBO.destroyFBO(lightMap);
     }
     
+    private void createVBO()
+    {
+        List<Vertex> vertices = new ArrayList<Vertex>();
+        world.compoSnapshotPool.foreach((PhysicsComponentSnapshot compoSnapshot) -> compoSnapshot.getVertices(vertices));
+        
+        Map<String, List<Vertex>> texVerts = new HashMap<String, List<Vertex>>();
+        for (Vertex v : vertices)
+        {
+            List<Vertex> texVList = texVerts.get(v.texture);
+            if (texVList == null)
+            {
+                texVList = new ArrayList<Vertex>();
+                texVerts.put(v.texture, texVList);
+            }
+            texVList.add(v);
+        }
+
+        vbos = new int[texVerts.size()];
+        vertexcs = new int[texVerts.size()];
+        vbotexs = new String[texVerts.size()];
+        
+        int i = 0;
+        Set<String> textures = texVerts.keySet();
+        for (String texture : textures)
+        {
+            List<Vertex> texVList = texVerts.get(texture);
+            
+            FloatBuffer vbuff = BufferUtils.createFloatBuffer(texVList.size() * 8);
+            for (Vertex v : texVList)
+                vbuff.put(v.x).put(v.y).put(v.r).put(v.g).put(v.b).put(v.a).put(v.s).put(v.t);
+            vbuff.flip();
+
+            vbos[i] = glGenBuffers();
+            glBindBuffer(GL_ARRAY_BUFFER, vbos[i]);
+            glBufferData(GL_ARRAY_BUFFER, vbuff, GL_STATIC_DRAW);
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
+            
+            vertexcs[i] = texVList.size();
+
+            if (texture != null)
+                Texture.referenceUp(texture);
+            vbotexs[i] = texture;
+            
+            i++;
+        }
+    }
+    
+    private void renderVBO()
+    {
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_COLOR_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        
+        for (int i = 0; i < vbos.length; i++)
+        {
+            glBindBuffer(GL_ARRAY_BUFFER, vbos[i]);
+            glVertexPointer(2, GL_FLOAT, Vertex.stride, Vertex.vertexOffset);
+            glColorPointer(4, GL_FLOAT, Vertex.stride, Vertex.colorOffset);
+            glTexCoordPointer(2, GL_FLOAT, Vertex.stride, Vertex.textureOffset);
+            
+            if (vbotexs[i] == null)
+                Texture.NO_TEXTURE.bind(0);
+            else
+                Texture.get(vbotexs[i]).bind(0);
+            glDrawArrays(GL_TRIANGLES, 0, vertexcs[i]);
+        }
+        
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+        glDisableClientState(GL_COLOR_ARRAY);
+        glDisableClientState(GL_VERTEX_ARRAY);
+    }
+    
+    private void destroyVBO()
+    {
+        for (int i = 0; i < vbos.length; i++)
+        {
+            glDeleteBuffers(vbos[i]);
+            if (vbotexs[i] != null)
+                Texture.referenceDown(vbotexs[i]);
+        }
+    }
+    
     // TODO: optimize, render only things within this square
     public void renderOcclusion(float lowX, float lowY, float highX, float highY)
     {
@@ -55,8 +153,7 @@ public class WorldRenderer
         Program.basicProgram.setUniform("uTexture", UniformType.INT1, 0);
         Texture.NO_TEXTURE.bind(0);
         
-        world.compoSnapshotPool.foreach((PhysicsComponentSnapshot compoSnapshot) -> compoSnapshot.render());
-        world.particleList.forEach((PhysicsParticle particle) -> particle.render());
+        renderVBO();
         
         glPopMatrix();
     }
@@ -65,17 +162,15 @@ public class WorldRenderer
     {
         occlusionMap.bind();
         occlusionMap.clear();
-
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        camera.transform();
-        camera.scale();
-
+        
         Program.basicProgram.useProgram();
         Program.basicProgram.setUniform("uTexture", UniformType.INT1, 0);
         Texture.NO_TEXTURE.bind(0);
         
-        world.compoSnapshotPool.foreach((PhysicsComponentSnapshot compoSnapshot) -> compoSnapshot.render());
-        world.particleList.forEach((PhysicsParticle particle) -> particle.render());
+        camera.transform();
+        camera.scale();
+
+        renderVBO();
         
         occlusionMap.unbind();
     }
@@ -204,10 +299,12 @@ public class WorldRenderer
                 brightnessMap = FBO.newFBO(viewportWidth, viewportHeight);
                 lightMap = FBO.newFBO(viewportWidth, viewportHeight);
             }
-    
+            
+            createVBO();
             renderOcclusionMap();
             renderBrightnessMap();
             renderLightMap();
+            destroyVBO();
             
             renderFinal();
             

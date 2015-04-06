@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import net.lodoma.lime.Lime;
+import net.lodoma.lime.world.gfx.Vertex;
 
 public class Animation
 {
@@ -88,6 +89,19 @@ public class Animation
     private float time;
     private String animation;
 
+    public void getVertices(List<Vertex> verts)
+    {
+        synchronized (animationLock)
+        {
+            if (root == null)
+                return;
+            
+            if (animation == null)
+                return;
+            root.getVertices(verts);
+        }
+    }
+    
     public void render()
     {
         synchronized (animationLock)

@@ -32,14 +32,18 @@ local listenerOnWaste
 local removeNextUpdate = false
 
 local function contactListener(contact)
-    contact.setEnabled(false)
-
-    if removeNextUpdate then return end
+    if removeNextUpdate then
+        contact.setEnabled(false)
+        return
+    end
 
     lime.selectComponent(contact.bodyB)
     local owner = lime.getOwner()
     if owner then
-        if owner == parentID then return end
+        if owner == parentID then
+            contact.setEnabled(false)
+            return
+        end
         removeNextUpdate = true
 
         if lime.getAttribute(owner, C.attribEntityDamageable) == true then
