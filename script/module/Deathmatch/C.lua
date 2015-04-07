@@ -54,7 +54,7 @@ local constants = {
     cLykkeMaxVelocityX = 12,
     cLykkeJumpImpulseY = 17,
     cLykkeWallJumpImpulseX = 8,
-    cLykkeWallJumpImpulseYM = 0.9,
+    cLykkeWallJumpImpulseYM = 0.7,
     cLykkeWallSlideVelYM = 8.7,
 
     cPickupWidth = 0.7,
