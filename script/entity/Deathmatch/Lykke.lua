@@ -38,11 +38,13 @@ local sensorWallRight = 0
 local hasGround = false
 local hasWallLeft = false
 local hasWallRight = false
-local wallSliding = false
+
+-- Movement states
 local isMoving = false
 local movingDirection = 1
 local movingTime = 0
 local jumpRise = false
+local wallSliding = false
 local allowWallJump = false
 
 local resetNextUpdate = false
@@ -168,81 +170,96 @@ function Lime_Init(entityID_)
     print("created player [ID=" .. entityID .. "] for user [ID=" .. userOwner .. "]")
 end
 
--- Return values:
---    -2 = can't jump
---    -1 = can jump left
---     0 = can jump up
---     1 = can jump right
-local function jumpDirection()
-    if hasGround then return 0 end
-    if hasWallLeft and hasWallRight then return 0 end
-    if hasWallLeft or hasWallRight then allowWallJump = false end
-    if hasWallLeft then return 1 end
-    if hasWallRight then return -1 end
-    return -2
-end
+-- A function that applies movement forces
+-- and updates movement state
+local function move(timeDelta)
 
-local function updateJumpData()
-    hasGround = sensorGround > 0
-    if sensorGround > 0 then
-        allowWallJump = true
-    end
-
-    local wallJump = lime.getAttribute(entityID, attribLykkeAbilityWallJump) > 0
-    hasWallLeft = (allowWallJump or wallJump) and sensorWallLeft > 0
-    hasWallRight = (allowWallJump or wallJump) and sensorWallRight > 0
-end
-
-local function tryJump()
-    updateJumpData()
-
+    lime.selectComponent(mainCompo)
     lime.setInputData(userOwner)
+
+    -- Fetch sensor data
+
+    hasGround = sensorGround > 0
+    hasWallLeft = sensorWallLeft > 0
+    hasWallRight = sensorWallRight > 0
+
+    -- ----------------
+    -- Code for jumping
+    -- ----------------
+
     if lime.getKeyPress(lime.KEY_W) or lime.getKeyPress(lime.KEY_UP) then
-        local jumpDir = jumpDirection()
+        local jumpDir = -2
+
+        -- If we have ground, or walls on both sides, jump straight up
+        if (hasGround) or (hasWallLeft and hasWallRight) then jumpDir = 0
+        else
+            local allowWallJump = lime.getAttribute(entityID, attribLykkeAbilityWallJump) > 0
+
+            -- If we're allowed to jump and have wall left, jump right
+            -- Otherwise, if we're allowed to jump and have wall right, jump left
+            if allowWallJump and hasWallLeft then jumpDir = 1
+            elseif allowWallJump and hasWallRight then jumpDir = -1 end
+        end
+
         if jumpDir ~= -2 then
-            local verticalJumpMultiplier = cLykkeJumpImpulseY
-            local horizontalJumpMultiplier = 0.0
+            local verticalJump = cLykkeJumpImpulseY
+            local horizontalJump = 0.0
             if jumpDir ~= 0 then
-                verticalJumpMultiplier = verticalJumpMultiplier * cLykkeWallJumpImpulseYM
-                horizontalJumpMultiplier = cLykkeWallJumpImpulseX * jumpDir
+                -- If we aren't jumping straight up, add X force and dampen Y force
+                verticalJump = verticalJump * cLykkeWallJumpImpulseYM
+                horizontalJump = cLykkeWallJumpImpulseX * jumpDir
             end
 
-            lime.selectComponent(mainCompo)
-            lime.applyLinearImpulseToCenter(horizontalJumpMultiplier, verticalJumpMultiplier)
+            lime.applyLinearImpulseToCenter(horizontalJump, verticalJump)
         end
     end
-end
 
-local function move(timeDelta)
+    -- ------------------------------------
+    -- Code for walking and movement states
+    -- ------------------------------------
+
     lime.selectComponent(mainCompo)
-    local velocityX = lime.getLinearVelocity()
+
+    -- Target velocity is the final velocity we want to reach while moving
 
     local targetVelocity = 0
+
+    -- First determine if we're moving at all
+
     isMoving = false
     if lime.getKeyState(lime.KEY_A) or lime.getKeyState(lime.KEY_LEFT) then
         isMoving = true
         movingDirection = -1
-        targetVelocity = -cLykkeMaxVelocityX
     end
     if lime.getKeyState(lime.KEY_D) or lime.getKeyState(lime.KEY_RIGHT) then
         isMoving = true
         movingDirection = 1
-        targetVelocity = cLykkeMaxVelocityX
     end
 
-    if not isMoving then
-        movingTime = 0
-    else
+    -- If we're moving, change the target velocity and update movingTime
+    -- Otherwise, set movingTime to 0 (movingTime is how long we've been moving for)
+
+    if isMoving then
+        targetVelocity = cLykkeMaxVelocityX * movingDirection
         movingTime = movingTime + timeDelta
+    else
+        movingTime = 0
     end
 
-    local inputForce = targetVelocity - velocityX
+    -- We'll apply force to correct the X velocity
+    -- If on ground, multiply it by ground acceleration, otherwise by air acceleration
 
+    local velocityX = lime.getLinearVelocity()
+    local inputForce = targetVelocity - velocityX
     if hasGround then
         inputForce = inputForce * cLykkeGroundAcceleration
     else
         inputForce = inputForce * cLykkeAirAcceleration
     end
+
+    -- Apply the inputForce and some additional Y force, because it makes jumping look nicer
+    -- NOTE: additional Y force must not be too high, because the player
+    --       starts to jitter at that point
 
     lime.applyForceToCenter(inputForce, -20.0)
 
@@ -250,17 +267,50 @@ local function move(timeDelta)
     local newVelocityX = velocityX
     local newVelocityY = velocityY
 
-    wallSliding = false
-    jumpRise = velocityY > 0
+    -- We are rising if we aren't touching the ground and our Y velocity is greater than 0
+    -- The "not hasGround" check is important because Y velocity can be greater that 0
+    -- even while standing on flat ground because of JBox2D position corrections.
 
-    local wallSlide = lime.getAttribute(entityID, attribLykkeAbilityWallSlide) > 0
-    if wallSlide and not hasGround and (hasWallLeft or hasWallRight) and velocityY < 0 then
+    jumpRise = not hasGround and velocityY > 0
+
+    -- Check if we are wall sliding
+    -- We are wall sliding if we are allowed to wall slide, don't have ground, are near a wall, and aren't rising
+    -- If we are wall sliding, dampen the Y velocity a bit
+
+    local canWallSlide = lime.getAttribute(entityID, attribLykkeAbilityWallSlide) > 0
+    wallSliding = canWallSlide and not hasGround and (hasWallLeft or hasWallRight) and not jumpRising
+    if wallSliding then
         newVelocityY = velocityY - velocityY * timeDelta * cLykkeWallSlideVelYM
-
-        wallSliding = true
     end
 
     lime.setLinearVelocity(newVelocityX, newVelocityY)
+
+    -- After all that moving, change the movingDirection state to the direction of the velocity
+    local velocityX, velocityY = lime.getLinearVelocity()
+    if velocityX < -0.75 then
+        movingDirection = -1
+    elseif velocityX > 0.75 then
+        movingDirection = 1
+    end
+
+    -- If we fell out of the world or died, reset
+    local positionX, positionY = lime.getComponentPosition()
+    if positionY < -10 or resetNextUpdate then
+        lime.setAttribute(entityID, attribEntityHealth, 100)
+        lime.selectComponent(mainCompo)
+        -- TODO: set position to real origin, not to a hardcoded position
+        lime.setComponentPosition(0, 4 * 1.5)
+        lime.setLinearVelocity(0, 0)
+
+        lime.selectComponent(cameraFocusCompo)
+        positionX, positionY = lime.getComponentPosition()
+
+        resetNextUpdate = false
+    end
+
+    -- Finally, update the focus point
+    lime.setAttribute(entityID, attribLykkeFocusX, positionX)
+    lime.setAttribute(entityID, attribLykkeFocusY, positionY)
 end
 
 local function shoot(timeDelta)
@@ -303,41 +353,13 @@ local function shoot(timeDelta)
     end
 end
 
-function Lime_Update(timeDelta)
-    tryJump()
-    move(timeDelta)
-    shoot(timeDelta)
-
+local function animate()
     lime.selectComponent(mainCompo)
-    local velocityX = lime.getLinearVelocity()
-    if velocityX < -0.75 then
-        movingDirection = -1
-    elseif velocityX > 0.75 then
-        movingDirection = 1
-    end
-
-    lime.selectComponent(cameraFocusCompo)
-    local cfx, cfy = lime.getComponentPosition()
-
-    if cfy < -10 or resetNextUpdate then
-        lime.setAttribute(entityID, attribEntityHealth, 100)
-        lime.selectComponent(mainCompo)
-        lime.setComponentPosition(0, 4 * 1.5)
-        lime.setLinearVelocity(0, 0)
-
-        lime.selectComponent(cameraFocusCompo)
-        cfx, cfy = lime.getComponentPosition()
-
-        resetNextUpdate = false
-    end
-
-    lime.setAttribute(entityID, attribLykkeFocusX, cfx)
-    lime.setAttribute(entityID, attribLykkeFocusY, cfy)
-
     lime.selectShape(mainShape)
     lime.setShapeAnimationRoot(0.0, -cLykkeHeight + 0.1)
     lime.setShapeAnimationScale(0.4 * -movingDirection, 0.4)
-    local animationSelection = ""
+
+    local animationSelection = "still"
     if hasGround then
         if not isMoving then
             animationSelection = "still"
@@ -349,7 +371,6 @@ function Lime_Update(timeDelta)
     else
         if not isMoving then
             if jumpRise then
-                lime.selectComponent(mainCompo)
                 local velocityX = lime.getLinearVelocity()
                 if velocityX < -0.75 or velocityX > 0.75 then
                     animationSelection = "fallingLeft"
@@ -364,7 +385,14 @@ function Lime_Update(timeDelta)
         end
     end
     lime.setShapeAnimationSelection(animationSelection)
+    
     lime.updateShape()
+end
+
+function Lime_Update(timeDelta)
+    move(timeDelta)
+    shoot(timeDelta)
+    animate()
 end
 
 function Lime_PostUpdate()
