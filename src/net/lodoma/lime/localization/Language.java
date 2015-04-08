@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,7 @@ import net.lodoma.lime.util.OsHelper;
 public class Language
 {
     private static Language currentLanguage;
+    private static String currentLanguageName;
     private static List<String> langNames = new ArrayList<String>();
     private static Map<String, Language> languages = new HashMap<String, Language>();
     
@@ -34,6 +36,7 @@ public class Language
                 languages.put(langname, language);
                 langNames.add(langname);
             }
+        Collections.sort(langNames);
     }
     
     public static List<String> getLanguageNameList()
@@ -44,11 +47,17 @@ public class Language
     public static void selectLanguage(String langname)
     {
         currentLanguage = languages.get(langname);
+        currentLanguageName = langname;
         if (currentLanguage == null)
         {
             Lime.LOGGER.C("\"" + langname + "\" not found");
             Lime.forceExit(null);
         }
+    }
+    
+    public static String getSelectedLanguageName()
+    {
+        return currentLanguageName;
     }
     
     public static String getLocalized(String unlocalized)

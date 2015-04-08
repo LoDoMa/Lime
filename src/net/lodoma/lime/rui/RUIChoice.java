@@ -48,6 +48,13 @@ public class RUIChoice extends RUIButton
         return currentChoice;
     }
     
+    public void setChoiceIndex(int currentChoice)
+    {
+        if (currentChoice < 0) currentChoice = 0;
+        if (currentChoice >= choices.size()) currentChoice = choices.size() - 1;
+        this.currentChoice = currentChoice;
+    }
+    
     public List<String> getChoiceList()
     {
         return choices;

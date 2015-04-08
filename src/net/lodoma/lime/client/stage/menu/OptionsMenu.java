@@ -1,5 +1,7 @@
 package net.lodoma.lime.client.stage.menu;
 
+import java.util.Collections;
+
 import net.lodoma.lime.Lime;
 import net.lodoma.lime.client.stage.Stage;
 import net.lodoma.lime.client.window.Window;
@@ -102,6 +104,7 @@ public class OptionsMenu extends Stage
         
         RUIChoice choiceLanguage = (RUIChoice) rui.getChildRecursive("body.choiceLanguage");
         choiceLanguage.getChoiceList().addAll(Language.getLanguageNameList());
+        choiceLanguage.setChoiceIndex(Collections.binarySearch(Language.getLanguageNameList(), Language.getSelectedLanguageName()));
         choiceLanguage.eventListener = (RUIEventType type, RUIEventData data) -> {
             if (type == RUIEventType.CHOICE_CHANGE)
                 Language.selectLanguage(choiceLanguage.getChoiceList().get(choiceLanguage.getChoiceIndex()));
