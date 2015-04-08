@@ -21,10 +21,6 @@ public class PhysicsShapeSnapshot
     public Vector2[] vertices;
     
     public PhysicsShapeAttachments attachments;
-
-    private int displayList;
-    private boolean firstDisplayList = true;
-    private boolean recreateDisplayList;
     
     public void read(DataInputStream in) throws IOException
     {
@@ -57,8 +53,6 @@ public class PhysicsShapeSnapshot
         if (attachments == null)
             attachments = new PhysicsShapeAttachments();
         attachments.readVisual(in);
-        
-        recreateDisplayList = true;
     }
     
     public void write(DataOutputStream out) throws IOException
@@ -113,50 +107,6 @@ public class PhysicsShapeSnapshot
             Texture.referenceDown(attachments.textureName);
         if (attachments.animation != null)
             Animation.destroyAnimation(attachments.animation);
-    }
-    
-    private void renderShape()
-    {
-        attachments.color.setGL();
-        
-        switch (shapeType)
-        {
-        case CIRCLE:
-        {
-            glTranslatef(offset.x, offset.y, 0.0f);
-            glScalef(radius, radius, 1.0f);
-            
-            glBegin(GL_TRIANGLE_FAN);
-            glVertex2f(0.0f, 0.0f);
-            for (int i = 0; i <= 10; i++)
-            {
-                float angle = (float) Math.toRadians(i * 360.0 / 10.0);
-                float x = (float) Math.cos(angle);
-                float y = (float) Math.sin(angle);
-                float texx = (x - attachments.texturePoint.x) / attachments.textureSize.x;
-                float texy = (y - attachments.texturePoint.y) / attachments.textureSize.y;
-                glTexCoord2f(texx, -texy);
-                glVertex2f(x, y);
-            }
-            glEnd();
-            break;
-        }
-        case POLYGON:
-        {
-            glBegin(GL_POLYGON);
-            for (int i = 0; i < vertices.length; i++)
-            {
-                float texx = (vertices[i].x - attachments.texturePoint.x) / attachments.textureSize.x;
-                float texy = (vertices[i].y - attachments.texturePoint.y) / attachments.textureSize.y;
-                glTexCoord2f(texx, -texy);
-                glVertex2f(vertices[i].x, vertices[i].y);
-            }
-            glEnd();
-            break;
-        }
-        default:
-            throw new IllegalStateException();
-        }
     }
     
     public void getVertices(List<Vertex> verts)
