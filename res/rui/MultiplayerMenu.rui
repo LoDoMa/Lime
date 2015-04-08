@@ -14,6 +14,28 @@ lblTitle body label
 	- position-y 80%
 	- text "Multiplayer"
 
+ulServerList body unordered-list
+	- position-x 5%
+	- position-y 30%
+	- width 90%
+	- height 45%
+	- vertical-spacing 2%
+
+	- background-color 0F0F0FFF
+	- gradient-color 111111FF
+	- gradient-source-y 100%
+
+	- border-width 1px
+	- border-radius 10px
+	- border-color FFFFFFFF
+
+	- horizontal-alignment center
+	- vertical-alignment top
+
+ulFESpacing ulServerList container
+	- index 1
+	- height 0%
+
 btnConnect body button
 	- @Button
 	- @MultiplayerButton

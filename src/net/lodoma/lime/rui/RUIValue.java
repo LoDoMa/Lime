@@ -24,12 +24,14 @@ public class RUIValue
     public RUIValue(float size) { this(RUIValueType.SIZE, size); }
     public RUIValue(Color color) { this(RUIValueType.COLOR, color); }
     public RUIValue(String string) { this(RUIValueType.STRING, string); }
+    public RUIValue(Object userdata) { this(RUIValueType.USERDATA, userdata); }
     
     public boolean toBoolean() { return (Boolean) checkType(RUIValueType.BOOLEAN); }
     public int toInteger() { return (Integer) checkType(RUIValueType.INTEGER); }
     public float toSize() { return (Float) checkType(RUIValueType.SIZE); }
     public Color toColor() { return (Color) checkType(RUIValueType.COLOR); }
     public String toString() { return (String) checkType(RUIValueType.STRING); }
+    public Object toUserdata() { return checkType(RUIValueType.USERDATA); }
     
     private Object checkType(RUIValueType wtype)
     {

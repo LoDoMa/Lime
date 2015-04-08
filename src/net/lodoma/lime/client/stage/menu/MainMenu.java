@@ -15,22 +15,22 @@ public class MainMenu extends Stage
     {
         rui.load("MainMenu");
         
-        rui.getChildRecursive("body.menu.btnMultiplayer").eventListener = (RUIEventType type, RUIEventData data) -> {
+        rui.getChildRecursive("body.ulMenu.btnMultiplayer").eventListener = (RUIEventType type, RUIEventData data) -> {
             if (type == RUIEventType.MOUSE_RELEASE)
                 manager.push(new MultiplayerMenu());
         };
         
-        rui.getChildRecursive("body.menu.btnEditor").eventListener = (RUIEventType type, RUIEventData data) -> {
+        rui.getChildRecursive("body.ulMenu.btnEditor").eventListener = (RUIEventType type, RUIEventData data) -> {
             if (type == RUIEventType.MOUSE_RELEASE)
                 manager.push(new Editor());
         };
         
-        rui.getChildRecursive("body.menu.btnOptions").eventListener = (RUIEventType type, RUIEventData data) -> {
+        rui.getChildRecursive("body.ulMenu.btnOptions").eventListener = (RUIEventType type, RUIEventData data) -> {
             if (type == RUIEventType.MOUSE_RELEASE)
                 manager.push(new OptionsMenu());
         };
         
-        rui.getChildRecursive("body.menu.btnExit").eventListener = (RUIEventType type, RUIEventData data) -> {
+        rui.getChildRecursive("body.ulMenu.btnExit").eventListener = (RUIEventType type, RUIEventData data) -> {
             if (type == RUIEventType.MOUSE_RELEASE)
                 Window.closeRequested = true;
         };

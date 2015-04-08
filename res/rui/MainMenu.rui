@@ -4,28 +4,28 @@ INCLUDE "MenuTheme"
 body ROOT container
 	- @Body
 
-menu body unordered-list
+ulMenu body unordered-list
 	- @MenuList
 
-btnMultiplayer menu button
+btnMultiplayer ulMenu button
 	- index 10
 	- @Button
 	- @MenuListMember
 	- text "Multiplayer"
 
-btnEditor menu button
+btnEditor ulMenu button
 	- index 20
 	- @Button
 	- @MenuListMember
 	- text "Editor"
 
-btnOptions menu button
+btnOptions ulMenu button
 	- index 30
 	- @Button
 	- @MenuListMember
 	- text "Options"
 
-btnExit menu button
+btnExit ulMenu button
 	- index 40
 	- @Button
 	- @MenuListMember

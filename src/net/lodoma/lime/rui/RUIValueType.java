@@ -7,4 +7,5 @@ public enum RUIValueType
     SIZE,
     COLOR,
     STRING,
+    USERDATA,
 }

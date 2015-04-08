@@ -2,7 +2,9 @@ package net.lodoma.lime.rui;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import net.lodoma.lime.client.window.Window;
 import net.lodoma.lime.input.Input;
@@ -128,6 +130,11 @@ public class RUIElement
         for (int i = 0; i < segms.length - 1; i++)
             current = current.getChild(segms[i]);
         current.removeChild(segms[segms.length - 1]);
+    }
+    
+    public Set<String> getChildrenNames()
+    {
+        return new HashSet<String>(children.keySet());
     }
     
     public void load(String filepath)
