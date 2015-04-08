@@ -8,7 +8,6 @@ import java.util.Map;
 import net.lodoma.lime.resource.texture.Texture;
 import net.lodoma.lime.util.Vector2;
 import net.lodoma.lime.world.gfx.Vertex;
-import static org.lwjgl.opengl.GL11.*;
 
 public class Bone
 {
@@ -67,6 +66,7 @@ public class Bone
 
         for (Bone child : childrenBack)
             child.getVertices(verts2);
+        
         if (textureName != null)
         {
             verts2.add(new Vertex().setXY(textureOffset.x + textureSize.x / -2.0f, textureOffset.y + textureSize.y / -2.0f).setRGBA(1.0f, 1.0f, 1.0f, 1.0f).setST(0.0f, 1.0f).setTexture(textureName));
@@ -76,6 +76,7 @@ public class Bone
             verts2.add(new Vertex().setXY(textureOffset.x + textureSize.x / +2.0f, textureOffset.y + textureSize.y / +2.0f).setRGBA(1.0f, 1.0f, 1.0f, 1.0f).setST(1.0f, 0.0f).setTexture(textureName));
             verts2.add(new Vertex().setXY(textureOffset.x + textureSize.x / -2.0f, textureOffset.y + textureSize.y / +2.0f).setRGBA(1.0f, 1.0f, 1.0f, 1.0f).setST(0.0f, 0.0f).setTexture(textureName));
         }
+        
         for (Bone child : childrenFront)
             child.getVertices(verts2);
         
@@ -86,34 +87,5 @@ public class Bone
             v.y = rv.y + offset.y;
         }
         verts.addAll(verts2);
-    }
-    
-    public void render()
-    {
-        glPushMatrix();
-        glTranslatef(offset.x, offset.y, 0.0f);
-        glRotatef(-crotation, 0.0f, 0.0f, 1.0f);
-
-        for (Bone child : childrenBack)
-            child.render();
-        
-        if (textureName != null)
-        {
-            Texture.get(textureName).bind(0);
-            
-            glTranslatef(textureOffset.x, textureOffset.y, 0.0f);
-            glBegin(GL_QUADS);
-            glTexCoord2f(0.0f, 1.0f); glVertex2f(textureSize.x / -2.0f, textureSize.y / -2.0f);
-            glTexCoord2f(1.0f, 1.0f); glVertex2f(textureSize.x / +2.0f, textureSize.y / -2.0f);
-            glTexCoord2f(1.0f, 0.0f); glVertex2f(textureSize.x / +2.0f, textureSize.y / +2.0f);
-            glTexCoord2f(0.0f, 0.0f); glVertex2f(textureSize.x / -2.0f, textureSize.y / +2.0f);
-            glEnd();
-            glTranslatef(-textureOffset.x, -textureOffset.y, 0.0f);
-        }
-
-        for (Bone child : childrenFront)
-            child.render();
-        
-        glPopMatrix();
     }
 }

@@ -102,19 +102,6 @@ public class Animation
         }
     }
     
-    public void render()
-    {
-        synchronized (animationLock)
-        {
-            if (root == null)
-                return;
-            
-            if (animation == null)
-                return;
-            root.render();
-        }
-    }
-    
     private void start()
     {
         synchronized (animationLock)

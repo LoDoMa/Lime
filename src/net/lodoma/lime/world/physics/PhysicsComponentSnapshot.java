@@ -50,18 +50,6 @@ public class PhysicsComponentSnapshot implements Identifiable<Integer>
         vertices.addAll(verts);
     }
     
-    public void render()
-    {
-        glPushMatrix();
-        glTranslatef(position.x, position.y, 0.0f);
-        glRotatef((float) Math.toDegrees(angle), 0.0f, 0.0f, 1.0f);
-        
-        for (PhysicsShapeSnapshot shape : shapes)
-            shape.render();
-        
-        glPopMatrix();
-    }
-    
     public void debugRender()
     {
         glPushMatrix();

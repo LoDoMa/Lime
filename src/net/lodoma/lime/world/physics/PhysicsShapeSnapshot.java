@@ -223,49 +223,6 @@ public class PhysicsShapeSnapshot
         }
     }
     
-    public void render()
-    {
-        if (attachments.animationName != null)
-        {
-            if (shapeType == PhysicsShapeType.CIRCLE)
-                glTranslatef(offset.x, offset.y, 0.0f);
-            
-            glTranslatef(attachments.animationRoot.x, attachments.animationRoot.y, 0.0f);
-            glScalef(attachments.animationScale.x, attachments.animationScale.y, 1.0f);
-
-            attachments.color.setGL();
-            attachments.animation.render();
-            
-            glScalef(1.0f / attachments.animationScale.x, 1.0f / attachments.animationScale.y, 1.0f);
-            glTranslatef(-attachments.animationRoot.x, -attachments.animationRoot.y, 0.0f);
-        }
-        else
-        {
-            if (recreateDisplayList)
-            {
-                if (firstDisplayList)
-                {
-                    glDeleteLists(displayList, 1);
-                    firstDisplayList = false;
-                }
-
-                displayList = glGenLists(1);
-                glNewList(displayList, GL_COMPILE);
-                renderShape();
-                glEndList();
-                
-                recreateDisplayList = false;
-            }
-
-            if (attachments.textureName == null)
-                Texture.NO_TEXTURE.bind(0);
-            else
-                Texture.get(attachments.textureName).bind(0);
-            
-            glCallList(displayList);
-        }
-    }
-    
     public void debugRender()
     {
         switch (shapeType)
