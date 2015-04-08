@@ -159,6 +159,9 @@ public class RUIParser
         case "text-field":
             element = new RUITextField(parent);
             break;
+        case "choice":
+            element = new RUIChoice(parent);
+            break;
         default:
             Lime.LOGGER.C("Error while parsing RUI file - invalid element type");
             Lime.forceExit(null);

@@ -11,22 +11,22 @@ btnMultiplayer ulMenu button
 	- index 10
 	- @Button
 	- @MenuListMember
-	- text "Multiplayer"
+	- text "$rui.menus.Multiplayer"
 
 btnEditor ulMenu button
 	- index 20
 	- @Button
 	- @MenuListMember
-	- text "Editor"
+	- text "$rui.menus.Editor"
 
 btnOptions ulMenu button
 	- index 30
 	- @Button
 	- @MenuListMember
-	- text "Options"
+	- text "$rui.menus.Options"
 
 btnExit ulMenu button
 	- index 40
 	- @Button
 	- @MenuListMember
-	- text "Exit"
+	- text "$rui.menus.Exit"

@@ -12,7 +12,7 @@ lblTitle body label
 	- @LabelTitle
 	- position-x 5%
 	- position-y 80%
-	- text "Multiplayer"
+	- text "$rui.menus.MultiplayerMenu"
 
 ulServerList body unordered-list
 	- position-x 5%
@@ -41,42 +41,42 @@ btnConnect body button
 	- @MultiplayerButton
 	- position-x 5%
 	- position-y 20%
-	- text "Connect"
+	- text "$rui.menus.Connect"
 
 btnDirect body button
 	- @Button
 	- @MultiplayerButton
 	- position-x 35%
 	- position-y 20%
-	- text "Direct"
+	- text "$rui.menus.Direct"
 
 btnSearch body button
 	- @Button
 	- @MultiplayerButton
 	- position-x 65%
 	- position-y 20%
-	- text "Search LAN"
+	- text "$rui.menus.SearchLAN"
 
 btnAdd body button
 	- @Button
 	- @MultiplayerButton
 	- position-x 5%
 	- position-y 14%
-	- text "Add"
+	- text "$rui.menus.Add"
 
 btnModify body button
 	- @Button
 	- @MultiplayerButton
 	- position-x 35%
 	- position-y 14%
-	- text "Modify"
+	- text "$rui.menus.Modify"
 
 btnRemove body button
 	- @Button
 	- @MultiplayerButton
 	- position-x 65%
 	- position-y 14%
-	- text "Remove"
+	- text "$rui.menus.Remove"
 
 btnBack body button
 	- @Button
@@ -84,4 +84,4 @@ btnBack body button
 	- position-y 8%
 	- width 50%
 	- height 5%
-	- text "Back"
+	- text "$rui.menus.Back"

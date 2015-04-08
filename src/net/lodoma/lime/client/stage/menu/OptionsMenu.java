@@ -5,7 +5,9 @@ import net.lodoma.lime.client.stage.Stage;
 import net.lodoma.lime.client.window.Window;
 import net.lodoma.lime.client.window.WindowException;
 import net.lodoma.lime.input.Input;
+import net.lodoma.lime.localization.Language;
 import net.lodoma.lime.rui.RUIActivable;
+import net.lodoma.lime.rui.RUIChoice;
 import net.lodoma.lime.rui.RUIEventData;
 import net.lodoma.lime.rui.RUIEventType;
 import net.lodoma.lime.shader.Program;
@@ -96,6 +98,13 @@ public class OptionsMenu extends Stage
                 Window.debugEnabled = false;
                 Lime.LOGGER.F("debug = " + Window.debugEnabled);
             }
+        };
+        
+        RUIChoice choiceLanguage = (RUIChoice) rui.getChildRecursive("body.choiceLanguage");
+        choiceLanguage.getChoiceList().addAll(Language.getLanguageNameList());
+        choiceLanguage.eventListener = (RUIEventType type, RUIEventData data) -> {
+            if (type == RUIEventType.CHOICE_CHANGE)
+                Language.selectLanguage(choiceLanguage.getChoiceList().get(choiceLanguage.getChoiceIndex()));
         };
         
         rui.getChildRecursive("body.btnBack").eventListener = (RUIEventType type, RUIEventData data) -> {

@@ -9,4 +9,5 @@ public enum RUIEventType
     ACTIVE,
     INACTIVE,
     SLIDER_VALUE_CHANGE,
+    CHOICE_CHANGE,
 }

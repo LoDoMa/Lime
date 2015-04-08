@@ -4,42 +4,92 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import net.lodoma.lime.Lime;
+import net.lodoma.lime.util.OsHelper;
 
 public class Language
 {
-    private Language parentLanguage;
-    private Map<String, String> names;
+    private static Language currentLanguage;
+    private static List<String> langNames = new ArrayList<String>();
+    private static Map<String, Language> languages = new HashMap<String, Language>();
     
-    public Language(Language parentLanguage, File langFile) throws IOException
+    public static void loadLangFiles()
     {
-        this.parentLanguage = parentLanguage;
-        names = new HashMap<String, String>();
+        File[] files = new File(OsHelper.JARPATH + "lang").listFiles();
+        for (File file : files)
+            if (file.getName().endsWith(".lang"))
+            {
+                Language language = new Language(file);
+                String langname = language.names.get("langname");
+                if (langname == null)
+                {
+                    Lime.LOGGER.C("\"langname\" not found in language file \"" + file.getPath() + "\"");
+                    Lime.forceExit(null);
+                }
+                languages.put(langname, language);
+                langNames.add(langname);
+            }
+    }
+    
+    public static List<String> getLanguageNameList()
+    {
+        return new ArrayList<String>(langNames);
+    }
+    
+    public static void selectLanguage(String langname)
+    {
+        currentLanguage = languages.get(langname);
+        if (currentLanguage == null)
+        {
+            Lime.LOGGER.C("\"" + langname + "\" not found");
+            Lime.forceExit(null);
+        }
+    }
+    
+    public static String getLocalized(String unlocalized)
+    {
+        if (currentLanguage == null)
+        {
+            Lime.LOGGER.C("Language is not selected");
+            Lime.forceExit(null);
+        }
         
+        String localizedName = currentLanguage.names.get(unlocalized);
+        return (localizedName == null) ? unlocalized : localizedName;
+    }
+    
+    private Map<String, String> names = new HashMap<String, String>();
+    
+    public Language(File langFile)
+    {
         try(FileReader fileReader = new FileReader(langFile);
             BufferedReader bufferedReader = new BufferedReader(fileReader))
         {
             String line;
             while((line = bufferedReader.readLine()) != null)
             {
-                String[] split = line.split("->");
-                String unlocalizedName = split[0].trim();
-                String localizedName = split[1].trim();
+                line = line.trim();
+                if (line.length() == 0)
+                    continue;
                 
-                names.put(unlocalizedName, localizedName);
+                int index = line.indexOf('=');
+                if (index == -1)
+                    throw new IOException("Invalid language file format");
+                String unlocalized = line.substring(0, index).trim();
+                String localized = line.substring(index + 1).trim();
+                names.put(unlocalized, localized);
             }
         }
-    }
-    
-    public String getLocalizedName(String unlocalizedName)
-    {
-        String localizedName = names.get(unlocalizedName);
-        if(localizedName == null)
-            if(parentLanguage == null)
-                return unlocalizedName;
-            else
-                return parentLanguage.getLocalizedName(unlocalizedName);
-        return localizedName;
+        catch (IOException e)
+        {
+            Lime.LOGGER.C("Failed to load language file \"" + langFile.getPath() + "\"");
+            Lime.LOGGER.log(e);
+            Lime.forceExit(e);
+        }
     }
 }

@@ -8,19 +8,19 @@ lblTitle body label
 	- @LabelTitle
 	- position-x 5%
 	- position-y 60%
-	- text "Direct connect"
+	- text "$rui.menus.DirectMenu"
 
 lblHost body label
 	- @Label
 	- position-x 5%
 	- position-y 44%
-	- text "Host:"
+	- text "$rui.menus.Host"
 
 tfldHost body text-field
 	- @TextField
-	- position-x 15%
+	- position-x 30%
 	- position-y 44%
-	- width 80%
+	- width 65%
 	- height 5%
 	- text "localhost"
 
@@ -30,7 +30,7 @@ btnJoin body button
 	- position-y 34%
 	- width 40%
 	- height 5%
-	- text "Join"
+	- text "$rui.menus.Join"
 
 btnBack body button
 	- @Button
@@ -38,4 +38,4 @@ btnBack body button
 	- position-y 26%
 	- width 40%
 	- height 5%
-	- text "Back"
+	- text "$rui.menus.Back"

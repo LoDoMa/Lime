@@ -1,2 +1,28 @@
-lime.entity.ball.name -> Ball
-lime.entity.zombie.name -> Zombie
+langname=English (US)
+
+rui.menus.On=on
+rui.menus.Off=off
+rui.menus.Back=Back
+
+rui.menus.Multiplayer=Multiplayer
+rui.menus.Editor=Editor
+rui.menus.Options=Options
+rui.menus.Exit=Exit
+
+rui.menus.MultiplayerMenu=Multiplayer
+rui.menus.Connect=Connect
+rui.menus.Direct=Direct
+rui.menus.SearchLAN=Search LAN
+rui.menus.Add=Add
+rui.menus.Modify=Modify
+rui.menus.Remove=Remove
+
+rui.menus.DirectMenu=Direct Connect
+rui.menus.Host=Host:
+rui.menus.Join=Join
+
+rui.menus.Windowed=Windowed
+rui.menus.Fullscreen=Fullscreen
+rui.menus.VSync=V-Sync:
+rui.menus.Debug=Debug:
+rui.menus.Sound=Sound:

@@ -1,0 +1,28 @@
+langname=Hrvatski
+
+rui.menus.On=da
+rui.menus.Off=ne
+rui.menus.Back=Natrag
+
+rui.menus.Multiplayer=Mrežna igra
+rui.menus.Editor=Editor
+rui.menus.Options=Opcije
+rui.menus.Exit=Izlaz iz igre
+
+rui.menus.MultiplayerMenu=Mrežna igra
+rui.menus.Connect=Poveži se
+rui.menus.Direct=Izravno povezivanje
+rui.menus.SearchLAN=Pretraži LAN
+rui.menus.Add=Dodaj
+rui.menus.Modify=Izmijeni
+rui.menus.Remove=Izbriši
+
+rui.menus.DirectMenu=Izravno povezivanje
+rui.menus.Host=Poslužitelj:
+rui.menus.Join=Poveži se
+
+rui.menus.Windowed=Prozor
+rui.menus.Fullscreen=Puni zaslon
+rui.menus.VSync=V-Sync:
+rui.menus.Debug=Debug:
+rui.menus.Sound=Zvuk:

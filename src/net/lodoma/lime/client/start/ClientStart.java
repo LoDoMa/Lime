@@ -3,6 +3,7 @@ package net.lodoma.lime.client.start;
 import java.io.File;
 
 import net.lodoma.lime.Lime;
+import net.lodoma.lime.localization.Language;
 import net.lodoma.lime.logger.LogLevel;
 import net.lodoma.lime.util.OsHelper;
 
@@ -25,6 +26,9 @@ public class ClientStart
         else                    nativePath += "x86";
 
         System.setProperty("org.lwjgl.librarypath", new File(nativePath).getAbsolutePath());
+        
+        Language.loadLangFiles();
+        Language.selectLanguage("English (US)");
         
         VisualInstance visual = new VisualInstance();
         visual.run();

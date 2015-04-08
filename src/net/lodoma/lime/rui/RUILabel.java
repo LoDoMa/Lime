@@ -1,6 +1,7 @@
 package net.lodoma.lime.rui;
 
 import net.lodoma.lime.client.window.Window;
+import net.lodoma.lime.localization.Language;
 import net.lodoma.lime.util.TrueTypeFont;
 
 public class RUILabel extends RUIElement
@@ -98,6 +99,8 @@ public class RUILabel extends RUIElement
         super.renderForeground();
         
         String text = values.get(state, "text").toString();
+        if (text.length() > 0 && text.charAt(0) == '$')
+            text = Language.getLocalized(text.substring(1));
         
         float x, y;
         
