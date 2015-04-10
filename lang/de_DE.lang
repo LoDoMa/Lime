@@ -1,0 +1,29 @@
+langname=Deutsch
+
+rui.menus.On=An
+rui.menus.Off=Aus
+rui.menus.Back=Fertig
+
+rui.menus.Multiplayer=Mehrspieler
+rui.menus.Editor=Editor
+rui.menus.Options=Optionen
+rui.menus.Exit=Spiel beenden
+
+rui.menus.MultiplayerMenu=Mehrspieler
+rui.menus.Connect=Server beitreten
+rui.menus.Direct=Direkt verbinden
+rui.menus.SearchLAN=Suche LAN
+rui.menus.Add=Server hinzufügen
+rui.menus.Modify=Ändern
+rui.menus.Remove=Löschen
+
+rui.menus.DirectMenu=Direkt verbinden
+rui.menus.Host=Server:
+rui.menus.Join=Server beitreten
+
+rui.menus.Windowed=Fenster
+rui.menus.Fullscreen=Vollbild
+rui.menus.VSync=V-Sync verwenden:
+rui.menus.Debug=Debuggen:
+rui.menus.Sound=Gesamtlautstärke:
+
