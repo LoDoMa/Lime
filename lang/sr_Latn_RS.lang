@@ -1,0 +1,29 @@
+﻿langname=Srpski 
+
+rui.menus.On=Da
+rui.menus.Off=Ne
+rui.menus.Back=Gotovo
+
+rui.menus.Multiplayer=Online igra
+rui.menus.Editor=Editor
+rui.menus.Options=Opcije
+rui.menus.Exit=Izlaz iz igre
+
+rui.menus.MultiplayerMenu=Online igra
+rui.menus.Connect=Poveži se
+rui.menus.Direct=Direktno povezivanje
+rui.menus.SearchLAN=Pretraži LAN
+rui.menus.Add=Dodaj server
+rui.menus.Modify=Izmeni
+rui.menus.Remove=Izbriši
+
+rui.menus.DirectMenu=Direktno povezivanje
+rui.menus.Host=Server :
+rui.menus.Join=Poveži se
+
+rui.menus.Windowed=Prozor
+rui.menus.Fullscreen=Pun ekran
+rui.menus.VSync=V-Sync
+rui.menus.Debug=Debug:
+rui.menus.Sound=Muzika:
+
