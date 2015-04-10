@@ -13,9 +13,9 @@ rui.menus.MultiplayerMenu=Mehrspieler
 rui.menus.Connect=Server beitreten
 rui.menus.Direct=Direkt verbinden
 rui.menus.SearchLAN=Suche LAN
-rui.menus.Add=Server hinzufügen
-rui.menus.Modify=Ändern
-rui.menus.Remove=Löschen
+rui.menus.Add=Server hinzufÃ¼gen
+rui.menus.Modify=Ã„ndern
+rui.menus.Remove=LÃ¶schen
 
 rui.menus.DirectMenu=Direkt verbinden
 rui.menus.Host=Server:
@@ -25,5 +25,5 @@ rui.menus.Windowed=Fenster
 rui.menus.Fullscreen=Vollbild
 rui.menus.VSync=V-Sync verwenden:
 rui.menus.Debug=Debuggen:
-rui.menus.Sound=Gesamtlautstärke:
+rui.menus.Sound=GesamtlautstÃ¤rke:
 
