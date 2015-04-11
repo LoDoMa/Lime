@@ -57,21 +57,18 @@ public class RUILabel extends RUIElement
             super.update(timeDelta);
 
             String fontName = values.get(state, "font-name").toString();
-            if (fontName_c == null || !fontName_c.equals(fontName))
-            {
-                fontName_c = fontName;
-                font_c = RUI.getFont(fontName);
-            }
-            
-            float fontSize_t = values.get(state, "font-size").toSize();
-            if (fontSize_t < 0) fontSize_t /= -Window.viewportHeight;
-            else fontSize_t *= dimensions_c.y;
-            fontSize_c = fontSize_t;
+            fontName_c = fontName;
+            font_c = RUI.getFont(fontName_c);
             
             int ttfSize = font_c.getFont().getSize() + 3;
             float scale = fontSize_c / ttfSize;
             fontScaleX_c = scale * 0.6f;
             fontScaleY_c = scale * 0.75f;
+            
+            float fontSize_t = values.get(state, "font-size").toSize();
+            if (fontSize_t < 0) fontSize_t /= -Window.viewportHeight;
+            else fontSize_t *= dimensions_c.y;
+            fontSize_c = fontSize_t;
 
             String horalign_t = values.get(state, "horizontal-alignment").toString();
             switch (horalign_t)
@@ -113,6 +110,8 @@ public class RUILabel extends RUIElement
         else y = (dimensions_c.y - fontSize_c) / 2.0f;
         
         fgColor_c.setGL();
+        
+        font_c = RUI.getFont(fontName_c);
         font_c.drawString(x, y, text, fontScaleX_c, fontScaleY_c, horalign_c);
     }
 }

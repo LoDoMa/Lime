@@ -1,9 +1,12 @@
 package net.lodoma.lime.rui;
 
 import java.awt.Font;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.lodoma.lime.localization.Language;
 import net.lodoma.lime.util.TrueTypeFont;
 
 public class RUI
@@ -18,13 +21,23 @@ public class RUI
             TrueTypeFont font = fonts.get(fontname);
             if (font == null)
             {
-                char[] chars = new char[Character.MAX_VALUE - 255 + 1];
-                for (int c = 256; c <= Character.MAX_VALUE; c++)
-                    chars[c - 256] = (char) c;
-                font = new TrueTypeFont(new Font(fontname, Font.PLAIN, FONT_SIZE), true, chars);
+                char[] additionalChars = Language.getCharset();
+                System.out.println(Arrays.toString(additionalChars));
+                font = new TrueTypeFont(new Font(fontname, Font.PLAIN, FONT_SIZE), true, additionalChars);
                 fonts.put(fontname, font);
             }
             return font;
+        }
+    }
+    
+    public static void reload()
+    {
+        synchronized (fonts)
+        {
+            Collection<TrueTypeFont> fontList = fonts.values();
+            for (TrueTypeFont font : fontList)
+                font.destroy();
+            fonts.clear();
         }
     }
 }

@@ -7,10 +7,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.lodoma.lime.Lime;
+import net.lodoma.lime.rui.RUI;
 import net.lodoma.lime.util.OsHelper;
 
 public class Language
@@ -53,6 +56,7 @@ public class Language
             Lime.LOGGER.C("\"" + langname + "\" not found");
             Lime.forceExit(null);
         }
+        RUI.reload();
     }
     
     public static String getSelectedLanguageName()
@@ -72,6 +76,18 @@ public class Language
         return (localizedName == null) ? unlocalized : localizedName;
     }
     
+    public static char[] getCharset()
+    {
+        if (currentLanguage == null)
+        {
+            Lime.LOGGER.C("Language is not selected");
+            Lime.forceExit(null);
+        }
+        
+        return currentLanguage.charset;
+    }
+    
+    private char[] charset;
     private Map<String, String> names = new HashMap<String, String>();
     
     public Language(File langFile)
@@ -79,6 +95,8 @@ public class Language
         try(FileReader fileReader = new FileReader(langFile);
             BufferedReader bufferedReader = new BufferedReader(fileReader))
         {
+            Set<Character> charsetSet = new HashSet<Character>();
+            
             String line;
             while((line = bufferedReader.readLine()) != null)
             {
@@ -91,7 +109,20 @@ public class Language
                     throw new IOException("Invalid language file format");
                 String unlocalized = line.substring(0, index).trim();
                 String localized = line.substring(index + 1).trim();
+                for (int i = 0; i < localized.length(); i++)
+                {
+                    char c = localized.charAt(i);
+                    if (c > 127) charsetSet.add(c);
+                }
                 names.put(unlocalized, localized);
+            }
+            
+            if (charsetSet.size() > 0)
+            {
+                charset = new char[charsetSet.size()];
+                int i = 0;
+                for (char c : charsetSet)
+                    charset[i++] = c;
             }
         }
         catch (IOException e)
