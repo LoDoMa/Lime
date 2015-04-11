@@ -22,7 +22,6 @@ public class RUI
             if (font == null)
             {
                 char[] additionalChars = Language.getCharset();
-                System.out.println(Arrays.toString(additionalChars));
                 font = new TrueTypeFont(new Font(fontname, Font.PLAIN, FONT_SIZE), true, additionalChars);
                 fonts.put(fontname, font);
             }
