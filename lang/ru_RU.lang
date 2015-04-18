@@ -1,0 +1,29 @@
+langname=Русский
+
+rui.menus.On=Вкл.
+rui.menus.Off=выкл.
+rui.menus.Back=готово
+
+rui.menus.Multiplayer=Сетеваяа игра
+rui.menus.Editor=Editor
+rui.menus.Options=Настройки
+rui.menus.Exit=Выйти з игры
+
+rui.menus.MultiplayerMenu=Сетеваяа игра
+rui.menus.Connect=Подключится
+rui.menus.Direct=Прямое подключение
+rui.menus.SearchLAN=Поиск локальную сеть
+rui.menus.Add=Довабить
+rui.menus.Modify=Изменять
+rui.menus.Remove=Удалить
+
+rui.menus.DirectMenu=Прямое подключение
+rui.menus.Host=Сервер :
+rui.menus.Join=Подключится
+
+rui.menus.Windowed=окно
+rui.menus.Fullscreen=Полноэкранный режиим
+rui.menus.VSync=Вертикальная синхронизация:
+rui.menus.Debug=Debug:
+rui.menus.Sound=Общая громкость :
+
